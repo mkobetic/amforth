@@ -14,7 +14,7 @@ ARM_CONSTANT "SYST_CSR", SYST_CSR, 0xE000E010
 # [15:3]  | -         | Reseverd
 # [2]     | CLKSOURCE | Clock source: 0 = external clock / 1 = processor clock.
 # [1]     | TICKINT   | Enables SysTick exception request; Software can use COUNTFLAG to determine if SysTick has ever counted to zero.
-# [0]     | ENABLE    | Enables the counterr
+# [0]     | ENABLE    | Enables the counter
 # When ENABLE is set to 1, the counter loads the RELOAD value from the SYST_RVR register
 # and then counts down. On reaching 0, it sets the COUNTFLAG to 1 and optionally asserts the
 # SysTick depending on the value of TICKINT. It then loads the RELOAD value again, and begins counting.
@@ -32,14 +32,14 @@ ARM_CONSTANT "SYST_CVR", SYST_CVR, 0xE000E018
 # Reads return the current value of the SysTick counter.
 # A write of any value clears the field to 0, and also clears the SYST_CSR COUNTFLAG bit to 0.
 
-.equ TIMER_RELOAD_VALUE, 0x00FFFFFF
+.equ RA4M1_TIMER_RELOAD_VALUE, 0x00FFFFFF
 
 ARM_COLON "delay-init", DELAY_INIT
     @ Disable SysTick during setup
     .word XT_ZERO, XT_SYST_CSR, XT_STORE
 
     @ Maximum reload value for 24 bit timer
-    .word XT_DOLITERAL, TIMER_RELOAD_VALUE, XT_SYST_RVR, XT_STORE
+    .word XT_DOLITERAL, RA4M1_TIMER_RELOAD_VALUE, XT_SYST_RVR, XT_STORE
 
     @ Any write to current clears it
     .word XT_ZERO, XT_SYST_CVR, XT_STORE
@@ -49,29 +49,42 @@ ARM_COLON "delay-init", DELAY_INIT
 .word XT_EXIT
 
 # Wait for n ticks of the SysTick timer.
-# tick = 1/32.768 kHz = 30.5 us
-# TODO: doesn't handle tick counts larger than TIMER_RELOAD_VALUE
+# tick = 1/32.768 kHz = 0.00003051757812 s ~ 30.5 us
+# TODO: doesn't handle tick counts larger than RA4M1_TIMER_RELOAD_VALUE
+#   which translates to about 512 seconds max delay
 ARM_COLON "delay-ticks", DELAY_TICKS
 @ ( n -- ) wait for n ticks of the timer, tick ~ 30 microseconds
     .word XT_SYST_CVR, XT_FETCH     @ ( n start-ticks )
 DELAY_TICKS_LOOP:
       .word XT_PAUSE, XT_2DUP
-      .word XT_SYST_CVR, XT_FETCH    @ ( n start-ticks n start-ticks current-ticks )
+      .word XT_SYST_CVR, XT_FETCH, XT_MINUS     @ ( n start-ticks n elapsed-ticks )
       # need to handle timer wrapping around zero
-      .word XT_MINUS, XT_DUP, XT_ZEROLESS, XT_NOT, XT_DOCONDBRANCH, 1f
-      # elapsed ticks are negative, timer wrapped, add the reload value
-      .word XT_DOLITERAL, TIMER_RELOAD_VALUE, XT_PLUS
+      .word XT_DUP, XT_ZEROLESS, XT_DOCONDBRANCH, 1f
+      # if elapsed ticks are negative, add the reload value
+      .word XT_DOLITERAL, RA4M1_TIMER_RELOAD_VALUE, XT_PLUS
+      # otherwise check if n < elapsed-ticks
 1:    .word XT_UGREATER, XT_DOCONDBRANCH, DELAY_TICKS_LOOP
     .word XT_2DROP
 .word XT_EXIT
 
+
+.equ RA4M1_MS_TICKS, 33
+# Number of timer ticks per millisecond
+# TODO: Somethings is off here. Calculating based on the SYSTICCLK frequency (32768 Hz),
+#   1 ms should be about 33 ticks:
+#       1 tick = 30.5 us
+#       1 ms = 1000 us / 30.5 us = 32.78 ticks
+#   In reality it seems to be at least 100 times more, wat?
+
 COLON "ms", MS
-@ ( n -- ) wits n milliseconds, 1 ms = 1000/30.5 = 32.78 ticks
-   .word 
+@ ( n -- ) waits n milliseconds
 MS_LOOP:
-    .word XT_1MINUS, XT_DUP, XT_ZEROLESS, XT_DOCONDBRANCH, MS_LEAVE
-    .word XT_DOLITERAL, 33, XT_DELAY_TICKS
-    .word XT_DOBRANCH, MS_LOOP
+        @ if n <= 0 leave
+        .word XT_DUP, XT_ZEROLESS, XT_NOT, XT_DOCONDBRANCH, MS_LEAVE
+        @ wait RA4M1_MS_TICKS ticks
+        .word XT_DOLITERAL, RA4M1_MS_TICKS, XT_DELAY_TICKS
+        @ decrement n, repeat
+        .word XT_1MINUS, XT_DOBRANCH, MS_LOOP
 MS_LEAVE:
     .word XT_DROP, XT_EXIT
 

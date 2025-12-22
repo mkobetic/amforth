@@ -2,20 +2,29 @@
 REVISION := $(shell git status -bs -u no|tr / -)
 CROSS=arm-none-eabi-
 LANG=C
+BOARD = unor4
 
 # Based on what Arduino IDE uses to program the Uno R4
 # https://www.shumatech.com/web/products/bossa
+# https://github.com/arduino/BOSSA
 BOSSAC=/Users/martin/Library/Arduino15/packages/arduino/tools/bossac/1.9.1-arduino5/bossac
 # BOSSAC = bossac
-# Must match ./memmap
-FLASH_IMAGE_START = 0x4000
 PORT=cu.usbmodemB43A45B4700C2
 
-BOARD = unor4
-LANG=C
+buildinfo: 
+	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
+
+build/%.o: %.s words/*.s buildinfo
+	$(CROSS)as -g --warn --fatal-warnings -achlms=build/unor4.list -I../../arm -I ../../arm/devices/cortex-m4 -I ../../shared -o $@ $<
+
+build/unor4.elf: build/unor4.o
+	$(CROSS)ld -T memmap $< -o $@
 
 build/%.lst: build/%.elf
-	$(CROSS)objdump -D $< >$@
+	$(CROSS)objdump -DSt -j amforth $< >$@
+
+build/%.sym: build/%.elf
+	$(CROSS)nm -l $< >$@
 
 build/%.hex: build/%.elf
 	$(CROSS)objcopy -O ihex $< $@
@@ -23,13 +32,7 @@ build/%.hex: build/%.elf
 build/%.bin: build/%.elf
 	$(CROSS)objcopy -O binary $< $@
 
-build/%.o: %.s words/*.s buildinfo
-	$(CROSS)as -g --warn --fatal-warnings -achlms=build/unor4.list -I../../arm -I ../../arm/devices/cortex-m4 -I ../../shared -o $@ $<
-
-all: build/unor4.hex build/unor4.lst
-
-build/unor4.elf: build/unor4.o
-	$(CROSS)ld -T memmap $< -o $@
+all: build/unor4.hex build/unor4.lst build/unor4.sym
 
 clean:
 	rm build/* words/build-info.s
@@ -47,9 +50,6 @@ clean:
 upload: build/unor4.bin touch1200bps
 	touch1200bps/touch1200bps /dev/$(PORT)
 	$(BOSSAC) --debug --port=$(PORT) --write build/unor4.bin
-
-buildinfo: 
-	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
 touch1200bps: touch1200bps/*
 	cd ./touch1200bps && go build
@@ -78,3 +78,7 @@ gdb: build/unor4.elf
 	-ex "target extended-remote localhost:50000"
 # 	-ex "b PFA_LED_INIT" \
 # 	-ex "monitor reset"
+
+
+# More debugging references
+# https://undo.io/resources/guide-to-symbols-debug-info/

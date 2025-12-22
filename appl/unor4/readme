@@ -3,6 +3,8 @@ https://docs.arduino.cc/hardware/uno-r4-wifi/
 https://docs.freenove.com/projects/fnk0096/en/latest/
 https://github.com/arduino/ArduinoCore-renesas
 
+See Makefile for details on how to program and debug the board.
+
 # MCU
 Renesas R7FA4M1AB3CFM#AA0 (64pins, 5V) with FPU, 32-bit ARM Cortex M4F
 256 kB FLASH: $00000000 .. $00040000
