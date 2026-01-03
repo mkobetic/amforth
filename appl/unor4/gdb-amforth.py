@@ -1,3 +1,4 @@
+# https://github.com/mkobetic/amforth/blob/unor4/appl/unor4/gdb-amforth.png
 import gdb
 
 # TODO: we should be able to read these from the symbol table
@@ -88,6 +89,7 @@ class ForthRegisterWindow:
         if frame is None:
             return "no frame selected"
         lines = [
+            self.value_register(frame, "r0"),
             self.value_register(frame, "r1"),
             self.value_register(frame, "r2"),
             self.value_register(frame, "r3"),

@@ -1,7 +1,6 @@
 
 COLON "appl-turnkey", APPLTURNKEY
   .word XT_DECIMAL
-  # TODO: UART not working yet
   .word XT_UART_INIT
   .word XT_DOT_VER
 
@@ -11,9 +10,9 @@ COLON "appl-turnkey", APPLTURNKEY
   .word XT_LED_INIT
   
 # for now just flash the LED forever
-LED_BLINK_LOOP:
-  .word XT_LED_ON, XT_DOLITERAL, 200, XT_MS
-  .word XT_LED_OFF, XT_DOLITERAL, 800, XT_MS
-  .word XT_DOLOOP, LED_BLINK_LOOP
+#LED_BLINK_LOOP:
+#  .word XT_LED_ON, XT_DOLITERAL, 200, XT_MS
+#  .word XT_LED_OFF, XT_DOLITERAL, 800, XT_MS
+#  .word XT_DOLOOP, LED_BLINK_LOOP
 
 .word XT_EXIT

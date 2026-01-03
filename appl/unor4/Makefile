@@ -11,6 +11,8 @@ BOSSAC=/Users/martin/Library/Arduino15/packages/arduino/tools/bossac/1.9.1-ardui
 # BOSSAC = bossac
 PORT=cu.usbmodemB43A45B4700C2
 
+all: build/unor4.hex build/unor4.lst build/unor4.sym
+
 buildinfo: 
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
@@ -32,7 +34,6 @@ build/%.hex: build/%.elf
 build/%.bin: build/%.elf
 	$(CROSS)objcopy -O binary $< $@
 
-all: build/unor4.hex build/unor4.lst build/unor4.sym
 
 clean:
 	rm build/* words/build-info.s
@@ -44,7 +45,7 @@ clean:
 # The board must be in bootloader mode for bossac to be able to communicate with it.
 # The LED soft pulses at 1 sec intervals when in bootloader mode.
 # To put the board into bootloader mode manually, press and release the RESET button twice.
-# Alternatively the touch2100bps utility can achieve the same as well.
+# Alternatively the touch1200bps utility can achieve the same as well.
 #
 # Note: it seems only the Arduino version of bossac works with UNO R4 (https://github.com/arduino/BOSSA)
 upload: build/unor4.bin touch1200bps
@@ -63,7 +64,8 @@ OPENOCD = $(ARDUINO_LIB)/tools/openocd/0.11.0-arduino2
 
 # Start OpenOCD
 # You can connect to the telnet port with: nc localhost 50002
-ocd: build/unor4.elf
+# ocd: build/unor4.elf
+ocd:
 	$(OPENOCD)/bin/openocd -c "gdb_port 50000" -c "tcl_port 50001" -c "telnet_port 50002" \
 	-f "$(ARDUINO_PLUGINS)/cortex-debug/extension/support/openocd-helpers.tcl" \
 	-f $(OPENOCD)/share/openocd/scripts/interface/cmsis-dap.cfg \
@@ -71,7 +73,8 @@ ocd: build/unor4.elf
 	-f dev/R7FA4M1AB.cfg
 
 # Start gdb and connect to OpenOCD
-gdb: build/unor4.elf
+# gdb: build/unor4.elf
+gdb:
 	$(CROSS)gdb-py -tui build/unor4.elf --quiet \
 	-ex "target extended-remote localhost:50000"
 # 	-ex "b PFA_LED_INIT" \

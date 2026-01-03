@@ -1,129 +1,103 @@
+# Implement serial host connection via SCI9, using non-FIFO async mode
+# References:
+# * RA4M1 Group: User's Manual (32-bit): 28. Serial Communications Interface (SCI)
 
-.equ UART0BASE, 0x10013000
+# From github.com/arduino/uno-r4-wifi-usb-bridge/UNOR4USBBridge/UNOR4USBBridge.ino
+#   Serial1 refers to gpio 20/21 ( -> will become Serial object in RA4 variant P109 / P110) SCI9
+#   Serial2 refers to gpio 2/3 ( -> will become SerialNina object in RA4 variant P501 / P502) SCI1
+#   #define SERIAL_AT              Serial1
+#   SERIAL_AT.begin(115200, SERIAL_8N1, 6, 5);
 
-.equ UART0_TXDATA    , UART0BASE + 0x00
-.equ UART0_RXDATA    , UART0BASE + 0x04
-.equ UART0_TXCTRL    , UART0BASE + 0x08
-.equ UART0_RXCTRL    , UART0BASE + 0x0C
-.equ UART0_IE        , UART0BASE + 0x10
-.equ UART0_IP        , UART0BASE + 0x14
-.equ UART0_DIV       , UART0BASE + 0x18
+.include "words/sci.s"
 
-.equ RCGCPIO,    0x400FE608
-.equ RCGCUART,   0x400FE618
-
-.equ GPIOA_BASE, 0x40004000
-.equ GPIOAFSEL,  0x40004420
-.equ GPIODEN,    0x4000451C
-
-.equ Terminal_UART_Base, 0x4000C000 @ UART 0
-
-.equ UART0_BASE, 0x4000C000
-.equ UARTDR,     Terminal_UART_Base + 0x000
-.equ UARTFR,     Terminal_UART_Base + 0x018
-.equ UARTIBRD,   Terminal_UART_Base + 0x024
-.equ UARTFBRD,   Terminal_UART_Base + 0x028
-.equ UARTLCRH,   Terminal_UART_Base + 0x02C
-.equ UARTCTL,    Terminal_UART_Base + 0x030
-.equ UARTCC,     Terminal_UART_Base + 0xFC8
-
+# SCI9 Pins 
+.equ RA4M1_P109PFS, 0x40040840 + 4 * 9
+.equ RA4M1_P110PFS, 0x40040840 + 4 * 10
 
 CODEWORD  "uart-init", UART_INIT
 
-  @ Baud rate generation:
-  @ 16000000 / (16 * 115200 ) = 1000000 / 115200 = 8.6805
-  @ 0.6805... * 64 = 43.5   ~ 44
+@ Following 28.3.7. SCI Initialization in Asynchronous Mode
+@ Omitting steps that should be set the prescribed way after reset
+@ (see also Apendix 3 / Register descriptions)
 
-  @ 16000000 / (16 * 38400 ) = 1000000 / 38400 = 20.04167
-  @ 0.4167.. * 64 = 2,67   ~ 3
+@ [ 0 ] Set SCR.TIE, RIE, TE, RE, and TEIE to 0
+  ldr r0, =SCI9_SCR
+  mov r1, #0
+  strb r1, [r0]
 
-  @ use 3 and 20
+@ [ 1 ] Set FCR.FM to 0. // FCR only applies to SCI0/1
+@ [ 2 ] Set the clock selection in SCR.
+@ When clock output is selected in asynchronous mode, the
+@ clock is output immediately after SCR settings are made.
+@ [ 3 ] Set SIMR1.IICM to 0. Set SPMR.CKPH and SPMR.CKPOL to 0. // I2C & SPI
+@ [ 4 ] Set data transmission/reception format in SMR, SCMR, and SEMR.
+@ serial settings 8N1 => SMR 0x00 (reset state) & SCMR[4] = 1 (reset state)
+@ [ 5 ] Set the communication terminals status in SPTR. (reset state)
 
-  movs r1, #1         @ UART0 aktivieren
-  ldr  r0, =RCGCUART
-  str  r1, [r0]
+@ [ 6 ] Write a value associated with the bit rate to BRR.
+@ PCLKA 48MHz, B = 115200 bps, n = 0
+@ N = PCLKA * 10^6 / (64 * 2^2n-1 * B) - 1 = 48000000 / (64 * 2^-1 * 115200) - 1 =
+@   = 48000000 / (32 * 115200) -1 ~ 12.02
+  ldr r0, =SCI9_BRR
+  mov r1, #12   @ N = 12 computed above for 115200 bps
+  strb r1, [r0]
 
-  movs r1, #0x3F      @ Alle GPIO-Ports aktivieren
-  ldr  r0, =RCGCPIO
-  str  r1, [r0]
+@ [ 7 ] Write the value obtained by correcting a bit rate error in MDDR.
+@ This step is not required if the BRME bit in SEMR is set to 0 or an external clock is used.
+@ TODO: We may want to use this to reduce error rates
 
-  movs r1, #3         @ PA0 und PA1 auf UART-Sonderfunktion schalten
-  ldr  r0, =GPIOAFSEL
-  str  r1, [r0]
-
-  @ movs r1, #3       @ PA0 und PA1 als digitale Leitungen aktivieren
-  ldr  r0, =GPIODEN
-  str  r1, [r0]
-
-   @ UART-Einstellungen vornehmen
-
-  movs r1, #0         @ UART stop
-  ldr  r0, =UARTCTL
-  str  r1, [r0]
-
-  movs r1, #8
-  ldr  r0, =UARTIBRD
+@ [ 8 ] Specify the I/O port to enable input and output functions as required for TXDn, RXDn, and SCKn pins.
+  mov r1, #0  @ Set both pins to SCI peripheral function
+  movt r1, #0x0501  @ [24:28]PSEL = SCI(5) & [16]PMR = peripheral function(1)
+  ldr r0, =RA4M1_P109PFS
+  str r1, [r0]
+  ldr r0, =RA4M1_P110PFS
   str r1, [r0]
 
-  movs r1, #44
-  ldr  r0, =UARTFBRD
-  str r1, [r0]
+@ [ 9 ] Set SCR.TE or SCR.RE to 1, also set SCR.TIE and SCR.RIE.
+@ Setting SCR.TE and SCR.RE allows TXDn and RXDn to be used.
+@ Not using interrupts so we'll be handling TE/RE in the read/write routines
+  ldr r0, =SCI9_SCR
+  mov r1, #0x30   @ [05]TE || [04]RE
+  strb r1, [r0]
 
-  movs r1, #0x60|0x10  @ 8N1, enable FIFOs !
-  ldr  r0, =UARTLCRH
-  str r1, [r0]
-
-  movs r1, #5          @ Choose PIOSC as source
-  ldr  r0, =UARTCC
-  str r1, [r0]
-
-  movs    r1, #0
-  ldr     r0, =UARTFR
-  str r1, [r0]
-
-  movw r1, #0x301      @ UART start
-  ldr  r0, =UARTCTL
-  str  r1, [r0]
 NEXT
+
+// Status register (SSR) bits
+.equ SCI_SSR_RDRF, 0x40 @ Receive Data Full
+.equ SCI_SSR_TDRE, 0x80 @ Transmit Data Empty
+
 @ -----------------------------------------------------------------------------
   CODEWORD  "serial-key", SERIAL_KEY
 @ -----------------------------------------------------------------------------
 
    savetos
-
-   ldr r0, =UARTDR    @ Einkommendes Zeichen abholen
-   ldr tos, [r0]      @ Register lesen
-   uxtb tos, tos      @ 8 Bits davon nehmen, Rest mit Nullen auffüllen.
-  
+  @ Don't read SCI_SSR_RDRF, it was already read by SERIAL_KEYQ and flag is now 0.
+  ldr r0, =SCI9_RDR  @ read RDR
+  ldrb tos, [r0]  
 NEXT
 
 @ -----------------------------------------------------------------------------
   CODEWORD  "serial-key?", SERIAL_KEYQ
 @ -----------------------------------------------------------------------------
    savetos
-   movs tos, #0
-   ldr r0, =UARTFR
-   ldr r1, [r0]
-   ands r1, #RXFE
+   mov tos, #0
+   ldr r0, =SCI9_SSR
+   ldrb r1, [r0]
+   ands r1, #SCI_SSR_RDRF
+   @ TODO: error handling
    bne 1f
      mvns tos, tos
 1: 
 NEXT
-.equ RXFE, 0x10 @ Receive  FIFO empty
-.equ TXFF, 0x20 @ Transmit FIFO full
 
 @ -----------------------------------------------------------------------------
   CODEWORD  "serial-emit", SERIAL_EMIT
 @ -----------------------------------------------------------------------------
 
-SERIAL_EMIT_WAIT: 
-     ldr r0, =UARTFR
-     ldr r0, [r0]
-     ands r0, #TXFF
-   bne SERIAL_EMIT_WAIT
-
-   ldr r0, =UARTDR
-   str tos, [r0]
+  @ Don't read SCI_SSR_TDRE, it was already read by SERIAL_EMITQ and flag is now 0.
+   ldr r0, =SCI9_TDR
+   strb tos, [r0]
    loadtos
 NEXT
 
@@ -132,10 +106,10 @@ NEXT
 @ -----------------------------------------------------------------------------
    savetos
    mov tos, #0
-   ldr r0, =UARTFR
+   ldr r0, =SCI9_SSR
    ldr r1, [r0]
-   ands r1, #TXFF
-   bne SERIAL_EMITQ1
+   ands r1, #SCI_SSR_TDRE
+   bne 1f
      mvn tos, tos
-SERIAL_EMITQ1:
+1:
 NEXT

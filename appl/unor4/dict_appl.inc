@@ -7,4 +7,5 @@
 .include "words/dump.s"
 .include "words/delay.s"
 
+.include "words/clock.s"
 .include "words/usart.s"
