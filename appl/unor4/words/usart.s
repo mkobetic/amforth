@@ -15,14 +15,6 @@
 #   loop() copies bytes between SERIAL_USER and SERIAL_USER_INTERNAL
 #   atLoop() listens for AT commands at SERIAL_AT
 
-.include "words/sci.s"
-
-.equ RA4M1_MSTPCRB, 0x40047000 @ Module Stop Control Register B
-.equ RA4M1_MSTPCRB22, 1 << 22  @ [22] SCI9 Module Stop (reset = 1)
-.equ RA4M1_MSTPCRB29, 1 << 29  @ [29] SCI2 Module Stop (reset = 1)
-.equ RA4M1_MSTPCRB30, 1 << 30  @ [30] SCI1 Module Stop (reset = 1)
-.equ RA4M1_MSTPCRB31, 1 << 31  @ [31] SCI0 Module Stop (reset = 1)
-
 # SCI9
 .equ RA4M1_P109PFS, 0x40040840 + 4 * 9  @ TXD9 pin
 .equ RA4M1_P110PFS, 0x40040840 + 4 * 10 @ RXD9 pin
@@ -104,11 +96,15 @@ CODEWORD  "uart-init", UART_INIT
   mov r1, #0x30   @ [05]TE || [04]RE
   strb r1, [r0]
 
+@ Polling TDRE flag won't work until the first byte is sent through,
+@ when the byte moves from the data register to the shift register,
+@ the move is what sets the TDRE bit.
+@ To work around this let's just send a space character through right away,
+@ this will allow the AmForth greeting to go through as expected.
+  ldr r0, =UART_TDR
+  mov r1, #' '
+  strb r1, [r0]
 NEXT
-
-// Status register (SSR) bits
-.equ SCI_SSR_RDRF, 0x40 @ Receive Data Full
-.equ SCI_SSR_TDRE, 0x80 @ Transmit Data Empty
 
 @ -----------------------------------------------------------------------------
 CODEWORD  "serial-key", SERIAL_KEY
