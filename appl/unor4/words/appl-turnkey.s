@@ -7,6 +7,7 @@ COLON "appl-turnkey", APPLTURNKEY
   .word XT_DELAY_INIT
   .word XT_UART_INIT
 
+  @ Emit the AmForth greeting
   .word XT_DOT_VER
   .word XT_SPACE,XT_ENV_BOARD,XT_TYPE, XT_CR
   .word XT_BUILD_INFO,XT_TYPE, XT_SPACE, XT_REV_INFO, XT_TYPE
@@ -16,8 +17,8 @@ COLON "appl-turnkey", APPLTURNKEY
   .word XT_LED_INIT, XT_LED_ON
 
 @ Get the ESP32 AT handler connection going
-@ TODO: this isn't working yet. For some reason the TDRE never comes on the SCI1 UART.
-@   It seems to initalize correctly, the SCI registered can be read and written.
+@ TODO: this isn't working yet. For some reason the TDRE never comes on for the SCI1 UART.
+@   It seems to initialize correctly, the SCI registers can be read and written.
 @   It seems as if the ESP32 isn't reading the bytes sent on the other side,
 @   but it's not clear how to debug what's going on there.
   @ .word XT_AT_UART_INIT

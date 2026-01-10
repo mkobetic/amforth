@@ -1,0 +1,5 @@
+*.list
+*.bkp
+dev/
+build/
+touch1200bps/touch1200bps

@@ -22,7 +22,7 @@ func main() {
 	var newPort string
 	var err error
 	if  newPort, err = serialutils.Reset(flag.Arg(0), false, false, nil, nil); err != nil {
-		fmt.Errorf("1200-bps touch: %w", err)
+		fmt.Fprintf(os.Stderr, "touch1200bps: %s\n", err)
 		os.Exit(1)
 	}
 	fmt.Fprintf(os.Stdout, newPort)

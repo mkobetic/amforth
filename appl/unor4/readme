@@ -39,3 +39,17 @@ https://github.com/arduino/uno-r4-wifi-usb-bridge
 See Makefile for more details on how to program and debug this port.
 
 To connect to Forth running on the board start your serial monitor in 8N1 mode at 115200 bps.
+
+
+## Notes
+
+### Values
+
+20000270 a RAM_ARM_WORDLIST
+20000240 a RAM_CURRENT
+20000268 a RAM_DP
+20000274 a RAM_ENVIRONMENT
+20000244 a RAM_FORTHRECOGNIZER
+20000278 a RAM_FORTH_WORDLIST
+20000248 a RAM_LP0
+2000026c a RAM_RAM_WORDLIST
