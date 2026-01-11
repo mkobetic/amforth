@@ -6,4 +6,5 @@
 *.hex
 *.list
 **/words/build-info.s
-appl/linux-arm/amforth
+.DS_Store
+

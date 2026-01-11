@@ -8,7 +8,7 @@ https://github.com/arduino/ArduinoCore-renesas
 Renesas R7FA4M1AB3CFM#AA0 (64pins, 5V) with FPU, 32-bit ARM Cortex M4F
 256 kB FLASH: $00000000 .. $00040000
 32 kB SRAM: $20000000 .. $20008000
-8 Kb EEPROM: $40100000 .. $40102000
+8 Kb DATA FLASH: $40100000 .. $40102000
 48 MHz
 $40000000 .. $40100000 Periperheral I/O 
 $407E0000 .. $407F0000 Flash I/O

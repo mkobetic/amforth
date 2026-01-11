@@ -38,3 +38,13 @@ upload: lp-stellaris.elf
 
 buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
+# Starts amforth under QEMU
+# add -S -s to the qemu invocation if you want to attach GDB to it
+run:
+	# QEMU's lm3s6965evb machine is not the LM4F120H5QR (m3 vs m4), but seems close enough
+	# qemu-system-arm -M lm3s6965evb -display none -bios none -kernel lp-stellaris.elf -serial stdio
+	qemu-system-arm -M lm3s6965evb -display none -bios none -kernel lp-stellaris.elf -serial stdio -S -s
+
+# Connect GDB to running amforth (must be running with the -S -s flags!)
+gdb:
+	$(CROSS)gdb lp-stellaris.elf -ex 'target remote :1234'

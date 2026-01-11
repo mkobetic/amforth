@@ -24,7 +24,7 @@ buildinfo:
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
 build/%.o: %.s words/*.s buildinfo
-	$(CROSS)as -g --warn --fatal-warnings -achlms=build/unor4.list -I../../arm -I ../../arm/devices/cortex-m4 -I ../../shared -o $@ $<
+	$(CROSS)as -g --warn --fatal-warnings -achlms=build/unor4.lst-as -I../../arm -I ../../arm/devices/cortex-m4 -I ../../shared -o $@ $<
 
 build/unor4.elf: build/unor4.o
 	$(CROSS)ld -T memmap.ld $< -o $@

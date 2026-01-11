@@ -57,10 +57,42 @@ test: image
 		'cd amforth/common/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'
 
 # Starts amforth under QEMU
-# WARNING(mk): This seems incomplete and does not work at least on MacOSX
+# WARNING(mk): This seems incomplete and does not work at least on MacOSX;
+#   tried many things to get raspios emulation going, but no luck so far :/
 # setup some terminal settings. Otherwise all input will be echo'ed
+# MACHINE = raspi2b
+# IMAGE = 2025-12-04-raspios-trixie-armhf-lite.img
+# KERNEL = kernel8.img
+# DTB = bcm2709-rpi-2-b.dtb
 run: amforth
 	qemu-img resize ./amforth 128k
 	stty -icanon -echo
-	$(QEMU) -machine raspi0 -display none -serial mon:stdio ./amforth || true
+ 	$(QEMU) -machine raspi2b -display none -serial mon:stdio  || true
+# 	$(QEMU) -machine $(MACHINE) -kernel $(KERNEL) -dtb $(DTB) -sd $(IMAGE) -nographic \
+# 		-append "rw earlyprintk loglevel=8 console=ttyAMA1,115200 dwc_otg.lpm_enable=0 root=/dev/mmcblk0p2 rootdelay=1" \
+# 		|| true
+# 	$(QEMU) -cpu arm1176 -m 256 -M versatilepb
+# 		-kernel qemu/kernel-qemu-5.10.63-bullseye \
+# 		-dtb appl/linux-arm/qemu/versatile-pb-bullseye-5.10.63.dtb \
+#     	-drive "file=$(IMAGE),if=none,index=0,media=disk,format=raw,id=disk0" \
+#     	-device 'virtio-blk-pci,drive=disk0,disable-modern=on,disable-legacy=off' \
+# 	    -net 'user,hostfwd=tcp::5022-:22' -net nic \
+# 	    -append 'root=/dev/vda2 panic=1' \
+#     	-no-reboot \
+#     	-nographic || true
 	stty sane
+
+# NOTES
+#
+# ## Raspberry Pi OS Lite
+# To get necessary image, kernel, dtb files for Raspbery PI emulation:
+# * download the 32-bit Raspberry Pi OS Lite from https://www.raspberrypi.com/software/operating-systems/
+# * decompress it (xz), mount it, and in the boot partition find:
+#   * dtb file corresponding to raspi you want, e.g. for raspi2b bcm2709-rpi-2-b.dtb
+#	* the kernel file, e.g. kernel8.img
+#
+# * https://interrupt.memfault.com/blog/emulating-raspberry-pi-in-qemu
+#
+# ## Alpine Linux
+# * https://wiki.alpinelinux.org/wiki/Install_Alpine_in_QEMU
+# * https://github.com/keygenqt/skill-qemu-alpine
