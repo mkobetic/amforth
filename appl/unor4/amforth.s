@@ -6,24 +6,26 @@
 
 .text
 
-.equ RamStart, 0x20000000
-.equ RamEnd,   0x20008000
+.equ rampointer, vp0
 
-# Flash starts at 0 but first 32K are occupied by the Uno R4 bootloader
-.equ FlashStart,  0x00004000
-.equ FlashEnd,    0x00040000
+@ .equ RamStart, 0x20000000
+@ .equ RamEnd,   0x20008000
 
-.equ datastack_size, 128   
-.equ returnstack_size, 128 
-.equ refill_buf_size, 96
-.equ appl_userarea_size, 8 
-.equ leavestack_size, 8*cellsize
+@ # Flash starts at 0 but first 32K are occupied by the Uno R4 bootloader
+@ .equ FlashStart,  0x00004000
+@ .equ FlashEnd,    0x00040000
+
+@ .equ datastack_size, 128   
+@ .equ returnstack_size, 128 
+@ .equ refill_buf_size, 96
+@ .equ appl_userarea_size, 8 
+@ .equ leavestack_size, 8*cellsize
 
 .equ WANT_IGNORECASE, 0
 
 # Inlining arm/amforth.s here to be able to extend vectors/isr
 .include "macros.s"
-.include "preamble.inc"
+@ .include "preamble.inc"
 .include "user.inc"
 
 .include "vectors.s"

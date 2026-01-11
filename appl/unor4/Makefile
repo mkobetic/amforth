@@ -27,7 +27,7 @@ build/%.o: %.s words/*.s buildinfo
 	$(CROSS)as -g --warn --fatal-warnings -achlms=build/amforth.lst-as -I../../arm -I ../../arm/devices/cortex-m4 -I ../../shared -o $@ $<
 
 build/amforth.elf: build/amforth.o
-	$(CROSS)ld -T memmap.ld $< -o $@
+	$(CROSS)ld -T ra4m1.ld $< -o $@
 
 build/%.lst: build/%.elf
 	$(CROSS)objdump -DSt -j amforth $< >$@
