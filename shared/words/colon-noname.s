@@ -1,6 +1,6 @@
 
 COLON ":noname", COLONNONAME
-    .word XT_HERE
+    .word XT_DP
     .word XT_DUP
     .word XT_LATEST
     .word XT_STORE

@@ -53,7 +53,6 @@ VALUE "environment", ENVIRONMENT, 98b
 VALUE "forth-wordlist", FORTH_WORDLIST, 99b
 .equ FLASH_END, .
 .set DPSTART, 99b
-.equ HERESTART, rampointer
 .endm
 
 .macro STRING string

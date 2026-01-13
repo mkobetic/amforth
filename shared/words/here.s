@@ -1,3 +1,4 @@
+VALUE "vp", VP, vp0
 
 COLON "here", HERE
-  .word XT_DP, XT_EXIT
+  .word XT_VP, XT_EXIT

@@ -1,7 +1,7 @@
 
 # initial setup of assembly variables and settings
 
-# used by ramallot
+# used by ramallot and other macros
 .set rampointer, RamStart  
 
 .equ cellsize, 4
@@ -15,3 +15,12 @@ ramallot returnstack, returnstack_size
 ramallot userarea, userarea_size
 ramallot refill_buf, refill_buf_size
 ramallot leavestack, leavestack_size
+
+# allocate RAM pool for variables
+.equ vp0, rampointer
+.equ rampool_size, 2048*cellsize
+ramallot rampool, rampool_size
+.equ vp.max, rampointer
+
+# the rest of RAM is for ram dictionary
+.equ dp0.ram, rampointer
