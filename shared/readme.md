@@ -35,6 +35,7 @@ This is a persistent, non-executable memory. It used to persist AmForth values a
 ## Basic dictionary word layout
 
 The 32-bit word header layout is somewhat different from the 8-bit word layout. The header field order is different.
+In AmForth the execution token (XT) is the CFA.
 
 | Field | Size   | Description
 | ----- | ------ | ----------------------------------
