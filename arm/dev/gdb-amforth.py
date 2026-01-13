@@ -74,7 +74,7 @@ class ForthRegisterWindow:
                 return f"{name}/{fName}:\t\t"
         else:
             return f"{name}:\t\t"
-    
+
     def value_register(self, frame, name, fName = None):
         reg = frame.read_register(name)
         return f"{self.prefix(name, fName)}{value(reg)}"
@@ -99,6 +99,8 @@ class ForthRegisterWindow:
         frame = gdb.selected_frame()
         if frame is None:
             return "no frame selected"
+        architecture = gdb.selected_inferior().architecture()
+        registers = map(lambda reg: reg.name, architecture.registers())
         lines = [
             self.value_register(frame, "r0"),
             self.value_register(frame, "r1"),
@@ -116,7 +118,8 @@ class ForthRegisterWindow:
             self.addres_register(frame, "sp"),
             self.addres_register(frame, "lr"),
             self.addres_register(frame, "pc"),
-            self.status_register(frame, "xPSR"),
+            # xPSR on Cortex-M3 is named xpsr
+            self.status_register(frame, "xPSR" if ("xPSR" in registers) else "xpsr"),
         ]
         return "\n".join(lines)
 
@@ -133,7 +136,7 @@ class ForthRegisterWindow:
 class ForthParameterStack: 
 
     def __init__(self, tui_window): 
-        self._tui_window = tui_window 
+        self._tui_window = tui_window
         tui_window.title = "Forth Parameter Stack"
         gdb.events.before_prompt.connect(self.render)
 

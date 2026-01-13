@@ -18,25 +18,24 @@ ifeq ("$(BOARD)", "armv7l")
 endif
 LANG=C
 
-
-%.o: %.asm buildinfo
-	$(CROSS)as $(AOPTS) --warn -al=amforth.list -I ../../arm -I ../../arm/devices/linux -I ../../shared -o $@ $<
-
-all: amforth
-
-amforth: amforth.o
-	$(CROSS)ld -T memmap -z max-page-size=4096 $< -o $@ 
-
-clean:
-	rm -f amforth *.elf *.bin *.o *.log *.lst *.hex *.list words/build-info.s
+all: build/amforth
 
 buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
+build/%.o: %.asm buildinfo
+	$(CROSS)as $(AOPTS) --warn -al=build/amforth.lst-as -I ../../arm -I ../../arm/devices/linux -I ../../shared -o $@ $<
+
+build/amforth: build/amforth.o
+	$(CROSS)ld -T memmap -z max-page-size=4096 $< -o $@ 
+
+clean:
+	rm -f amforth build/* words/build-info.s
+
 # To run amforth in emulated container you can use a container runtime that supports --platform linux/arm/v7
 # For MacOS check out https://orbstack.dev/ (Free for personal use)
 # See Dockerfile for the details of what goes into the container image, tweak to heart's desire.
-image: amforth
+image: build/amforth
 	docker build --tag amforth:latest .
 
 # Starts the amforth container with a terminal session.
@@ -64,7 +63,7 @@ test: image
 # IMAGE = 2025-12-04-raspios-trixie-armhf-lite.img
 # KERNEL = kernel8.img
 # DTB = bcm2709-rpi-2-b.dtb
-run: amforth
+run: build/amforth
 	qemu-img resize ./amforth 128k
 	stty -icanon -echo
  	$(QEMU) -machine raspi2b -display none -serial mon:stdio  || true

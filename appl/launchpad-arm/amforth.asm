@@ -20,4 +20,23 @@
 
 .equ WANT_IGNORECASE, 0
 
-.include "amforth.s"
+.include "macros.s"
+
+.include "preamble.inc"
+.include "user.inc"
+.include "common/vectors.s"
+
+@ move past the vector table space
+.org 0x400
+
+.include "common/isr.s"
+
+STARTDICT
+
+.include "dict_prims.inc"
+.include "dict_secs.inc"
+.include "dict_env.inc"
+
+.include "dict_appl.inc"
+
+ENDDICT

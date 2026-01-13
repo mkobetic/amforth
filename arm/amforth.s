@@ -1,3 +1,5 @@
+# This is a template to start from.
+# Copy it into your appl/ directory and modify as needed.
 
 .include "macros.s"
 

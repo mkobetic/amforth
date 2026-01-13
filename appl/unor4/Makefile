@@ -65,7 +65,7 @@ upload: build/amforth.bin touch1200bps
 touch1200bps: touch1200bps/*
 	cd ./touch1200bps && go build
 
-PHONY: buildinfo clean upload touch1200bps ocd gdb
+.PHONY: clean upload touch1200bps ocd gdb
 
 # Start OpenOCD
 # You can connect to the OpenOCD telnet port with: nc localhost 50002
@@ -83,7 +83,9 @@ ocd:
 # gdb: build/amforth.elf
 gdb:
 	$(CROSS)gdb-py -tui build/amforth.elf --quiet \
-	-ex "target extended-remote localhost:50000"
+	-ex "target extended-remote localhost:50000" \
+	-ex "directory ../../arm/dev" \
+	-ex "source .gdbinit"
 
 # More debugging references
 # https://undo.io/resources/guide-to-symbols-debug-info/

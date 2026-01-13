@@ -5,6 +5,7 @@
 *.lst
 *.hex
 *.list
+build/
 **/words/build-info.s
 .DS_Store
 
