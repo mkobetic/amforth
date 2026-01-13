@@ -1,4 +1,15 @@
-This is a fork of https://sourceforge.net/p/amforth/code/2462/
+This is a fork of https://sourceforge.net/p/amforth/code/2462/.
+The purpose of this repo is to advance the 32-bit ARM variants of AmForth.
+For details on that check out the READMEs in the respective directories.
+* shared/ - the shared 32-bit AmForth core
+* arm/ - the ARM architecture core (Cortex M4)
+* appl/launchpad-arm/ - targets Launchpad Stellaris board (runs under QEMU)
+* appl/linux-arm/ - targets generic Linux/Raspberry PI (runs under Docker emulation)
+* appl/unor4/ - targets Arduino UNO R4 WIFI board
+
+The original README follows.
+
+---------------------------------------------------------------
 
 Author:
     Matthias Trute <mtrute@users.sourceforge.net>
