@@ -12,6 +12,6 @@ BLINK_0001: # begin
 	.word XT_TWO
 	.word XT_LED_PULSE
 	.word XT_LED_DELAY
-	.word XT_DOBRANCH,BLINK_0001 # again
+	.word XT_DOBRANCH,BLINK_0001 /* again */
 	.word XT_EXIT
 # ----------------------------------------------------------------------

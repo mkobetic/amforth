@@ -14,6 +14,10 @@
 .equ WANT_CODE         , NO
 .equ WANT_TABLE        , NO
 
+.equ WANT_FLOAT , NO
+
 .equ WANT_SEARCH_ORDER , YES 
 
 .equ WANT_USB_OPERATOR , NO
+
+.equ WANT_QEM_BUILD , NO

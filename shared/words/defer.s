@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-only
 .ifnb
 
-COLON "defer", DEFER # ( "name" -- ) create deferred word "name"
+COLON "defer", DEFER
+# ( "name" -- ) create deferred word "name"
     .word XT_FLAGDOTDEFER
     .word XT_DOTO
     .word XT_FLAGDOTHEADER
@@ -17,7 +18,8 @@ COLON "defer", DEFER # ( "name" -- ) create deferred word "name"
     # end added 
     .word XT_EXIT
 
-COLON "defer~", CLOAKED_DEFER # ( n "name" -- ) create cloaked deferred word "name"
+COLON "defer~", CLOAKED_DEFER
+# ( n "name" -- ) create cloaked deferred word "name"
     .word XT_FLAGDOTVALUE
     .word XT_FLAGDOTCLOAKED
     .word XT_OR
@@ -39,7 +41,8 @@ COLON "defer~", CLOAKED_DEFER # ( n "name" -- ) create cloaked deferred word "na
 
 .else
 
-COLON "defer", DEFER # ( "name" -- ) create deferred word "name"
+COLON "defer", DEFER
+# ( "name" -- ) create deferred word "name"
     .word XT_FLAGDOTDEFER
     .word XT_FLAGDOTPRIVATEQ
     .word XT_OR
@@ -57,7 +60,8 @@ COLON "defer", DEFER # ( "name" -- ) create deferred word "name"
     # end added 
     .word XT_EXIT
 
-COLON "defer~", CLOAKED_DEFER # ( n "name" -- ) create cloaked deferred word "name"
+COLON "defer~", CLOAKED_DEFER
+# ( n "name" -- ) create cloaked deferred word "name"
     .word XT_FLAGDOTVALUE
     .word XT_FLAGDOTPRIVATE
     .word XT_OR

@@ -5,7 +5,8 @@ CONSTANT "vp0"    , VP0      , vp0
 CONSTANT "vp.max" , VPDOTMAX , vp.max
 VALUE    "vp"     , VP       , vp0 
 
-COLON "vallot" , VALLOT # ( n -- ) MEMORY: allocate n bytes in variable space (RAM)
+COLON "vallot" , VALLOT
+# ( n -- ) MEMORY: allocate n bytes in variable space (RAM)
 
     .word XT_VP
     .word XT_PLUS
@@ -24,17 +25,20 @@ VALLOT_0000:
     .word XT_EXIT 
 
 
-COLON "ram", RAMHERE # ( -- a ) MEMORY: current value of ram pool pointer 
+COLON "ram", RAMHERE
+# ( -- a ) MEMORY: current value of ram pool pointer 
       .word XT_VP
       .word XT_EXIT      
 
-COLON "ram+", RAMHEREPLUS # ( -- a ) MEMORY: current value of ram pool pointer, increment
+COLON "ram+", RAMHEREPLUS
+# ( -- a ) MEMORY: current value of ram pool pointer, increment
     .word XT_VP
     .word XT_ONE
     .word XT_VALLOT
     .word XT_EXIT
 
-COLON "ram++", RAMHEREPLUSPLUS # ( -- a ) MEMORY:
+COLON "ram++", RAMHEREPLUSPLUS
+# ( -- a ) MEMORY:
     .word XT_VP
     .word XT_CELL
     .word XT_VALLOT

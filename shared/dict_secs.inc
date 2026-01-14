@@ -37,7 +37,6 @@
     .include "words/warm.s"
 .endif
 
-.include "words/ms.s"
 .include "words/cr.s"
 .include "words/bl.s"
 .include "words/space.s"
@@ -245,7 +244,6 @@
 .include "words/is.s"
 .include "words/alto.s"
 #.include "words/to.s"
-.include "mcu-words/eeprom.s"
 .include "words/xt2string.s"
 .include "words/dictopt.s"
 

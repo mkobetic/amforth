@@ -13,5 +13,4 @@
 
 .include "words/type0.s"
 
-.include "words/dump.s"
 .include "words/csr.s"

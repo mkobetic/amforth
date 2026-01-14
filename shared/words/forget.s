@@ -51,7 +51,7 @@ COLON "(forget)", LPARENFORGETRPAREN
 	.word XT_PLUS
 	.word XT_NFA2STRING
 	.word XT_SUBMINUSSTRINGQ
-	.word XT_DOCONDBRANCH,LPARENFORGETRPAREN_0001 # if
+	.word XT_DOCONDBRANCH,LPARENFORGETRPAREN_0001 /* if */
 	.word XT_R_FETCH
 	.word XT_FFA2LFA
 	.word XT_HEXDOT
@@ -81,7 +81,7 @@ COLON "(forget)", LPARENFORGETRPAREN
 	.word XT_R_FETCH
 	.word XT_RAM_WORDLIST
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,LPARENFORGETRPAREN_0002 # if
+	.word XT_DOCONDBRANCH,LPARENFORGETRPAREN_0002 /* if */
 	.word XT_R_FETCH
 	.word XT_FFA2LFA
 	.word XT_FETCH
@@ -111,7 +111,8 @@ LPARENFORGETRPAREN_0004: # then
 	.word XT_RDROP
 	.word XT_EXIT
 # ----------------------------------------------------------------------
-COLON "forget", FORGET # ( -- "name" ) DICT: Remove a word from the RAM dictionary wordlist 
+COLON "forget", FORGET
+# ( -- "name" ) DICT: Remove a word from the RAM dictionary wordlist 
 	.word XT_SHOWDOTHEADER
 	.word XT_PARSENAME
 	.word XT_DOLITERAL

@@ -14,7 +14,8 @@
 #     rdrop
 # ;
 
-COLON "xt>nfa" , XT2NFA # ( xt -- nfa ) DICT: Find NFA given XT (XT **must** have NFA)
+COLON "xt>nfa" , XT2NFA
+# ( xt -- nfa ) DICT: Find NFA given XT (XT **must** have NFA)
 
     .word XT_TO_R
     .word XT_R_FETCH

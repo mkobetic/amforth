@@ -21,14 +21,16 @@ CONSTANT "flag.table"     , FLAGDOTTABLE    , 0x100
 CONSTANT "flag.cloaked"   , FLAGDOTCLOAKED  , 0x80000000
 CONSTANT "flag.private"   , FLAGDOTPRIVATE  , 0x80000000
 
-COLON "private" , PRIVATE # ( -- ) DICT: Future words marked as private
+COLON "private" , PRIVATE
+# ( -- ) DICT: Future words marked as private
       .word XT_FLAGDOTPRIVATE
       .word XT_DOXLITERAL
       .word XT_FLAGDOTPRIVATEQ
       .word XT_DEFER_STORE
       .word XT_EXIT
       
-COLON "public" , PUBLIC  # ( -- )  DICT: Future words marked as public  
+COLON "public" , PUBLIC
+# ( -- )  DICT: Future words marked as public  
       .word XT_ZERO
       .word XT_DOXLITERAL
       .word XT_FLAGDOTPRIVATEQ

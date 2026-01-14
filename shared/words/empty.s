@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "empty", EMPTY # ( -- ) DICT: empty RAM and non-core FLASH dictionaries
+COLON "empty", EMPTY
+# ( -- ) DICT: empty RAM and non-core FLASH dictionaries
       .word XT_TRUE
       .word XT_DOTO
       .word XT_EEPROMDOTEMPTYQ

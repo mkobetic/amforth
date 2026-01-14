@@ -1,7 +1,9 @@
-HEADLESS DODOES
+# SPDX-License-Identifier: GPL-3.0-only
+#HEADLESS DODOES
+HIDEWORD "(DODOES)" , QDODOES
   savetos
-  mv x3, x17
-  push x16
-  lw x16, -4(x17)
-  addi x16, x16, 4
+  mv s3, s1
+  push s2
+  lw s2, -4(s1)
+  addi s2, s2, 4
 NEXT

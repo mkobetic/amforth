@@ -41,16 +41,20 @@
 #     r> mclr
 # ;
 
-COLON "mset", MSET # ( mask a -- ) MEM: set bits in [a] if bits set in mask
+COLON "mset", MSET
+# ( mask a -- ) MEM: set bits in [a] if bits set in mask
     .WORD XT_DUP , XT_FETCH , XT_ROT , XT_OR , XT_SWAP , XT_STORE, XT_EXIT  
 
-COLON "mclr", MCLR # ( mask a -- ) MEM: clear bits in [a] if bits set in mask
+COLON "mclr", MCLR
+# ( mask a -- ) MEM: clear bits in [a] if bits set in mask
     .WORD XT_DUP , XT_FETCH , XT_ROT , XT_INVERT,  XT_AND, XT_SWAP , XT_STORE, XT_EXIT  
 
-COLON "mtog", MTOG # ( mask a -- ) MEM: toggle bits in [a] if bits set in mask
+COLON "mtog", MTOG
+# ( mask a -- ) MEM: toggle bits in [a] if bits set in mask
     .WORD XT_DUP , XT_FETCH , XT_ROT , XT_XOR , XT_SWAP , XT_STORE, XT_EXIT  
 
-COLON "m4fix", M4FIX # ( mask n a -- ) MEM: fix a 4 bit patten in [a] starting at bit 4n in [a]
+COLON "m4fix", M4FIX
+# ( mask n a -- ) MEM: fix a 4 bit patten in [a] starting at bit 4n in [a]
     .WORD XT_TO_R , XT_TO_R , XT_DUP , XT_INVERT 
     .word XT_DOLITERAL , 0xF , XT_AND
     .WORD XT_R_FETCH , XT_CELL , XT_STAR , XT_LSHIFT

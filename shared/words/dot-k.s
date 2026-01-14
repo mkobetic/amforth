@@ -5,14 +5,15 @@
 # ;
 
 # ----------------------------------------------------------------------
-COLON ".k", DOTK # ( nN..n1 -- ) OUTPUT: Delete all entries in stack 
+COLON ".k", DOTK
+	# ( nN..n1 -- ) OUTPUT: Delete all entries in stack 
 	.word XT_DEPTH
 	.word XT_ZERO
-	.word XT_QDOCHECK, XT_DOCONDBRANCH,DOTK_0001 # ?do
+	.word XT_QDOCHECK, XT_DOCONDBRANCH,DOTK_0001 /* ?do */
 	.word XT_DODO
 DOTK_0002: # do
 	.word XT_DROP
-	.word XT_DOLOOP,DOTK_0002 # loop
+	.word XT_DOLOOP,DOTK_0002 /* loop */
 DOTK_0001: # (for ?do IF required) 
 	.word XT_EXIT
 # ----------------------------------------------------------------------

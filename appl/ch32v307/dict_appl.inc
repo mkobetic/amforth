@@ -4,46 +4,48 @@
 
 
 
-# MFD wrong chip .include "mcu-words/pll.s"
+# MFD wrong chip .include "words/pll.s"
 
 .if WANT_QEM_BUILD
-    .include "mcu-words/serial.qem"        
+    .include "words/serial.qem"        
 .else
-    .include "mcu-words/usart.s"
-    .include "mcu-words/gpio.s"     
+    .include "words/usart.s"
+    .include "words/gpio.s"     
 .endif
 
-# MFD wrong chip .include "mcu-words/qspidiv.s"
+# MFD wrong chip .include "words/qspidiv.s"
 
-# MFD include "mcu-words/flash.s" as in dict_prims
-.include "mcu-words/led.s"
+# MFD include "words/flash.s" as in dict_prims
+.include "words/led.s"
 
-.include "mcu-words/env-board.s"
-#include "mcu-words/build-info.s"
-.include "mcu-words/applturnkey.s"
+.include "words/env-board.s"
+#include "words/build-info.s"
+.include "words/applturnkey.s"
 
-.include "mcu-words/type0.s" # not sure 
+.include "words/type0.s" # not sure 
 
-# MFD .include "mcu-words/qtest.s"
+# MFD .include "words/qtest.s"
 .if WANT_SYSTICK
-.include "mcu-words/systick.s"
+.include "words/systick.s"
 .endif
 
-.include "mcu-words/reset.s"
+.include "words/reset.s"
 
 .if WANT_TIMER6
-.include "mcu-words/t6.s"
-.include "mcu-words/t8.s"
-.include "mcu-words/t9.s"
+.include "words/t6.s"
+.include "words/t8.s"
+.include "words/t9.s"
 .endif
 
-#.include "mcu-words/temp6.s"
-.include "mcu-words/usb.s"
-#.include "mcu-words/debug.s"
-#.include "mcu-words/frag.s"
+#.include "words/temp6.s"
+.include "words/usb.s"
+#.include "words/debug.s"
+#.include "words/frag.s"
 
 .if WANT_FLOAT
-    .include "mcu-words/float.s"
+    .include "words/float.s"
 .endif
 
-.include "mcu-words/mlc.s"
+.include "words/mlc.s"
+
+.include "words/eeprom.s"
