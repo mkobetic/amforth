@@ -25,17 +25,17 @@ ARDUINO=TRUE  # TRUE for Arduino tool chain, FALSE for ZEPHYR
 # ----------------------------------------------------------------------
 # extracted from config.inc
 
-ASMONLY:=$(shell perl -n -e ' if(/.equ\s+WANT_ASM_BUILD\s*,\s+(YES|NO)/){print $$1;}' ./User/config.inc)
-WANT_FLOAT:=$(shell perl -n -e ' if(/.equ\s+WANT_FLOAT\s*,\s+(YES|NO)/){print $$1;exit;}' ./User/config.inc)
-WANT_SEE:=$(shell perl -n -e ' if(/.equ\s+WANT_SEE\s*,\s+(YES|NO)/){print $$1;exit;}' ./User/config.inc)
-WANT_CASE:=$(shell perl -n -e ' if(/.equ\s+WANT_CASE\s*,\s+(YES|NO)/){print $$1;exit;}' ./User/config.inc)
-WANT_MATCH:=$(shell perl -n -e ' if(/.equ\s+WANT_MATCH\s*,\s+(YES|NO)/){print $$1;exit;}' ./User/config.inc)
-WANT_TABLE:=$(shell perl -n -e ' if(/.equ\s+WANT_TABLE\s*,\s+(YES|NO)/){print $$1;exit;}' ./User/config.inc)
-WANT_FORNEXT:=$(shell perl -n -e ' if(/.equ\s+WANT_FORNEXT\s*,\s+(YES|NO)/){print $$1;exit;}' ./User/config.inc)
-WANT_203:=$(shell perl -n -e ' if(/.equ\s+WANT_203_BUILD\s*,\s+(YES|NO)/){print $$1;exit;}' ./User/config.inc)
-WANT_QEM:=$(shell perl -n -e ' if(/.equ\s+WANT_QEM_BUILD\s*,\s+(YES|NO)/){print $$1;exit;}' ./User/config.inc)
-WANT_307:=$(shell perl -n -e ' if(/.equ\s+WANT_307_BUILD\s*,\s+(YES|NO)/){print $$1;exit;}' ./User/config.inc)
-WANT_305:=$(shell perl -n -e ' if(/.equ\s+WANT_305_BUILD\s*,\s+(YES|NO)/){print $$1;exit;}' ./User/config.inc)
+ASMONLY:=$(shell perl -n -e ' if(/.equ\s+WANT_ASM_BUILD\s*,\s+(YES|NO)/){print $$1;}' ./config.inc)
+WANT_FLOAT:=$(shell perl -n -e ' if(/.equ\s+WANT_FLOAT\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
+WANT_SEE:=$(shell perl -n -e ' if(/.equ\s+WANT_SEE\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
+WANT_CASE:=$(shell perl -n -e ' if(/.equ\s+WANT_CASE\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
+WANT_MATCH:=$(shell perl -n -e ' if(/.equ\s+WANT_MATCH\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
+WANT_TABLE:=$(shell perl -n -e ' if(/.equ\s+WANT_TABLE\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
+WANT_FORNEXT:=$(shell perl -n -e ' if(/.equ\s+WANT_FORNEXT\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
+WANT_203:=$(shell perl -n -e ' if(/.equ\s+WANT_203_BUILD\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
+WANT_QEM:=$(shell perl -n -e ' if(/.equ\s+WANT_QEM_BUILD\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
+WANT_307:=$(shell perl -n -e ' if(/.equ\s+WANT_307_BUILD\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
+WANT_305:=$(shell perl -n -e ' if(/.equ\s+WANT_305_BUILD\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
 
 # ----------------------------------------------------------------------
 # Variables that will probably need to be changed to suit your setup 
@@ -113,28 +113,28 @@ CHIPSET=
 
 ifeq ($(strip $(WANT_203)),YES)
 CHIPSET=203
-LD_FILE := ./User/linker.203
+LD_FILE := ./linker.203
 LIB_WCH := ./lib_203
 LIB_USER := ./lib_203_user
 endif
 
 ifeq ($(strip $(WANT_305)),YES)
 CHIPSET=305
-LD_FILE := ./User/linker.305
+LD_FILE := ./linker.305
 LIB_WCH := ./wch307
 LIB_USER := ./lib_wch_user
 endif
 
 ifeq ($(strip $(WANT_307)),YES)
 CHIPSET=307
-LD_FILE := ./User/linker.307
+LD_FILE := ./linker.307
 LIB_WCH := ./wch307
 LIB_USER := ./lib_wch_user
 endif
 
 ifeq ($(strip $(WANT_QEM)),YES)
 CHIPSET=QEM
-LD_FILE := ./User/linker.qem
+LD_FILE := ./linker.qem
 LIB_WCH := ./lib_qem
 LIB_USER := ./lib_qem_user
 endif
@@ -143,10 +143,10 @@ BUILD_DIR := ./build
 
 # Source directories based on build type
 ifeq ($(strip $(ASMONLY)),YES)
-SRC_DIRS := ./User
+SRC_DIRS := .
 SRCS = $(shell find $(SRC_DIRS) -name "*.S")
 else
-SRC_DIRS := $(LIB_WCH) $(LIB_USER) ./User
+SRC_DIRS := $(LIB_WCH) $(LIB_USER) .
 SRCS = $(shell find $(SRC_DIRS) -type d -name Startup -prune -name "*.cpp" -or -name "*.c" -or -name "*.S")
 endif
 
@@ -159,9 +159,7 @@ LIB_OBJS  := $(filter $(BUILD_DIR)/$(LIB_WCH)/%,$(OBJS)) \
 USER_OBJS := $(filter-out $(BUILD_DIR)/$(LIB_WCH)/% \
                           $(BUILD_DIR)/$(LIB_USER)/%,$(OBJS))
 
-
-INC_DIRS := $(shell find $(SRC_DIRS) -type d)
-INC_FLAGS := $(addprefix -I,$(INC_DIRS))
+INC_FLAGS := -I . -I ../../risc-v -I ../../shared
 
 # Compiler flags 
 ifeq ($(strip $(WANT_203)),YES)
@@ -311,7 +309,7 @@ min:
 
 ## Update build info - run before build 
 info:
-	cat User/mcu-words/build-info.tmpl | sed "s/%d/`date`/" | sed "s/%r/${REVISION}/" > User/mcu-words/build-info.s
+	cat mcu-words/build-info.tmpl | sed "s/%d/`date`/" | sed "s/%r/${REVISION}/" > mcu-words/build-info.s
 
 ## Flash hex file to the device  
 flash:
