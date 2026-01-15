@@ -9,7 +9,7 @@ and with architecture compatible application/board specific words, e.g.
 
 # Architecture
 
-## Basic memory layout
+## Memory layout
 
 ### Code Flash Memory / ROM
 
@@ -32,9 +32,10 @@ RAMHI higher part stores definitions of user defined words. The end of the used 
 This is a persistent, non-executable memory. It used to persist AmForth values and other application uses. Design yet to be finalized.
 
 
-## Basic dictionary word layout
+## Dictionary word layout
 
 The 32-bit word header layout is somewhat different from the 8-bit word layout. The header field order is different.
+In AmForth the execution token (XT) is the CFA.
 
 | Field | Size   | Description
 | ----- | ------ | ----------------------------------
@@ -52,3 +53,7 @@ Words that are compiled into the AmForth binary have corresponding symbols defin
 * LFA - VE_ symbol
 * CFA - XT_ symbol
 * PFA - PFA_ sybmol
+
+## Wordlists and Search Order
+
+To be continued
