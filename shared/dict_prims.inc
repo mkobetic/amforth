@@ -13,25 +13,34 @@
 .include "words/drop.s"
 .include "words/over.s"
 .include "words/swap.s"
+.include "words/xor.s"
+.include "words/umstar.s"
 
 .include "words/plus.s"
 .include "words/2drop.s"
 .include "words/2dup.s"
 .include "words/rot.s"
+.include "words/invert.s"
 .include "words/negate.s"
 .include "words/minus.s"
 .include "words/dnegate.s"
 .include "words/d-plus.s"
 .include "words/d-minus.s"
+.include "words/star.s"
 
+.include "words/flash.s"
 .include "words/exit.s"
+.include "words/exiti.s"
+
 
 .include "words/dup.s"
 .include "words/nip.s"
 
 .include "words/q-dup.s"
 .include "words/tuck.s"
+.include "words/m-rot.s"
 .include "words/pick.s"
+
 
 .include "words/to-r.s"
 .include "words/r-from.s"
@@ -42,6 +51,7 @@
 .include "words/fetch.s"
 .include "words/store.s"
 
+#.include "words/negate.s"
 .include "words/abs.s"
 .include "words/muldiv.s"
 .include "words/stack.s"
@@ -108,11 +118,10 @@
 .include "words/compare.s"
 .include "words/n_to_r.s"
 .include "words/n_r_from.s"
-
-.include "words/exiti.s"
 .include "words/ashift.s"
-.include "words/2rot.s"
 .include "words/cell-minus.s"
+.include "words/2rot.s"
+.include "words/move.s"
 
 # Include architecture specific primitives
 .include "arch_prims.inc"

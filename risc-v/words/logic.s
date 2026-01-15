@@ -19,15 +19,6 @@
   or s3, t0, s3
   NEXT
 
-# -----------------------------------------------------------------------------
-  CODEWORD  "xor", XOR # ( n2 n1 -- n2 ^ n1 ) LOGIC: TOS is bitwise NOS XOR TOS
-                        # Combines the top two stack elements using bitwise exclusive-OR.
-# -----------------------------------------------------------------------------
-  lw t0, 0(s4)
-  addi s4, s4, 4
-  xor s3, t0, s3
-  NEXT
-
 # I prefer a logical not as below  
 # -----------------------------------------------------------------------------
 #  CODEWORD  "not", NOT # ( x -- ~x )
@@ -54,8 +45,3 @@ COLON "not" , NOT # ( f -- ~f ) LOGIC: if f true ~f false (logical not)
   sll s3, t0, s3
   NEXT
 
-# -----------------------------------------------------------------------------
-  CODEWORD  "invert", INVERT # ( x -- ~x ) LOGIC: XOR TOS with -1 
-# -----------------------------------------------------------------------------
-  xori s3, s3, -1
-  NEXT
