@@ -4,13 +4,14 @@
 
 # start of flash dictionary. The 0 is the stop marker.
 .macro STARTDICT
-  # .text should aready be in section amforth 
-  .word 0
+  # .text should aready be in section amforth
+  .p2align 2,0x55
 # Inject a NOP word as the first entry in the dictionary.
-VE_NOP: .word 0
+  .word 0
 97: # arch-wordlist
 98: # environment
 99: # forth-wordlist
+VE_NOP: .word 0
         .byte 8f-7f
 7:      .ascii "nop"
 8:      .p2align 2,0xAA

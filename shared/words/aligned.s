@@ -16,7 +16,7 @@ COLON "aligned", ALIGNED
 	.word 0xff
 	.word XT_AND
 	.word XT_ZEROEQUAL
-	.word XT_DOCONDBRANCH,ALIGNED_0001 # if
+	.word XT_DOCONDBRANCH,ALIGNED_0001 /* if */
 #	.word XT_TOFLUSHLAST
 ALIGNED_0001: # then
 	.word XT_EXIT
