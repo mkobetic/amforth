@@ -93,7 +93,7 @@ BIN_STUB=/Users/tw/zephyr-sdk-0.16.4/riscv64-zephyr-elf/bin/riscv64-zephyr-elf
 TOOLCHAIN=Zephyr
 endif
 
-QEMU_TOOLS=/usr/local/Cellar/qemu/10.1.0/bin
+QEMU_TOOLS=/opt/homebrew/bin
 
 MKDIR_P=mkdir -p
 LD :=$(BIN_STUB)-ld

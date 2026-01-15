@@ -115,8 +115,8 @@ VE_\Label:
     .section amramlo,"aw",%nobits
     .balign 4
      # Capture current location counter
-    .space 4
     .set \Label\()_ram, .          
+    .space 4
     .section amforth
     # Write the captured address into flash
     .word \Label\()_ram             
