@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build distribution tarballs
-        run: make dist1200bps
+        run: cd appl/unor4 && make dist1200bps
       - name: Create release
         uses: ncipollo/release-action@v1
         id: create_release
