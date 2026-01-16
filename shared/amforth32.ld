@@ -27,7 +27,7 @@ SECTIONS
 	.text :
 	{
 		. = ALIGN(4);
-                *(EXCLUDE_FILE(amforth.o).text)        
+                *(EXCLUDE_FILE(*amforth.o).text)        
                 
 		*(.text)
 		*(.text.*)
@@ -100,6 +100,33 @@ SECTIONS
 	  KEEP (*(.dtors))
 	} >FLASH AT>FLASH 
 
+        amforth :
+        {
+            . = ALIGN( cellsize ) ;
+            PROVIDE( flash.low = . );
+            *(amforth)
+            *amforth.o(.text .text.*)
+
+        } >FLASH AT>FLASH
+
+        eeprom :
+        {
+            . = ALIGN(256) ;
+            PROVIDE( eeprom = . );
+            FILL(0xDEADBEEF);
+            . = . + 256 - 1 ;  
+            BYTE(0);
+
+        } >FLASH AT>FLASH
+
+        userdict :
+        {
+            . = ALIGN(4096) ;
+            PROVIDE( dp0.flash = . );
+            PROVIDE( flash.high = . );
+            PROVIDE( flash.max = ORIGIN(FLASH) + LENGTH(FLASH));
+        } >FLASH AT>FLASH
+
 	.dalign :
 	{
 		. = ALIGN(4);
@@ -146,32 +173,6 @@ SECTIONS
         PROVIDE( ram_ripe = .); /* QEMU */
 	} >RAM AT>FLASH
 
-        amforth :
-        {
-            . = ALIGN( cellsize ) ;
-            PROVIDE( flash.low = . );
-            *amforth.o
-
-        } >FLASH
-
-        eeprom :
-        {
-            . = ALIGN(256) ;
-            PROVIDE( eeprom = . );
-            FILL(0xDEADBEEF);
-            . = . + 256 - 1 ;  
-            BYTE(0);
-
-        } >FLASH
-
-        userdict :
-        {
-            . = ALIGN(4096) ;
-            PROVIDE( dp0.flash = . );
-            PROVIDE( flash.high = . );
-            PROVIDE( flash.max = ORIGIN(FLASH) + LENGTH(FLASH));
-        } >FLASH
-        
 	PROVIDE( _end = _ebss);
 	PROVIDE( end = . );
 
