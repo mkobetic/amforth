@@ -137,7 +137,8 @@ at_rx_no_error:
     @ Check if max received or add timeout/termination logic
     cmp     r2, #'\n'               @ Stop if newline
     beq     at_rx_done
-    cmp     tos, #refill_buf_size      @ Stop if max bytes
+    ldr     r3, =refill_buf_size
+    cmp     tos, r3      @ Stop if max bytes
     beq     at_rx_done
     b     at_rx_loop                 @ Continue if not done
 at_rx_done:

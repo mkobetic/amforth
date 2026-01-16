@@ -11,10 +11,10 @@
 .cpu cortex-m4
 .thumb
 
-.section .vector
+.section .vector, "ax"
 .include "vectors.s"
 
-.section amforth
+.section amforth, "ax"
 .include "isr.s"
 
 STARTDICT
