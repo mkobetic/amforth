@@ -17,11 +17,11 @@ buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
 build/%.o: %.s buildinfo
-	$(CROSS)as -g --warn --fatal-warnings -alms=build/amforth.lst-as -I../../arm -I ../../arm/devices/lm4f120xl -I ../../shared -o $@ $<
+	$(CROSS)as -g --warn --fatal-warnings -alms=build/amforth.lst-as -I../.. -I ../../devices/lm4f120xl -I ../../../shared -o $@ $<
 
 
 build/amforth.elf: build/amforth.o
-	$(CROSS)ld -L ../../shared -T launchpad.ld $< -o $@ 
+	$(CROSS)ld -L ../../../shared -T launchpad.ld $< -o $@ 
 	$(CROSS)objcopy build/amforth.elf build/amforth.bin -O binary
 
 build/%.hex: build/%.elf
@@ -33,7 +33,7 @@ build/%.lst: build/%.elf
 clean:
 	rm -f build/* words/build-info.s
 
-include ../../arm/dev/utils.make
+include ../../dev/utils.make
 
 upload: build/amforth.elf
 	lm4flash build/amforth.bin
@@ -65,4 +65,4 @@ debug:
 gdb:
 	$(CROSS)gdb-py build/amforth.elf --quiet \
 		-ex 'target remote :1234' \
- 		-ex "directory ../../arm/dev"
+ 		-ex "directory ../../dev"

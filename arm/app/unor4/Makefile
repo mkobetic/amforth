@@ -24,10 +24,10 @@ buildinfo:
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
 build/%.o: %.s words/*.s buildinfo
-	$(CROSS)as -g --warn --fatal-warnings -achlms=build/amforth.lst-as -I../../arm -I ../../arm/devices/cortex-m4 -I ../../shared -o $@ $<
+	$(CROSS)as -g --warn --fatal-warnings -achlms=build/amforth.lst-as -I../.. -I ../../devices/cortex-m4 -I ../../../shared -o $@ $<
 
 build/amforth.elf: build/amforth.o
-	$(CROSS)ld -L ../../shared -T ra4m1.ld $< -o $@
+	$(CROSS)ld -L ../../../shared -T ra4m1.ld $< -o $@
 
 build/%.lst: build/%.elf
 	$(CROSS)objdump -DSt -j amforth $< >$@
@@ -45,7 +45,7 @@ build/%.bin: build/%.elf
 clean:
 	rm build/* words/build-info.s
 
-include ../../arm/dev/utils.make
+include ../../dev/utils.make
 
 # N.B.: The UNO R4 BOSSA_LOADER always stores the file at FLASH_IMAGE_START (+offset),
 # 		so DO NOT use -o to enforce FLASH_IMAGE_START!
@@ -86,7 +86,7 @@ ocd:
 gdb:
 	$(CROSS)gdb-py -tui build/amforth.elf --quiet \
 	-ex "target extended-remote localhost:50000" \
-	-ex "directory ../../arm/dev" \
+	-ex "directory ../../dev" \
 	-ex "source tui-full.gdb"
 
 # More debugging references
