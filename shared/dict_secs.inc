@@ -249,3 +249,4 @@
 .include "words/dallot.s"
 .include "words/dalign.s"
 
+.include "words/mlc.s"

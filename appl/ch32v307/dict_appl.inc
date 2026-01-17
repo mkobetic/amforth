@@ -47,6 +47,4 @@
     .include "words/float.s"
 .endif
 
-.include "words/mlc.s"
-
 .include "words/eeprom.s"

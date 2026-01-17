@@ -186,7 +186,7 @@ COLON "doescape", DOESCAPE
 	.word XT_2DUP
 	.word XT_PLUS
 	.word XT_ESCAPESQ
-	.word XT_DOCONDBRANCH,DOESCAPE_0001 # if
+	.word XT_DOCONDBRANCH,DOESCAPE_0001 /* if */
 	.word XT_2DROP
 	.word XT_TRUE
 	.word XT_DOBRANCH,DOESCAPE_0002
@@ -218,7 +218,7 @@ COLON "docell", DOCELL
 	.word XT_INITUNDERVARS
 DOCELL_0001: # begin
 	.word XT_DOESCAPE
-	.word XT_DOCONDBRANCH,DOCELL_0001 # until
+	.word XT_DOCONDBRANCH,DOCELL_0001 /* until */
 	.word XT_CCOUNT
 	.word XT_FETCH
 	.word XT_DOTCHAR
@@ -235,7 +235,7 @@ DOROW_0002: # do
 	.word XT_DUP
 	.word XT_I
 	.word XT_DOCELL
-	.word XT_DOLOOP,DOROW_0002 # loop
+	.word XT_DOLOOP,DOROW_0002 /* loop */
 DOROW_0001: # (for ?do IF required) 
 	.word XT_DROP
 	.word XT_EXIT
@@ -249,7 +249,7 @@ MANDELBROT_0002: # do
 	.word XT_I
 	.word XT_DOROW
 	.word XT_CR
-	.word XT_DOLOOP,MANDELBROT_0002 # loop
+	.word XT_DOLOOP,MANDELBROT_0002 /* loop */
 MANDELBROT_0001: # (for ?do IF required) 
 	.word XT_EXIT
 # ----------------------------------------------------------------------
