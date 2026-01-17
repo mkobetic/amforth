@@ -88,7 +88,7 @@ arm                 = ARM Cortex-M based MCUs
 │   └── ra4m1              = Renesas RA4M1 & Arduino Uno R4 board
 ├── arch_prims.inc  = includes ARM specific words
 ├── common          = common source files to be included by mcus
-├── interpreter.inc = inner interpreter for ARM
+├── interpreter.s = inner interpreter for ARM
 └── macros.inc      = ARM specific macros; includes core/common/macros.inc
 
 rv                  = RISC-V based MCUs
@@ -97,11 +97,11 @@ rv                  = RISC-V based MCUs
 │   ├── ch32v307    = WCH CH32V307 board
 │   └── hifive1     = HiFive board
 ├── arch_prims.inc  = includes RISC-V specific words
-├── interpreter.inc = inner interpreter for RISC-V
+├── interpreter.s = inner interpreter for RISC-V
 └── macros.inc      = RISC-V specific macros; includes core/common/macros.inc
 ```
 
-[1] dict_prims.inc includes interpreter.inc so that the interpreter code resides in the middle of the prim words (cpu caching reasons);
+[1] dict_prims.inc includes interpreter.s so that the interpreter code resides in the middle of the prim words (cpu caching reasons);
     it also includes arch_prims.inc so that arm/rv can add more generic architecture prim words
 [2] produced with % tree --prune -I 'words|build|dev|touch1200bps' core arm rv
 

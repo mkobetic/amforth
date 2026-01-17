@@ -55,7 +55,7 @@
 
 # Inner interpreter should be located roughly in the middle of the codewords.
 # It is the most executed bit and should be as close to other frequently executed code as possible.
-.include "interpreter.inc"
+.include "interpreter.s"
 
 .include "words/comp.s"
 
