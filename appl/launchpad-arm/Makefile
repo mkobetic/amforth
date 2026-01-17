@@ -11,8 +11,6 @@ ifeq ("$(BOARD)", "armv7l")
 endif
 LANG=C
 
-include ../../arm/dev/utils.make
-
 all: build/amforth.hex build/amforth.lst
 
 buildinfo: words/build-info.tmpl
@@ -32,10 +30,10 @@ build/%.hex: build/%.elf
 build/%.lst: build/%.elf
 	$(CROSS)objdump --show-raw-insn --insn-width=4 --all-headers --disassemble-all --source --syms $< >$@
 
-
-
 clean:
 	rm -f build/* words/build-info.s
+
+include ../../arm/dev/utils.make
 
 upload: build/amforth.elf
 	lm4flash build/amforth.bin
@@ -59,7 +57,7 @@ runpty:
 #	Unsuccessful so far: Failed to create PTY symlink: Operation not permitted
 #	$(QEMU) -chardev pty,path=/dev/stellaris,id=stellaris -serial chardev:stellaris
 
-# Like prun but halts on start and waits for GDB to attach to it
+# Like runpty but halts on start and waits for GDB to attach to it
 debug:
 	$(QEMU) -serial pty -S -s
 

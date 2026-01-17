@@ -1,5 +1,14 @@
 # PLACEHOLDERS FOR MISSING FUNCTIONALITY
 
+// TODO: This doesn't do flash, unlike the RV side
+// ( h addr -- ) Write a half word h to addr
+COLON "h,", HCOMMA
+	.word XT_DP
+	.word XT_HSTORE
+	.word XT_TWO
+	.word XT_DALLOT
+	.word XT_EXIT
+
 # FLASH
 
 COLON "std.unlock", STDDOTUNLOCK
@@ -11,9 +20,6 @@ CODEWORD "std.erase" , STDDOTERASE
     .word XT_EXIT
 
 COLON "!i", BANGI
-    .word XT_EXIT
-
-COLON "h,", HCOMMA 
     .word XT_EXIT
 
 CONSTANT "flash.low"    , FLASH_LOW   , flash.low

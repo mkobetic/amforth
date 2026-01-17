@@ -4,8 +4,6 @@ CROSS=arm-none-eabi-
 LANG=C
 BOARD = UNOR4
 
-include ../../arm/dev/utils.make
-
 # This port was developed on a MacBook with some tools borrowed from Arduino IDE.
 # You will likely need to adjust PORT, BOSSAC and OPENOCD to suite your configuration.
 ARDUINO_TOOLS = /Users/martin/Library/Arduino15/packages/arduino/tools
@@ -46,6 +44,8 @@ build/%.bin: build/%.elf
 
 clean:
 	rm build/* words/build-info.s
+
+include ../../arm/dev/utils.make
 
 # N.B.: The UNO R4 BOSSA_LOADER always stores the file at FLASH_IMAGE_START (+offset),
 # 		so DO NOT use -o to enforce FLASH_IMAGE_START!

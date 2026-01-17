@@ -44,3 +44,19 @@ NEXT
   strb r0, [tos]     @ Popping both saves a cycle.
   movs tos, r1
 NEXT
+
+# -----------------------------------------------------------------------------
+  CODEWORD  "h@", HFETCH @ ( addr -- x ) MEM: put half-word at addr on data stack 
+                              # Loads the halfword at 'addr'.
+# -----------------------------------------------------------------------------
+  ldrh tos, [tos]
+  NEXT
+
+# -----------------------------------------------------------------------------
+  CODEWORD  "h!", HSTORE @ ( x a -- ) MEM: store half-word x at a 
+# Given a value 'x' and an 8-bit-aligned address 'addr', stores 'x' to memory at 'addr', consuming both.
+# -----------------------------------------------------------------------------
+  popnos r0
+  strh r0, [tos]
+  loadtos
+  NEXT
