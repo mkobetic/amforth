@@ -64,66 +64,47 @@ To be continued
 The picture below shows the relevant bit of directory structure with the words/ directories stripped out, annotated to provide some rationale.
 
 ```
-% tree --prune -I 'words|build|dev|devices|touch1200bps' appl/ch32v307 appl/launchpad-arm appl/unor4 arm rv shared
+% tree --prune -I 'words|build|dev|devices|touch1200bps' core arm rv
 
-appl/ch32v307
-├── amforth.S ; main board file
-├── clock.K
-├── config.inc ; board configuration
-├── dict_appl.inc ; board specific words
-├── dict_min.inc
-├── linker.307  ; linker files largely just define MEMORY, and INCLUDE shared/amforth32.ld with the SECTIONS
-├── linker.qem
-├── main.S
-├── Makefile
-├── startup.307
-└── startup.qem
-appl/launchpad-arm
-├── amforth.asm
-├── dict_appl.inc
-├── flash.s
-├── launchpad.ld ; linker file including shared/amforth32.ld
-├── Makefile
-├── readme
-└── vectors.s
-appl/unor4
-├── amforth.s
-├── dict_appl.inc
-├── flash.s
-├── isr.s
-├── Makefile
-├── notes.md
-├── ra4m1.ld ; linker file including shared/amforth32.ld
-├── readme
-└── vectors.s
-arm
-├── amforth.s ; template file to be used for new boards
-├── arch_prims.inc ; architecture specific words
-├── common ; these files are in common directory so that they can be included by the corresponding board files
-│   ├── isr.s
-│   └── vectors.s
-├── interpreter.inc ; inner interpreter code
-└── macros.inc ; architecture specific macros; includes shared/common/macros.inc
-rv
-├── amforth.s ; template file to be used for new boards
-├── arch_prims.inc ; architecture specific words
-├── interpreter.inc ; inner interpreter code
-└── macros.inc ; architecture specific macros; includes shared/common/macros.inc
-shared
-├── amforth32.ld ; shared linker file defining the 32-bit memory layout
-├── common ; again common directory so that arch specific macros.inc can import this macros.inc
-│   └── macros.inc
-├── config.inc ; basic configuration parameters referenced by shared/words
-├── dict_env.inc ; shared env dictionary words
-├── dict_prims.inc ; common primitive words used by shared/words (see [1])
-├── dict_secs.inc ; all the secondary shared/words
+core                = core AmForth files; shared by all architectures and apps
+├── amforth32.ld    = shared linker file; defines the 32-bit memory layout (SECTIONS)
+├── common
+│   └── macros.inc  = shared macros (e.g. dictionary); included by arch macros.inc
+├── config.inc      = basic configuration parameters referenced by core/words
+├── dict_env.inc    = includes shared environment wordlist words
+├── dict_prims.inc  = includes common primary words required by core/words (see [1])
+├── dict_secs.inc   = includes all secondary core/words; define most of core functionality
 ├── readme.md
-└── user.inc ; shared user dictionary words
+└── user.inc        = shared user area words
+
+arm                 = ARM Cortex-M based MCUs
+├── amforth.s       = template main source file to be used to start new boards
+├── app
+│   ├── launchpad           = Launchpad Stellaris board 
+│   │   ├── amforth.s       = main app source file
+│   │   ├── dict_appl.inc   = app specific words
+│   │   ├── launchpad.ld    = app linker file defines MEMORY, and INCLUDEs core/amforth32.ld
+│   │   ├── Makefile
+│   │   └── readme
+│   ├── linux               = generic linux/raspberry Pi
+│   └── unor4               = Arduino Uno R4 board
+├── arch_prims.inc  = includes ARM specific words
+├── common          = common source files to be included by apps
+├── interpreter.inc = inner interpreter for ARM
+└── macros.inc      = ARM specific macros; includes core/common/macros.inc
+
+rv                  = RISC-V based MCUs
+├── amforth.s       = template main source file to be used to start new boards
+├── app
+│   ├── ch32v307    = WCH CH32V307 board
+│   └── hifive1     = HiFive board
+├── arch_prims.inc  = includes RISC-V specific words
+├── interpreter.inc = inner interpreter for RISC-V
+└── macros.inc      = RISC-V specific macros; includes core/common/macros.inc
 ```
 
-[1] the dict_prims.inc includes interpreter.inc so that the interpreter code still resides in the middle of the prim words (cpu caching reasons);
-     it also includes arch_prims.inc so that arm/rv can add more prim words
-
+[1] dict_prims.inc includes interpreter.inc so that the interpreter code resides in the middle of the prim words (cpu caching reasons);
+    it also includes arch_prims.inc so that arm/rv can add more generic architecture prim words
 
 # Linker files
 
