@@ -2,10 +2,10 @@
 
 This is the shared basis of all 32-bit versions of AmForth.
 
-Words in shared/words are combined with architecture specific words (RISC-V/words, ARM/words, ...)
+Words in core/words are combined with architecture specific words (rv/words, arm/words, ...)
 and with architecture compatible application/board specific words, e.g.
-* rv/words + appl/hifive1/words, or
-* arm/words + appl/launchpad-arm/words
+* core/words/ + rv/words + rv/app/hifive1/words (HiFive board), or
+* core/words/ + arm/words + arm/app/launchpad/words (Launchpad Stellaris board)
 
 # Architecture
 
@@ -61,7 +61,7 @@ To be continued
 
 # AmForth directory layout
 
-The picture below shows the relevant bit of directory structure with the words/ directories stripped out, annotated to provide some rationale.
+The picture below shows the relevant bit of directory structure with the words/ directories stripped out.
 
 ```
 % tree --prune -I 'words|build|dev|devices|touch1200bps' core arm rv
@@ -105,6 +105,25 @@ rv                  = RISC-V based MCUs
 
 [1] dict_prims.inc includes interpreter.inc so that the interpreter code resides in the middle of the prim words (cpu caching reasons);
     it also includes arch_prims.inc so that arm/rv can add more generic architecture prim words
+
+## Directory conventions
+
+words/ - source files of forth words, colon words and code words
+common/ - files intended for inclusion at lower levels
+dev/ - supporting utilities for AmForth development, e.g. gdb extensions, shared Makefile bits, etc.
+tools/ - runnable tools aimed for various supporting tasks, communication, docs, etc (preferably written in Python)
+build/ - directory for compilation artifacts, excluded from the repository
+
+## File conventions
+
+*.s, *.S       = assembler source files, either code-words (assembler), or colon-words (ITC assembler)
+amforth.s      = the main AmForth source file (usually one for each MCU)
+*.inc          = include files; shouldn't contain code, just directives and constant definitions
+dict_*.inc     = shared lists of AmForth words, defines how the dictionary is laid out in flash
+arch_*.inc     = additional words specific to architecture, follows the prims words in flash
+app/*.inc      = config files for specific boards/targets
+amforth32.ld   = the main linker file; defines the basic AmForth 32-bit memory layout
+*.ld           = MCU/board specific linker file; configures amforth32.ld options and specifies MEMORY parameters
 
 # Linker files
 
