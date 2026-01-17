@@ -24,10 +24,10 @@ buildinfo:
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
 build/%.o: %.s words/*.s buildinfo
-	$(CROSS)as -g --warn --fatal-warnings -achlms=build/amforth.lst-as -I../.. -I ../../devices/cortex-m4 -I ../../../shared -o $@ $<
+	$(CROSS)as -g --warn --fatal-warnings -achlms=build/amforth.lst-as -I../.. -I ../../devices/cortex-m4 -I ../../../core -o $@ $<
 
 build/amforth.elf: build/amforth.o
-	$(CROSS)ld -L ../../../shared -T ra4m1.ld $< -o $@
+	$(CROSS)ld -L ../../../core -T ra4m1.ld $< -o $@
 
 build/%.lst: build/%.elf
 	$(CROSS)objdump -DSt -j amforth $< >$@

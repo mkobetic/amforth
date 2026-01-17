@@ -17,11 +17,11 @@ buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
 build/%.o: %.s buildinfo
-	$(CROSS)as -g --warn --fatal-warnings -alms=build/amforth.lst-as -I../.. -I ../../devices/lm4f120xl -I ../../../shared -o $@ $<
+	$(CROSS)as -g --warn --fatal-warnings -alms=build/amforth.lst-as -I../.. -I ../../devices/lm4f120xl -I ../../../core -o $@ $<
 
 
 build/amforth.elf: build/amforth.o
-	$(CROSS)ld -L ../../../shared -T launchpad.ld $< -o $@ 
+	$(CROSS)ld -L ../../../core -T launchpad.ld $< -o $@ 
 	$(CROSS)objcopy build/amforth.elf build/amforth.bin -O binary
 
 build/%.hex: build/%.elf

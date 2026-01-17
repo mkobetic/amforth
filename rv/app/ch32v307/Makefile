@@ -159,7 +159,7 @@ LIB_OBJS  := $(filter $(BUILD_DIR)/$(LIB_WCH)/%,$(OBJS)) \
 USER_OBJS := $(filter-out $(BUILD_DIR)/$(LIB_WCH)/% \
                           $(BUILD_DIR)/$(LIB_USER)/%,$(OBJS))
 
-INC_FLAGS := -I . -I ../.. -I ../../../shared
+INC_FLAGS := -I . -I ../.. -I ../../../core
 
 # Compiler flags 
 ifeq ($(strip $(WANT_203)),YES)
@@ -169,7 +169,7 @@ FLAGS := -march=rv32imafc -mabi=ilp32f -msmall-data-limit=8 -mno-save-restore -O
 endif
 
 # Needed for the INCLUDE amforth32.ld to work in linked files (-L must preceed the -T !!!)
-FLAGS += -L ../../../shared
+FLAGS += -L ../../../core
 
 DEFINES  := -DSYSCLK_FREQ_96MHz
 #ASFLAGS  := $(FLAGS) -x assembler $(INC_FLAGS) -MMD -MP $(DEFINES) 

@@ -24,10 +24,10 @@ buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
 build/%.o: %.asm buildinfo
-	$(CROSS)as $(AOPTS) --warn -al=build/amforth.lst-as -I ../.. -I ../../devices/linux -I ../../../shared -o $@ $<
+	$(CROSS)as $(AOPTS) --warn -al=build/amforth.lst-as -I ../.. -I ../../devices/linux -I ../../../core -o $@ $<
 
 build/amforth: build/amforth.o
-	$(CROSS)ld -L ../../../shared -T linux.ld -z max-page-size=4096 $< -o $@ 
+	$(CROSS)ld -L ../../../core -T linux.ld -z max-page-size=4096 $< -o $@ 
 
 clean:
 	rm -f amforth build/* words/build-info.s
