@@ -1,2 +1,2 @@
-# TODO yet, see risc-v
+# TODO yet, see rv
 

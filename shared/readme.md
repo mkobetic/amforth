@@ -4,7 +4,7 @@ This is the shared basis of all 32-bit versions of AmForth.
 
 Words in shared/words are combined with architecture specific words (RISC-V/words, ARM/words, ...)
 and with architecture compatible application/board specific words, e.g.
-* risc-v/words + appl/hifive1/words, or
+* rv/words + appl/hifive1/words, or
 * arm/words + appl/launchpad-arm/words
 
 # Architecture
@@ -64,7 +64,7 @@ To be continued
 The picture below shows the relevant bit of directory structure with the words/ directories stripped out, annotated to provide some rationale.
 
 ```
-% tree --prune -I 'words|build|dev|devices|touch1200bps' appl/ch32v307 appl/launchpad-arm appl/unor4 arm risc-v shared
+% tree --prune -I 'words|build|dev|devices|touch1200bps' appl/ch32v307 appl/launchpad-arm appl/unor4 arm rv shared
 
 appl/ch32v307
 ├── amforth.S ; main board file
@@ -104,7 +104,7 @@ arm
 │   └── vectors.s
 ├── interpreter.inc ; inner interpreter code
 └── macros.inc ; architecture specific macros; includes shared/common/macros.inc
-risc-v
+rv
 ├── amforth.s ; template file to be used for new boards
 ├── arch_prims.inc ; architecture specific words
 ├── interpreter.inc ; inner interpreter code
@@ -122,7 +122,7 @@ shared
 ```
 
 [1] the dict_prims.inc includes interpreter.inc so that the interpreter code still resides in the middle of the prim words (cpu caching reasons);
-     it also includes arch_prims.inc so that arm/risc-v can add more prim words
+     it also includes arch_prims.inc so that arm/rv can add more prim words
 
 
 # Linker files
