@@ -34,7 +34,7 @@ jobs:
           echo "$TOOLS_DIR/bin" >> $GITHUB_PATH
 
       - name: Verify installation
-        run:  arm-none-eabi-gcc --version
+        run:  arm-none-eabi-as --version && arm-none-eabi-ld --version
 
       - name: Build RA4M1
         run: cd arm/mcu/ra4m1 && make
