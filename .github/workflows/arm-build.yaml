@@ -29,15 +29,19 @@ jobs:
           mkdir -p $TOOLS_DIR
           # Download and extract the toolchain (adjust URL/filename as needed)
           curl -L $URL | tar -xJ -C $TOOLS_DIR --strip-components=1
-          
-          # Add the 'bin' directory to the PATH for subsequent steps in this job
+
+      - name: Add toolchain binaries to the PATH
           echo "$TOOLS_DIR/bin" >> $GITHUB_PATH
 
       - name: Verify installation
-        run:  arm-none-eabi-as --version && arm-none-eabi-ld --version
+        run:  arm-none-eabi-as --version
 
       - name: Build RA4M1
-        run: cd arm/mcu/ra4m1 && make
+        run: |
+          pwd
+          ls
+          which arm-none-eabi-as
+          cd arm/mcu/ra4m1 && make
 
       - name: Build LM4F120
         run: cd arm/mcu/lm4f120 && make
