@@ -1,5 +1,6 @@
 List of know issues and tasks that need to be done (by area)
 
+
 # CORE
 
 * [ ] core/aligned.s vs arm|rv/aligned.s
@@ -18,6 +19,7 @@ List of know issues and tasks that need to be done (by area)
 * [ ] automated ref-card generation
 * [ ] figure out what to do about docs
 * [ ] document conventions and standard practices
+* [ ] document dev tool setup
 
 
 # ARM
@@ -27,9 +29,9 @@ List of know issues and tasks that need to be done (by area)
 * [ ] (exiti) likely needs work
 * [ ] document dev tool setup
 
-## LAUNCHPAD
+## LM4F120
 
-## UNO R4
+## RA4M1
 
 * [ ] make sure FLASH_IMAGE_START is handled correctly
 * [ ] flash dictionary updates
@@ -41,12 +43,12 @@ List of know issues and tasks that need to be done (by area)
 # RISC-V
 * [ ] generalize flash dictionary write support (flash.s)
 * [ ] generalize eeprom support (eeprom.s)
-* [ ] document dev tool setup
 
 ## CH32V307
 
 ## HIFIVE1
 * [ ] get it running under qemu -M sifive_e (SiFive E31 core)
+
 
 # TOOLS
 * [ ] document/instrument Python setup for the tools

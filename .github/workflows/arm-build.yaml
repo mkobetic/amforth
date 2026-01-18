@@ -1,0 +1,46 @@
+name: ARM Build
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest-arm
+    env:
+      # See https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
+      VERSION: 15.2.rel1
+      TOOLS_DIR: toolchain
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Toolchain Installation
+        id: cache-toolchain
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.TOOLS_DIR }}
+          key: ${{ runner.os }}-${{ env.VERSION }}
+
+      - name: Install ARM GNU Toolchain
+        if: steps.cache-toolchain.outputs.cache-hit != 'true'
+        run: |
+          # Define installation path and toolchain archive name
+
+          ARCHIVE=arm-gnu-toolchain-$VERSION-aarch64-arm-none-eabi.tar.xz
+          URL=https://developer.arm.com/-/media/Files/downloads/gnu/$VERSION/binrel/$ARCHIVE
+
+          mkdir -p $TOOLS_DIR
+          # Download and extract the toolchain (adjust URL/filename as needed)
+          curl -L $URL | tar -xJ -C $TOOLS_DIR --strip-components=1
+          
+          # Add the 'bin' directory to the PATH for subsequent steps in this job
+          echo "$TOOLS_DIR/bin" >> $GITHUB_PATH
+
+      - name: Verify installation
+        run:  arm-none-eabi-gcc --version
+
+      - name: Build RA4M1
+        run: cd arm/mcu/ra4m1 && make
+
+      - name: Build LM4F120
+        run: cd arm/mcu/lm4f120 && make
+
+      - name: Build Linux/RaspPi
+        run: cd arm/mcu/linux && make
