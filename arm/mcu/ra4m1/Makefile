@@ -22,6 +22,7 @@ all: build/amforth.hex build/amforth.lst build/amforth.sym
 
 buildinfo: 
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
+	mkdir -p build
 
 build/%.o: %.s words/*.s buildinfo
 	$(CROSS)as -g --warn --fatal-warnings -achlms=build/amforth.lst-as -I../.. -I ../../../core -o $@ $<
