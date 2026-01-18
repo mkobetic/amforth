@@ -31,7 +31,7 @@ jobs:
           curl -L $URL | tar -xJ -C $TOOLS_DIR --strip-components=1
 
       - name: Add toolchain binaries to the PATH
-        run:  echo "$TOOLS_DIR/bin" >> $GITHUB_PATH
+        run:  echo "$GITHUB_WORKSPACE/$TOOLS_DIR/bin" >> $GITHUB_PATH
 
       - name: Verify installation
         run:  arm-none-eabi-as --version
