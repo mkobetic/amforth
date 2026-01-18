@@ -38,10 +38,9 @@ jobs:
 
       - name: Build RA4M1
         run: |
-          pwd
-          ls
-          which arm-none-eabi-as
-          cd arm/mcu/ra4m1 && make
+          cd arm/mcu/ra4m1
+          arm-none-eabi-as --version
+          make
 
       - name: Build LM4F120
         run: cd arm/mcu/lm4f120 && make
