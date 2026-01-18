@@ -39,6 +39,7 @@ jobs:
       - name: Build RA4M1
         run: |
           cd arm/mcu/ra4m1
+          echo $PATH
           arm-none-eabi-as --version
           make
 
