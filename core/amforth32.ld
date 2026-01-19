@@ -1,7 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 
-cellsize = 4 ;
-
 __stack_size = 2048;
 PROVIDE( _stack_size = __stack_size );
 
@@ -174,15 +172,7 @@ SECTIONS
 	} >RAM AT>FLASH
 
 	PROVIDE( _end = _ebss);
-	PROVIDE( end = . );
-
-    rampool_size = 4096*2 ;
-    returnstack_size = 40 * 4 ;
-    datastack_size = 40 * 4 ; 
-    refill_buf_size = 96 ;
-    userarea_size = 2*4 + 32*4 ;
-    leavestack_size = 8*4 ;
-    
+	PROVIDE( end = . );    
 
     amramlo :
     {
@@ -191,45 +181,6 @@ SECTIONS
         PROVIDE(RAM_lower_fi = . ) ;
         . = . + 256 ;
         PROVIDE(RAM_upper_fi = . ) ;
-
-        PROVIDE(ram_vector_base = . ) ;
-        . = . + 256 * 4 ;
-        PROVIDE(RAM_upper_ram_vector_base = . ) ;
-        
-        PROVIDE(reg_shadow = . ) ;
-        . = . + 256 ;
-        PROVIDE(RAM_upper_reg_shadow = . ) ;
-
-        PROVIDE(RAM_lower_datastack = . ) ;
-        . = . + datastack_size ;
-        PROVIDE(RAM_upper_datastack = . ) ;
-
-        . = . + 4 ;
-
-        PROVIDE(RAM_lower_returnstack = . ) ;
-        . = . + returnstack_size  ;      
-        PROVIDE(RAM_upper_returnstack = . ) ;
-
-        . = . + 4 ;
-        
-        PROVIDE(RAM_lower_refill_buf  = . ) ;
-        . = . + refill_buf_size ;               
-        PROVIDE(RAM_upper_refill_buf = . ) ;
-
-        . = . + 4 ;
-        
-        PROVIDE(RAM_lower_userarea  = . ) ;
-        . = . + userarea_size ;
-        PROVIDE(RAM_upper_userarea  = . ) ;
-
-        . = . + 4 ;
-        
-        PROVIDE(RAM_lower_leavestack = . ) ;
-        . = . + leavestack_size ; 
-        PROVIDE(RAM_upper_leavestack = . ) ;
-
-        . = . + 4 ;
-        
 
     } >RAM
 

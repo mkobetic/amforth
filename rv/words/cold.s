@@ -1,5 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
+RAMALLOT datastack, datastack_size
+RAMALLOT returnstack, returnstack_size
+
 CODEWORD "cold", COLD
 
   # set up the clock system and make it run

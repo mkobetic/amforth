@@ -19,6 +19,7 @@ LD := $(TC_DIR)/bin/$(CROSS)ld
 OBJCOPY := $(TC_DIR)/bin/$(CROSS)objcopy
 OBJDUMP := $(TC_DIR)/bin/$(CROSS)objdump
 READELF := $(TC_DIR)/bin/$(CROSS)readelf
+NM := $(TC_DIR)/bin/$(CROSS)nm
 SIZE := $(TC_DIR)/bin/$(CROSS)size
 GDB := $(TC_DIR)/bin/$(CROSS)gdb
 GDBPY := $(TC_DIR)/bin/$(CROSS)gdb-py3

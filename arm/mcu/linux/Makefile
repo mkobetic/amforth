@@ -19,7 +19,7 @@ QEMU=qemu-system-arm
 LANG=C
 
 build/amforth: build/amforth.o
-	$(LD) -L ../../../core -T linux.ld -z max-page-size=4096 $< -o $@ 
+	$(LD) -L $(AMFORTH)/core -T linux.ld -z max-page-size=4096 $< -o $@ 
 
 # To run amforth in emulated container you can use a container runtime that supports --platform linux/arm/v7
 # For MacOS check out https://orbstack.dev/ (Free for personal use)
@@ -31,22 +31,17 @@ image: build/amforth
 # Once terminal to the container opens you can start amforth, the binary is on the PATH.
 # The whole host amforth directory is mounted in the container at /amforth.
 # Apparently cannot run gdb inside the container, because ptrace sys call is not supported in emulation.
+DOCKER = docker run --rm --volume $(AMFORTH):/amforth amforth:latest
 drun: image
-	docker run --interactive --tty --rm \
-		--volume $(shell pwd)/../../..:/amforth \
-		amforth:latest
+	$(DOCKER) --interactive --tty
 
 # Run standard tests and output the results, requires WANT_IGNORECASE enabled above
 # because the standard tests are in all caps and all amforth words are in lowercase.
 # Currently segfaults, presumably because variables don't work yet which are central
 # to the implementation of the testing framework (see the tester source)
 test: image
-	docker run --rm --volume $(shell pwd)/../../..:/amforth amforth:latest /bin/sh -c \
-<<<<<<< HEAD
-		'cd amforth/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'
-=======
+	$(DOCKER) /bin/sh -c \
 		'cd amforth/_common/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'
->>>>>>> 9fd674a (remove common/ add RAMALLOT)
 
 # Starts amforth under QEMU
 # WARNING(mk): This seems incomplete and does not work at least on MacOSX;

@@ -83,8 +83,3 @@
     .equ WANT_MATCH   , YES
 .endif
 
-
-# currently cellsize needs to be 4. One day
-# it will be a configuration variable. 
-
-.equ cellsize , 4 

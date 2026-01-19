@@ -1,4 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-only
+
+# TODO: should this be configurable?
+RAMALLOT ram_vector, 256*cellsize
+.equ ram_vector_base, RAM_lower_ram_vector
+
 CONSTANT "trap.base" , TRAP_BASE , ram_vector_base
 # ( -- u ) TRAP: beginning of Forth interrupt table
 
@@ -9,4 +14,3 @@ COLON "trap!" , TRAP_STORE
       .word XT_PLUS
       .word XT_STORE 
       .word XT_EXIT
-

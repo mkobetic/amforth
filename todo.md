@@ -10,7 +10,7 @@ List of know issues and tasks that need to be done (by area)
 * [ ] document amforth32.ld (assumptions, section purpose, etc)
 * [ ] move non-address constants from amforth32.ld to config.inc? (cellsize, region sizes, etc...)
 
-* [ ] CI compilation tests
+* [x] CI compilation tests
 * [ ] CI core tests (emulated)
 * [ ] Standardized Makefile targets across all MCUs 
 * [ ] Extract OS and personal details from Makefiles (.env files?)
