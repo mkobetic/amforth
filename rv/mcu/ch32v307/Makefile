@@ -105,6 +105,7 @@ TOOLCHAIN=Local-Toolchain
 endif
 
 QEMU_TOOLS=/opt/homebrew/bin
+QEMU_TOOLS=/usr/local/Cellar/qemu/10.1.0/bin
 
 MKDIR_P=mkdir -p
 LD :=$(BIN_STUB)ld
