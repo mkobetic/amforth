@@ -18,6 +18,11 @@ RESET  := $(shell tput -Txterm sgr0)
 YES=TRUE
 NO=FALSE
 
+
+AMFORTH ?= $(shell git rev-parse --show-toplevel)
+include $(AMFORTH)/rv/dev/Makefile
+# MCU_LD ?= stellaris.ld // using custom build targets here
+
 # Choices 
 
 ARDUINO=TRUE  # TRUE for Arduino tool chain, FALSE for ZEPHYR 
@@ -45,7 +50,7 @@ MINICOM=/usr/local/bin/minicom
 AMSHELL=./tools/amforth-shell.py --port $(MODEM) --speed 115200 $1
 SOCKSHELL=./tools/socket-shell.py --port $(MODEM) --speed 115200 $1
 
-UU=$(ROOT)/tools/uu
+UU=$(AMFORTH)/tools/uu
 
 ifeq ($(strip $(WANT_203)),YES)
 MODEM=/dev/tty.usbmodem0B358F0690082
@@ -76,8 +81,6 @@ ZEPHYR := $(HOME)/zephyr-sdk-0.16.4
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
 
-
-ROOT := ../..
 TARGET_NAME := amforth
 TARGET_ELF  := $(TARGET_NAME).elf
 TARGET_HEX  := $(TARGET_NAME).hex
@@ -85,25 +88,32 @@ TARGET_BIN  := $(TARGET_NAME).bin
 TARGET_MAP  := $(TARGET_NAME).map
 TARGET_LIST := $(TARGET_NAME).list
 
+# Decide which toolchain to use.
+# If local toolchain is installed, use that,
+# otherwise use what $(ARDUINO) says
+ifeq ($(wildcard $(TC_DIR)),)
 ifeq ($(strip $(ARDUINO)),TRUE)
-BIN_STUB=$(ARDU15)/packages/WCH/tools/riscv-none-embed-gcc/8.2.0/bin/riscv-none-embed
+BIN_STUB=$(ARDU15)/packages/WCH/tools/riscv-none-embed-gcc/8.2.0/bin/riscv-none-embed-
 TOOLCHAIN=WCH-via-Arduino
 else
-BIN_STUB=/Users/tw/zephyr-sdk-0.16.4/riscv64-zephyr-elf/bin/riscv64-zephyr-elf
+BIN_STUB=/Users/tw/zephyr-sdk-0.16.4/riscv64-zephyr-elf/bin/riscv64-zephyr-elf-
 TOOLCHAIN=Zephyr
+endif
+else
+BIN_STUB=$(TC_DIR)/bin/$(CROSS)
+TOOLCHAIN=Local-Toolchain
 endif
 
 QEMU_TOOLS=/opt/homebrew/bin
 
 MKDIR_P=mkdir -p
-LD :=$(BIN_STUB)-ld
-AS := $(BIN_STUB)-gcc
-CC := $(BIN_STUB)-gcc
-CXX := $(BIN_STUB)-g++
-OBJCOPY := $(BIN_STUB)-objcopy
-OBJDUMP := $(BIN_STUB)-objdump
-OBJSIZE := $(BIN_STUB)-size
-RANLIB := $(BIN_STUB)-ranlib
+LD :=$(BIN_STUB)ld
+CC := $(BIN_STUB)gcc
+CXX := $(BIN_STUB)g++
+OBJCOPY := $(BIN_STUB)objcopy
+OBJDUMP := $(BIN_STUB)objdump
+OBJSIZE := $(BIN_STUB)size
+RANLIB := $(BIN_STUB)ranlib
 OPENOCD := $(ARDU15)/packages/WCH/tools/openocd/1.0.0/bin/openocd
 OPENCFG := $(ARDU15)/packages/WCH/tools/openocd/1.0.0/bin/wch-riscv.cfg
 SRCR := $(HOME)/ng/dev/uc/AmForth-RV/appl/ch32v307/cpp/MRSC/CH32V307VCT6
@@ -213,7 +223,7 @@ help:
 	if (helpMessage) { \
 	helpCommand = substr($$1, 0, index($$1, ":")-1); \
 	helpMessage = substr(lastLine, RSTART + 2, RLENGTH); \
-	printf "  ${GREEN}%-$(TARGET_MAX_CHAR_NUM)s${RESET}\t${BLACK}%s${RESET}\n", helpCommand, helpMessage; \
+	printf "  ${GREEN}%-$(TARGET_MAX_CHAR_NUM)s${RESET}\t%s${RESET}\n", helpCommand, helpMessage; \
 	} \
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
@@ -221,6 +231,13 @@ help:
 
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
+
+# For some reason make decides at the end of the build that amforth.s is an intermediate file and deletes it.
+# You will see a spurious `rm amforth.s` at the end of the build.
+# Interestingly, even though our file is named amforth.S, it gets deleted on MacOS anyway,
+# because MacOS filesystem is case-insensitive (unfortunately).
+# .PRECIOUS overrides make's inferred cleanup attempt.
+.PRECIOUS: amforth.s
 
 ## Build hex file (will clean first)
 all: clean $(BUILD_DIR)/$(TARGET_ELF)
@@ -245,7 +262,10 @@ endif
 #   ./User                -> USER_OBJS (always linked directly)
 #   ./lib_wch_user|203    -> LIB_OBJS  (selectively linked from archive)
 #   ./lib_wch|203         -> LIB_OBJS  (selectively linked from archive)
-$(BUILD_DIR)/$(TARGET_ELF): $(USER_OBJS) $(BUILD_DIR)/libcode.a
+# NOTE: This duplicates the target from core/dev/Makefile, but this one is more specific (and last) so it will win,
+#  however dependencies of both targets are collected and executed, so this will run some unnecessary steps from core
+#  resulting in unnecessary files in build/
+$(BUILD_DIR)/$(TARGET_ELF): buildinfo $(USER_OBJS) $(BUILD_DIR)/libcode.a
 ifneq ($(strip $(LIB_OBJS)),)
 	$(CC) $(FLAGS) -T $(LD_FILE) -nostartfiles -o $@ $(USER_OBJS) -Wl,--start-group $(BUILD_DIR)/libcode.a -Wl,--end-group --verbose --specs=nano.specs --specs=nosys.specs
 else

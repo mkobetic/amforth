@@ -6,7 +6,7 @@ For details check out the READMEs in the respective directories.
 * core/ - the shared 32-bit AmForth core
 * arm/ - the ARM architecture core (Cortex M4)
 * rv/ - the RISC-V architecture core
-* rv/app, arm/app - AmForth for different boards and targets
+* rv/mcu/*, arm/mcu/* - AmForth for different boards and targets
 
 The original README follows.
 

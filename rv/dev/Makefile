@@ -22,9 +22,9 @@ OBJDUMP := $(TC_DIR)/bin/$(CROSS)objdump
 
 include $(AMFORTH)/core/dev/Makefile
 
-# Install development toolchain in TC_DIR
 ARCHIVE = xpack-$(CROSS)gcc-$(TC_VER)-$(HOST).tar.gz
 URL = https://github.com/xpack-dev-tools/$(CROSS)gcc-xpack/releases/download/v$(TC_VER)/$(ARCHIVE)
+## Install development toolchain in TC_DIR
 toolchain:
 	mkdir -p $(TC_DIR)
 	curl -L $(URL) | tar zx -C $(TC_DIR) --strip-components=1

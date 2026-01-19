@@ -32,7 +32,7 @@ buildinfo: words/build-info.tmpl
 build/%.o: %.s buildinfo
 	$(AS) -g --warn --fatal-warnings -alms=build/amforth.lst-as -I../.. -I $(AMFORTH)/core -o $@ $<
 
-build/amforth.elf: build/amforth.o
+build/%.elf: build/%.o
 	$(LD) -L $(AMFORTH)/core -T $(MCU_LD) $< -o $@ 
 
 build/%.hex: build/%.elf
@@ -47,7 +47,7 @@ build/%.lst: build/%.elf
 clean:
 	rm -f build/* words/build-info.s
 
-# A detailed dump of ELF sections for debugging linker issues
+## A detailed dump of ELF sections for debugging linker issues
 sections: sec-type sec-addr sec-sum
 
 sec-type:

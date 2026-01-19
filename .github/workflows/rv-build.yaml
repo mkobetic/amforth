@@ -23,5 +23,8 @@ jobs:
         if: steps.cache-toolchain.outputs.cache-hit != 'true'
         run: cd rv/dev && make toolchain
 
+      - name: Build CH32
+        run: cd rv/mcu/ch32v307 && make all
+
       - name: Build HiFive1
         run: cd rv/mcu/hifive1 && make all
