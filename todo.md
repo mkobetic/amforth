@@ -12,7 +12,7 @@ List of know issues and tasks that need to be done (by area)
 
 * [ ] CI compilation tests
 * [ ] CI core tests (emulated)
-* [ ] Standardized Makefile targets across all apps 
+* [ ] Standardized Makefile targets across all MCUs 
 * [ ] Extract OS and personal details from Makefiles (.env files?)
 * [ ] Automated compiled artifact releases
 * [ ] proper, and extractable comments for all words
@@ -37,7 +37,7 @@ List of know issues and tasks that need to be done (by area)
 * [ ] flash dictionary updates
 
 ## LINUX
-* [ ] fix compilation bugs
+* [x] fix compilation bugs
 
 
 # RISC-V
@@ -47,6 +47,7 @@ List of know issues and tasks that need to be done (by area)
 ## CH32V307
 
 ## HIFIVE1
+* [x] fix compilation
 * [ ] get it running under qemu -M sifive_e (SiFive E31 core)
 
 

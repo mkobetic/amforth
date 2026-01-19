@@ -169,7 +169,7 @@ LIB_OBJS  := $(filter $(BUILD_DIR)/$(LIB_WCH)/%,$(OBJS)) \
 USER_OBJS := $(filter-out $(BUILD_DIR)/$(LIB_WCH)/% \
                           $(BUILD_DIR)/$(LIB_USER)/%,$(OBJS))
 
-INC_FLAGS := -I . -I ../.. -I ../../../core
+INC_FLAGS := -I . -I ../.. -I $(AMFORTH)/core -I $(AMFORTH)
 
 # Compiler flags 
 ifeq ($(strip $(WANT_203)),YES)

@@ -13,15 +13,13 @@ include $(AMFORTH)/arm/dev/Makefile
 MCU_LD ?= linux.ld
 
 # if you want to run standard tests you need WANT_IGNORECASE flag set
-AOPTS=--defsym WANT_IGNORECASE=1
-# if you want debug info add -g
-AOPTS+=-g
+AOPTS +=--defsym WANT_IGNORECASE=1
 
 QEMU=qemu-system-arm
 LANG=C
 
 build/amforth: build/amforth.o
-	$(LD) -L $(AMFORTH)/core -T linux.ld -z max-page-size=4096 $< -o $@ 
+	$(LD) -L ../../../core -T linux.ld -z max-page-size=4096 $< -o $@ 
 
 # To run amforth in emulated container you can use a container runtime that supports --platform linux/arm/v7
 # For MacOS check out https://orbstack.dev/ (Free for personal use)
@@ -44,7 +42,11 @@ drun: image
 # to the implementation of the testing framework (see the tester source)
 test: image
 	docker run --rm --volume $(shell pwd)/../../..:/amforth amforth:latest /bin/sh -c \
+<<<<<<< HEAD
 		'cd amforth/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'
+=======
+		'cd amforth/_common/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'
+>>>>>>> 9fd674a (remove common/ add RAMALLOT)
 
 # Starts amforth under QEMU
 # WARNING(mk): This seems incomplete and does not work at least on MacOSX;
@@ -55,7 +57,7 @@ test: image
 # KERNEL = kernel8.img
 # DTB = bcm2709-rpi-2-b.dtb
 run: build/amforth
-	qemu-img resize ./amforth 128k
+	qemu-img resize build/amforth 128k
 	stty -icanon -echo
  	$(QEMU) -machine raspi2b -display none -serial mon:stdio  || true
 # 	$(QEMU) -machine $(MACHINE) -kernel $(KERNEL) -dtb $(DTB) -sd $(IMAGE) -nographic \

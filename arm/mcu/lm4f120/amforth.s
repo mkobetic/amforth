@@ -12,10 +12,10 @@
 .thumb
 
 .section .vector, "ax"
-.include "common/vectors.s"
+.include "vectors.s"
 
 .section amforth, "ax"
-.include "common/isr.s"
+.include "isr.s"
 
 STARTDICT
 

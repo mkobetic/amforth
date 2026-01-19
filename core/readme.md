@@ -66,12 +66,11 @@ The picture below shows the relevant bit of directory structure with the words/ 
 ```
 core                = core AmForth files; shared by all architectures and mcus
 ├── amforth32.ld    = shared linker file; defines the 32-bit memory layout (SECTIONS)
-├── common
-│   └── macros.inc  = shared macros (e.g. dictionary); included by arch macros.inc
-├── config.inc      = basic configuration parameters referenced by core/words
+├── config.inc      = core configuration parameters
 ├── dict_env.inc    = includes shared environment wordlist words
 ├── dict_prims.inc  = includes common primary words required by core/words (see [1])
 ├── dict_secs.inc   = includes all secondary core/words; define most of core functionality
+├── macros.inc      = shared macros (e.g. dictionary); included by arch macros.inc
 ├── readme.md
 └── user.inc        = shared user area words
 
@@ -87,9 +86,8 @@ arm                 = ARM Cortex-M based MCUs
 │   ├── linux              = generic linux/raspberry Pi
 │   └── ra4m1              = Renesas RA4M1 & Arduino Uno R4 board
 ├── arch_prims.inc  = includes ARM specific words
-├── common          = common source files to be included by mcus
 ├── interpreter.s = inner interpreter for ARM
-└── macros.inc      = ARM specific macros; includes core/common/macros.inc
+└── macros.inc      = ARM specific macros; includes core/macros.inc
 
 rv                  = RISC-V based MCUs
 ├── amforth.s       = template main source file to be used to start new boards
@@ -98,7 +96,7 @@ rv                  = RISC-V based MCUs
 │   └── hifive1     = HiFive board
 ├── arch_prims.inc  = includes RISC-V specific words
 ├── interpreter.s = inner interpreter for RISC-V
-└── macros.inc      = RISC-V specific macros; includes core/common/macros.inc
+└── macros.inc      = RISC-V specific macros; includes core/macros.inc
 ```
 
 [1] dict_prims.inc includes interpreter.s so that the interpreter code resides in the middle of the prim words (cpu caching reasons);
@@ -108,7 +106,6 @@ rv                  = RISC-V based MCUs
 ## Directory conventions
 
 words/ - source files of forth words, colon words and code words
-common/ - files intended for inclusion at lower levels
 dev/ - supporting utilities for AmForth development, e.g. gdb extensions, shared Makefile bits, etc.
 tools/ - runnable tools aimed for various supporting tasks, communication, docs, etc (preferably written in Python)
 build/ - directory for compilation artifacts, excluded from the repository

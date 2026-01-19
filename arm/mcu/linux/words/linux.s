@@ -106,6 +106,8 @@ NEXT
 
 VARIABLE "argv", ARGV
 
+RAMALLOT "uname_buf", 512
+
 COLON "uname", UNAME
   .word XT_DOLITERAL,RAM_lower_uname_buf
   .word XT_ZERO, XT_ZERO, XT_ZERO, XT_ZERO, XT_ZERO, XT_ZERO

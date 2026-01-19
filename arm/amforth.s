@@ -22,10 +22,10 @@ The default (custom) section flags seem to be CONTENTS and READONLY so not ALLOC
  */
  
 .section .vector, "ax"
-.include "common/vectors.s" 
+.include "vectors.s" 
 
 .section amforth, "ax"
-.include "common/isr.s"
+.include "isr.s"
 
 STARTDICT
 

@@ -29,8 +29,17 @@ buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 	mkdir -p build
 
+# Default assembler options
+# -g = include debug info in the object file
+AOPTS := -g --warn --fatal-warnings
+# Generate assembler listing
+AOPTS += -alms=build/amforth.lst-as
+# The include order is important: architecture > core > AMFORTH
+# for simple imports, e.g. config.inc or words/xx.s, the more specific directory wins
+# the AMFORTH root allows include files to import more general include files with the same name
+INCLUDES := -I../.. -I $(AMFORTH)/core -I $(AMFORTH)
 build/%.o: %.s buildinfo
-	$(AS) -g --warn --fatal-warnings -alms=build/amforth.lst-as -I../.. -I $(AMFORTH)/core -o $@ $<
+	$(AS) $(AOPTS) $(INCLUDES) -o $@ $<
 
 build/%.elf: build/%.o
 	$(LD) -L $(AMFORTH)/core -T $(MCU_LD) $< -o $@ 

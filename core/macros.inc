@@ -36,6 +36,14 @@ VALUE "forth-wordlist", FORTH_WORDLIST, 99b
 8:  .p2align 2,0x0f
 .endm
 
+.macro RAMALLOT Name, Length 
+    .section amramlo    /* switch to RAM section */
+    .set RAM_lower_\Name, .          
+    .space \Length
+    .set RAM_upper_\Name, .          
+    .section amforth    /* switch back to flash section */
+.endm
+
 .equ Flag_cloaked,    0x80000000
 .equ Flag_visible,    0x00000000
 
