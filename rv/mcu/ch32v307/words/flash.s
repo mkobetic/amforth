@@ -289,7 +289,10 @@ QCOMMA_0002: # then
 
     COLON "(h!i)" , INT_STORE
     .word XT_HSTORE
-    .word XT_ZERO  # this is here whilst the real INT_STORE leaves n 
+#    .word XT_ZERO  # this is here whilst the real INT_STORE leaves n
+    .word XT_TWO
+    .word XT_DOT
+    .word XT_CR 
     .word XT_EXIT
     
 .include "words/flash.qem"
@@ -339,11 +342,11 @@ CODEWORD "(h!i)", INT_STORE # ( -- )
       and t1, t1, t2          # 
       sw  t1, 0(t0)           #
 
-      li  t0, R32_FLASH_STATR
-      lw  t1, 0(t0)
-      andi t1, t1, (1<<5)
-      savetos
-      add s3 , t1 , 0 
+#      li  t0, R32_FLASH_STATR
+#      lw  t1, 0(t0)
+#      andi t1, t1, (1<<5)
+#      savetos
+#      add s3 , t1 , 0 
 
       NEXT
       

@@ -1,21 +1,21 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-
-
-
-
 # MFD wrong chip .include "words/pll.s"
 
 .if WANT_QEM_BUILD
-    .include "words/serial.qem"        
-.else
-    .include "words/usart.s"
-    .include "words/gpio.s"     
+    .include "words/serial.qem"
+    .include "words/flash.qem"
+    .include "words/flash.307"
+    .include "words/eeprom.s"    
 .endif
 
-# MFD wrong chip .include "words/qspidiv.s"
+.if WANT_307_BUILD
+    .include "words/flash.307"  
+    .include "words/usart.s"
+    .include "words/gpio.s"
+    .include "words/eeprom.s"    
+.endif
 
-# MFD include "words/flash.s" as in dict_prims
 .include "words/led.s"
 .include "words/blink.s"
 
@@ -25,7 +25,6 @@
 
 .include "words/type0.s" # not sure 
 
-# MFD .include "words/qtest.s"
 .if WANT_SYSTICK
 .include "words/systick.s"
 .endif
@@ -47,7 +46,7 @@
     .include "words/float.s"
 .endif
 
-.include "words/eeprom.s"
+
 
 #.include "words/areg.s"
 

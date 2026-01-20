@@ -36,9 +36,9 @@ COLON "warm", WARM
 
 #  .word XT_WARM_RELOAD
   
-  .word XT_EEPROMDOTINIT
-  .word XT_EEPROMDOTWARM
-  .word XT_STDDOTUNLOCK
+#  .word XT_EEPROMDOTINIT
+#  .word XT_EEPROMDOTWARM
+#  .word XT_STDDOTUNLOCK
   
   .word XT_TURNKEY    
   

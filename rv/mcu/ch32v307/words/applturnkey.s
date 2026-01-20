@@ -31,5 +31,16 @@ COLON "wch-turnkey", APPLTURNKEY # ( -- ) SYSTEM:
   .word XT_STORE
 .endif
 
+.if WANT_307_BUILD
+  .word XT_FLASHDOT307
+  .word XT_EEPROMDOTINIT                                                           
+  .word XT_EEPROMDOTWARM                                                           
+  .word XT_STDDOTUNLOCK                                                            
+.endif
+
+.if WANT_QEM_BUILD
+   .word XT_FLASHDOTQEM
+.endif   
+
 .word XT_EXIT
 

@@ -15,7 +15,7 @@ COLON "~(c,)", TILDELPARENCCOMMARPAREN
 # ----------------------------------------------------------------------
 COLON "~(,)", TILDELPARENCOMMARPAREN 
 	.word XT_DP
-	.word XT_CSTORE
+	.word XT_STORE
 	.word XT_CELL
 	.word XT_DALLOT
 	.word XT_EXIT

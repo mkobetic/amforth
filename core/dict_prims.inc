@@ -23,7 +23,7 @@
 .include "words/d-minus.s"
 .include "words/star.s"
 
-.include "words/flash.s"
+# .include "words/flash.s"
 .include "words/exit.s"
 .include "words/exiti.s"
 
