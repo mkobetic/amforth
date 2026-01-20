@@ -9,9 +9,11 @@ ifeq ("$(BOARD)", "armv7l")
 endif
 LANG=C
 
+# if you want to run standard tests you need WANT_IGNORECASE flag set
+AOPTS+=--defsym WANT_IGNORECASE=1
+
 upload: build/amforth.elf
 	lm4flash build/amforth.bin
-
 
 # QEMU's lm3s6965evb machine is not the LM4F120H5QR (m3 vs m4), but seems to be close enough.
 # https://www.qemu.org/docs/master/system/arm/stellaris.html
@@ -40,3 +42,10 @@ gdb:
 	$(CROSS)gdb-py build/amforth.elf --quiet \
 		-ex 'target remote :1234' \
  		-ex "directory ../../dev"
+
+# Run standard tests and output the results, requires WANT_IGNORECASE enabled above
+# because the standard tests are in all caps and all amforth words are in lowercase.
+TESTER := $(AMFORTH)/lib/forth2012/tester
+test:
+	cat $(TESTER)/tester-amforth.frt $(TESTER)/core.fr | \
+	$(QEMU) -serial stdio

@@ -24,6 +24,8 @@ SIZE := $(TC_DIR)/bin/$(CROSS)size
 GDB := $(TC_DIR)/bin/$(CROSS)gdb
 GDBPY := $(TC_DIR)/bin/$(CROSS)gdb-py3
 
+AOPTS := -g --warn --fatal-warnings -alms=build/amforth.lst-as
+
 all: build/amforth.bin build/amforth.hex build/amforth.lst
 
 buildinfo: words/build-info.tmpl

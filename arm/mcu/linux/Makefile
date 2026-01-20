@@ -37,8 +37,8 @@ drun: image
 
 # Run standard tests and output the results, requires WANT_IGNORECASE enabled above
 # because the standard tests are in all caps and all amforth words are in lowercase.
-# Currently segfaults, presumably because variables don't work yet which are central
-# to the implementation of the testing framework (see the tester source)
+# Currently segfaults, in about the middle of the core test suite
+# TESTING HERE ....
 test: image
 	$(DOCKER) /bin/sh -c \
 		'cd amforth/_common/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'

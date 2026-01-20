@@ -183,7 +183,9 @@ endif
 # Needed for the INCLUDE amforth32.ld to work in linked files (-L must preceed the -T !!!)
 FLAGS += -L ../../../core
 
-DEFINES  := -DSYSCLK_FREQ_96MHz
+DEFINES := -DSYSCLK_FREQ_96MHz
+# Need WANT_IGNORECASE if running core tests
+DEFINES += -DWANT_IGNORECASE
 #ASFLAGS  := $(FLAGS) -x assembler $(INC_FLAGS) -MMD -MP $(DEFINES) 
 ASFLAGS  := $(FLAGS) -x assembler-with-cpp  $(INC_FLAGS) -MMD -MP $(DEFINES) 
 CPPFLAGS := $(FLAGS) $(INC_FLAGS) -MMD -MP $(DEFINES)
@@ -360,14 +362,22 @@ debug:
 	@echo "$(INC_FLAGS)" | tr ' ' '\n'
 
 #? --- QEM ---
+QEMU := $(QEMU_TOOLS)/qemu-system-riscv32 -M virt -display none -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF)
+
 ## redirect operator uart to stdio
 stdio:
-	$(QEMU_TOOLS)/qemu-system-riscv32 -M virt -display none -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF) -serial stdio    
+	$(QEMU) -serial stdio    
+
+# Run standard tests and output the results, requires WANT_IGNORECASE enabled above
+# because the standard tests are in all caps and all amforth words are in lowercase.
+TESTER := $(AMFORTH)/lib/forth2012/tester
+test:
+	cat $(TESTER)/tester-amforth.frt $(TESTER)/core.fr | \
+	$(QEMU) -serial stdio
 
 ## create with socket
-sock:
-	$(QEMU_TOOLS)/qemu-system-riscv32 -M virt -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF) \
-    -serial tcp:localhost:4321,server,nowait -display none                                                  
+# sock:
+#     $(QEMU) -serial 'tcp:localhost:4321,server,nowait'                                             
 
 ## socket shell  
 sksh:
