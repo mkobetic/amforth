@@ -1,7 +1,4 @@
 
-RAMALLOT datastack, datastack_size
-RAMALLOT returnstack, returnstack_size
-
 CODEWORD "cold", COLD
 
    ldr r0, =RAM_upper_returnstack

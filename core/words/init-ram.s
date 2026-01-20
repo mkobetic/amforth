@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-RAMALLOT userarea, userarea_size
-
 COLON "init-ram", INIT_RAM
 
     .word XT_DOLITERAL, RAM_lower_userarea, XT_UP_STORE

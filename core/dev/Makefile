@@ -42,6 +42,9 @@ INCLUDES := -I../.. -I $(AMFORTH)/core -I $(AMFORTH)
 build/%.o: %.s buildinfo
 	$(AS) $(AOPTS) $(INCLUDES) -o $@ $<
 
+# Sometimes make decides that amforth.elf is an intermediary file that should be deleted.
+.PRECIOUS: build/amforth.elf
+
 build/%.elf: build/%.o
 	$(LD) -L $(AMFORTH)/core -T $(MCU_LD) $< -o $@ 
 

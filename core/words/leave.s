@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-RAMALLOT leavestack, leavestack_size
-
 VALUE "lp0", LP0, RAM_upper_leavestack
 VARIABLE "lp", LP
 

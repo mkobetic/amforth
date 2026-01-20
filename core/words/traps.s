@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-# TODO: should this be configurable?
-RAMALLOT ram_vector, 256*cellsize
 .equ ram_vector_base, RAM_lower_ram_vector
 
 CONSTANT "trap.base" , TRAP_BASE , ram_vector_base
