@@ -11,7 +11,7 @@ SCOMMA_0002: # do
 	.word XT_PLUS
 	.word XT_CFETCH
 	.word XT_CCOMMA
-	.word XT_DOLOOP,SCOMMA_0002 # loop
+	.word XT_DOLOOP,SCOMMA_0002 /* loop */
 SCOMMA_0001: # (for ?do IF required) 
 	.word XT_DROP
 	.word XT_DP
@@ -20,12 +20,12 @@ SCOMMA_0001: # (for ?do IF required)
 	.word XT_SWAP
 	.word XT_MINUS
 	.word XT_ZERO
-	.word XT_QDOCHECK, XT_DOCONDBRANCH,SCOMMA_0003 # ?do
+	.word XT_QDOCHECK, XT_DOCONDBRANCH,SCOMMA_0003 /* ?do */
 	.word XT_DODO
 SCOMMA_0004: # do
 	.word XT_MINUSONE
 	.word XT_CCOMMA
-	.word XT_DOLOOP,SCOMMA_0004 # loop
+	.word XT_DOLOOP,SCOMMA_0004 /* loop */
 SCOMMA_0003: # (for ?do IF required) 
 	.word XT_EXIT
 
