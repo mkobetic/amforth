@@ -1,3 +1,7 @@
+![ARM](https://github.com/mkobetic/coin/actions/workflows/arm-build.yaml/badge.svg)
+![ARM-Linux](https://github.com/mkobetic/coin/actions/workflows/arm-linux-build.yaml/badge.svg)
+![RISC-V](https://github.com/mkobetic/coin/actions/workflows/rv-build.yaml/badge.svg)
+
 This is a fork of https://sourceforge.net/p/amforth/code/2462/.
 
 The purpose is to advance the 32-bit ARM and RISC-V variants of AmForth.
