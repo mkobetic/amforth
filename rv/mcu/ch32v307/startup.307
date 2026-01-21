@@ -336,8 +336,6 @@ DMA2_Channel9_IRQHandler:  1:  j 1b
 DMA2_Channel10_IRQHandler:  1:  j 1b
 DMA2_Channel11_IRQHandler:  1:  j 1b
 
-
-RAMALLOT reg_shadow, 256
 .equ reg_shadow, RAM_lower_reg_shadow
 
 	.section	.text.handle_reset,"ax",@progbits

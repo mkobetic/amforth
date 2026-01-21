@@ -3,6 +3,7 @@
 # MFD wrong chip .include "words/pll.s"
 
 .if WANT_QEM_BUILD
+    .print "INFO: using QEM MCU words"	
     .include "words/serial.qem"
     .include "words/flash.qem"
     .include "words/flash.307"
@@ -10,6 +11,7 @@
 .endif
 
 .if WANT_307_BUILD
+    .print "INFO: using 307 MCU words"	
     .include "words/flash.307"  
     .include "words/usart.s"
     .include "words/gpio.s"
@@ -20,7 +22,7 @@
 .include "words/blink.s"
 
 .include "words/env-board.s"
-#include "words/build-info.s"
+.include "words/build-info.s"
 .include "words/applturnkey.s"
 
 .include "words/type0.s" # not sure 

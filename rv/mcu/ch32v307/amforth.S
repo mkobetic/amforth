@@ -42,11 +42,13 @@
 .include "macros.inc"       # macros for everything
 .include "user.inc"         # user area configuration 
 
+RAMALLOT reg_shadow, 256
+
 STARTDICT
 
 .include "dict_prims.inc" 
 .include "dict_secs.inc"
-#include "dict_mcu.inc"    # include with cpp
+.include "dict_mcu.inc"    # include with cpp
 .include "dict_env.inc"
 
 ENDDICT
