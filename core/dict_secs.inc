@@ -88,6 +88,7 @@
 .include "words/xliteral.s"
 .include "words/compile.s"
 .include "words/comma.s"
+.include "words/ccomma.s"
 .include "words/immediate-q.s"
 .include "words/order.s"
 .include "words/find-xt.s"
@@ -250,3 +251,4 @@
 .include "words/dalign.s"
 
 .include "words/mlc.s"
+.include "words/store_i.s"

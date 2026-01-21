@@ -2,6 +2,16 @@
 # TODO
 # need freeze (exists but needs retooling)
 
+.equ R32_FLASH_KEYR     , 0x40022004 # FPEC key register X
+.equ R32_FLASH_OBKEYR   , 0x40022008 # OBKEY register X 
+.equ R32_FLASH_STATR    , 0x4002200C # Status register 0x00000000
+.equ R32_FLASH_CTLR     , 0x40022010 # Control register 0x00000080
+.equ R32_FLASH_ADDR     , 0x40022014 # Address register 0x00000000
+.equ R32_FLASH_OBR      , 0x4002201C # Selection word register 0x03FFFFFC
+.equ R32_FLASH_WPR      , 0x40022020 # Write protection register 0xFFFFFFF
+.equ R32_FLASH_MODEKEYR , 0x40022024 # Extension key register X
+.equ OFFSET, 0x08000000
+
 .extern eeprom_buf
 .extern eeprom
 
@@ -242,4 +252,125 @@ EEPROMDOTSAVE_0001: # (for ?do IF required)
     .word XT_EEPROMDOTLOCK
 	.word XT_EXIT
 
+
+# Moved from flash.s temporarily as part of nff
+
+CODEWORD "flash.lock", FLASH_LOCK # ( -- ) FLASH: Lock flash
+
+         li t0, R32_FLASH_CTLR
+         lw t1, 0(t0)
+         ori t1,t1, (1 << 7)
+         sw t1, 0(t0)
+         NEXT
+
+
+
+
+
+# ----------------------------------------------------------------------
+CODEWORD "~flash.busy" , WAIT_FLASH_BUSY # ( -- ) FLASH: Busy loop exit when FLASH controller ready to proceed
+         li t0, R32_FLASH_STATR
+1:
+         lw t1, 0(t0)
+         andi t1,t1, (1 << 0)
+         bne t1,zero,1b 
+         NEXT
+
+CODEWORD "~flash.writing" , WAIT_FLASH_WRITING # ( -- ) FLASH: Busy loop exit when FLASH controller ready to write
+         li t0, R32_FLASH_STATR
+1:
+         lw t1, 0(t0)
+         andi t1,t1, (1 << 1)
+         bne t1,zero,1b 
+         NEXT
+         
+CODEWORD "+flash.prog" , PLUS_FLASH_PROG # ( -- ) FLASH: Set programming fast mode flag
+         li t0, R32_FLASH_CTLR
+         lw t1, 0(t0)
+         li t2, (1<<16) # FTPG RW Perform a fast page programming operation 
+         or t1, t1, t2    
+         sw t1, 0(t0)
+         NEXT
+
+CODEWORD "-flash.prog" , MINUS_FLASH_PROG # ( -- ) FLASH: Unset programming fast mode flag
+         li  t0, R32_FLASH_CTLR
+         lw  t1, 0(t0)
+         li  t2, ~(1<<16) # FTPG RW Perform a fast page programming operation 
+         and t1, t1, t2    
+         sw  t1, 0(t0)
+         NEXT
+
+
+CODEWORD "flash.prog" , FLASH_PROG # ( -- ) FLASH: Start program erase / write process
+         li  t0, R32_FLASH_CTLR
+         lw  t1, 0(t0)
+         li  t2, (1<<21)
+         or  t1,t1,t2
+         sw  t1, 0(t0)
+         NEXT
+
+.ifnb 
+CODEWORD "-flash.eop" , MINUS_FLASH_EOP # ( -- ) FLASH: Unset TOP flag
+         li  t0, R32_FLASH_STATR
+         lw  t1, 0(t0)
+         ori t1, t1, (1<<5)
+         sw  t1, 0(t0)
+         NEXT
+
+
+CODEWORD "~flash.eop" , WAIT_FLASH_EOP # ( -- ) FLASH: Busy loop exit when FLASH controller ready to write
+         li t0, R32_FLASH_STATR
+1:
+         lw t1, 0(t0)
+         andi t1,t1, (1 << 5)
+         bne t1,zero,1b 
+         NEXT
+.endif          
+
+CODEWORD "flash.unlock", FLASH_UNLOCK # ( -- ) FLASH: Unlock flash
+
+      li t0 , R32_FLASH_KEYR
+      li t1 , 0x45670123
+      sw t1 , 0(t0)
+      li t1 , 0xCDEF89AB
+      sw t1 , 0(t0)
+
+      li t0 , R32_FLASH_MODEKEYR
+      li t1 , 0x45670123
+      sw t1 , 0(t0)
+      li t1 , 0xCDEF89AB
+      sw t1 , 0(t0)
+
+      NEXT
+
+CODEWORD "flash.erase" , FLASH_ERASE # ( a-flash -- ) FLASH: Erase 256B page flash-a is in 
+
+      li  t0 , 0xFFFFFF00     # make the page address 
+      and s3 , s3, t0         # from TOS
+
+      li  t0, R32_FLASH_CTLR
+      lw  t1, 0(t0)
+      li  t2, (1<<17)         # fast 256 byte page erase
+      or  t1, t1, t2          # ...
+      sw  t1, 0(t0)           # save in preparation
+
+      li  t3, R32_FLASH_ADDR  # store page address 
+      sw  s3, 0(t3)           #
+
+      lw  t1, 0(t0)           # t0 still has R32_FLASH_CTLR
+      ori t1, t1, (1<<6)      # 
+      sw  t1, 0(t0)           # start erasing...
+
+      li   t3, R32_FLASH_STATR
+1:    lw   t1, 0(t3)          # contents of status
+      andi t1, t1, 1          # busy
+      bne  t1, zero, 1b       # branch if busy (t1!=0)
+
+      lw  t1, 0(t0)           # t0 still has R32_FLASH_CTLR
+      li  t2, ~(1<<17)        # clear the erase flag
+      and t1, t1, t2          # ...
+      sw  t1, 0(t0)            # save in preparation
+  
+      loadtos
+      NEXT
 

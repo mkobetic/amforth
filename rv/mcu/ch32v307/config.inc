@@ -10,10 +10,10 @@
 # Choose the target for the build. Exactly ONE of these
 # options should be YES, all others should be NO
 
-.equ WANT_307_BUILD    , NO
+.equ WANT_307_BUILD    , YES
 .equ WANT_305_BUILD    , NO
 .equ WANT_203_BUILD    , NO
-.equ WANT_QEM_BUILD    , YES
+.equ WANT_QEM_BUILD    , NO
 
 # Choose NO if you want to include C code in the lib_???_user dir 
 

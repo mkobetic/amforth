@@ -1,20 +1,17 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-CONSTANT "flash.mask" , FLASHDOTMASK , 0xFF
+DEFER "(,)", LPARENCOMMARPAREN , XT_NOP  
 
-COLON ",", COMMA
-    .word XT_DALIGN
-	.word XT_DP
-	.word XT_MEMMODE
-	.word XT_DOCONDBRANCH,COMMA_0001
-	# if
-	.word XT_BANGI
-	.word XT_DOBRANCH,COMMA_0002
+COLON ",", COMMA 
+    .word XT_MEMMODE
+    .word XT_DOCONDBRANCH,COMMA_0001 /* if */
+    .word XT_LPARENCOMMARPAREN
+    .word XT_DOBRANCH,COMMA_0002
 COMMA_0001: # else
-	.word XT_STORE
+    .word XT_DP
+    .word XT_STORE
+    .word XT_CELL
+    .word XT_DALLOT
 COMMA_0002: # then
-	.word XT_CELL
-	.word XT_DALLOT
-	.word XT_EXIT
-
+    .word XT_EXIT
 

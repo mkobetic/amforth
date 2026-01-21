@@ -1,0 +1,65 @@
+# ----------------------------------------------------------------------
+COLON "~(dallot)", TILDELPARENDALLOTRPAREN 
+	.word XT_DP
+	.word XT_PLUS
+    .word XT_DOTO
+	.word XT_DP
+	.word XT_EXIT
+# ----------------------------------------------------------------------
+COLON "~(c,)", TILDELPARENCCOMMARPAREN 
+	.word XT_DP
+	.word XT_CSTORE
+	.word XT_ONE
+	.word XT_DALLOT
+	.word XT_EXIT
+# ----------------------------------------------------------------------
+COLON "~(,)", TILDELPARENCOMMARPAREN 
+	.word XT_DP
+	.word XT_STORE
+	.word XT_CELL
+	.word XT_DALLOT
+	.word XT_EXIT
+# ----------------------------------------------------------------------
+COLON "flash.qem" , FLASHDOTQEM
+
+     # ' ~(dallot) to (dallot)
+     
+    .word XT_DOLITERAL
+    .word XT_TILDELPARENDALLOTRPAREN
+    .word XT_DOLITERAL    
+    .word XT_LPARENDALLOTRPAREN
+    .word XT_CELLPLUS
+	.word XT_FETCH
+	.word XT_STORE
+
+     # ' ~(c,) to (c,)
+     
+    .word XT_DOLITERAL
+    .word XT_TILDELPARENCCOMMARPAREN
+    .word XT_DOLITERAL
+    .word XT_LPARENCCOMMARPAREN
+    .word XT_CELLPLUS
+	.word XT_FETCH
+	.word XT_STORE
+
+     # ' ~(,) to (,)
+     
+    .word XT_DOLITERAL
+    .word XT_TILDELPARENCOMMARPAREN
+    .word XT_DOLITERAL
+    .word XT_LPARENCOMMARPAREN
+    .word XT_CELLPLUS
+	.word XT_FETCH
+	.word XT_STORE
+
+     # ' ! to !i
+     
+    .word XT_DOLITERAL
+    .word XT_STORE
+    .word XT_DOLITERAL
+    .word XT_STORE_I
+    .word XT_CELLPLUS
+	.word XT_FETCH
+	.word XT_STORE
+
+    .word XT_EXIT
