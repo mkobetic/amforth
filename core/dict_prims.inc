@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-# all primitves / code words
-# they are placed close together to
-# maximize cache usage
-#
+# all primitives / code words;
+# placed close together to maximize cache usage
+
+# early compilation steps
+.include "core/amforth32.s"
 
 .include "words/drop.s"
 .include "words/over.s"

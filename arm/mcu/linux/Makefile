@@ -13,9 +13,7 @@ include $(AMFORTH)/arm/dev/Makefile
 MCU_LD ?= linux.ld
 
 # if you want to run standard tests you need WANT_IGNORECASE flag set
-AOPTS=--defsym WANT_IGNORECASE=1
-# if you want debug info add -g
-AOPTS+=-g
+AOPTS +=--defsym WANT_IGNORECASE=1
 
 QEMU=qemu-system-arm
 LANG=C
@@ -33,18 +31,17 @@ image: build/amforth
 # Once terminal to the container opens you can start amforth, the binary is on the PATH.
 # The whole host amforth directory is mounted in the container at /amforth.
 # Apparently cannot run gdb inside the container, because ptrace sys call is not supported in emulation.
+DOCKER = docker run --rm --volume $(AMFORTH):/amforth amforth:latest
 drun: image
-	docker run --interactive --tty --rm \
-		--volume $(shell pwd)/../../..:/amforth \
-		amforth:latest
+	$(DOCKER) --interactive --tty
 
 # Run standard tests and output the results, requires WANT_IGNORECASE enabled above
 # because the standard tests are in all caps and all amforth words are in lowercase.
 # Currently segfaults, presumably because variables don't work yet which are central
 # to the implementation of the testing framework (see the tester source)
 test: image
-	docker run --rm --volume $(shell pwd)/../../..:/amforth amforth:latest /bin/sh -c \
-		'cd amforth/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'
+	$(DOCKER) /bin/sh -c \
+		'cd amforth/_common/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'
 
 # Starts amforth under QEMU
 # WARNING(mk): This seems incomplete and does not work at least on MacOSX;
@@ -55,7 +52,7 @@ test: image
 # KERNEL = kernel8.img
 # DTB = bcm2709-rpi-2-b.dtb
 run: build/amforth
-	qemu-img resize ./amforth 128k
+	qemu-img resize build/amforth 128k
 	stty -icanon -echo
  	$(QEMU) -machine raspi2b -display none -serial mon:stdio  || true
 # 	$(QEMU) -machine $(MACHINE) -kernel $(KERNEL) -dtb $(DTB) -sd $(IMAGE) -nographic \

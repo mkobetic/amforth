@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-.equ cellsize, 4
-
 # start of flash dictionary. The 0 is the stop marker.
 .macro STARTDICT
   # .text should aready be in section amforth
@@ -34,6 +32,17 @@ VALUE "forth-wordlist", FORTH_WORDLIST, 99b
     .byte 8f - 7f
 7:  .ascii "\string"
 8:  .p2align 2,0x0f
+.endm
+
+.macro RAMALLOT Name, Length, Padding
+    .section amramlo,"aw",%nobits    /* switch to RAM section */
+    .set RAM_lower_\Name, .          
+    .space \Length
+    .set RAM_upper_\Name, .
+    .ifnb \Padding
+    .space \Padding
+    .endif
+    .section amforth    /* switch back to flash section */
 .endm
 
 .equ Flag_cloaked,    0x80000000

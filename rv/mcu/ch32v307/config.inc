@@ -1,8 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # options
 
-.equ YES , 1
-.equ NO  , 0 
+.include "core/config.inc"
 
 # the big choices - but only half of it. The Makefile must have
 # the equivalent defines set too. No easy way to do it from here.
@@ -84,8 +83,3 @@
     .equ WANT_MATCH   , YES
 .endif
 
-
-# currently cellsize needs to be 4. One day
-# it will be a configuration variable. 
-
-.equ cellsize , 4 

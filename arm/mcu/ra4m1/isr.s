@@ -19,4 +19,4 @@ irq_vektor_timer2a:
 irq_vektor_timer2b:
 
 # fall back to nullhandler
-.include "common/isr.s"
+.include "arm/isr.s"

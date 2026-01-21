@@ -4,6 +4,7 @@
 import gdb
 
 # TODO: we should be able to read these from the symbol table
+# FIXME: These are now wrong with amforth32.ld in the picture
 FlashStart = 0x00004000
 FlashEnd = 0x00040000
 RAM_lower_datastack = 0x20000000
