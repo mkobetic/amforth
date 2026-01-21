@@ -10,6 +10,8 @@ List of know issues and tasks that need to be done (by area)
 * [ ] document amforth32.ld (assumptions, section purpose, etc)
 * [ ] move non-address constants from amforth32.ld to config.inc? (cellsize, region sizes, etc...)
 
+* [ ] a way to build different configurations for a given MCU
+* [ ] ability to build with particular feature without changing files (e.g WANT_IGNORECASE)
 * [x] CI compilation tests
 * [ ] CI core tests (emulated)
 * [ ] Standardized Makefile targets across all MCUs 

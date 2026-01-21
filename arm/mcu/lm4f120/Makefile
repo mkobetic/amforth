@@ -45,7 +45,27 @@ gdb:
 
 # Run standard tests and output the results, requires WANT_IGNORECASE enabled above
 # because the standard tests are in all caps and all amforth words are in lowercase.
+# Makes it almost through the core tests, freezes at
+# > TESTING SOURCE >IN WORD
+#  ok
+# > 
+#  ok
+# > : GS1 S" SOURCE" 2DUP EVALUATE
+# 3153 554F 4352  ?? -13 30 
+# >        >R SWAP >R = R> R> = ;
+
 TESTER := $(AMFORTH)/lib/forth2012/tester
 test:
 	cat $(TESTER)/tester-amforth.frt $(TESTER)/core.fr | \
-	$(QEMU) -serial stdio
+	$(QEMU) -serial stdio | \
+	awk ' \
+		BEGIN { pass = 0; fail = 0 } \
+		/^> TESTING / { print } \
+		/^> T\{.*\}T/ { marker=$$0; next } \
+		marker && / ok[[:space:]]$$/ { pass += 1 } \
+		marker && $$0 !~ / ok[[:space:]]$$/ { fail += 1 ; print marker; print $$0 } \
+		{ marker="" } \
+		END { \
+			printf "PASS: %d, FAIL: %d, TOTAL: %d\n", pass, fail, pass + fail; \
+			if (fail > 0) exit 1 \
+		}'

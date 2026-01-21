@@ -5,8 +5,6 @@
 .include "macros.inc"
 .include "user.inc"
 
-.equ WANT_IGNORECASE, 0
-
 .syntax unified
 .cpu cortex-m4
 .thumb

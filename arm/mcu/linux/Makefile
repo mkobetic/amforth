@@ -38,7 +38,36 @@ drun: image
 # Run standard tests and output the results, requires WANT_IGNORECASE enabled above
 # because the standard tests are in all caps and all amforth words are in lowercase.
 # Currently segfaults, in about the middle of the core test suite
-# TESTING HERE ....
+# > T{ -2 2 -2 */MOD -> -2 2 -2 T*/MOD }T
+#  ?? -13 16 
+# > T{ 7 2 3 */MOD -> 7 2 3 T*/MOD }T
+#  ?? -13 14 
+# > T{ 7 2 -3 */MOD -> 7 2 -3 T*/MOD }T
+#  qemu: uncaught target signal 11 (Segmentation fault) - core dumped
+# ?? -13 15 
+# > T{ -7 2 3 */MOD -> -7 2 3 T*/MOD }T
+#  ?? -13 15 
+# > T{ -7 2 -3 */MOD -> -7 2 -3 T*/MOD }T
+#  ?? -13 16 
+# > T{ MAX-INT 2 MAX-INT */MOD -> MAX-INT 2 MAX-INT T*/MOD }T
+#  ?? -13 26 
+# > T{ MIN-INT 2 MIN-INT */MOD -> MIN-INT 2 MIN-INT T*/MOD }T
+#  ?? -13 26 
+# > 
+#  ok
+# > \ ------------------------------------------------------------------------
+#  ok
+# > TESTING HERE , @ ! CELL+ CELLS C, C@ C! CHARS 2@ 2! ALIGN ALIGNED +! ALLOT
+#  ok
+# > 
+#  ok
+# > HERE 1 ALLOT
+#  ok
+# > HERE
+#  ok
+# > CONSTANT 2NDA
+# Segmentation fault
+make: *** [test] Error 139
 test: image
 	$(DOCKER) /bin/sh -c \
 		'cd amforth/_common/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'
