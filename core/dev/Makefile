@@ -37,6 +37,11 @@ buildinfo: words/build-info.tmpl
 AOPTS := -g --warn --fatal-warnings
 # Generate assembler listing
 AOPTS += -alms=build/amforth.lst-as
+# if you want to run standard tests you need WANT_IGNORECASE flag set
+ifdef WANT_IGNORECASE
+AOPTS +=--defsym WANT_IGNORECASE=$(WANT_IGNORECASE)
+endif
+
 # The include order is important: architecture > core > AMFORTH
 # for simple imports, e.g. config.inc or words/xx.s, the more specific directory wins
 # the AMFORTH root allows include files to import more general include files with the same name

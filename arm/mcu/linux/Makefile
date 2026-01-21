@@ -12,9 +12,6 @@ AMFORTH ?= $(shell git rev-parse --show-toplevel)
 include $(AMFORTH)/arm/dev/Makefile
 MCU_LD ?= linux.ld
 
-# if you want to run standard tests you need WANT_IGNORECASE flag set
-AOPTS +=--defsym WANT_IGNORECASE=1
-
 QEMU=qemu-system-arm
 LANG=C
 

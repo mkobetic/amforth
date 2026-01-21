@@ -9,9 +9,6 @@ ifeq ("$(BOARD)", "armv7l")
 endif
 LANG=C
 
-# if you want to run standard tests you need WANT_IGNORECASE flag set
-AOPTS+=--defsym WANT_IGNORECASE=1
-
 upload: build/amforth.elf
 	lm4flash build/amforth.bin
 

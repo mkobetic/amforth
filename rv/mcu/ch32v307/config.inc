@@ -9,17 +9,17 @@
 # Choose the target for the build. Exactly ONE of these
 # options should be YES, all others should be NO
 
-.equ WANT_307_BUILD    , YES
+.equ WANT_307_BUILD    , NO
 .equ WANT_305_BUILD    , NO
 .equ WANT_203_BUILD    , NO
-.equ WANT_QEM_BUILD    , NO
+.equ WANT_QEM_BUILD    , YES
 
 # Choose NO if you want to include C code in the lib_???_user dir 
 
 .equ WANT_ASM_BUILD    , YES
 
 
-.equ WANT_IGNORECASE   , YES  
+#.equ WANT_IGNORECASE   , YES
 .equ WANT_NESTED_ISR   , NO
 
 # if WANT_ASM_BUILD is YES the USB options will be ignored 

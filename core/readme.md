@@ -139,3 +139,18 @@ Note that while symbols defined in linker files can be referenced in assembler f
 Primarily it means that they cannot be used as immediate values.
 
 This is because the assembler processes source code before the linker, so it can't resolve symbols defined only in the linker script when used as immediates. Immediates must be known at assembly time, while linker symbols are resolved later during linking. Using linker symbol improperly fails with confusing error "Unknown symbol". The issue might be that the symbol exists but is used improperly (in a way that would require embedding it into the instruction opcode, as opposed to an instruction argument).
+
+# Development
+
+## Tools
+
+## Testing
+
+## QEMU Tests
+
+QEMU is best installed with the OS package manager (homebrew on Mac)
+* requires qemu-system-arm for ARM MCUs
+* requires qemu-system-risc32 for RISC-V MCUs
+* Linux MCUs can run on qemu-user on Linux or in Docker on MacOS
+* The Makefile test target requires timeout command to force QEMU to terminate,
+  it is native on linux, install coreutils on Mac to get gtimeout

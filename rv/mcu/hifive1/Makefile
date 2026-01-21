@@ -28,9 +28,6 @@ GDB_UPLOAD_CMDS += -ex "monitor resume"
 GDB_UPLOAD_CMDS += -ex "monitor shutdown"
 GDB_UPLOAD_CMDS += -ex "quit"
 
-# if you want to run standard tests you need WANT_IGNORECASE flag set
-AOPTS+=--defsym WANT_IGNORECASE=1
-
 upload:
 	$(RISCV_OPENOCD) $(OPENOCDARGS) & \
 	$(GDB) build/amforth.hex $(GDB_UPLOAD_ARGS) $(GDB_UPLOAD_CMDS) && \

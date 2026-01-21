@@ -24,4 +24,4 @@ jobs:
         run: cd arm/dev && make toolchain
 
       - name: Build Linux/RaspPi
-        run: cd arm/mcu/linux && make all
+        run: cd arm/mcu/linux && WANT_IGNORECASE=1 make all

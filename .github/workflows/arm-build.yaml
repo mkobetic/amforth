@@ -24,16 +24,16 @@ jobs:
         run: cd arm/dev && make toolchain
 
       - name: Build RA4M1
-        run: cd arm/mcu/ra4m1 && make all
+        run: cd arm/mcu/ra4m1 && WANT_IGNORECASE=1 make all
 
       - name: Build LM4F120
         run: cd arm/mcu/lm4f120 && make all
 
-      - name: Cache and Install QEMU
+      - name: Cache and Install QEMU ARM
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: qemu-system
+          packages: qemu-system-arm
           version: 1 # Change this to manually bust the cache
 
-      - name: Test LM4F120
+      - name: LM4F120 Core Tests
         run: cd arm/mcu/lm4f120 && make test
