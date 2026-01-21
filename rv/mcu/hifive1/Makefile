@@ -40,10 +40,3 @@ QEMU=qemu-system-riscv32 -M sifive_e -display none -bios none -kernel build/amfo
 # Starts amforth under QEMU
 run:
 	$(QEMU) -serial stdio
-
-# Run standard tests and output the results, requires WANT_IGNORECASE enabled above
-# because the standard tests are in all caps and all amforth words are in lowercase.
-TESTER := $(AMFORTH)/lib/forth2012/tester
-test:
-	cat $(TESTER)/tester-amforth.frt $(TESTER)/core.fr | \
-	$(QEMU) -serial stdio

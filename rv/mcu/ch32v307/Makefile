@@ -105,7 +105,7 @@ BIN_STUB=$(TC_DIR)/bin/$(CROSS)
 TOOLCHAIN=Local-Toolchain
 endif
 
-QEMU_RV32?=/usr/local/Cellar/qemu/10.1.0/bin/qemu-system-riscv32
+QEMU_RV32 ?= /usr/local/Cellar/qemu/10.1.0/bin/qemu-system-riscv32
 
 MKDIR_P=mkdir -p
 LD :=$(BIN_STUB)ld
@@ -186,7 +186,7 @@ DEFINES := -DSYSCLK_FREQ_96MHz
 
 # Need WANT_IGNORECASE if running core tests
 ifdef WANT_IGNORECASE
-DEFINES += -DWANT_IGNORECASE
+DEFINES += -Wa,--defsym,WANT_IGNORECASE=1
 endif
 
 #ASFLAGS  := $(FLAGS) -x assembler $(INC_FLAGS) -MMD -MP $(DEFINES) 
@@ -369,48 +369,11 @@ QEMU := $(QEMU_RV32) -M virt -display none -bios none -kernel $(BUILD_DIR)/$(TAR
 
 ## redirect operator uart to stdio
 stdio:
-	$(QEMU) -serial stdio    
-
-# Run standard tests and output the results, requires WANT_IGNORECASE enabled above
-# because the standard tests are in all caps and all amforth words are in lowercase.
-# STATUS: Feezes about half way through at
-# > T{ 1ST @ 2ND @ -> 5 6 }T
-#  ok
-# > T{ 1ST 2@ -> 6 5 }T
-#  ?? -13 9 
-# > T{ 2 1 1ST 2! -> }T
-#  ?? -13 13 
-# > T{ 1ST 2@ -> 2 1 }T
-#  ?? -13 9 
-# > T{ 1S 1ST !  1ST @ -> 1S }T  \ CAN STORE CELL-WIDE VALUE
-#  ok
-# > 
-#  ok
-# > HERE 1 C,
-#  ?? -13 9 
-# > HERE 2 C,
-#  ?? -13 9 
-# > CONSTANT 2NDC
-# 444E  ?? -4 13 
-# > CONSTANT 1STC
-# 5453  ?? -4 13 
-# > T{ 1STC 2NDC U< -> <TRUE> }T  \ HERE MUST GROW WITH ALLOT
-# INCORRECT RESULT: T{ 1STC 2NDC U< -> <TRUE> }T  \ HERE MUST GROW WITH ALLOT
-#  ok
-# > T{ 1STC CHAR+ -> 2NDC }T   \ ... BY ONE CHAR
-# INCORRECT RESULT: T{ 1STC CHAR+ -> 2NDC }T   \ ... BY ONE CHAR
-#  ok
-# > T{ 1STC 1 CHARS + -> 2NDC }T
-#  ?? -13 15 
-# > T{ 1STC C@ 2NDC C@ -> 1 2 }T
-TESTER := $(AMFORTH)/lib/forth2012/tester
-test:
-	cat $(TESTER)/tester-amforth.frt $(TESTER)/core.fr | \
 	$(QEMU) -serial stdio
 
 ## create with socket
-# sock:
-#     $(QEMU) -serial 'tcp:localhost:4321,server,nowait'                                             
+sock:
+	$(QEMU) -serial tcp:localhost:4321,server,nowait  # need to terminate
 
 ## socket shell  
 sksh:

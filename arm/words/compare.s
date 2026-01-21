@@ -44,6 +44,7 @@ compare:
      ldrb r3, [tos, r0]
 
 .if WANT_IGNORECASE==1
+  .print "INFO: Using IGNORECASE for word comparison"
      lowercase r2
      lowercase r3
 .endif

@@ -144,13 +144,27 @@ This is because the assembler processes source code before the linker, so it can
 
 ## Tools
 
+### Toolchain
+
+* TC_DIR
+* Local toolchain `make toolchain`
+* Arduino IDE toolchain
+
+### Debugging
+
+### Uploaders, other MCU specific tools
+
 ## Testing
 
-## QEMU Tests
+## Emulation Tests
+
+Large amount of core functionality can be tested with QEMU emulation.
+These tests run automatically on every commit pushed to github.
 
 QEMU is best installed with the OS package manager (homebrew on Mac)
 * requires qemu-system-arm for ARM MCUs
 * requires qemu-system-risc32 for RISC-V MCUs
 * Linux MCUs can run on qemu-user on Linux or in Docker on MacOS
-* The Makefile test target requires timeout command to force QEMU to terminate,
-  it is native on linux, install coreutils on Mac to get gtimeout
+* The Makefile `test` target requires timeout command to force QEMU to terminate,
+  it is native on linux, install coreutils on Mac to get it
+* It uses `awk` script to parse out the test results
