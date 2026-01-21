@@ -57,7 +57,7 @@ gdb:
 TESTER := $(AMFORTH)/lib/forth2012/tester
 test:
 	cat $(TESTER)/tester-amforth.frt $(TESTER)/core.fr | \
-	$(QEMU) -serial stdio | \
+	gtimeout -s TERM 5s $(QEMU) -serial stdio | \
 	awk ' \
 		BEGIN { pass = 0; fail = 0 } \
 		/^> TESTING / { print } \

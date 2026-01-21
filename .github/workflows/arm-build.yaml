@@ -28,3 +28,10 @@ jobs:
 
       - name: Build LM4F120
         run: cd arm/mcu/lm4f120 && make all
+
+      - name: Install QEMU
+        run: |
+          sudo apt-get install -y qemu-system
+
+      - name: Test LM4F120
+        run: cd arm/mcu/lm4f120 && make test
