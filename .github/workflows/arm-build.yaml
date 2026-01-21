@@ -29,9 +29,11 @@ jobs:
       - name: Build LM4F120
         run: cd arm/mcu/lm4f120 && make all
 
-      - name: Install QEMU
-        run: |
-          sudo apt-get install -y qemu-system
+      - name: Cache and Install QEMU
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: qemu-system
+          version: 1 # Change this to manually bust the cache
 
       - name: Test LM4F120
         run: cd arm/mcu/lm4f120 && make test
