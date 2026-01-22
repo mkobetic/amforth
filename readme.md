@@ -7,10 +7,23 @@ This is a fork of https://sourceforge.net/p/amforth/code/2462/.
 The purpose is to advance the 32-bit ARM and RISC-V variants of AmForth.
 
 For details check out the READMEs in the respective directories.
-* core/ - the shared 32-bit AmForth core
+* [core/](https://github.com/mkobetic/amforth/tree/main/core) - the shared 32-bit AmForth core
 * arm/ - the ARM architecture core (Cortex M4)
 * rv/ - the RISC-V architecture core
 * rv/mcu/, arm/mcu/ - AmForth for different boards and targets
+
+## Available MCUs/Boards
+
+### RISC-V
+
+* [WCH CH32V307 / dev board (+QEMU emulation)](https://github.com/mkobetic/amforth/tree/main/rv/mcu/ch32v307)
+* [SiFive FE310 / Hifive1](https://github.com/mkobetic/amforth/tree/main/rv/mcu/hifive1)
+
+### ARM Cortex M4
+
+* [Renesas RA4M1 / Arduino UNO R4](https://github.com/mkobetic/amforth/tree/main/arm/mcu/ra4m1)
+* [TI LM4F120 / Stellaris Launchpad (+QEMU emulation)](https://github.com/mkobetic/amforth/tree/main/arm/mcu/lm4f120)
+* [Generic ARM-32 / Generic Linux, Raspberry PI (+Docker emulation)](https://github.com/mkobetic/amforth/tree/main/arm/mcu/linux)
 
 The original README follows.
 

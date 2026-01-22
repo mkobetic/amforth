@@ -1,4 +1,3 @@
-
 Short Notice for the bravest
 
 Required packages (Ubuntu 18.04 LTS standard repo)
@@ -10,7 +9,7 @@ Required packages (Ubuntu 18.04 LTS standard repo)
 
 Build with "make". 
 
-Test it with "make qrun" with the qemu installed,
-or "make drun" to run with arm/v7 capable container runtime,
-or copy the binary to a Raspberry PI
+* Test it with "make qrun" with the qemu installed,
+* or "make drun" to run with arm/v7 capable container runtime,
+* or copy the binary to a Raspberry PI
 

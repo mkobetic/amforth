@@ -12,9 +12,8 @@ List of know issues and tasks that need to be done (by area)
 * [ ] is the RAM_upper/lower_fi area used for anything?
 
 * [ ] a way to build different configurations for a given MCU
-* [ ] ability to build with particular feature without changing files (e.g WANT_IGNORECASE)
 * [x] CI compilation tests
-* [ ] CI core tests (emulated)
+* [x] CI core tests (emulated)
 * [ ] Standardized Makefile targets across all MCUs 
 * [ ] Extract OS and personal details from Makefiles (.env files?)
 * [ ] Automated compiled artifact releases
@@ -28,6 +27,9 @@ List of know issues and tasks that need to be done (by area)
 
 # ARM
 
+* [ ] implement CHAR+
+* [ ] fix core test freeze
+* [ ] add readme.md
 * [ ] implement m-rot.s (see rv)
 * [ ] implement umstar.s (see rv)
 * [ ] (exiti) likely needs work
@@ -45,6 +47,7 @@ List of know issues and tasks that need to be done (by area)
 
 
 # RISC-V
+* [ ] add readme.md
 * [ ] generalize flash dictionary write support (flash.s)
 * [ ] generalize eeprom support (eeprom.s)
 

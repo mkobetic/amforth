@@ -7,6 +7,8 @@ and with architecture compatible MCU specific words, e.g.
 * core/words/ + rv/words + rv/mcu/hifive1/words (HiFive board), or
 * core/words/ + arm/words + arm/mcu/lm4f120/words (Stellaris Launchpad board)
 
+
+
 # Architecture
 
 ## Memory layout
@@ -152,6 +154,9 @@ This is because the assembler processes source code before the linker, so it can
 
 ### Debugging
 
+* GDB
+* OpenOCD
+
 ### Uploaders, other MCU specific tools
 
 ## Testing
@@ -159,12 +164,12 @@ This is because the assembler processes source code before the linker, so it can
 ## Emulation Tests
 
 Large amount of core functionality can be tested with QEMU emulation.
+Linux based targets can run on qemu-user on Linux or in Docker on MacOS.
 These tests run automatically on every commit pushed to github.
 
 QEMU is best installed with the OS package manager (homebrew on Mac)
 * requires qemu-system-arm for ARM MCUs
 * requires qemu-system-risc32 for RISC-V MCUs
-* Linux MCUs can run on qemu-user on Linux or in Docker on MacOS
 * The Makefile `test` target requires timeout command to force QEMU to terminate,
   it is native on linux, install coreutils on Mac to get it
 * It uses `awk` script to parse out the test results
