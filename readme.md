@@ -1,6 +1,6 @@
 ![ARM](https://github.com/mkobetic/amforth/actions/workflows/arm-build.yaml/badge.svg)
-![ARM-Linux](https://github.com/mkobetic/amforth/actions/workflows/arm-linux-build.yaml/badge.svg)
-![RISC-V Build](https://github.com/mkobetic/amforth/actions/workflows/rv-build.yaml/badge.svg)
+![ARM/Linux](https://github.com/mkobetic/amforth/actions/workflows/arm-linux-build.yaml/badge.svg)
+![RISC-V](https://github.com/mkobetic/amforth/actions/workflows/rv-build.yaml/badge.svg)
 
 This is a fork of https://sourceforge.net/p/amforth/code/2462/.
 
@@ -10,7 +10,7 @@ For details check out the READMEs in the respective directories.
 * core/ - the shared 32-bit AmForth core
 * arm/ - the ARM architecture core (Cortex M4)
 * rv/ - the RISC-V architecture core
-* rv/mcu/*, arm/mcu/* - AmForth for different boards and targets
+* rv/mcu/, arm/mcu/ - AmForth for different boards and targets
 
 The original README follows.
 
