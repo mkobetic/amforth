@@ -15,11 +15,6 @@ HOST ?= $(HOST_OS)-$(if $(filter $(HOST_ARCH),x86_64),x64,$(HOST_ARCH))
 TC_VER ?= 15.2.0-1
 TC_DIR ?= $(AMFORTH)/toolchain/$(CROSS)$(TC_VER)
 
-AS := $(TC_DIR)/bin/$(CROSS)as
-LD := $(TC_DIR)/bin/$(CROSS)ld
-OBJCOPY := $(TC_DIR)/bin/$(CROSS)objcopy
-OBJDUMP := $(TC_DIR)/bin/$(CROSS)objdump
-
 include $(AMFORTH)/core/dev/Makefile
 
 ARCHIVE = xpack-$(CROSS)gcc-$(TC_VER)-$(HOST).tar.gz

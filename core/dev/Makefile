@@ -14,15 +14,19 @@ ifeq ("$(REVISION)", "")
     REVISION := $(shell svnversion -n)
 endif
 
+# These are implicit variables in make, can't use ?=
 AS := $(TC_DIR)/bin/$(CROSS)as
 LD := $(TC_DIR)/bin/$(CROSS)ld
-OBJCOPY := $(TC_DIR)/bin/$(CROSS)objcopy
-OBJDUMP := $(TC_DIR)/bin/$(CROSS)objdump
-READELF := $(TC_DIR)/bin/$(CROSS)readelf
-NM := $(TC_DIR)/bin/$(CROSS)nm
-SIZE := $(TC_DIR)/bin/$(CROSS)size
-GDB := $(TC_DIR)/bin/$(CROSS)gdb
-GDBPY := $(TC_DIR)/bin/$(CROSS)gdb-py3
+
+PP ?= $(TC_DIR)/bin/$(CROSS)cpp
+OBJCOPY ?= $(TC_DIR)/bin/$(CROSS)objcopy
+OBJDUMP ?= $(TC_DIR)/bin/$(CROSS)objdump
+READELF ?= $(TC_DIR)/bin/$(CROSS)readelf
+NM ?= $(TC_DIR)/bin/$(CROSS)nm
+SIZE ?= $(TC_DIR)/bin/$(CROSS)size
+GDB ?= $(TC_DIR)/bin/$(CROSS)gdb
+GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py3
+
 
 all: build/amforth.bin build/amforth.hex build/amforth.lst
 
@@ -30,11 +34,12 @@ buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 	mkdir -p build
 
-# Default assembler options
-# -g = include debug info in the object file
-AOPTS := -g --warn --fatal-warnings
-# Generate assembler listing
-AOPTS += -alms=build/amforth.lst-as
+AOPTS ?= -g --warn --fatal-warnings -alms=build/amforth.lst-as
+# if you want to run standard tests you need WANT_IGNORECASE flag set
+ifdef WANT_IGNORECASE
+AOPTS +=--defsym WANT_IGNORECASE=$(WANT_IGNORECASE)
+endif
+
 # The include order is important: architecture > core > AMFORTH
 # for simple imports, e.g. config.inc or words/xx.s, the more specific directory wins
 # the AMFORTH root allows include files to import more general include files with the same name
@@ -59,6 +64,33 @@ build/%.lst: build/%.elf
 
 clean:
 	rm -f build/* words/build-info.s
+
+# Run standard tests, output failures and summarize the results.
+# Not finished means we didn't get through the whole test file.
+# Requires WANT_IGNORECASE, because the standard tests
+# are in all caps and all AmForth words are in lowercase;
+# `WANT_IGNORECASE=1 make` should do it.
+# Uses timeout command to terminate QEMU, because there is no way
+# to do it from the inside, i.e. from AmForth running in it.
+TIMEOUT ?= 2s
+TESTER ?= $(AMFORTH)/lib/forth2012/tester/tester-amforth.frt
+test:
+	{ cat $(TESTER); \
+	  $(PP) -w $(AMFORTH)/tests/cpp-core.fr; \
+	  echo '.s" TESTS FINISHED"' ; \
+	} | timeout -s TERM $(TIMEOUT) $(QEMU) -serial stdio | \
+	awk ' \
+		BEGIN { pass = 0; fail = 0; finished = 0 } \
+		/TESTS FINISHED/ { finished = 1 } \
+		/^> TESTING / { print } \
+		/^> T\{.*\}T/ { marker=$$0; next } \
+		marker && / ok[[:space:]]$$/ { pass += 1 } \
+		marker && $$0 !~ / ok[[:space:]]$$/ { fail += 1 ; print marker; print $$0 } \
+		{ marker="" } \
+		END { \
+			printf "FINISHED: %s, PASS: %d, FAIL: %d\n", finished ? "Y" : "N", pass, fail; \
+			if (!finished || fail > 0) exit 1 \
+		}'
 
 ## A detailed dump of ELF sections for debugging linker issues
 sections: sec-type sec-addr sec-sum

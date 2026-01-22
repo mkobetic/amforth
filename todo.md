@@ -9,7 +9,10 @@ List of know issues and tasks that need to be done (by area)
 * [ ] remove HIDEWORD in favor of HEADLESS
 * [ ] document amforth32.ld (assumptions, section purpose, etc)
 * [ ] move non-address constants from amforth32.ld to config.inc? (cellsize, region sizes, etc...)
+* [ ] is the RAM_upper/lower_fi area used for anything?
 
+* [ ] a way to build different configurations for a given MCU
+* [ ] ability to build with particular feature without changing files (e.g WANT_IGNORECASE)
 * [x] CI compilation tests
 * [ ] CI core tests (emulated)
 * [ ] Standardized Makefile targets across all MCUs 
@@ -20,6 +23,7 @@ List of know issues and tasks that need to be done (by area)
 * [ ] figure out what to do about docs
 * [ ] document conventions and standard practices
 * [ ] document dev tool setup
+* [ ] add enabled feature list to the greeting
 
 
 # ARM
@@ -45,6 +49,7 @@ List of know issues and tasks that need to be done (by area)
 * [ ] generalize eeprom support (eeprom.s)
 
 ## CH32V307
+* [ ] RAMALLOT reg_shadow differences between 307 ad QEM configuration
 
 ## HIFIVE1
 * [x] fix compilation

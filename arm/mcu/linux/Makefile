@@ -12,10 +12,6 @@ AMFORTH ?= $(shell git rev-parse --show-toplevel)
 include $(AMFORTH)/arm/dev/Makefile
 MCU_LD ?= linux.ld
 
-# if you want to run standard tests you need WANT_IGNORECASE flag set
-AOPTS +=--defsym WANT_IGNORECASE=1
-
-QEMU=qemu-system-arm
 LANG=C
 
 build/amforth: build/amforth.o
@@ -31,17 +27,25 @@ image: build/amforth
 # Once terminal to the container opens you can start amforth, the binary is on the PATH.
 # The whole host amforth directory is mounted in the container at /amforth.
 # Apparently cannot run gdb inside the container, because ptrace sys call is not supported in emulation.
-DOCKER = docker run --rm --volume $(AMFORTH):/amforth amforth:latest
+DOCKER = docker run --rm --volume $(AMFORTH):/amforth
 drun: image
-	$(DOCKER) --interactive --tty
+	$(DOCKER) --interactive --tty amforth:latest
 
 # Run standard tests and output the results, requires WANT_IGNORECASE enabled above
 # because the standard tests are in all caps and all amforth words are in lowercase.
-# Currently segfaults, presumably because variables don't work yet which are central
-# to the implementation of the testing framework (see the tester source)
-test: image
-	$(DOCKER) /bin/sh -c \
-		'cd amforth/_common/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'
+# Run with: `WANT_IGNORECASE=1 make dtest`
+# Currently segfaults towards the end:
+# ...
+# > TESTING DO LOOP +LOOP I J UNLOOP LEAVE EXIT
+# > TESTING DEFINING WORDS: : ; CONSTANT VARIABLE CREATE DOES> >BODY
+# > TESTING <# # #S #> HOLD SIGN BASE >NUMBER HEX DECIMAL
+# qemu: uncaught target signal 11 (Segmentation fault) - core dumped
+# FINISHED: N, PASS: 342, FAIL: 1
+# Segmentation fault
+dtest: image
+	$(DOCKER) amforth:latest /bin/sh -c ' \
+		cd amforth/arm/mcu/linux; \
+		QEMU=amforth AMFORTH=/amforth PP=cpp make test '
 
 # Starts amforth under QEMU
 # WARNING(mk): This seems incomplete and does not work at least on MacOSX;
@@ -51,6 +55,7 @@ test: image
 # IMAGE = 2025-12-04-raspios-trixie-armhf-lite.img
 # KERNEL = kernel8.img
 # DTB = bcm2709-rpi-2-b.dtb
+QEMU ?=qemu-system-arm
 run: build/amforth
 	qemu-img resize build/amforth 128k
 	stty -icanon -echo

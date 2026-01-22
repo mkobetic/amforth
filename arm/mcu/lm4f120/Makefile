@@ -12,7 +12,6 @@ LANG=C
 upload: build/amforth.elf
 	lm4flash build/amforth.bin
 
-
 # QEMU's lm3s6965evb machine is not the LM4F120H5QR (m3 vs m4), but seems to be close enough.
 # https://www.qemu.org/docs/master/system/arm/stellaris.html
 QEMU=qemu-system-arm -M lm3s6965evb -display none -bios none -kernel build/amforth.elf

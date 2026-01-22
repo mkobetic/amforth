@@ -35,6 +35,7 @@
 
   lbu a2, 0(a1)
 .if WANT_IGNORECASE==1
+  .print "INFO: Using IGNORECASE for word comparison"
   lowercase a2
 .endif
   lbu a3, 0(s3)

@@ -105,8 +105,7 @@ BIN_STUB=$(TC_DIR)/bin/$(CROSS)
 TOOLCHAIN=Local-Toolchain
 endif
 
-QEMU_TOOLS=/opt/homebrew/bin
-QEMU_TOOLS=/usr/local/Cellar/qemu/10.1.0/bin
+QEMU_RV32 ?= /usr/local/Cellar/qemu/10.1.0/bin/qemu-system-riscv32
 
 MKDIR_P=mkdir -p
 LD :=$(BIN_STUB)ld
@@ -183,7 +182,13 @@ endif
 # Needed for the INCLUDE amforth32.ld to work in linked files (-L must preceed the -T !!!)
 FLAGS += -L ../../../core
 
-DEFINES  := -DSYSCLK_FREQ_96MHz
+DEFINES := -DSYSCLK_FREQ_96MHz
+
+# Need WANT_IGNORECASE if running core tests
+ifdef WANT_IGNORECASE
+DEFINES += -Wa,--defsym,WANT_IGNORECASE=1
+endif
+
 #ASFLAGS  := $(FLAGS) -x assembler $(INC_FLAGS) -MMD -MP $(DEFINES) 
 ASFLAGS  := $(FLAGS) -x assembler-with-cpp  $(INC_FLAGS) -MMD -MP $(DEFINES) 
 CPPFLAGS := $(FLAGS) $(INC_FLAGS) -MMD -MP $(DEFINES)
@@ -360,14 +365,15 @@ debug:
 	@echo "$(INC_FLAGS)" | tr ' ' '\n'
 
 #? --- QEM ---
+QEMU := $(QEMU_RV32) -M virt -display none -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF)
+
 ## redirect operator uart to stdio
 stdio:
-	$(QEMU_TOOLS)/qemu-system-riscv32 -M virt -display none -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF) -serial stdio    
+	$(QEMU) -serial stdio
 
 ## create with socket
 sock:
-	$(QEMU_TOOLS)/qemu-system-riscv32 -M virt -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF) \
-    -serial tcp:localhost:4321,server,nowait -display none                                                  
+	$(QEMU) -serial tcp:localhost:4321,server,nowait  # need to terminate
 
 ## socket shell  
 sksh:

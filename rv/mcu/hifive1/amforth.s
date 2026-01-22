@@ -9,8 +9,6 @@
 .include "macros.inc"
 .include "user.inc"
 
-.equ WANT_IGNORECASE, 1
-
 .section amforth, "ax"
 
 STARTDICT

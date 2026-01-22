@@ -51,3 +51,6 @@
 # Other configuration parameters
 .equ WANT_USB_OPERATOR , NO
 .equ WANT_QEM_BUILD , NO
+
+# This can also be enabled with an environment variable with the same name
+# .equ WANT_IGNORECASE, YES
