@@ -14,12 +14,12 @@ For details check out the READMEs in the respective directories.
 
 ## Available MCUs/Boards
 
-### RISC-V
+### RISC-V 32
 
 * [WCH CH32V307 / dev board (+QEMU emulation)](https://github.com/mkobetic/amforth/tree/main/rv/mcu/ch32v307)
 * [SiFive FE310 / Hifive1](https://github.com/mkobetic/amforth/tree/main/rv/mcu/hifive1)
 
-### ARM Cortex M4
+### ARM 32
 
 * [Renesas RA4M1 / Arduino UNO R4](https://github.com/mkobetic/amforth/tree/main/arm/mcu/ra4m1)
 * [TI LM4F120 / Stellaris Launchpad (+QEMU emulation)](https://github.com/mkobetic/amforth/tree/main/arm/mcu/lm4f120)
