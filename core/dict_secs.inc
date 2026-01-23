@@ -252,3 +252,6 @@
 
 .include "words/mlc.s"
 .include "words/store_i.s"
+.include "words/char-plus.s"
+.include "words/2store.s"
+.include "words/2fetch.s"
