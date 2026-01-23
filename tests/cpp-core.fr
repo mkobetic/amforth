@@ -340,9 +340,8 @@ T{ 1S 2 UM* -> 1S 1 LSHIFT 1 }T
 T{ MAX-UINT MAX-UINT UM* -> 1 1 INVERT }T
 
 \ ------------------------------------------------------------------------
-#ifdef DONT_SKIP
+#ifdef DONT_SKIP # missing keys words AND debate on floored/symmetric division 
 TESTING DIVIDE: FM/MOD SM/REM UM/MOD */ */MOD / /MOD MOD
-\ missing keys words AND debate on floored/symmetric division 
 
 T{ 0 S>D 1 FM/MOD -> 0 0 }T
 T{ 1 S>D 1 FM/MOD -> 0 1 }T
@@ -545,9 +544,8 @@ T{ MAX-INT 2 MAX-INT */MOD -> MAX-INT 2 MAX-INT T*/MOD }T
 T{ MIN-INT 2 MIN-INT */MOD -> MIN-INT 2 MIN-INT T*/MOD }T
 #endif 
 \ ------------------------------------------------------------------------
-#ifdef DONT_SKIP
+#ifdef DONT_SKIP # because of memory soup ALLOT DALLOT hang dp not word aligned 
 TESTING HERE , @ ! CELL+ CELLS C, C@ C! CHARS 2@ 2! ALIGN ALIGNED +! ALLOT
-\ because of memory soup ALLOT DALLOT hang dp not word aligned 
 
 HERE 1 ALLOT
 HERE
@@ -556,6 +554,7 @@ CONSTANT 1STA
 T{ 1STA 2NDA U< -> <TRUE> }T		\ HERE MUST GROW WITH ALLOT
 T{ 1STA 1+ -> 2NDA }T			\ ... BY ONE ADDRESS UNIT
 ( MISSING TEST: NEGATIVE ALLOT )
+#endif
 
 HERE 1 ,
 HERE 2 ,
@@ -582,15 +581,14 @@ CONSTANT 2NDC
 CONSTANT 1STC
 T{ 1STC 2NDC U< -> <TRUE> }T		\ HERE MUST GROW WITH ALLOT
 T{ 1STC CHAR+ -> 2NDC }T			\ ... BY ONE CHAR
-#ifdef DONT_SKIP
 T{ 1STC 1 CHARS + -> 2NDC }T
-\ missing CHARS
-#endif
 T{ 1STC C@ 2NDC C@ -> 1 2 }T
 T{ 3 1STC C! -> }T
 T{ 1STC C@ 2NDC C@ -> 3 2 }T
 T{ 4 2NDC C! -> }T
 T{ 1STC C@ 2NDC C@ -> 3 4 }T
+
+#ifdef DONT_SKIP # because of memory soup ALLOT DALLOT hang dp not word aligned 
 
 ALIGN 1 ALLOT HERE ALIGN HERE 3 CELLS ALLOT
 CONSTANT A-ADDR  CONSTANT UA-ADDR
@@ -606,8 +604,7 @@ T{ 1234 A-ADDR CELL+ !  A-ADDR CELL+ @ -> 1234 }T
 
 T{ 123 456 A-ADDR CELL+ 2!  A-ADDR CELL+ 2@ -> 123 456 }T
 #endif
-#ifdef DONT_SKIP
-\ missing CHARS
+
 : BITS ( X -- U )
    0 SWAP BEGIN DUP WHILE DUP MSB AND IF >R 1+ R> THEN 2* REPEAT DROP ;
 ( CHARACTERS >= 1 AU, <= SIZE OF CELL, >= 8 BITS )
@@ -624,7 +621,7 @@ T{ 0 1ST ! -> }T
 T{ 1 1ST +! -> }T
 T{ 1ST @ -> 1 }T
 T{ -1 1ST +! 1ST @ -> 0 }T
-#endif
+
 \ ------------------------------------------------------------------------
 TESTING CHAR [CHAR] [ ] BL S"
 
@@ -761,9 +758,8 @@ T{ NOP NOP1 NOP NOP2 -> }T
 T{ NOP1 -> }T
 T{ NOP2 -> }T
 
-#ifdef DONT_SKIP
+#ifdef DONT_SKIP # DOES> I think there is a way this will pass but not now  
 \ DOES> 
-\ I think there is a way this will pass but not now  
 T{ : DOES1 DOES> @ 1 + ; -> }T
 T{ : DOES2 DOES> @ 2 + ; -> }T
 T{ CREATE CR1 -> }T
@@ -783,9 +779,8 @@ T{ W1 -> HERE 1 + }T
 T{ W1 -> HERE 2 + }T
 #endif
 \ ------------------------------------------------------------------------
-#ifdef DONT_SKIP
+#ifdef DONT_SKIP # missing EVALUATE
 TESTING EVALUATE
-\ missing EVALUATE
 
 : GE1 S" 123" ; IMMEDIATE
 : GE2 S" 123 1+" ; IMMEDIATE
@@ -803,9 +798,9 @@ T{ : GE7 GE2 GE5 ; -> }T
 T{ GE7 -> 124 }T
 #endif
 \ ------------------------------------------------------------------------
-#ifdef DONT_SKIP
+#ifdef DONT_SKIP # missing word EVALUATE
 TESTING SOURCE >IN WORD
-\ missing word
+
 
 : GS1 S" SOURCE" 2DUP EVALUATE
        >R SWAP >R = R> R> = ;
@@ -902,9 +897,8 @@ T{ GP7 -> <TRUE> }T
 
 
 \ >NUMBER TESTS
-#ifdef DONT_SKIP
+#ifdef DONT_SKIP # memory soup
 CREATE GN-BUF 0 C,
-\ memory soup and missing char+
 
 : GN-STRING	GN-BUF 1 ;
 : GN-CONSUMED	GN-BUF CHAR+ 0 ;
@@ -979,9 +973,8 @@ T{ SEEBUF -> 12 34 34 }T
 #endif
 
 \ ------------------------------------------------------------------------
-#ifdef DONT_SKIP
+#ifdef DONT_SKIP # This test requires visual inspection. Doesn't work in automated setting.
 TESTING OUTPUT: . ." CR EMIT SPACE SPACES TYPE U.
-\ This test requires visual inspection. Doesn't work in automated setting.
 
 : OUTPUT-TEST
    ." YOU SHOULD SEE THE STANDARD GRAPHIC CHARACTERS:" CR
@@ -1007,9 +1000,9 @@ T{ OUTPUT-TEST -> }T
 
 #endif
 \ ------------------------------------------------------------------------
-#ifdef DONT_SKIP
+#ifdef DONT_SKIP # getting input in an automated test is not helpful
 TESTING INPUT: ACCEPT
-\ getting input in an automated test is not helpful
+
 
 CREATE ABUF 80 CHARS ALLOT
 
@@ -1028,8 +1021,8 @@ TESTING DICTIONARY SEARCH RULES
 T{ : GDX   123 ; : GDX   GDX 234 ; -> }T
 
 T{ GDX -> 123 234 }T
-#ifdef DONT_SKIP
-\ missing .(
+
+#ifdef DONT_SKIP # missing .(
 CR .( End of Core word set tests) CR
 #endif
 
