@@ -5,6 +5,7 @@
 *.lst
 *.hex
 *.list
+.env
 build/
 dist/
 /toolchain

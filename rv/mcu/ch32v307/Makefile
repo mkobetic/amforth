@@ -45,7 +45,10 @@ WANT_305:=$(shell perl -n -e ' if(/.equ\s+WANT_305_BUILD\s*,\s+(YES|NO)/){print 
 # ----------------------------------------------------------------------
 # Variables that will probably need to be changed to suit your setup 
 
-TMPPATH=$(HOME)/ng/dev/uc/minasm
+# Include personal environment settings
+-include .env
+
+TMPPATH?=$(HOME)/ng/dev/uc/minasm
 MINICOM=/opt/homebrew/bin/minicom
 MINICOM=/usr/local/bin/minicom
 AMSHELL=$(TMPPATH)/tools/amforth-shell.py --port $(MODEM) --speed 115200 $1
@@ -54,9 +57,9 @@ SOCKSHELL=$(TMPPATH)/tools/socket-shell.py --port $(MODEM) --speed 115200 $1
 UU=$(AMFORTH)/tools/uu
 
 ifeq ($(strip $(WANT_203)),YES)
-MODEM=/dev/tty.usbmodem0B358F0690082
+MODEM?=/dev/tty.usbmodem0B358F0690082
 else
-MODEM=/dev/tty.usbmodem507D8F06D5502
+MODEM?=/dev/tty.usbmodem507D8F06D5502
 endif
 
 # ----------------------------------------------------------------------

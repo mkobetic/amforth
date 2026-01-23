@@ -27,7 +27,7 @@ SIZE ?= $(TC_DIR)/bin/$(CROSS)size
 GDB ?= $(TC_DIR)/bin/$(CROSS)gdb
 GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py3
 
-
+## Build all files
 all: build/amforth.bin build/amforth.hex build/amforth.lst
 
 buildinfo: words/build-info.tmpl
@@ -65,7 +65,14 @@ build/%.lst: build/%.elf
 clean:
 	rm -f build/* words/build-info.s
 
-# Run standard tests, output failures and summarize the results.
+AMSHELL=$(AMFORTH)/tools/amforth-shell.py --port $(MODEM) --speed $(SPEED) $1
+
+## Connect via AmShell
+# Set EDITOR to make the #edit shell directive work.
+shell:
+	$(AMSHELL) --no-error-on-output -i
+
+## Run standard tests, output failures and summarize the results.
 # Not finished means we didn't get through the whole test file.
 # Requires WANT_IGNORECASE, because the standard tests
 # are in all caps and all AmForth words are in lowercase;

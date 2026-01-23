@@ -152,6 +152,15 @@ This is because the assembler processes source code before the linker, so it can
 * Local toolchain `make toolchain`
 * Arduino IDE toolchain
 
+### Running
+
+* amforth-shell.py
+
+Use `make shell` tu run it (first set MODEM to point at the serial device)
+
+Requires Python3 and pyserial package. If `pip3 install pyserial` gives you `error: externally-managed-environment`, and 
+you don't want heed its warnings and deal with Python virtual environments, then `pip3 install --user --break-system-packages pyserial` should be a relatively safe resolution.
+
 ### Debugging
 
 * GDB

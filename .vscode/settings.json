@@ -4,5 +4,8 @@
     "files.associations": {
         "*.s": "arm",
         "*.inc": "arm"
+    },
+    "terminal.integrated.env.osx": {
+        "AMFORTH": "${workspaceRoot}",
     }
 }
