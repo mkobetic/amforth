@@ -556,6 +556,7 @@ CONSTANT 1STA
 T{ 1STA 2NDA U< -> <TRUE> }T		\ HERE MUST GROW WITH ALLOT
 T{ 1STA 1+ -> 2NDA }T			\ ... BY ONE ADDRESS UNIT
 ( MISSING TEST: NEGATIVE ALLOT )
+#endif
 
 HERE 1 ,
 HERE 2 ,
@@ -582,15 +583,15 @@ CONSTANT 2NDC
 CONSTANT 1STC
 T{ 1STC 2NDC U< -> <TRUE> }T		\ HERE MUST GROW WITH ALLOT
 T{ 1STC CHAR+ -> 2NDC }T			\ ... BY ONE CHAR
-#ifdef DONT_SKIP
 T{ 1STC 1 CHARS + -> 2NDC }T
-\ missing CHARS
-#endif
 T{ 1STC C@ 2NDC C@ -> 1 2 }T
 T{ 3 1STC C! -> }T
 T{ 1STC C@ 2NDC C@ -> 3 2 }T
 T{ 4 2NDC C! -> }T
 T{ 1STC C@ 2NDC C@ -> 3 4 }T
+
+#ifdef DONT_SKIP
+\ because of memory soup ALLOT DALLOT hang dp not word aligned 
 
 ALIGN 1 ALLOT HERE ALIGN HERE 3 CELLS ALLOT
 CONSTANT A-ADDR  CONSTANT UA-ADDR
@@ -606,8 +607,7 @@ T{ 1234 A-ADDR CELL+ !  A-ADDR CELL+ @ -> 1234 }T
 
 T{ 123 456 A-ADDR CELL+ 2!  A-ADDR CELL+ 2@ -> 123 456 }T
 #endif
-#ifdef DONT_SKIP
-\ missing CHARS
+
 : BITS ( X -- U )
    0 SWAP BEGIN DUP WHILE DUP MSB AND IF >R 1+ R> THEN 2* REPEAT DROP ;
 ( CHARACTERS >= 1 AU, <= SIZE OF CELL, >= 8 BITS )
@@ -624,7 +624,7 @@ T{ 0 1ST ! -> }T
 T{ 1 1ST +! -> }T
 T{ 1ST @ -> 1 }T
 T{ -1 1ST +! 1ST @ -> 0 }T
-#endif
+
 \ ------------------------------------------------------------------------
 TESTING CHAR [CHAR] [ ] BL S"
 
@@ -805,7 +805,7 @@ T{ GE7 -> 124 }T
 \ ------------------------------------------------------------------------
 #ifdef DONT_SKIP
 TESTING SOURCE >IN WORD
-\ missing word
+\ missing word EVALUATE
 
 : GS1 S" SOURCE" 2DUP EVALUATE
        >R SWAP >R = R> R> = ;
@@ -904,7 +904,7 @@ T{ GP7 -> <TRUE> }T
 \ >NUMBER TESTS
 #ifdef DONT_SKIP
 CREATE GN-BUF 0 C,
-\ memory soup and missing char+
+\ memory soup
 
 : GN-STRING	GN-BUF 1 ;
 : GN-CONSUMED	GN-BUF CHAR+ 0 ;

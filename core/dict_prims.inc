@@ -80,6 +80,7 @@
 .include "words/2-slash.s"
 .include "words/cell-plus.s"
 .include "words/cells.s"
+.include "words/chars.s"
 
 
 .include "words/tib.s"
