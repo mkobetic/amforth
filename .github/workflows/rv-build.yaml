@@ -1,4 +1,4 @@
-name: RISC-V Build
+name: RISC-V
 on: [push]
 
 jobs:

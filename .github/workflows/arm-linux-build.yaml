@@ -1,4 +1,4 @@
-name: ARM Linux Build
+name: ARM/Linux
 on: [push]
 
 jobs:
