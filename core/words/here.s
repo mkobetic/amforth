@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 COLON "here", HERE
-  .word XT_VHERE
+#  .word XT_VHERE
+  .word XT_DHERE
   .word XT_EXIT
 
 # another attempt
