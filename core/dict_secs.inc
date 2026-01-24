@@ -247,11 +247,22 @@
 .include "words/xt2string.s"
 .include "words/dictopt.s"
 
-.include "words/dallot.s"
-.include "words/dalign.s"
 
 .include "words/mlc.s"
 .include "words/store_i.s"
 .include "words/char-plus.s"
 .include "words/2store.s"
 .include "words/2fetch.s"
+
+.include "words/dallot.s"
+.include "words/vallot.s"
+.include "words/eallot.s"
+
+.include "words/dhere.s"
+.include "words/vhere.s"
+.include "words/ehere.s"
+
+.include "words/dalign.s"
+.include "words/valign.s"
+.include "words/ealign.s"
+
