@@ -87,6 +87,10 @@ VE_\Label:
     HEADER Flag_visible | Flag_cloaked, "\Name", \Label, PFA_\Label
 .endm
 
+.macro CODEALIAS Name, Label, Target
+    HEADER Flag_visible, "\Name", \Label, PFA_\Target
+.endm
+
 # HIDEWORD is a CODEWORD with Flag_invisible
 # suspect I have made this visible again as
 # whatever I was trying did not work and I
