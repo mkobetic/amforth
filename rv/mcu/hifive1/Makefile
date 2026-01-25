@@ -4,9 +4,7 @@ MCU_LD ?= hifive1.ld
 
 
 BOARD ?= freedom-e300-hifive1
-COPTS += -Wall  -Os -nostdlib -nostartfiles -ffreestanding -save-temps
-AOPTS = --warn --fatal-warnings
-
+# COPTS += -Wall  -Os -nostdlib -nostartfiles -ffreestanding -save-temps
 
 #############################################################
 # This Section is for uploading a program to SPI Flash

@@ -45,22 +45,15 @@ WANT_305:=$(shell perl -n -e ' if(/.equ\s+WANT_305_BUILD\s*,\s+(YES|NO)/){print 
 # ----------------------------------------------------------------------
 # Variables that will probably need to be changed to suit your setup 
 
-# Include personal environment settings
+# Include personal environment settings.
+# Including after config so that personal settings can reflect the config.
 -include .env
 
-TMPPATH?=$(HOME)/ng/dev/uc/minasm
 MINICOM=/opt/homebrew/bin/minicom
 MINICOM=/usr/local/bin/minicom
-AMSHELL=$(TMPPATH)/tools/amforth-shell.py --port $(MODEM) --speed 115200 $1
-SOCKSHELL=$(TMPPATH)/tools/socket-shell.py --port $(MODEM) --speed 115200 $1
+SOCKSHELL=$(AMFORTH)/tools/socket-shell.py --port $(MODEM) --speed 115200 $1
 
 UU=$(AMFORTH)/tools/uu
-
-ifeq ($(strip $(WANT_203)),YES)
-MODEM?=/dev/tty.usbmodem0B358F0690082
-else
-MODEM?=/dev/tty.usbmodem507D8F06D5502
-endif
 
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
@@ -97,27 +90,21 @@ TARGET_LIST := $(TARGET_NAME).list
 # otherwise use what $(ARDUINO) says
 ifeq ($(wildcard $(TC_DIR)),)
 ifeq ($(strip $(ARDUINO)),TRUE)
-BIN_STUB=$(ARDU15)/packages/WCH/tools/riscv-none-embed-gcc/8.2.0/bin/riscv-none-embed-
+TC_DIR = $(ARDU15)/packages/WCH/tools/riscv-none-embed-gcc/8.2.0
+CROSS = riscv-none-embed-
 TOOLCHAIN=WCH-via-Arduino
 else
-BIN_STUB=/Users/tw/zephyr-sdk-0.16.4/riscv64-zephyr-elf/bin/riscv64-zephyr-elf-
+TC_DIR = /Users/tw/zephyr-sdk-0.16.4/riscv64-zephyr-elf
+CROSS = riscv64-zephyr-elf-
 TOOLCHAIN=Zephyr
 endif
 else
-BIN_STUB=$(TC_DIR)/bin/$(CROSS)
 TOOLCHAIN=Local-Toolchain
 endif
 
 QEMU_RV32 ?= /usr/local/Cellar/qemu/10.1.0/bin/qemu-system-riscv32
 
-MKDIR_P=mkdir -p
-LD :=$(BIN_STUB)ld
-CC := $(BIN_STUB)gcc
-CXX := $(BIN_STUB)g++
-OBJCOPY := $(BIN_STUB)objcopy
-OBJDUMP := $(BIN_STUB)objdump
-OBJSIZE := $(BIN_STUB)size
-RANLIB := $(BIN_STUB)ranlib
+#MKDIR_P=mkdir -p
 OPENOCD := $(ARDU15)/packages/WCH/tools/openocd/1.0.0/bin/openocd
 OPENCFG := $(ARDU15)/packages/WCH/tools/openocd/1.0.0/bin/wch-riscv.cfg
 SRCR := $(HOME)/ng/dev/uc/AmForth-RV/appl/ch32v307/cpp/MRSC/CH32V307VCT6
@@ -153,19 +140,19 @@ LIB_WCH := ./lib_qem
 LIB_USER := ./lib_qem_user
 endif
 
-BUILD_DIR := ./build
+BUILD_DIR := build
 
 # Source directories based on build type
 ifeq ($(strip $(ASMONLY)),YES)
 SRC_DIRS := .
-SRCS = $(shell find $(SRC_DIRS) -name "*.S")
+SRCS = $(shell find $(SRC_DIRS) -name "*.S" | sed 's|^./||')
 else
 SRC_DIRS := $(LIB_WCH) $(LIB_USER) .
 SRCS = $(shell find $(SRC_DIRS) -type d -name Startup -prune -name "*.cpp" -or -name "*.c" -or -name "*.S")
 endif
 
 OBJS = $(SRCS:%=$(BUILD_DIR)/%.o)
-DEPS = $(OBJS:.o=.d)
+#DEPS = $(OBJS:.o=.d)
 
 LIB_OBJS  := $(filter $(BUILD_DIR)/$(LIB_WCH)/%,$(OBJS)) \
              $(filter $(BUILD_DIR)/$(LIB_USER)/%,$(OBJS)) 
@@ -173,7 +160,7 @@ LIB_OBJS  := $(filter $(BUILD_DIR)/$(LIB_WCH)/%,$(OBJS)) \
 USER_OBJS := $(filter-out $(BUILD_DIR)/$(LIB_WCH)/% \
                           $(BUILD_DIR)/$(LIB_USER)/%,$(OBJS))
 
-INC_FLAGS := -I . -I ../.. -I $(AMFORTH)/core -I $(AMFORTH)
+INC_FLAGS := -I . $(INCLUDES)
 
 # Compiler flags 
 ifeq ($(strip $(WANT_203)),YES)
@@ -183,7 +170,7 @@ FLAGS := -march=rv32imafc -mabi=ilp32f -msmall-data-limit=8 -mno-save-restore -O
 endif
 
 # Needed for the INCLUDE amforth32.ld to work in linked files (-L must preceed the -T !!!)
-FLAGS += -L ../../../core
+FLAGS += -L $(AMFORTH)/core
 
 DEFINES := -DSYSCLK_FREQ_96MHz
 
@@ -196,7 +183,7 @@ endif
 ASFLAGS  := $(FLAGS) -x assembler-with-cpp  $(INC_FLAGS) -MMD -MP $(DEFINES) 
 CPPFLAGS := $(FLAGS) $(INC_FLAGS) -MMD -MP $(DEFINES)
 
-LDFLAGS := $(FLAGS) -T $(LD_FILE) -nostartfiles -Xlinker -t -Xlinker --gc-sections -Xlinker --verbose --specs=nano.specs --specs=nosys.specs \
+#LDFLAGS += -nostartfiles -Xlinker -t -Xlinker --gc-sections -Xlinker --verbose --specs=nano.specs --specs=nosys.specs \
                                                 -Xlinker -Map $(BUILD_DIR)/$(TARGET_MAP)
 
 # ----------------------------------------------------------------------
@@ -275,7 +262,7 @@ endif
 # NOTE: This duplicates the target from core/dev/Makefile, but this one is more specific (and last) so it will win,
 #  however dependencies of both targets are collected and executed, so this will run some unnecessary steps from core
 #  resulting in unnecessary files in build/
-$(BUILD_DIR)/$(TARGET_ELF): buildinfo $(USER_OBJS) $(BUILD_DIR)/libcode.a
+$(BUILD_DIR)/$(TARGET_ELF): $(USER_OBJS) $(BUILD_DIR)/libcode.a
 ifneq ($(strip $(LIB_OBJS)),)
 	$(CC) $(FLAGS) -T $(LD_FILE) -nostartfiles -o $@ $(USER_OBJS) -Wl,--start-group $(BUILD_DIR)/libcode.a -Wl,--end-group --verbose --specs=nano.specs --specs=nosys.specs
 else
@@ -284,32 +271,24 @@ endif
 	$(OBJCOPY) -Oihex   $@ $(BUILD_DIR)/$(TARGET_HEX)
 	$(OBJCOPY) -Obinary $@ $(BUILD_DIR)/$(TARGET_BIN)
 	$(OBJDUMP) -m riscv:rv32 -M no-aliases --show-raw-insn --insn-width=4 --all-headers --demangle -d $(BUILD_DIR)/$(TARGET_ELF) > $(BUILD_DIR)/$(TARGET_LIST)
-	$(OBJSIZE) $(BUILD_DIR)/$(TARGET_ELF)
+	$(SIZE) $(BUILD_DIR)/$(TARGET_ELF)
 	$(OBJDUMP) -t $(BUILD_DIR)/$(TARGET_ELF) | sort > $(BUILD_DIR)/symtab
 	@echo "Toolchain was $(TOOLCHAIN)"
 
 # assembly
-$(BUILD_DIR)/%.S.o: %.S
-	$(MKDIR_P) $(dir $@)
+$(BUILD_DIR)/%.S.o: %.S buildinfo
 	$(CC) $(ASFLAGS) -c $< -o $@
 
 # c source
-$(BUILD_DIR)/%.c.o: %.c
-	$(MKDIR_P) $(dir $@)
+$(BUILD_DIR)/%.c.o: %.c buildinfo
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 # c++ source
-$(BUILD_DIR)/%.cpp.o: %.cpp
-	$(MKDIR_P) $(dir $@)
+$(BUILD_DIR)/%.cpp.o: %.cpp buildinfo
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 
 .PHONY: clean info shell speed save uu 
-
-## Connect via AmShell 
-shell:
-	export EDITOR=emacs
-	$(AMSHELL) --no-error-on-output -i 
 
 ## Connect via USB 
 uu:
@@ -338,19 +317,11 @@ open:
 ## Connect via minicom 
 min:
 	$(RM) minicom.cap
-	$(MINICOM) -D $(MODEM) --color=on -C minicom.cap 
-
-## Update build info - run before build 
-info:
-	cat mcu-words/build-info.tmpl | sed "s/%d/`date`/" | sed "s/%r/${REVISION}/" > mcu-words/build-info.s
+	$(MINICOM) -D $(MODEM) --color=on -C minicom.cap
 
 ## Flash hex file to the device  
 flash:
 	$(HOME)/.cargo/bin/wlink flash $(BUILD_DIR)/$(TARGET_HEX)
-
-## Clean - run before build
-clean:
-	$(RM) -r $(BUILD_DIR)
 
 debug:
 	@echo "Configuration:"
