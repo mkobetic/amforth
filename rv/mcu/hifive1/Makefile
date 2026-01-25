@@ -1,9 +1,11 @@
-AMFORTH ?= $(shell git rev-parse --show-toplevel)
-include $(AMFORTH)/rv/dev/Makefile
+BOARD ?= freedom-e300-hifive1
 MCU_LD ?= hifive1.ld
 
+AMFORTH ?= $(shell git rev-parse --show-toplevel)
 
-BOARD ?= freedom-e300-hifive1
+# Included after various configuration bits are defined (importantly MCU_LD)
+include $(AMFORTH)/rv/dev/Makefile
+
 # COPTS += -Wall  -Os -nostdlib -nostartfiles -ffreestanding -save-temps
 
 #############################################################

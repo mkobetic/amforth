@@ -15,13 +15,7 @@ WHITE  := $(shell tput -Txterm setaf 7)
 RESET  := $(shell tput -Txterm sgr0)
 
 
-YES=TRUE
-NO=FALSE
-
-
 AMFORTH ?= $(shell git rev-parse --show-toplevel)
-include $(AMFORTH)/rv/dev/Makefile
-# MCU_LD ?= stellaris.ld // using custom build targets here
 
 # Choices 
 
@@ -37,22 +31,25 @@ WANT_CASE:=$(shell perl -n -e ' if(/.equ\s+WANT_CASE\s*,\s+(YES|NO)/){print $$1;
 WANT_MATCH:=$(shell perl -n -e ' if(/.equ\s+WANT_MATCH\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
 WANT_TABLE:=$(shell perl -n -e ' if(/.equ\s+WANT_TABLE\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
 WANT_FORNEXT:=$(shell perl -n -e ' if(/.equ\s+WANT_FORNEXT\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
-WANT_203:=$(shell perl -n -e ' if(/.equ\s+WANT_203_BUILD\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
-WANT_QEM:=$(shell perl -n -e ' if(/.equ\s+WANT_QEM_BUILD\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
-WANT_307:=$(shell perl -n -e ' if(/.equ\s+WANT_307_BUILD\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
-WANT_305:=$(shell perl -n -e ' if(/.equ\s+WANT_305_BUILD\s*,\s+(YES|NO)/){print $$1;exit;}' ./config.inc)
 
 # ----------------------------------------------------------------------
 # Variables that will probably need to be changed to suit your setup 
 
 # Include personal environment settings.
+# Following variables should be set:
+# * MODEM - the serial device used to connect to the board, e.g /dev/cu.usbmodem...
+# * WLINK - command to execute the WLINK flash uploader
+# * QEMU_RV32 - command to execute qemu-system-riscv32
+# * OPENOCD - command to execute OpenOCD
+# * OPENCFG - path to OpenOCD configuration file for CH32V307
 # Including after config so that personal settings can reflect the config.
 -include .env
 
-MINICOM=/opt/homebrew/bin/minicom
-MINICOM=/usr/local/bin/minicom
-SOCKSHELL=$(AMFORTH)/tools/socket-shell.py --port $(MODEM) --speed 115200 $1
+QEMU_RV32 ?= qemu-system-riscv32
+WLINK ?= $(HOME)/.cargo/bin/wlink
+MINICOM ?= minicom
 
+SOCKSHELL=$(AMFORTH)/tools/socket-shell.py --port $(MODEM) --speed 115200 $1
 UU=$(AMFORTH)/tools/uu
 
 # ----------------------------------------------------------------------
@@ -78,13 +75,6 @@ ZEPHYR := $(HOME)/zephyr-sdk-0.16.4
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
 
-TARGET_NAME := amforth
-TARGET_ELF  := $(TARGET_NAME).elf
-TARGET_HEX  := $(TARGET_NAME).hex
-TARGET_BIN  := $(TARGET_NAME).bin
-TARGET_MAP  := $(TARGET_NAME).map
-TARGET_LIST := $(TARGET_NAME).list
-
 # Decide which toolchain to use.
 # If local toolchain is installed, use that,
 # otherwise use what $(ARDUINO) says
@@ -92,9 +82,11 @@ ifeq ($(wildcard $(TC_DIR)),)
 ifeq ($(strip $(ARDUINO)),TRUE)
 TC_DIR = $(ARDU15)/packages/WCH/tools/riscv-none-embed-gcc/8.2.0
 CROSS = riscv-none-embed-
-TOOLCHAIN=WCH-via-Arduino
+TOOLCHAIN = WCH-via-Arduino
+OPENOCD = $(ARDU15)/packages/WCH/tools/openocd/1.0.0/bin/openocd
+OPENCFG = $(ARDU15)/packages/WCH/tools/openocd/1.0.0/bin/wch-riscv.cfg
 else
-TC_DIR = /Users/tw/zephyr-sdk-0.16.4/riscv64-zephyr-elf
+TC_DIR = $(ZEPHYR)/riscv64-zephyr-elf
 CROSS = riscv64-zephyr-elf-
 TOOLCHAIN=Zephyr
 endif
@@ -102,43 +94,47 @@ else
 TOOLCHAIN=Local-Toolchain
 endif
 
-QEMU_RV32 ?= /usr/local/Cellar/qemu/10.1.0/bin/qemu-system-riscv32
-
-#MKDIR_P=mkdir -p
-OPENOCD := $(ARDU15)/packages/WCH/tools/openocd/1.0.0/bin/openocd
-OPENCFG := $(ARDU15)/packages/WCH/tools/openocd/1.0.0/bin/wch-riscv.cfg
-SRCR := $(HOME)/ng/dev/uc/AmForth-RV/appl/ch32v307/cpp/MRSC/CH32V307VCT6
-
 # Set library directories based on chip variant
 CHIPSET=
 
-ifeq ($(strip $(WANT_203)),YES)
+# Default target to build
+TARGET ?= 307
+$(info TARGET: $(TARGET))
+
+ifeq ($(strip $(TARGET)),203)
 CHIPSET=203
-LD_FILE := ./linker.203
+MCU_LD := ./linker.203
 LIB_WCH := ./lib_203
 LIB_USER := ./lib_203_user
-endif
-
-ifeq ($(strip $(WANT_305)),YES)
+else ifeq ($(strip $(TARGET)),305)
 CHIPSET=305
-LD_FILE := ./linker.305
+MCU_LD := ./linker.305
 LIB_WCH := ./wch307
 LIB_USER := ./lib_wch_user
-endif
-
-ifeq ($(strip $(WANT_307)),YES)
+else ifeq ($(strip $(TARGET)),307)
 CHIPSET=307
-LD_FILE := ./linker.307
+MCU_LD := ./linker.307
 LIB_WCH := ./wch307
 LIB_USER := ./lib_wch_user
-endif
-
-ifeq ($(strip $(WANT_QEM)),YES)
+else ifeq ($(strip $(TARGET)),QEM)
 CHIPSET=QEM
-LD_FILE := ./linker.qem
+MCU_LD := ./linker.qem
 LIB_WCH := ./lib_qem
 LIB_USER := ./lib_qem_user
+else 
+$(error Unknown target configuration $(TARGET))
 endif
+
+# Included after various configuration bits are defined (importantly MCU_LD)
+include $(AMFORTH)/rv/dev/Makefile
+
+
+TARGET_NAME := amforth
+TARGET_ELF  := $(TARGET_NAME).elf
+TARGET_HEX  := $(TARGET_NAME).hex
+TARGET_BIN  := $(TARGET_NAME).bin
+TARGET_MAP  := $(TARGET_NAME).map
+TARGET_LIST := $(TARGET_NAME).list
 
 BUILD_DIR := build
 
@@ -160,13 +156,15 @@ LIB_OBJS  := $(filter $(BUILD_DIR)/$(LIB_WCH)/%,$(OBJS)) \
 USER_OBJS := $(filter-out $(BUILD_DIR)/$(LIB_WCH)/% \
                           $(BUILD_DIR)/$(LIB_USER)/%,$(OBJS))
 
-INC_FLAGS := -I . $(INCLUDES)
+INCLUDES := -I . $(INCLUDES)
+
 
 # Compiler flags 
-ifeq ($(strip $(WANT_203)),YES)
-FLAGS := -march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore -Os -Wunused -Wuninitialized -g
+FLAGS := -Wa,--defsym,BUILD_$(strip $(TARGET))=YES -msmall-data-limit=8 -mno-save-restore -Os -Wunused -Wuninitialized -g
+ifeq ($(strip $(TARGET)),203)
+FLAGS += -march=rv32imac -mabi=ilp32 
 else
-FLAGS := -march=rv32imafc -mabi=ilp32f -msmall-data-limit=8 -mno-save-restore -Os -Wunused -Wuninitialized -g
+FLAGS += -march=rv32imafc -mabi=ilp32f
 endif
 
 # Needed for the INCLUDE amforth32.ld to work in linked files (-L must preceed the -T !!!)
@@ -179,9 +177,9 @@ ifdef WANT_IGNORECASE
 DEFINES += -Wa,--defsym,WANT_IGNORECASE=1
 endif
 
-#ASFLAGS  := $(FLAGS) -x assembler $(INC_FLAGS) -MMD -MP $(DEFINES) 
-ASFLAGS  := $(FLAGS) -x assembler-with-cpp  $(INC_FLAGS) -MMD -MP $(DEFINES) 
-CPPFLAGS := $(FLAGS) $(INC_FLAGS) -MMD -MP $(DEFINES)
+#ASFLAGS  := $(FLAGS) -x assembler $(INCLUDES) -MMD -MP $(DEFINES) 
+ASFLAGS  := $(FLAGS) -x assembler-with-cpp  $(INCLUDES) -MMD -MP $(DEFINES) 
+CPPFLAGS := $(FLAGS) $(INCLUDES) -MMD -MP $(DEFINES)
 
 #LDFLAGS += -nostartfiles -Xlinker -t -Xlinker --gc-sections -Xlinker --verbose --specs=nano.specs --specs=nosys.specs \
                                                 -Xlinker -Map $(BUILD_DIR)/$(TARGET_MAP)
@@ -192,7 +190,8 @@ CPPFLAGS := $(FLAGS) $(INC_FLAGS) -MMD -MP $(DEFINES)
 
 ## Show help
 help:
-	@echo 'Usage: make${RESET} ${GREEN}<target>${RESET}'
+	@echo 'Usage: [TARGET=<target config>] make${RESET} ${GREEN}<make target>${RESET}'
+	@echo '<target config> is one of 307, 305, 203, QEM'
 	@echo ''
 	@echo 'Compiler, assembler and library:'
 	@printf "  ${YELLOW}TOOLCHAIN${RESET}\t\t$(TOOLCHAIN)\n"
@@ -210,7 +209,7 @@ help:
 	@printf "  ${YELLOW}WANT_TABLE${RESET}\t\t${WANT_TABLE}\n"
 	@printf "  ${YELLOW}WANT_FORNEXT${RESET}\t\t${WANT_FORNEXT}\n"
 	@echo ''
-	@echo 'Targets:'
+	@echo 'Make targets:'
 	@awk '/^#\? / { \
 	text = substr($$0, 4); \
 	printf "  %s\n", text; \
@@ -238,7 +237,7 @@ help:
 
 ## Build hex file (will clean first)
 all: clean $(BUILD_DIR)/$(TARGET_ELF)
-	@echo Building $(BUILD_DIR)/$(TARGET_ELF)
+	@echo INFO: Built $(BUILD_DIR)/$(TARGET_ELF) for target $(TARGET) using $(TOOLCHAIN)
 
 # Create static library from:
 # - lib_wch or lib_203 (vendor peripheral drivers)
@@ -264,16 +263,15 @@ endif
 #  resulting in unnecessary files in build/
 $(BUILD_DIR)/$(TARGET_ELF): $(USER_OBJS) $(BUILD_DIR)/libcode.a
 ifneq ($(strip $(LIB_OBJS)),)
-	$(CC) $(FLAGS) -T $(LD_FILE) -nostartfiles -o $@ $(USER_OBJS) -Wl,--start-group $(BUILD_DIR)/libcode.a -Wl,--end-group --verbose --specs=nano.specs --specs=nosys.specs
+	$(CC) $(FLAGS) -T $(MCU_LD) -nostartfiles -o $@ $(USER_OBJS) -Wl,--start-group $(BUILD_DIR)/libcode.a -Wl,--end-group --verbose --specs=nano.specs --specs=nosys.specs
 else
-	$(CC) $(FLAGS) -T $(LD_FILE) -nostartfiles -o $@ $(USER_OBJS) --verbose --specs=nano.specs --specs=nosys.specs
+	$(CC) $(FLAGS) -T $(MCU_LD) -nostartfiles -o $@ $(USER_OBJS) --verbose --specs=nano.specs --specs=nosys.specs
 endif
 	$(OBJCOPY) -Oihex   $@ $(BUILD_DIR)/$(TARGET_HEX)
 	$(OBJCOPY) -Obinary $@ $(BUILD_DIR)/$(TARGET_BIN)
 	$(OBJDUMP) -m riscv:rv32 -M no-aliases --show-raw-insn --insn-width=4 --all-headers --demangle -d $(BUILD_DIR)/$(TARGET_ELF) > $(BUILD_DIR)/$(TARGET_LIST)
 	$(SIZE) $(BUILD_DIR)/$(TARGET_ELF)
 	$(OBJDUMP) -t $(BUILD_DIR)/$(TARGET_ELF) | sort > $(BUILD_DIR)/symtab
-	@echo "Toolchain was $(TOOLCHAIN)"
 
 # assembly
 $(BUILD_DIR)/%.S.o: %.S buildinfo
@@ -292,15 +290,12 @@ $(BUILD_DIR)/%.cpp.o: %.cpp buildinfo
 
 ## Connect via USB 
 uu:
-	export EDITOR=emacs
 	$(UU) 
 
 w:
-	export EDITOR=emacs
 	$(AMSHELL) --no-error-on-output -i ./w.f
 
 float:
-	export EDITOR=emacs
 	$(AMSHELL) --no-error-on-output -i ./float.f
 
 speed:
@@ -321,7 +316,7 @@ min:
 
 ## Flash hex file to the device  
 flash:
-	$(HOME)/.cargo/bin/wlink flash $(BUILD_DIR)/$(TARGET_HEX)
+	$(WLINK) flash $(BUILD_DIR)/$(TARGET_HEX)
 
 debug:
 	@echo "Configuration:"
@@ -336,7 +331,7 @@ debug:
 	@echo "LIB_OBJS (selectively linked):"
 	@echo "$(LIB_OBJS)" | tr ' ' '\n'
 	@echo "INC (selectively linked):"
-	@echo "$(INC_FLAGS)" | tr ' ' '\n'
+	@echo "$(INCLUDES)" | tr ' ' '\n'
 
 #? --- QEM ---
 QEMU := $(QEMU_RV32) -M virt -display none -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF)
@@ -351,7 +346,6 @@ sock:
 
 ## socket shell  
 sksh:
-	export EDITOR=emacs
 	$(SOCKSHELL) --no-error-on-output -i 
 
  

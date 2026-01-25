@@ -79,7 +79,7 @@ clean:
 AMSHELL=$(AMFORTH)/tools/amforth-shell.py --port $(MODEM) --speed $(SPEED) $1
 
 ## Connect via AmShell
-# Set EDITOR to make the #edit shell directive work.
+# export EDITOR in your .env file to make the #edit shell directive work.
 shell:
 	$(AMSHELL) --no-error-on-output -i
 

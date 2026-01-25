@@ -1,5 +1,3 @@
-AMFORTH ?= $(shell git rev-parse --show-toplevel)
-include $(AMFORTH)/arm/dev/Makefile
 MCU_LD ?= stellaris.ld
 
 
@@ -8,6 +6,11 @@ ifeq ("$(BOARD)", "armv7l")
    CROSS=
 endif
 LANG=C
+
+AMFORTH ?= $(shell git rev-parse --show-toplevel)
+
+# Included after various configuration bits are defined (importantly MCU_LD)
+include $(AMFORTH)/arm/dev/Makefile
 
 upload: build/amforth.elf
 	lm4flash build/amforth.bin

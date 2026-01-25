@@ -2,9 +2,9 @@
 # (it will be ignored by git, and won't be committed to the repository)
 #
 # Following variables should be set there:
-# MODEM - the serial device used to connect to the board, e.g cu.usbmodemB43A45B4700C2
-# BOSSAC - UNO R4 uploader (see more details below)
-# OPENOCD - on-chip debugging server for GDB
+# * MODEM - the serial device used to connect to the board, e.g cu.usbmodemB43A45B4700C2
+# * BOSSAC - UNO R4 uploader (see more details below)
+# * OPENOCD - on-chip debugging server for GDB
 #
 # If you have Arduino IDE installed with the Uno R4 board you can
 # point BOSSAC, OPENOCD at the Arduino installed binaries, e.g.
@@ -13,14 +13,17 @@
 # OPENOCD = $(ARDUINO_TOOLS)/openocd/0.11.0-arduino2/bin/openocd
 -include .env
 
-AMFORTH ?= $(shell git rev-parse --show-toplevel)
-include $(AMFORTH)/arm/dev/Makefile
 MCU_LD ?= ra4m1.ld
 
 LANG=C
 BOARD = UNOR4
 # serial connection speed used by AmForth and the UNO R4 bootloader
 SPEED = 115200
+
+AMFORTH ?= $(shell git rev-parse --show-toplevel)
+
+# Included after various configuration bits are defined (importantly MCU_LD)
+include $(AMFORTH)/arm/dev/Makefile
 
 # Using bossac as the uploader, based on what Arduino IDE uses to program the board.
 # https://www.shumatech.com/web/products/bossa

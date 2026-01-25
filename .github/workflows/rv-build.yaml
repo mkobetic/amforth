@@ -26,8 +26,11 @@ jobs:
       - name: Build HiFive1
         run: cd rv/mcu/hifive1 && WANT_IGNORECASE=1 make all
 
-      - name: Build CH32
-        run: cd rv/mcu/ch32v307 && WANT_IGNORECASE=1 make all
+      - name: Build CH32 for 307
+        run: cd rv/mcu/ch32v307 && TARGET=307 WANT_IGNORECASE=1 make all
+
+      - name: Build CH32 for QEMU
+        run: cd rv/mcu/ch32v307 && TARGET=QEM WANT_IGNORECASE=1 make all
 
       # It seems we need to update the index otherwise the qemu install fails
       - name: apt-get update

@@ -50,7 +50,11 @@
 
 # Other configuration parameters
 .equ WANT_USB_OPERATOR , NO
-.equ WANT_QEM_BUILD , NO
+.if WANT_USB_OPERATOR
+.ifdef BUILD_QEM
+.error "Cannot use WANT_USB_OPERATOR with QEM target"
+.endif
+.endif
 
 # This can also be enabled with an environment variable with the same name
 # .equ WANT_IGNORECASE, YES
