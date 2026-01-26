@@ -4,7 +4,7 @@
 # command to dump the return stack
 define .r
   set var $frame = $sp
-  while $frame < 0x20000100
+  while $frame < &RAM_upper_returnstack
     # location of the next XT to run after EXIT
     x/a $frame
     # next XT to run after EXIT
@@ -16,12 +16,13 @@ end
 # command to dump the parameter stack
 define .s
   # print TOS
-  print $r6
+  printf "TOS: %x\n", $r6
   # grab the PSP
   set var $frame = $r7
   # rest of the parameter stack
-  while $frame < 0x20000080
-    print *(int)$frame
+  while $frame < &RAM_upper_datastack
+    # print *(int)$frame
+    x/x $frame
     set $frame = $frame + 4
   end
 end
@@ -130,20 +131,3 @@ define bde
     step 2
   end
 end
-
-# TUI for debugging
-
-# Simple layouts using just the default GDB windows: src, asm, cmd
-# tui new-layout forth regs 15 {-horizontal src 1 asm 1} 20 status 0 cmd 20
-tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 } 3 regs 1 } 1
-
-# Custom AmForth layout with Forth stacks and customized register windows.
-# This requires Python enabled GDB and the correct version of Python installed on the system.
-# ref: https://undo.io/resources/enhance-gdb-with-tui/
-# Make sure the sourced files are on GDB search path
-source gdb-amforth.py
-tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 } 3  { fregs 2 fps 1 frs 1 } 1 } 1
-
-# Enable the forth layout and set focus on the command window
-layout forth
-focus cmd

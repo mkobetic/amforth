@@ -8,8 +8,8 @@
 @ -----------------------------------------------------------------------------
   CODEWORD  "!flash", STORE_FLASH @ ( x Addr -- )
 @ -----------------------------------------------------------------------------
-  popda r0 @ Adresse
-  popda r1 @ Inhalt.
+  poptos r0
+  poptos r1
 
   @ Prüfe Inhalt. Schreibe nur, wenn es NICHT -1 ist.
   cmp r1, #-1
@@ -49,8 +49,8 @@ flashkomma_innen:
   CODEWORD  "w!flash", W_STORE_FLASH @ ( x Addr -- )
   @ Schreibt an die auf 2 gerade Adresse in den Flash.
 @ -----------------------------------------------------------------------------
-  popda r0 @ Adresse
-  popda r1 @ Inhalt.
+  poptos r0
+  poptos r1
 
   @ Prüfe Inhalt. Schreibe nur, wenn es NICHT -1 ist.
   ldr r3, =0xFFFF
@@ -98,8 +98,8 @@ hflash_gerade:
   CODEWORD  "c!flash", CSTORE_FLASH @ ( x Addr -- )
   @ Schreibt ein einzelnes Byte in den Flash.
 @ -----------------------------------------------------------------------------
-  popda r0 @ Adresse
-  popda r1 @ Inhalt.
+  poptos r0
+  poptos r1
 
   @ Prüfe Inhalt. Schreibe nur, wenn es NICHT -1 ist.
   ands r1, #0xFF @ Alles Unwichtige von den Daten wegmaskieren
@@ -141,7 +141,7 @@ NEXT
   @ Löscht einen 1kb großen Flashblock
 @ -----------------------------------------------------------------------------
   push {r0, r1, r2, r3}
-  popda r0 @ Adresse zum Löschen holen
+  poptos r0 @ Adresse zum Löschen holen
 
   ldr r2, =FLASH_FMA @ 1. Write the page address to the FMA register.
   str r0, [r2]

@@ -1,0 +1,5 @@
+TESTING rot, -rot
+
+T{ 1 2 3 -rot -> 3 1 2 }T
+T{ 1 2 3 -rot rot -> 1 2 3 }T
+

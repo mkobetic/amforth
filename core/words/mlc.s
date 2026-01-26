@@ -107,13 +107,7 @@ VARIABLE "cimag",CIMAG
 VARIABLE "zreal",ZREAL
 VARIABLE "zimag",ZIMAG
 VARIABLE "ccount",CCOUNT
-# ----------------------------------------------------------------------
-COLON "*/", STARSLASH 
-	.word XT_TO_R
-	.word XT_STAR
-	.word XT_R_FROM
-	.word XT_SLASH
-	.word XT_EXIT
+
 # ----------------------------------------------------------------------
 COLON "zr_sq", ZRUNDERSQ 
 	.word XT_ZREAL

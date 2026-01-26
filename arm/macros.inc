@@ -30,24 +30,33 @@ rlooplimit .req r12
     ldr tos, [psp], #4
 .endm
 
-// push register under tos, leave tos as is (n2 n1 -- n2 reg n1)
-.macro pushnos register
-  str tos, [psp, #-4]!
-.endm
-
-// pop nos into register leave tos as is (n3 n2 n1 -- n2 n1) & reg = n2
-.macro popnos register
-  ldr \register, [psp], #4
-.endm
-
-.macro pushda register @ Push register on Datastack
+// push register to the data stack (n2 n1 -- n2 n1 reg)
+.macro pushtos register
   savetos
   mov tos, \register
 .endm
 
-.macro popda register @ Pop register from Datastack
+// pop register from data stack (n2 n1 reg -- n2 n1)
+.macro poptos register
   mov \register, tos
   loadtos
+.endm
+
+// push register under tos, leave tos as is (n2 n1 -- n2 reg n1)
+.macro pushnos register
+  str \register, [psp, #-4]!
+.endm
+
+// pop nos into register, leave tos as is (n2 reg n1 -- n2 n1)
+.macro popnos register
+  ldr \register, [psp], #4
+.endm
+
+.macro throw exception
+  savetos               /* for good order        */
+  ldr tos, =\exception   /* load exception number */
+  ldr FORTHW, =XT_THROW  /* load XT of THROW to W reg */
+  b DO_EXECUTE          /* execute via ITC VM    */
 .endm
 
 .macro ENDDICT

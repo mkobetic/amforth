@@ -4,8 +4,8 @@
 
   push {r0, r1, r2}
 
-  popda r1 @ Count
-  popda r2 @ Destination address
+  poptos r1
+  poptos r2
   @ TOS:     Source address
 
   @ Count > 0 ?

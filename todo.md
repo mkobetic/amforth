@@ -8,7 +8,7 @@ List of know issues and tasks that need to be done (by area)
 * [ ] remove doxliteral.s in favor of doliteral.s
 * [ ] remove HIDEWORD in favor of HEADLESS
 * [ ] document amforth32.ld (assumptions, section purpose, etc)
-* [ ] move non-address constants from amforth32.ld to config.inc? (cellsize, region sizes, etc...)
+* [x] move non-address constants from amforth32.ld to config.inc? (cellsize, region sizes, etc...)
 * [ ] is the RAM_upper/lower_fi area used for anything?
 
 * [ ] a way to build different configurations for a given MCU
@@ -27,10 +27,10 @@ List of know issues and tasks that need to be done (by area)
 
 # ARM
 
-* [ ] implement CHAR+
-* [ ] fix core test freeze
+* [x] implement CHAR+
+* [x] fix core test freeze
 * [ ] add readme.md
-* [ ] implement m-rot.s (see rv)
+* [x] implement m-rot.s (see rv)
 * [ ] implement umstar.s (see rv)
 * [ ] (exiti) likely needs work
 * [ ] document dev tool setup

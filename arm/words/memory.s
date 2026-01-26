@@ -3,8 +3,8 @@
   CODEWORD  "fill",FILL  @ Fill memory with given byte.
   @ ( Destination Count Filling -- )
 @------------------------------------------------------------------------------
-  popda r0 @ Filling byte
-  popda r1 @ Count
+  poptos r0
+  poptos r1
   @ TOS      Destination
 
   cmp r1, #0

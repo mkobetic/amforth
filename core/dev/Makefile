@@ -42,7 +42,7 @@ buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 	mkdir -p build
 
-ASFLAGS := -g --warn --fatal-warnings -alms=build/amforth.lst-as
+ASFLAGS := -g --warn --fatal-warnings -ahlmn=build/amforth.lst-as
 # if you want to run standard tests you need WANT_IGNORECASE flag set
 ifdef WANT_IGNORECASE
 ASFLAGS +=--defsym WANT_IGNORECASE=$(WANT_IGNORECASE)
@@ -78,7 +78,7 @@ clean:
 
 SPEED ?= 115200
 AMSHELL=$(AMFORTH)/tools/amforth-shell.py --port $(MODEM) --speed $(SPEED) $1
-
+export AMFORTH_LIB=.:$(AMFORTH)/tests:$(AMFORTH)/lib
 ## Connect via AmShell
 # export EDITOR in your .env file to make the #edit shell directive work.
 shell:
@@ -100,6 +100,7 @@ RESULTS := awk -f $(AMFORTH)/tests/results.awk
 endif
 test:
 	{ cat $(TESTER); \
+	  echo '.s" TESTS STARTING"' ; \
 	  $(PP) -w $(AMFORTH)/tests/cpp-core.fr; \
 	  cat $(AMFORTH)/tests/core2.fr; \
 	  echo '.s" TESTS FINISHED"' ; \
