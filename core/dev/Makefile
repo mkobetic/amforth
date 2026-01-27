@@ -81,23 +81,18 @@ shell:
 # to do it from the inside, i.e. from AmForth running in it.
 TIMEOUT ?= 2s
 TESTER ?= $(AMFORTH)/lib/forth2012/tester/tester-amforth.frt
+ifdef RAW
+RESULTS := cat
+else
+RESULTS := awk -f $(AMFORTH)/tests/results.awk
+endif
 test:
 	{ cat $(TESTER); \
 	  $(PP) -w $(AMFORTH)/tests/cpp-core.fr; \
+	  cat $(AMFORTH)/tests/core2.fr; \
 	  echo '.s" TESTS FINISHED"' ; \
 	} | timeout -s TERM $(TIMEOUT) $(QEMU) -serial stdio | \
-	awk ' \
-		BEGIN { pass = 0; fail = 0; finished = 0 } \
-		/TESTS FINISHED/ { finished = 1 } \
-		/^> TESTING / { print } \
-		/^> T\{.*\}T/ { marker=$$0; next } \
-		marker && / ok[[:space:]]$$/ { pass += 1 } \
-		marker && $$0 !~ / ok[[:space:]]$$/ { fail += 1 ; print marker; print $$0 } \
-		{ marker="" } \
-		END { \
-			printf "FINISHED: %s, PASS: %d, FAIL: %d\n", finished ? "Y" : "N", pass, fail; \
-			if (!finished || fail > 0) exit 1 \
-		}'
+	$(RESULTS)
 
 ## A detailed dump of ELF sections for debugging linker issues
 sections: sec-type sec-addr sec-sum

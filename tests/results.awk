@@ -1,0 +1,15 @@
+BEGIN { pass = 0; fail = 0; finished = 0 } 
+/TESTS FINISHED/ { finished = 1 } 
+/^> TESTING / { print } 
+/^> T\{.*\}T/ { marker=$0; next } 
+marker { 
+    if ($0 ~ / \?\? |INCORRECT RESULT|WRONG NUMBER/) { 
+            fail += 1 ; print marker; print $0 
+    } else { 
+        pass += 1 
+    }
+    marker="" } 
+END { 
+    printf "FINISHED: %s, PASS: %d, FAIL: %d\n", finished ? "Y" : "N", pass, fail; 
+    if (!finished || fail > 0) exit 1 
+}
