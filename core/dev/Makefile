@@ -65,6 +65,7 @@ build/%.lst: build/%.elf
 clean:
 	rm -f build/* words/build-info.s
 
+SPEED ?= 115200
 AMSHELL=$(AMFORTH)/tools/amforth-shell.py --port $(MODEM) --speed $(SPEED) $1
 
 ## Connect via AmShell

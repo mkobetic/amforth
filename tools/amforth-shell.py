@@ -1382,7 +1382,7 @@ additional definitions (e.g. register names)
                 cmd = [self.editor, "+" + str(lineno), filename]
             elif exename in ["vi", "vim"]:
                 cmd = [self.editor, filename, "+" + str(lineno)]
-            elif exename == "mcedit":
+            elif exename in [ "mcedit", "code" ]:
                 cmd = [self.editor, " " + filename, ":" + str(lineno)]
             elif exename == "gedit":
                 cmd = [self.editor, "-b", filename, "+" + str(lineno)]
