@@ -3,3 +3,11 @@ TESTING rot, -rot
 T{ 1 2 3 -rot -> 3 1 2 }T
 T{ 1 2 3 -rot rot -> 1 2 3 }T
 
+TESTING doubles
+
+\ full 64/64 division
+T{ $10000000010. $100000000. ud/mod -> $10. $100. }T
+\ escape to 64/32 division
+T{ $100000010. $10000. ud/mod -> $10. $10000. }T
+\ escape to 32/32 division
+T{ $1000010. $1000. ud/mod -> $10. $1000. }T

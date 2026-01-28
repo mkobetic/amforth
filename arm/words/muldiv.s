@@ -30,6 +30,10 @@ slashmod:
   CODEWORD "u/mod", USLASHMOD @ ( u1 u2 -- rem quot )
   cbnz tos, uslashmod  @ throw if divisor is zero
   throw EDIVZ
+  bl uslashmod
+  NEXT
+
+@ call with bl uslashmod
 uslashmod:  
   ldm psp!, {r0}      @ Get u1 into a register
   movs r1, tos        @ Back up the divisor in X.
@@ -38,4 +42,4 @@ uslashmod:
   subs r0, r1         @ Compute remainder.
   subs psp, #4
   str r0, [psp]
-  NEXT
+  bx lr
