@@ -525,8 +525,6 @@ T{ -7 2 -3 */ -> -7 2 -3 T*/ }T
 T{ MAX-INT 2 MAX-INT */ -> MAX-INT 2 MAX-INT T*/ }T
 T{ MIN-INT 2 MIN-INT */ -> MIN-INT 2 MIN-INT T*/ }T
 
-#ifdef DONT_SKIP # missing */MOD
-
 T{ 0 2 1 */MOD -> 0 2 1 T*/MOD }T
 T{ 1 2 1 */MOD -> 1 2 1 T*/MOD }T
 T{ 2 2 1 */MOD -> 2 2 1 T*/MOD }T
@@ -546,7 +544,6 @@ T{ -7 2 3 */MOD -> -7 2 3 T*/MOD }T
 T{ -7 2 -3 */MOD -> -7 2 -3 T*/MOD }T
 T{ MAX-INT 2 MAX-INT */MOD -> MAX-INT 2 MAX-INT T*/MOD }T
 T{ MIN-INT 2 MIN-INT */MOD -> MIN-INT 2 MIN-INT T*/MOD }T
-#endif
 
 \ ------------------------------------------------------------------------
 #ifdef DONT_SKIP # because of memory soup ALLOT DALLOT hang dp not word aligned 

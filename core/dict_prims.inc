@@ -75,6 +75,7 @@
 .include "words/m-slash-mod.s"
 .include "words/um-slash-mod.s"
 .include "words/star-slash.s"
+.include "words/star-slash-mod.s"
 .include "words/1-plus.s"
 .include "words/1-minus.s"
 .include "words/2-plus.s"

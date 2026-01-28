@@ -10,9 +10,6 @@ If d and n3 differ in sign, the implementation-defined result returned will be t
 
 # : */ >r m* r> m/mod nip ;
 COLON "*/", STARSLASH 
-	.word XT_TO_R
-	.word XT_MSTAR
-	.word XT_R_FROM
-	.word XT_MSLASHMOD
+	.word XT_STARSLASHMOD
     .word XT_NIP
 	.word XT_EXIT
