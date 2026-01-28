@@ -31,7 +31,7 @@ List of know issues and tasks that need to be done (by area)
 * [x] fix core test freeze
 * [ ] add readme.md
 * [x] implement m-rot.s (see rv)
-* [ ] implement umstar.s (see rv)
+* [x] implement umstar.s (see rv)
 * [ ] (exiti) likely needs work
 * [ ] document dev tool setup
 

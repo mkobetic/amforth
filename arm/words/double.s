@@ -1,15 +1,3 @@
-
-
-@------------------------------------------------------------------------------
-  CODEWORD  "um*", UMSTAR
-  @ Multiply unsigned 32*32 = 64
-  @ ( u u -- ud )
-@------------------------------------------------------------------------------
-    ldr r0, [psp]  @ To be calculated: Tos * r0
-    umull r0, tos, tos, r0 @ umull lo, hi, x, y => hi:lo = x*y
-    str r0, [psp]
-    NEXT
-
 @------------------------------------------------------------------------------
   CODEWORD  "m*", MSTAR
   @ Multiply signed 32*32 = 64
@@ -26,6 +14,18 @@
          @ ( ud1 ud2 -- ud ud)
          @ ( 1L 1H 2L tos: 2H -- Rem-L Rem-H Quot-L tos: Quot-H )
 @------------------------------------------------------------------------------
+@ use faster um/mod if divisor is 32-bits
+@ TODO: This crashes hard in QEMU, why?
+@   cbnz tos, 1f
+@   loadtos
+@   b umslashmod
+@ 1:
+@  throw if divisor is zero
+  ldr  r0, [psp, #0]
+  orrs r0, r0, tos
+  bne 2f
+  throw EDIVZ
+2:
   bl ud_slash_mod
 NEXT
 
@@ -34,65 +34,71 @@ ud_slash_mod:
 
    @ ( DividendL DividendH DivisorL DivisorH -- RemainderL RemainderH ResultL ResultH )
    @   8         4         0        tos      -- 8          4          0       tos
+  dndlo .req r0 @ Dividend-Low / Quotient-Low
+  dndhi .req r1 @ Dividend-High / Quotient-High
+  remlo .req r2 @ Remainder-Low
+  remhi .req r3 @ Remainder-High
+  dsrlo .req r4 @ Divisor-Low
+  dsrhi .req r5 @ Divisor-High
+  @ tos used for iteration index
 
-
-   @ Shift-High Shift-Low Dividend-High Dividend-Low
-   @         r3        r2            r1           r0
-
-   movs r3, #0
-   movs r2, #0
-   ldr  r1, [psp, #4]
-   ldr  r0, [psp, #8]
-
-   @ Divisor-High Divisor-Low
-   @          r5           r4
-
-ud_slash_mod_internal:
-   movs r5, tos
-   ldr  r4, [psp, #0]
-
-   @ For this long division, we need 64 individual division steps.
-   mov tos, #64
-
+   movs remhi, #0 @ initialize remainder
+   movs remlo, #0
+   ldr  dndhi, [psp, #4] @ load dividend
+   ldr  dndlo, [psp, #8]
+   movs dsrhi, tos  @ load divisor
+   ldr  dsrlo, [psp, #0]
+   mov tos, #64 @ 64 individual long division steps.
 3:
     @ Shift the long chain of four registers.
-    lsls r0, #1
-    adcs r1, r1
-    adcs r2, r2
-    adcs r3, r3
+    lsls dndlo, #1
+    adcs dndhi, dndhi
+    adcs remlo, remlo
+    adcs remhi, remhi
 
     @ Compare Divisor with top two registers
-    cmp r3, r5 @ Check high part first
+    cmp remhi, dsrhi @ Check high part first
     bhi 1f
     blo 2f
 
-    cmp r2, r4 @ High part is identical. Low part decides.
+    cmp remlo, dsrlo @ High part is identical. Low part decides.
     blo 2f
 
     @ Subtract Divisor from two top registers
-1:  subs r2, r4 @ Subtract low part
-    sbcs r3, r5 @ Subtract high part with carry
+1:  subs remlo, dsrlo @ Subtract low part
+    sbcs remhi, dsrhi @ Subtract high part with carry
 
     @ Insert a bit into Result which is inside LSB of the long register.
-    adds r0, #1
+    adds dndlo, #1
 2:
-
    subs tos, #1
    bne 3b
 
    @ Now place all values to their destination.
-   movs tos, r1       @ Result-High
-   str  r0, [psp, #0] @ Result-Low
-   str  r3, [psp, #4] @ Remainder-High
-   str  r2, [psp, #8] @ Remainder-Low
+   movs tos, dndhi       @ Quotient-High
+   str  dndlo, [psp, #0] @ Quotient-Low
+   str  remhi, [psp, #4] @ Remainder-High
+   str  remlo, [psp, #8] @ Remainder-Low
 
    pop {r4, r5}
    bx lr
+
+   .unreq dndlo
+   .unreq dndhi
+   .unreq dsrlo
+   .unreq remlo
+   .unreq remhi
 
 @------------------------------------------------------------------------------
   CODEWORD  "d/mod", DSLASHMOD
               @ Signed symmetric divide 64/64 = 64 remainder 64
               @ ( d1 d2 -- d d )
+  @ throw if dividend is zero
+  ldr  r0, [psp, #0]
+  orrs r0, r0, tos
+  bne 1f
+  throw EDIVZ
+1:
   bl d_slash_mod
 NEXT
 

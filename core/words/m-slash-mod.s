@@ -1,7 +1,7 @@
 /*
 WORD: "m/mod"
 STACK: ( d n1 -- n2 n3 )
-CATEG: CORE
+CATEG: MATH
 SHORT: Divide d by n1, giving the quotient n3 and the remainder n2.
 
 All values and arithmetic are signed. Throw if n1 is zero or if the quotient n3 lies outside the range of a single-cell signed integer.
@@ -15,7 +15,7 @@ COLON "m/mod", MSLASHMOD
 # ( dividend divisor -- reminder quotient )
     /* throw if divisor is zero */
     .word XT_DUP, XT_ZEROEQUAL, XT_DOCONDBRANCH, 1f
-	.word XT_DOLITERAL, EDIVZ, XT_THROW /* throw division by zero */
+	.word XT_DOLITERAL, EDIVZ, XT_THROW
 
     /* stash sign of divisor and negate it if necessary */
 1:  .word XT_DUP, XT_ZEROLESS, XT_DUP, XT_TO_R /* (R: divsor-neg? ) */
@@ -30,17 +30,17 @@ COLON "m/mod", MSLASHMOD
     /* negate remainder if divend-neg? */
     .word XT_R_FETCH, XT_DOCONDBRANCH, 4f
     .word XT_SWAP, XT_NEGATE, XT_SWAP
-    /* negate quotient if signs were different */
+    /* negate quotient if signs were different (divsor-neg? xor divend-neg?) */
 4:  .word XT_R_FROM, XT_R_FROM, XT_XOR, XT_DOCONDBRANCH, 5f
     .word XT_NEGATE
 
 5:  .word XT_EXIT
 
 /*
-WORD: SM/REM
+WORD: sm/rem
 STACK: ( d1 n1 -- n2 n3 )
-CATEG: CORE
-SHORT: Divide d1 by n1, giving the symmetric quotient n3 and the remainder n2.
+CATEG: MATH
+SHORT: Divide d1 by n1, giving the symmetric quotient n3 and the remainder n2. (alias for m/mod)
 
 Input and output stack arguments are signed. Throw if n1 is zero or if the quotient lies outside the range of a single-cell signed integer.
  */

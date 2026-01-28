@@ -13,9 +13,9 @@
 @ -----------------------------------------------------------------------------
   CODEWORD "/mod",SLASHMOD @ ( n1 n2 -- rem quot )
 @ -----------------------------------------------------------------------------
-  cbnz tos, 1f  @ throw if divisor is zero
+  cbnz tos, slashmod  @ throw if divisor is zero
   throw EDIVZ
-1:  
+slashmod:  
   ldm psp!, {r0}     @ Get u1 into a register
   movs r1, tos       @ Back up the divisor in X.
   sdiv tos, r0, tos  @ Divide: quotient in TOS.
@@ -28,6 +28,9 @@
   NEXT
 @ -----------------------------------------------------------------------------
   CODEWORD "u/mod", USLASHMOD @ ( u1 u2 -- rem quot )
+  cbnz tos, uslashmod  @ throw if divisor is zero
+  throw EDIVZ
+uslashmod:  
   ldm psp!, {r0}      @ Get u1 into a register
   movs r1, tos        @ Back up the divisor in X.
   udiv tos, r0, tos   @ Divide: quotient in TOS.

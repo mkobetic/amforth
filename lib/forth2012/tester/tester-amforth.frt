@@ -26,7 +26,7 @@ variable START-DEPTH
 ;
 
 variable ACTUAL-DEPTH			\ STACK RECORD
-variable ACTUAL-RESULTS 20 cells allot  \ reserve space in RAM
+variable ACTUAL-RESULTS 20 cells vallot  \ reserve space in RAM
 
 : ERROR		\ ( C-ADDR U -- ) DISPLAY AN ERROR MESSAGE
    itype

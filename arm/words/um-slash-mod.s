@@ -1,7 +1,7 @@
 /*
 WORD: "um/mod"
 STACK: ( ud u1 -- u2 u3 )
-CATEG: CORE
+CATEG: MATH
 SHORT: Divide ud by u1, giving the quotient u3 and the remainder u2.
 
 All values and arithmetic are unsigned. An ambiguous condition exists if u1 is zero or if the quotient lies outside the range of a single-cell unsigned integer.
@@ -14,12 +14,13 @@ CODEWORD "um/mod", UMSLASHMOD
     lo  .req r1
     rem .req r2
     idx .req r3
-
-    cbnz tos, 4f  @ throw if divisor is zero
+umslashmod:
+    cbnz tos, 4f        @ throw if divisor is zero
     throw EDIVZ
-4:  popnos hi @ load the dividend
+4:  popnos hi
+    cmp hi, #0          @ if hi == 0, use the quicker u/mod
+    beq uslashmod    
     popnos lo 
-    @ TODO: if hi == 0, use the quicker /mod
     @ TODO: could use CLZ to skip shifting through 0 bit prefix bit by bit and save some iterations
     mov     idx, #64        @ Loop counter for 64 bits
     mov     rem, #0         @ Initialize remainder to 0

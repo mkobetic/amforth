@@ -1,7 +1,7 @@
 /*
 WORD: star-slash
 STACK: ( n1 n2 n3 -- n4 )
-CATEG: ARITHMETIC
+CATEG: MATH
 SHORT: Multiply n1 by n2 producing the intermediate double-cell result d. Divide d by n3 giving the single-cell quotient n4.
 
 An ambiguous condition exists if n3 is zero or if the quotient n4 lies outside the range of a signed number.

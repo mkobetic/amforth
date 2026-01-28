@@ -49,7 +49,6 @@
 
 #.include "words/negate.s"
 .include "words/abs.s"
-.include "words/muldiv.s"
 .include "words/stack.s"
 .include "words/logic.s"
 .include "words/memory.s"
@@ -70,8 +69,8 @@
 .include "words/d-2slash.s"
 .include "words/double.s"
 
-
 #.include "words/umplus.s"
+.include "words/muldiv.s"
 .include "words/m-slash-mod.s"
 .include "words/um-slash-mod.s"
 .include "words/star-slash.s"
