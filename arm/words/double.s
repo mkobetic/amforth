@@ -15,17 +15,18 @@
          @ ( 1L 1H 2L tos: 2H -- Rem-L Rem-H Quot-L tos: Quot-H )
 @------------------------------------------------------------------------------
 @ use faster um/mod if divisor is 32-bits
-@ TODO: This crashes hard in QEMU, why?
-@   cbnz tos, 1f
-@   loadtos
-@   b umslashmod
-@ 1:
-@  throw if divisor is zero
-  ldr  r0, [psp, #0]
-  orrs r0, r0, tos
-  bne 2f
+  cbnz tos, 1f
+  loadtos
+  cbnz tos, 2f @ throw if divisor is zero
   throw EDIVZ
 2:
+  bl umslashmod @ (rem quolo quohi)
+  ldr r0, [psp] @ save quolo
+  mov r1, #0    @ push 0 for remhi
+  str r1, [psp]
+  pushnos r0 @ (rem 0 quolo quohi)
+  NEXT
+1:
   bl ud_slash_mod
 NEXT
 
