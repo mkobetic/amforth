@@ -546,7 +546,6 @@ T{ MAX-INT 2 MAX-INT */MOD -> MAX-INT 2 MAX-INT T*/MOD }T
 T{ MIN-INT 2 MIN-INT */MOD -> MIN-INT 2 MIN-INT T*/MOD }T
 
 \ ------------------------------------------------------------------------
-#ifdef DONT_SKIP # because of memory soup ALLOT DALLOT hang dp not word aligned 
 TESTING HERE , @ ! CELL+ CELLS C, C@ C! CHARS 2@ 2! ALIGN ALIGNED +! ALLOT
 
 HERE 1 ALLOT
@@ -556,7 +555,6 @@ CONSTANT 1STA
 T{ 1STA 2NDA U< -> <TRUE> }T		\ HERE MUST GROW WITH ALLOT
 T{ 1STA 1+ -> 2NDA }T			\ ... BY ONE ADDRESS UNIT
 ( MISSING TEST: NEGATIVE ALLOT )
-#endif
 
 HERE 1 ,
 HERE 2 ,
@@ -590,7 +588,6 @@ T{ 1STC C@ 2NDC C@ -> 3 2 }T
 T{ 4 2NDC C! -> }T
 T{ 1STC C@ 2NDC C@ -> 3 4 }T
 
-#ifdef DONT_SKIP # because of memory soup ALLOT DALLOT hang dp not word aligned 
 
 ALIGN 1 ALLOT HERE ALIGN HERE 3 CELLS ALLOT
 CONSTANT A-ADDR  CONSTANT UA-ADDR
@@ -605,7 +602,6 @@ T{ 3 A-ADDR CELL+ C!  A-ADDR CELL+ C@ -> 3 }T
 T{ 1234 A-ADDR CELL+ !  A-ADDR CELL+ @ -> 1234 }T
 
 T{ 123 456 A-ADDR CELL+ 2!  A-ADDR CELL+ 2@ -> 123 456 }T
-#endif
 
 : BITS ( X -- U )
    0 SWAP BEGIN DUP WHILE DUP MSB AND IF >R 1+ R> THEN 2* REPEAT DROP ;
@@ -801,7 +797,7 @@ T{ GE7 -> 124 }T
 
 
 \ ------------------------------------------------------------------------
-#ifdef DONT_SKIP # missing word EVALUATE
+#ifdef DONT_SKIP # missing SCANS and WORD
 TESTING SOURCE >IN WORD
 
 
@@ -899,8 +895,8 @@ T{ GP6 -> <TRUE> }T
 T{ GP7 -> <TRUE> }T
 
 
+#ifdef DONT_SKIP # Missing >NUMBER
 \ >NUMBER TESTS
-#ifdef DONT_SKIP # memory soup
 CREATE GN-BUF 0 C,
 
 : GN-STRING	GN-BUF 1 ;
@@ -939,8 +935,9 @@ T{ MAX-UINT DUP MAX-BASE GN1 -> MAX-UINT DUP 0 }T
 : GN2	\ ( -- 16 10 )
    BASE @ >R  HEX BASE @  DECIMAL BASE @  R> BASE ! ;
 T{ GN2 -> 10 A }T
-
+#endif
 \ ------------------------------------------------------------------------
+#ifdef DONT_SKIP # Incompatible FILL, MOVE
 TESTING FILL MOVE
 
 CREATE FBUF 00 C, 00 C, 00 C,
