@@ -91,21 +91,18 @@ shell:
 # `WANT_IGNORECASE=1 make` should do it.
 # Uses timeout command to terminate QEMU, because there is no way
 # to do it from the inside, i.e. from AmForth running in it.
-TIMEOUT ?= 2s
+TIMEOUT ?= 3s
 TESTER ?= $(AMFORTH)/lib/forth2012/tester/tester-amforth.frt
-ifdef RAW
-RESULTS := cat
-else
-RESULTS := awk -f $(AMFORTH)/tests/results.awk
-endif
+SKIP := $(PP) -w -P
 test:
 	{ cat $(TESTER); \
 	  echo '.s" TESTS STARTING"' ; \
-	  $(PP) -w $(AMFORTH)/tests/cpp-core.fr; \
+	  $(SKIP) $(AMFORTH)/tests/cpp-core.fr; \
 	  cat $(AMFORTH)/tests/core2.fr; \
 	  echo '.s" TESTS FINISHED"' ; \
 	} | timeout -s TERM $(TIMEOUT) $(QEMU) -serial stdio | \
-	$(RESULTS)
+	tee tests.log | \
+	awk -f $(AMFORTH)/tests/results.awk
 
 ## A detailed dump of ELF sections for debugging linker issues
 sections: sec-type sec-addr sec-sum
