@@ -11,7 +11,7 @@ SHORT: interpret a Forth string of length u starting at address a
 VARIABLE "evaluate.strlen",EVALUATEDOTSTRLEN
 VARIABLE "evaluate.str",EVALUATEDOTSTR
 # ----------------------------------------------------------------------
-COLON "evalulate.source"  , SOURCEMINUSSTRING 
+COLON "evaluate.source"  , SOURCEMINUSSTRING 
     .word XT_EVALUATEDOTSTR
     .word XT_FETCH
     .word XT_EVALUATEDOTSTRLEN
