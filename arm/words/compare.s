@@ -22,8 +22,8 @@ NEXT
 compare:
   push {lr}
 
-  popda r1        @ Length of second string
-  ldm psp!, {r0}  @ Length of first  string
+  poptos r1  @ Length of second string
+  popnos r0  @ Length of first  string
   cmp r0, r1
   beq 1f
 

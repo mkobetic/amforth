@@ -1286,6 +1286,8 @@ additional definitions (e.g. register names)
         else:
             if mcudef.startswith("rv"):
                 flavor="risc-v"
+            elif mcudef.startswith("cortex"):
+                flavor="arm"
             else:
                 flavor="avr8"
         self._search_list.insert(0,os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]),"..", flavor, "lib")))

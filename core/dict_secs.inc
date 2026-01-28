@@ -266,3 +266,4 @@
 .include "words/valign.s"
 .include "words/ealign.s"
 
+.include "words/break.s"

@@ -35,9 +35,9 @@ class GdbCommandWindow:
             return 
         self._tui_window.write(self.get_contents(), True)
 
-# class ForthParameterStack(GdbCommandWindow):
-#     title = "Parameter Stack"
-#     gdb_command = ".s"
+class ForthParameterStack(GdbCommandWindow):
+    title = "Parameter Stack"
+    gdb_command = ".s"
 
 class ForthReturnStack(GdbCommandWindow):
     title = "Return Stack"
@@ -136,37 +136,37 @@ class ForthRegisterWindow:
         self._tui_window.write(contents, True)
 
 # ForthParameterStack shows the contents of the PSP
-class ForthParameterStack: 
+# class ForthParameterStack: 
 
-    def __init__(self, tui_window): 
-        self._tui_window = tui_window
-        tui_window.title = "Forth Parameter Stack"
-        gdb.events.before_prompt.connect(self.render)
+#     def __init__(self, tui_window): 
+#         self._tui_window = tui_window
+#         tui_window.title = "Forth Parameter Stack"
+#         gdb.events.before_prompt.connect(self.render)
 
-    def get_contents(self):
-        frame = gdb.selected_frame()
-        if frame is None:
-            return "no frame selected"
-        tos = frame.read_register("r6")
-        # TODO: need to detect when stack is empty
-        lines = [ f"r6/TOS:\t\t{value(tos)}" ]
-        psp = frame.read_register("r7")
-        # cast psp from int to int* so that we can dereference it
-        psp = psp.cast(psp.type.pointer())
-        while psp < RAM_upper_datastack:
-            addr = psp.format_string(format="x")
-            lines.append(f"{addr}:\t{value(psp.dereference())}")
-            psp += 1
-        return "\n".join(lines)
+#     def get_contents(self):
+#         frame = gdb.selected_frame()
+#         if frame is None:
+#             return "no frame selected"
+#         tos = frame.read_register("r6")
+#         # TODO: need to detect when stack is empty
+#         lines = [ f"r6/TOS:\t\t{value(tos)}" ]
+#         psp = frame.read_register("r7")
+#         # cast psp from int to int* so that we can dereference it
+#         psp = psp.cast(psp.type.pointer())
+#         while psp < RAM_upper_datastack:
+#             addr = psp.format_string(format="x")
+#             lines.append(f"{addr}:\t{value(psp.dereference())}")
+#             psp += 1
+#         return "\n".join(lines)
 
-    def render(self): 
-        if not self._tui_window.is_valid(): 
-            return
-        try:
-            contents = self.get_contents()
-        except gdb.error as exc: 
-            contents = str(exc)
-        self._tui_window.write(contents, True)
+#     def render(self): 
+#         if not self._tui_window.is_valid(): 
+#             return
+#         try:
+#             contents = self.get_contents()
+#         except gdb.error as exc: 
+#             contents = str(exc)
+#         self._tui_window.write(contents, True)
 
 gdb.register_window_type("fps", ForthParameterStack)
 gdb.register_window_type("frs", ForthReturnStack)
