@@ -15,15 +15,23 @@ ifeq ("$(REVISION)", "")
 endif
 
 # These are implicit variables in make, can't use ?=
+# see https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
 AS := $(TC_DIR)/bin/$(CROSS)as
 LD := $(TC_DIR)/bin/$(CROSS)ld
+CC := $(TC_DIR)/bin/$(CROSS)gcc
+CXX := $(TC_DIR)/bin/$(CROSS)g++
+CPP := $(TC_DIR)/bin/$(CROSS)cpp
 
-PP ?= $(TC_DIR)/bin/$(CROSS)cpp
+# Tools that can be overridden by the environment
+PP ?= $(CPP) # to allow overriding the pre-processor (use PP instead of CPP)
 OBJCOPY ?= $(TC_DIR)/bin/$(CROSS)objcopy
 OBJDUMP ?= $(TC_DIR)/bin/$(CROSS)objdump
 READELF ?= $(TC_DIR)/bin/$(CROSS)readelf
+RANLIB ?= $(TC_DIR)/bin/$(CROSS)ranlib
 NM ?= $(TC_DIR)/bin/$(CROSS)nm
 SIZE ?= $(TC_DIR)/bin/$(CROSS)size
+
+# Debugging tools
 GDB ?= $(TC_DIR)/bin/$(CROSS)gdb
 GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py3
 
@@ -34,24 +42,27 @@ buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 	mkdir -p build
 
-AOPTS ?= -g --warn --fatal-warnings -alms=build/amforth.lst-as
+ASFLAGS := -g --warn --fatal-warnings -alms=build/amforth.lst-as
 # if you want to run standard tests you need WANT_IGNORECASE flag set
 ifdef WANT_IGNORECASE
-AOPTS +=--defsym WANT_IGNORECASE=$(WANT_IGNORECASE)
+ASFLAGS +=--defsym WANT_IGNORECASE=$(WANT_IGNORECASE)
 endif
+
+# Needed for the INCLUDE amforth32.ld to work in linked files (-L must precede the -T !!!)
+LDFLAGS := -L $(AMFORTH)/core -T $(MCU_LD)
 
 # The include order is important: architecture > core > AMFORTH
 # for simple imports, e.g. config.inc or words/xx.s, the more specific directory wins
 # the AMFORTH root allows include files to import more general include files with the same name
 INCLUDES := -I../.. -I $(AMFORTH)/core -I $(AMFORTH)
 build/%.o: %.s buildinfo
-	$(AS) $(AOPTS) $(INCLUDES) -o $@ $<
+	$(AS) $(ASFLAGS) $(INCLUDES) -o $@ $<
 
 # Sometimes make decides that amforth.elf is an intermediary file that should be deleted.
 .PRECIOUS: build/amforth.elf
 
 build/%.elf: build/%.o
-	$(LD) -L $(AMFORTH)/core -T $(MCU_LD) $< -o $@ 
+	$(LD) $(LDFLAGS) $< -o $@ 
 
 build/%.hex: build/%.elf
 	$(OBJCOPY) -O ihex $< $@
@@ -69,7 +80,7 @@ SPEED ?= 115200
 AMSHELL=$(AMFORTH)/tools/amforth-shell.py --port $(MODEM) --speed $(SPEED) $1
 
 ## Connect via AmShell
-# Set EDITOR to make the #edit shell directive work.
+# export EDITOR in your .env file to make the #edit shell directive work.
 shell:
 	$(AMSHELL) --no-error-on-output -i
 

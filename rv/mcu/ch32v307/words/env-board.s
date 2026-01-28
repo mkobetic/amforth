@@ -2,19 +2,19 @@
 
 ENVIRONMENT "board", BOARD
 
-.if WANT_203_BUILD
+.ifdef BUILD_203
     STRING "WCH CH32V203"
 .endif
 
-.if WANT_307_BUILD
+.ifdef BUILD_307
     STRING "WCH CH32V307"
 .endif
 
-.if WANT_305_BUILD
+.ifdef BUILD_305
     STRING "WCH CH32V305"
 .endif
 
-.if WANT_QEM_BUILD
+.ifdef BUILD_QEM
     STRING "QEMU"
 .endif
 

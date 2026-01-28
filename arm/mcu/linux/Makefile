@@ -8,11 +8,14 @@ else
 	CROSS ?= arm-none-linux-gnueabihf-
 endif
 
-AMFORTH ?= $(shell git rev-parse --show-toplevel)
-include $(AMFORTH)/arm/dev/Makefile
+LANG=C
 MCU_LD ?= linux.ld
 
-LANG=C
+AMFORTH ?= $(shell git rev-parse --show-toplevel)
+
+# Included after various configuration bits are defined (importantly MCU_LD)
+include $(AMFORTH)/arm/dev/Makefile
+
 
 build/amforth: build/amforth.o
 	$(LD) -L $(AMFORTH)/core -T linux.ld -z max-page-size=4096 $< -o $@ 
