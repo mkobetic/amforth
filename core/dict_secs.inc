@@ -31,7 +31,7 @@
 .include "words/num-constants.s"
 #.include "words/dicthelp.s"
 
-.if WANT_QEM_BUILD
+.ifdef BUILD_QEM
     .include "words/warm.qem"
 .else
     .include "words/warm.s"
@@ -267,3 +267,4 @@
 .include "words/ealign.s"
 
 .include "words/evaluate.s"
+.include "words/break.s"

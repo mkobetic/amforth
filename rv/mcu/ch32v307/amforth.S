@@ -10,22 +10,22 @@
 
 .include "config.inc"   # most configuration options are in this file
 
-.if WANT_203_BUILD
+.ifdef BUILD_203
 .print "INFO: using 203 startup"	
 .include "startup.203"  # startup and master_int handler for both C and Forth
 .endif
 
-.if WANT_305_BUILD
+.ifdef BUILD_305
 .print "INFO: using 307 startup"		
 .include "startup.307"  # startup and master_int handler for both C and Forth
 .endif 
 
-.if WANT_307_BUILD
+.ifdef BUILD_307
 .print "INFO: using 307 startup"		
 .include "startup.307"  # startup and master_int handler for both C and Forth
 .endif 
 
-.if WANT_QEM_BUILD
+.ifdef BUILD_QEM
 .print "INFO: using QEM startup"		
 .include "startup.qem"  # startup and master_int handler for both C and Forth
 .endif 

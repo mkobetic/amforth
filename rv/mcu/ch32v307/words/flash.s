@@ -285,7 +285,7 @@ QCOMMA_0002: # then
 # ----------------------------------------------------------------------
 # THIS IS THE PART TW 
 
-.if WANT_QEM_BUILD
+.ifdef BUILD_QEM
 
     COLON "(h!i)" , INT_STORE
     .word XT_HSTORE

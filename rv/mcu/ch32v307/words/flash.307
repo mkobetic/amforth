@@ -47,7 +47,7 @@ CONSTANT "flash.max"    , FLASH_MAX  , flash.max
 
 # ----------------------------------------------------------------------
 
-.if WANT_307_BUILD
+.ifdef BUILD_307
 
 VALUE    "dp.cache" , DPDOTCACHE , 0
 CONSTANT "flash.cell" , FLASHDOTCELL , 2
@@ -253,7 +253,7 @@ CODEWORD "std.erase" , STDDOTERASE # ( a-flash -- ) FLASH: Erase 256B page flash
       loadtos
       NEXT
 
-.if WANT_307_BUILD
+.ifdef BUILD_307
 
 # ----------------------------------------------------------------------
 COLON "~(dallot)", TILDELPARENDALLOTRPAREN 

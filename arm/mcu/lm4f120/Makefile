@@ -1,5 +1,3 @@
-AMFORTH ?= $(shell git rev-parse --show-toplevel)
-include $(AMFORTH)/arm/dev/Makefile
 MCU_LD ?= stellaris.ld
 
 
@@ -8,6 +6,11 @@ ifeq ("$(BOARD)", "armv7l")
    CROSS=
 endif
 LANG=C
+
+AMFORTH ?= $(shell git rev-parse --show-toplevel)
+
+# Included after various configuration bits are defined (importantly MCU_LD)
+include $(AMFORTH)/arm/dev/Makefile
 
 upload: build/amforth.elf
 	lm4flash build/amforth.bin
@@ -30,12 +33,14 @@ runpty:
 #	Unsuccessful so far: Failed to create PTY symlink: Operation not permitted
 #	$(QEMU) -chardev pty,path=/dev/stellaris,id=stellaris -serial chardev:stellaris
 
-# Like runpty but halts on start and waits for GDB to attach to it
+# Like runpty but halts on start and waits for GDB to attach to it.
+# Add -S if you want QEMU to not start the quest.
 debug:
-	$(QEMU) -serial pty -S -s
+	$(QEMU) -serial pty -s
 
 # Connect GDB to running amforth (must be running with the -S -s flags!)
 gdb:
 	$(CROSS)gdb-py build/amforth.elf --quiet \
 		-ex 'target remote :1234' \
- 		-ex "directory ../../dev"
+ 		-ex "directory ../../dev" \
+		-ex "source tui-full.gdb"

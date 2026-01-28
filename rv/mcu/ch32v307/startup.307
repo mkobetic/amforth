@@ -504,7 +504,7 @@ septog:      # toggle the LED
 
 .include "clock.K"
 
-.if WANT_203_BUILD
+.ifdef BUILD_203
 #  .include "usb203.K"
 .endif
 

@@ -25,14 +25,24 @@ variable START-DEPTH
     then
 ;
 
-: ERROR		\ ( C-ADDR U -- ) DISPLAY AN ERROR MESSAGE FOLLOWED BY
-		\ THE LINE THAT HAD THE ERROR.
-   itype source type cr			\ DISPLAY LINE CORRESPONDING TO ERROR
+variable ACTUAL-DEPTH			\ STACK RECORD
+variable ACTUAL-RESULTS 20 cells vallot  \ reserve space in RAM
+
+: ERROR		\ ( C-ADDR U -- ) DISPLAY AN ERROR MESSAGE
+   itype
+   \ FOLLOWED BY THE ACTUAL STACK STATE AFTER THE TEST
+   40 emit space \ OPEN BRACKET
+   ACTUAL-DEPTH @ START-DEPTH @ - \ RESULT COUNT
+   dup 0> if
+      1- 0 swap do \ PRINT RESULTS FROM THE END
+         ACTUAL-RESULTS i cells + @ .
+      -1 +loop
+   then
+   41 emit cr \ CLOSE BRACKET
+	\ FOLLOWED BY THE LINE THAT HAD THE ERROR.
+   source type cr			\ DISPLAY LINE CORRESPONDING TO ERROR
    EMPTY-STACK				\ THROW AWAY EVERY THING ELSE
 ;
-
-variable ACTUAL-DEPTH			\ STACK RECORD
-variable ACTUAL-RESULTS 20 cells allot  \ reserve space in RAM
 
 : t{ \ ( -- ) SYNTACTIC SUGAR.
     depth START-DEPTH !
@@ -49,9 +59,9 @@ variable ACTUAL-RESULTS 20 cells allot  \ reserve space in RAM
    depth ACTUAL-DEPTH @ = if		\ IF DEPTHS MATCH
       depth START-DEPTH @ > if		\ IF THERE IS SOMETHING ON THE STACK
          depth START-DEPTH @ - 0 do	\ FOR EACH STACK ITEM
-	    ACTUAL-RESULTS i cells + @	\ COMPARE ACTUAL WITH EXPECTED
-	    <> if s" INCORRECT RESULT: " ERROR leave then
-	 loop
+            ACTUAL-RESULTS i cells + @	\ COMPARE ACTUAL WITH EXPECTED
+            <> if s" INCORRECT RESULTS: " ERROR leave then
+         loop
       then
    else					\ DEPTH MISMATCH
       s" WRONG NUMBER OF RESULTS: " ERROR

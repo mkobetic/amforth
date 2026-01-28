@@ -8,15 +8,6 @@
   NEXT
 
 #------------------------------------------------------------------------------
-  COLON "um/mod", UMSLASHMOD
-um_slash_mod: # ( ud u -- u u ) Dividend Divisor -- Rest Ergebnis
-             # 64/32 = 32 Rest 32
-#------------------------------------------------------------------------------
-#  .word XT_ZERO, XT_UDSLASHMOD,XT_NIP,XT_NIP,XT_EXIT
-   .word XT_ZERO, XT_UDSLASHMOD,XT_DROP,XT_NIP,XT_EXIT
-
-
-#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Obviously, this is C code and not assembly code. It will not work here, but
