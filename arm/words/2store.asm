@@ -11,6 +11,10 @@ SHORT: Store cell pair x1 x2 at a, with x2 at a and x1 at the next consecutive c
 @------------------------------------------------------------------------------
   CODEWORD  "2!",2STORE @ Store ( d addr -- )
 @------------------------------------------------------------------------------
+  ands r0, tos, #0x3     /* cell aligned?         */
+  beq  1f                /* branch if OK          */
+  throw EADRINV          /* not aligned so throw  */
+1:                       /* normal operation      */
   ldmia psp!, {r1, r2}
   str r1, [tos]
   str r2, [tos, #4]

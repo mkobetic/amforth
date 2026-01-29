@@ -2,7 +2,7 @@
 # MFD VALUE "header.flag" , HEADERDOTFLAG, 0x33
 
 COLON "header", HEADER
-
+    .word XT_DALIGN
     .word XT_OVER,XT_GREATERZERO 
     .word XT_DOCONDBRANCH, PFA_HEADER1
     .word XT_EXECUTE

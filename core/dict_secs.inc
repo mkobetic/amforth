@@ -268,3 +268,5 @@
 
 .include "words/evaluate.s"
 .include "words/break.s"
+
+.include "words/chkdalign.s"

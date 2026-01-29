@@ -11,8 +11,18 @@ SHORT: Fetch cell pair x1 x2 stored at a x2 is stored at a and x1 at the next co
 #------------------------------------------------------------------------------
   CODEWORD  "2@",2FETCH # Fetch ( addr -- d )
 #------------------------------------------------------------------------------
+
+  andi t0, s3, 0x3       /* cell aligned ?        */
+  beqz t0, 1f            /* branch if OK          */
+
+  /* handle exception ...                         */
+
+  throw EADRINV
+
+1: /* normal operation ...                        */
+
   addi s4, s4, -4
   lw   t0, 4(s3)
   sw   t0, 0(s4)
   lw   s3, 0(s3)
-NEXT
+  NEXT

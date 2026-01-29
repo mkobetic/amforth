@@ -92,5 +92,9 @@
   NEXT
 .endm
 
-
-  
+.macro throw , exception
+    savetos                /* for good order        */
+    li s3,\exception       /* load exception number */
+    la s1, XT_THROW        /* move XT to W reg      */
+    j DO_EXECUTE           /* execute via ITC VM    */
+.endm
