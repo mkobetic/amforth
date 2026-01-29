@@ -15,7 +15,7 @@ COLON "chkdalign", CHKDALIGN
 	.word XT_MINUS
 	.word XT_DOCONDBRANCH,CHKDALIGN_0001 /* if */
 	.word XT_DOLITERAL
-	.word -9
+	.word EADRINV
 	.word XT_THROW
 CHKDALIGN_0001: /* then */
 	.word XT_EXIT

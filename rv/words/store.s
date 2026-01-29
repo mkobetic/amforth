@@ -7,7 +7,7 @@
 
     /* handle exception ...                         */
   
-    throw -9
+    throw EADRINV
     
 1:  /* normal operation ...                         */
 

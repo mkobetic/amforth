@@ -6,10 +6,10 @@
 
     /* handle exception ...                         */
 
-    throw -9 
+    throw EADRINV
 
 1:  /* normal operation ...                         */
 
     lw s3, 0(s3)
-    
-  NEXT
+
+    NEXT
