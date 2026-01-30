@@ -9,6 +9,7 @@
 build/
 dist/
 /toolchain
+__pycache__
 **/words/build-info.s
 .DS_Store
 

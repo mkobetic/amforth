@@ -36,7 +36,7 @@ GDB ?= $(TC_DIR)/bin/$(CROSS)gdb
 GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py3
 
 ## Build all files
-all: build/amforth.bin build/amforth.hex build/amforth.lst
+all: build/amforth.bin build/amforth.hex build/amforth.lst build/amforth.sal build/amforth.sym
 
 buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
@@ -73,6 +73,16 @@ build/%.bin: build/%.elf
 build/%.lst: build/%.elf
 	$(OBJDUMP) --show-raw-insn --insn-width=4 --all-headers --disassemble-all --source --syms $< >$@
 
+SORT_SYMS_BY_ADDRESS := grep -E '^[0-9a-f]{8} .*' | \
+	awk '{ printf "0x%s\n",$$0; }' | \
+	sort --key=1 --sort=numeric
+
+build/%.sal: build/%.elf
+	$(NM) -l $< | $(SORT_SYMS_BY_ADDRESS) >$@
+
+build/%.sym: build/%.elf
+	$(OBJDUMP) --syms $< | $(SORT_SYMS_BY_ADDRESS) >$@
+
 clean:
 	rm -f build/* words/build-info.s
 
@@ -101,7 +111,7 @@ test:
 	  cat $(AMFORTH)/tests/core2.fr; \
 	  echo '.s" TESTS FINISHED"' ; \
 	} | timeout -s TERM $(TIMEOUT) $(QEMU) -serial stdio | \
-	tee tests.log | \
+	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
 
 ## A detailed dump of ELF sections for debugging linker issues

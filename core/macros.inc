@@ -79,7 +79,15 @@ VE_\Label:
    PFA_\Label: 
 .endm
 
+# Use to terminate COLON and CODEWORD definition
+.macro FINISH Label
+    .size _\Label, . - VE_\Label
+.endm
+
 .macro CODEWORD Name, Label
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:
     HEADER Flag_visible, "\Name", \Label, PFA_\Label
 .endm
 
@@ -107,6 +115,9 @@ VE_\Label:
 .endm
 
 .macro COLON Name, Label
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:
     HEADER Flag_colon, "\Name", \Label, DOCOLON
 .endm
 
