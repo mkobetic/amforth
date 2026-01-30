@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-3.0-only
+/* SPDX-License-Identifier: GPL-3.0-only */
 CONSTANT "XT.COLON"    , CON_COLON, DOCOLON
 CONSTANT "XT.VARIABLE" , CON_VARIABLE, PFA_DOVARIABLE
 CONSTANT "XT.EXIT"     , CON_EXIT  , XT_EXIT
@@ -11,30 +11,30 @@ CONSTANT "XT.EXECUTE" , CON_EXECUTE, DO_EXECUTE
 CONSTANT "PFA.DODATA" , CON_DODATA, PFA_DODATA
 CONSTANT "PFA.DOUSER" , CON_DOUSER, PFA_DOUSER
 
-# FIX THIS
+/* FIX THIS */
 
-COLON "literal?" , LITERALQ # ( a -- f ) DICT: f is true if a contains XT of DOLITERAL 
+COLON "literal?" , LITERALQ /* ( a -- f ) DICT: f is true if a contains XT of DOLITERAL  */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word XT_DOLITERAL
       .word XT_EQUAL
       .word XT_EXIT
 
-COLON "xliteral?" , XLITERALQ # ( a -- f ) DICT: f is true if a contains XT of DOXLITERAL 
+COLON "xliteral?" , XLITERALQ /* ( a -- f ) DICT: f is true if a contains XT of DOXLITERAL  */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word XT_DOXLITERAL
       .word XT_EQUAL
       .word XT_EXIT
 
-COLON "sliteral?" , SLITERALQ # ( a -- f ) DICT: f is true if a contains XT of DOSLITERAL 
+COLON "sliteral?" , SLITERALQ /* ( a -- f ) DICT: f is true if a contains XT of DOSLITERAL  */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word XT_DOSLITERAL
       .word XT_EQUAL
       .word XT_EXIT
 
-COLON "loop?" , LOOPQ # ( a -- f ) DICT: f is true if [a] is XT of DOLOOP | DOPLUSLOOP 
+COLON "loop?" , LOOPQ /* ( a -- f ) DICT: f is true if [a] is XT of DOLOOP | DOPLUSLOOP  */
       .word XT_FETCH
       .word XT_DUP
       .word XT_DOLITERAL
@@ -47,30 +47,30 @@ COLON "loop?" , LOOPQ # ( a -- f ) DICT: f is true if [a] is XT of DOLOOP | DOPL
       .word XT_OR 
       .word XT_EXIT
 
-COLON "condbranch?", CONDBRANCHQ # # ( a -- f ) DICT: f is true if a contains XT of DOCONDBRANCH
+COLON "condbranch?", CONDBRANCHQ /* # ( a -- f ) DICT: f is true if a contains XT of DOCONDBRANCH */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word XT_DOCONDBRANCH
       .word XT_EQUAL
       .word XT_EXIT
 
-COLON "branch?", BRANCHQ # # ( a -- f ) DICT: f is true if a contains XT of DOBRANCH
+COLON "branch?", BRANCHQ /* # ( a -- f ) DICT: f is true if a contains XT of DOBRANCH */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word XT_DOBRANCH
       .word XT_EQUAL
       .word XT_EXIT
 
-# MFD if below works 
-# COLON "anybranch?", ANYBRANCHQ # # ( a -- f ) DICT: f is true if a contains XT of any branch
-#       .word XT_DUP
-#       .word XT_CONDBRANCHQ
-#       .word XT_SWAP
-#       .word XT_BRANCHQ
-#       .word XT_OR 
-#       .word XT_EXIT
+/* MFD if below works  */
+/* COLON "anybranch?", ANYBRANCHQ # # ( a -- f ) DICT: f is true if a contains XT of any branch */
+/* .word XT_DUP */
+/* .word XT_CONDBRANCHQ */
+/* .word XT_SWAP */
+/* .word XT_BRANCHQ */
+/* .word XT_OR  */
+/* .word XT_EXIT */
 
-COLON "anybranch?", ANYBRANCHQ # # ( a -- f ) DICT: f is true if a contains XT of any branch
+COLON "anybranch?", ANYBRANCHQ /* # ( a -- f ) DICT: f is true if a contains XT of any branch */
       .word XT_DUP
       .word XT_CONDBRANCHQ
       .word XT_OVER
@@ -81,22 +81,22 @@ COLON "anybranch?", ANYBRANCHQ # # ( a -- f ) DICT: f is true if a contains XT o
       .word XT_OR 
       .word XT_EXIT
 
-#MFD COLON "colon?" , COLONQ
-#      .word XT_FETCH
-#      .word XT_CON_COLON
-#      .word XT_EQUAL
-#      .word XT_EXIT
+/* MFD COLON "colon?" , COLONQ */
+/* .word XT_FETCH */
+/* .word XT_CON_COLON */
+/* .word XT_EQUAL */
+/* .word XT_EXIT */
 
-# colon? ( a -- f )            
-COLON "colon?" , COLONQ # ( a -- f ) DICT: f is true if a contains XT of DOCOLON 
+/* colon? ( a -- f )             */
+COLON "colon?" , COLONQ /* ( a -- f ) DICT: f is true if a contains XT of DOCOLON  */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word DOCOLON
       .word XT_EQUAL
       .word XT_EXIT
 
-# codeword? ( xt -- f )
-COLON "codeword?" , CODEWORDQ # ( a -- f ) DICT: f is true if a contains XT of CODEWORD
+/* codeword? ( xt -- f ) */
+COLON "codeword?" , CODEWORDQ /* ( a -- f ) DICT: f is true if a contains XT of CODEWORD */
       .word XT_DUP
       .word XT_FETCH
       .word XT_SWAP
@@ -105,14 +105,14 @@ COLON "codeword?" , CODEWORDQ # ( a -- f ) DICT: f is true if a contains XT of C
       .word XT_EXIT
       
 
-# exit? ( addr-in-pfa-body -- f )
-#COLON "exit?" , EXITQ
-#      .word XT_FETCH
-#      .word XT_CON_EXIT
-#      .word XT_EQUAL
-#      .word XT_EXIT
+/* exit? ( addr-in-pfa-body -- f ) */
+/* COLON "exit?" , EXITQ */
+/* .word XT_FETCH */
+/* .word XT_CON_EXIT */
+/* .word XT_EQUAL */
+/* .word XT_EXIT */
 
-COLON "exit?" , EXITQ  # ( a -- f ) DICT: f is true if [a] is XT of EXIT | EXITI
+COLON "exit?" , EXITQ  /* ( a -- f ) DICT: f is true if [a] is XT of EXIT | EXITI */
       .word XT_FETCH
       .word XT_DUP
       .word XT_DOLITERAL
@@ -125,41 +125,41 @@ COLON "exit?" , EXITQ  # ( a -- f ) DICT: f is true if [a] is XT of EXIT | EXITI
       .word XT_OR 
       .word XT_EXIT
 
-# Original MFD 
-# condbranch? ( addr-in-pfa-body -- f )
-#COLON "condbranch?" , CONDBRANCHQ
-#      .word XT_FETCH
-#      .word XT_CON_DOCONDBRANCH
-#      .word XT_EQUAL
-#      .word XT_EXIT
+/* Original MFD  */
+/* condbranch? ( addr-in-pfa-body -- f ) */
+/* COLON "condbranch?" , CONDBRANCHQ */
+/* .word XT_FETCH */
+/* .word XT_CON_DOCONDBRANCH */
+/* .word XT_EQUAL */
+/* .word XT_EXIT */
 
-# MFD COLON "variable?" , VARIABLEQ
-#      .word XT_FETCH
-#      .word XT_CON_VARIABLE
-#      .word XT_EQUAL
-#      .word XT_EXIT
+/* MFD COLON "variable?" , VARIABLEQ */
+/* .word XT_FETCH */
+/* .word XT_CON_VARIABLE */
+/* .word XT_EQUAL */
+/* .word XT_EXIT */
 
-COLON "variable?" , VARIABLEQ # ( a -- f ) DICT: f is true if [a] is XT for a variable
+COLON "variable?" , VARIABLEQ /* ( a -- f ) DICT: f is true if [a] is XT for a variable */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word PFA_DOVARIABLE
       .word XT_EQUAL
       .word XT_EXIT
 
-#MFD COLON "value?" , VALUEQ
-#      .word XT_FETCH
-#      .word XT_CON_VALUE
-#      .word XT_EQUAL
-#      .word XT_EXIT
+/* MFD COLON "value?" , VALUEQ */
+/* .word XT_FETCH */
+/* .word XT_CON_VALUE */
+/* .word XT_EQUAL */
+/* .word XT_EXIT */
 
-COLON "value?" , VALUEQ # ( a -- f ) DICT: f is true if [a] is XT for a value
+COLON "value?" , VALUEQ /* ( a -- f ) DICT: f is true if [a] is XT for a value */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word PFA_DOVALUE
       .word XT_EQUAL
       .word XT_EXIT
 
-# brain damaged string
+/* brain damaged string */
 .macro BDAM string
     .byte 8f - 7f
 7:  .ascii "\string"
@@ -268,44 +268,44 @@ REGITC:
         BDAM "t5" 
         BDAM "t6" 
 
-#         BDAM "x0"  
-#         BDAM "x1"  
-#         BDAM "RSP"  
-#         BDAM "TOS"   
-#         BDAM "DSP"  
-#         BDAM "x5"  
-#         BDAM "x6"  
-#         BDAM "x7"  
-#         BDAM "LPI"  
-#         BDAM "LPL"  
-#         BDAM "x10" 
-#         BDAM "x11" 
-#         BDAM "x12" 
-#         BDAM "x13" 
-#         BDAM "x14" 
-#         BDAM "x15" 
-#         BDAM "IP" 
-#         BDAM "W" 
-#         BDAM "UP" 
-#         BDAM "x19" 
-#         BDAM "A" 
-#         BDAM "B" 
-#         BDAM "x22" 
-#         BDAM "x23" 
-#         BDAM "x24" 
-#         BDAM "x25" 
-#         BDAM "x26" 
-#         BDAM "x27" 
-#         BDAM "x28" 
-#         BDAM "x29" 
-#         BDAM "x30" 
-#         BDAM "x31" 
+/* BDAM "x0"   */
+/* BDAM "x1"   */
+/* BDAM "RSP"   */
+/* BDAM "TOS"    */
+/* BDAM "DSP"   */
+/* BDAM "x5"   */
+/* BDAM "x6"   */
+/* BDAM "x7"   */
+/* BDAM "LPI"   */
+/* BDAM "LPL"   */
+/* BDAM "x10"  */
+/* BDAM "x11"  */
+/* BDAM "x12"  */
+/* BDAM "x13"  */
+/* BDAM "x14"  */
+/* BDAM "x15"  */
+/* BDAM "IP"  */
+/* BDAM "W"  */
+/* BDAM "UP"  */
+/* BDAM "x19"  */
+/* BDAM "A"  */
+/* BDAM "B"  */
+/* BDAM "x22"  */
+/* BDAM "x23"  */
+/* BDAM "x24"  */
+/* BDAM "x25"  */
+/* BDAM "x26"  */
+/* BDAM "x27"  */
+/* BDAM "x28"  */
+/* BDAM "x29"  */
+/* BDAM "x30"  */
+/* BDAM "x31"  */
 
 CONSTANT "REGNUM" , CON_REGNUM, REGNUM
 CONSTANT "REGABI" , CON_REGABI, REGABI
 CONSTANT "REGITC" , CON_REGITC, REGITC
 
-# VALUE "REGNAME", REGNAME, REGITC
+/* VALUE "REGNAME", REGNAME, REGITC */
 
 
 

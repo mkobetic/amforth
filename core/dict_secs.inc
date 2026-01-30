@@ -270,3 +270,4 @@
 .include "words/break.s"
 
 .include "words/chkdalign.s"
+.include "words/vdump.s"

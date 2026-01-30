@@ -106,7 +106,6 @@
 .include "words/do-value.s"
 .include "words/do-defer.s"
 .include "words/do-user.s"
-.include "words/do-does.s"
 .include "words/up.s"
 
 .include "words/dobranch.s"
@@ -120,6 +119,8 @@
 .include "words/cell-minus.s"
 .include "words/2rot.s"
 .include "words/move.s"
+
+.include "words/does.s"
 
 # Include architecture specific primitives
 .include "arch_prims.inc"
