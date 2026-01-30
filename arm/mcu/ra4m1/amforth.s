@@ -2,7 +2,7 @@
 .globl PFA_COLD 
 
 .include "config.inc"
-.include "macros.inc"
+.include "arm/macros.inc"
 .include "user.inc"
 
 .syntax unified
@@ -10,10 +10,10 @@
 .thumb
 
 .section .vector, "ax"
-.include "vectors.s"
+.include "mcu/ra4m1/vectors.s"
 
 .section amforth, "ax"
-.include "isr.s"
+.include "mcu/ra4m1/isr.s"
 
 STARTDICT
 
