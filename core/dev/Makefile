@@ -84,7 +84,7 @@ build/%.dep: %.s buildinfo
 # table of contents: headers and location of all words in files listed by amforth.dep
 # the file paths are adjusted to be relative to $(AMFORTH) 
 build/%.toc: build/%.dep
-	awk -f $(AMFORTH)/core/dev/toc.awk $(shell sed 's|/dev/null:||; s| \\||' $<) >$@
+	@awk -f $(AMFORTH)/core/dev/toc.awk $(shell sed 's|/dev/null:||; s| \\||' $<) >$@
 
 build/%.txt: build/%.toc
 	$(AMFORTH)/tools/refcard.py >$@

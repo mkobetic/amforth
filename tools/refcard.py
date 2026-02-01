@@ -22,6 +22,17 @@ import re
 import html
 import argparse
 
+def read_build_info():
+    pattern = re.compile(r'^\s*STRING\s*"(.*)"')
+    bits = []
+    for fn in ['words/env-cpu.s', 'words/env-board.s', 'words/build-info.s']:
+        with open(fn, 'r') as f:
+            for line in f:
+                match = pattern.match(line)
+                if match:
+                    bits.append(match.group(1))
+    return bits
+
 def parse_categories(filepath):
     """
     Parses the categories file.
@@ -174,6 +185,7 @@ def generate_refcard(categories_file, toc_file):
 def generate_html_refcard(categories_file, toc_file):
     categories = parse_categories(categories_file)
     words_db = parse_toc(toc_file, categories)
+    build_info = " ".join(read_build_info())
     
     if not categories or not words_db:
         return
@@ -192,9 +204,18 @@ def generate_html_refcard(categories_file, toc_file):
     print("</head>")
     print("<body>")
     print("<h1>AmForth Reference Card</h1>")
+    print(f'<h2>{build_info}</h2>')
+
+    print("<p>")
+    links = []
+    for cat_name, _ in categories:
+        anchor = html.escape(cat_name)
+        links.append(f'<a href="#{anchor}">{anchor}</a>')
+    print(" | ".join(links))
+    print("</p>")
 
     for cat_name, word_list in categories:
-        print(f"<h2>{html.escape(cat_name)}</h2>")
+        print(f'<h2 id="{html.escape(cat_name)}">{html.escape(cat_name)}</h2>')
         print("<table>")
         print("<tr><th>Word</th><th>Type</th><th>Stack Signature</th><th>Description</th><th>Location</th></tr>")
         
