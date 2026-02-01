@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 DATA "rectype-num", RECTYPE_NUM
-    .word XT_NOOP    
+    .word XT_NOP    
     .word XT_LITERAL 
     .word XT_LITERAL 
 
 DATA "rectype-dnum", RECTYPE_DNUM
-    .word XT_NOOP 
+    .word XT_NOP 
     .word XT_2LITERAL
     .word XT_2LITERAL
 
