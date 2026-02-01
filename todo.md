@@ -34,6 +34,7 @@ List of know issues and tasks that need to be done (by area)
 * [x] implement umstar.s (see rv)
 * [ ] (exiti) likely needs work
 * [ ] document dev tool setup
+* [ ] better HW fault handling
 
 ## LM4F120
 

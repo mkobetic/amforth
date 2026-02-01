@@ -8,7 +8,7 @@
 # this is placed in section .init but is included here are values from config.inc
 # are needed by both C and AmForth-RV 
 
-.include "config.inc"   # most configuration options are in this file
+.include "mcu/ch32v307/config.inc"   # most configuration options are in this file
 
 .ifdef BUILD_203
 .print "INFO: using 203 startup"	
@@ -39,7 +39,7 @@
 .option norvc               # don't use compressed
 .option norelax             # don't relax
 
-.include "macros.inc"       # macros for everything
+.include "rv/macros.inc"       # macros for everything
 .include "user.inc"         # user area configuration 
 
 RAMALLOT reg_shadow, 256

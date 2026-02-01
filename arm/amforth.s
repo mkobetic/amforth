@@ -4,7 +4,7 @@
 .globl PFA_COLD 
 
 .include "config.inc"
-.include "macros.inc"
+.include "arm/macros.inc"
 .include "user.inc"
 
 .syntax unified
