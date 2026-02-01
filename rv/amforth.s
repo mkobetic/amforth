@@ -6,7 +6,7 @@
   j PFA_COLD
 
 .include "config.inc"
-.include "macros.inc"
+.include "rv/macros.inc"
 .include "user.inc"
 
 .section amforth, "ax"

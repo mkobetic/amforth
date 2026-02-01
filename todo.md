@@ -35,6 +35,8 @@ List of know issues and tasks that need to be done (by area)
 * [ ] (exiti) likely needs work
 * [ ] we are not using the link register, would it speed things up if it was used to cache DO_NEXT?
       (i.e. macro NEXT would do `b lr` instead of `b DO_NEXT`)
+* [ ] document dev tool setup
+* [ ] better HW fault handling
 
 ## LM4F120
 

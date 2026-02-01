@@ -23,17 +23,26 @@ jobs:
         if: steps.cache-toolchain.outputs.cache-hit != 'true'
         run: cd arm/dev && make toolchain
 
+      - name: Build RA4M1 (WANT_ITC)
+        run: cd arm/mcu/ra4m1 && WANT_ITC=1 make all
+
       - name: Build RA4M1
         run: cd arm/mcu/ra4m1 && WANT_IGNORECASE=1 make all
-
-      - name: Build LM4F120
-        run: cd arm/mcu/lm4f120 && WANT_IGNORECASE=1 make all
 
       - name: Cache and Install QEMU ARM
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: qemu-system-arm
           version: 1 # Change this to manually bust the cache
+
+      - name: Build LM4F120 (WANT_ITC)
+        run: cd arm/mcu/lm4f120 && WANT_IGNORECASE=1 WANT_ITC=1 make all
+
+      - name: LM4F120 Core Tests (WANT_ITC)
+        run: cd arm/mcu/lm4f120 && TIMEOUT=5s make test
+
+      - name: Build LM4F120
+        run: cd arm/mcu/lm4f120 && WANT_IGNORECASE=1 make all
 
       - name: LM4F120 Core Tests
         run: cd arm/mcu/lm4f120 && TIMEOUT=5s make test
