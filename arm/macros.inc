@@ -13,7 +13,7 @@ rloopindex .req r11
 rlooplimit .req r12
 
 @ default register mapping
-@ sp .req r13  @ rsp (return stack pointer)
+@ sp .req r13
 @ lr .req r14
 @ pc .req r15
 
