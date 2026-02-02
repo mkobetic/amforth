@@ -128,7 +128,7 @@ test:
 	  cat $(AMFORTH)/tests/core2.fr; \
 	  echo '.s" TESTS FINISHED"' ; \
 	} | timeout -s TERM $(TIMEOUT) $(QEMU) -serial stdio | \
-	tee tests.log | \
+	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
 
 ## A detailed dump of ELF sections for debugging linker issues

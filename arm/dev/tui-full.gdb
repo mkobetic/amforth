@@ -7,7 +7,9 @@ source amforth.gdb
 # This requires Python enabled GDB and the correct version of Python installed on the system.
 # ref: https://undo.io/resources/enhance-gdb-with-tui/
 # Make sure the sourced files are on GDB search path
-source gdb-amforth.py
+source gdb_shared.py
+source gdb_backtrace.py
+source gdb_tui.py
 tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 } 3  { fregs 2 fps 1 frs 1 } 1 } 1
 
 # Enable the forth layout and set focus on the command window

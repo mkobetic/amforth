@@ -2,17 +2,7 @@
 # Loaded by tui-full.gdb
  
 import gdb
-
-# TODO: we should be able to read these from the symbol table
-# FIXME: These are now wrong with amforth32.ld in the picture
-FlashStart = 0x00004000
-FlashEnd = 0x00040000
-RAM_lower_datastack = 0x20000000
-RAM_upper_datastack = 0x20000080
-RAM_lower_returnstack = 0x20000080
-RAM_upper_returnstack = 0x20000100
-RAM_lower_userarea = 0x20000100
-RAM_upper_userarea = 0x20000188
+from gdb_shared import *
 
 # GdbCommandWindow can be used to define a TUI window
 # that invokes a GDB command to produce its contents.
@@ -35,18 +25,18 @@ class GdbCommandWindow:
             return 
         self._tui_window.write(self.get_contents(), True)
 
-class ForthParameterStack(GdbCommandWindow):
-    title = "Parameter Stack"
-    gdb_command = ".s"
+# class ForthParameterStack(GdbCommandWindow):
+#     title = "Parameter Stack"
+#     gdb_command = ".s"
 
-class ForthReturnStack(GdbCommandWindow):
-    title = "Return Stack"
-    gdb_command = ".r"
+# class ForthReturnStack(GdbCommandWindow):
+#     title = "Return Stack"
+#     gdb_command = ".r"
 
 def value(val):
     # If val is in the flash code range, treat it as address
     if FlashStart <= val and val < FlashEnd:
-        return val.format_string(format="a")
+        return address(val)
     dec = val.format_string(format="d")
     hex = val.format_string(format="x")
     if 0 <= val and val <= 0xFFFF:
@@ -59,6 +49,9 @@ def value(val):
             return f"{dec} {hex} {bin}"
     else: 
         return f"{dec} {hex}"
+
+def address(val):
+    return val.format_string(format="a")
 
 # ForthRegisterWindow is a custom register view
 # showing registers based on what they are used for in AmForth.
@@ -118,7 +111,7 @@ class ForthRegisterWindow:
             self.addres_register(frame, "r10", "UP"),
             self.value_register(frame, "r11", "RLINDEX"),
             self.value_register(frame, "r12", "RLLIMIT"),
-            self.addres_register(frame, "sp"),
+            self.addres_register(frame, "sp", "RSP"),
             self.addres_register(frame, "lr"),
             self.addres_register(frame, "pc"),
             # xPSR on Cortex-M3 is named xpsr
@@ -136,41 +129,78 @@ class ForthRegisterWindow:
         self._tui_window.write(contents, True)
 
 # ForthParameterStack shows the contents of the PSP
-# class ForthParameterStack: 
+class ForthParameterStack: 
 
-#     def __init__(self, tui_window): 
-#         self._tui_window = tui_window
-#         tui_window.title = "Forth Parameter Stack"
-#         gdb.events.before_prompt.connect(self.render)
+    def __init__(self, tui_window): 
+        self._tui_window = tui_window
+        tui_window.title = "Forth Parameter Stack"
+        gdb.events.before_prompt.connect(self.render)
 
-#     def get_contents(self):
-#         frame = gdb.selected_frame()
-#         if frame is None:
-#             return "no frame selected"
-#         tos = frame.read_register("r6")
-#         # TODO: need to detect when stack is empty
-#         lines = [ f"r6/TOS:\t\t{value(tos)}" ]
-#         psp = frame.read_register("r7")
-#         # cast psp from int to int* so that we can dereference it
-#         psp = psp.cast(psp.type.pointer())
-#         while psp < RAM_upper_datastack:
-#             addr = psp.format_string(format="x")
-#             lines.append(f"{addr}:\t{value(psp.dereference())}")
-#             psp += 1
-#         return "\n".join(lines)
+    def get_contents(self):
+        frame = gdb.selected_frame()
+        if frame is None:
+            return "no frame selected"
+        tos = frame.read_register("r6")
+        # TODO: need to detect when stack is empty
+        lines = [ f"r6/TOS:\t\t{value(tos)}" ]
+        psp = frame.read_register("r7")
+        # cast psp from int to int* so that we can dereference it
+        psp = psp.cast(psp.type.pointer())
+        while psp < RAM_upper_datastack:
+            addr = psp.format_string(format="x")
+            lines.append(f"{addr}:\t{value(psp.dereference())}")
+            psp += 1
+        return "\n".join(lines)
 
-#     def render(self): 
-#         if not self._tui_window.is_valid(): 
-#             return
-#         try:
-#             contents = self.get_contents()
-#         except gdb.error as exc: 
-#             contents = str(exc)
-#         self._tui_window.write(contents, True)
+    def render(self): 
+        if not self._tui_window.is_valid(): 
+            return
+        try:
+            contents = self.get_contents()
+        except gdb.error as exc: 
+            contents = str(exc)
+        self._tui_window.write(contents, True)
+
+# ForthReturnStack shows the contents of the RSP
+class ForthReturnStack: 
+
+    def __init__(self, tui_window): 
+        self._tui_window = tui_window
+        tui_window.title = "Forth Return Stack"
+        gdb.events.before_prompt.connect(self.render)
+
+    def get_contents(self):
+        frame = gdb.selected_frame()
+        if frame is None:
+            return "no frame selected"
+        w = frame.read_register("r8") # FORTHW
+        lines = [ f"r8/FORTHW:\t{address(w)}" ]
+        ip = frame.read_register("r9") # FORTHIP
+        lines.append(f"r9/FORTHIP:\t{address(ip)}")
+        rsp = frame.read_register("sp")
+        # cast rsp from int to int* so that we can dereference it
+        rsp = rsp.cast(rsp.type.pointer())
+        while rsp < RAM_upper_returnstack:
+            addr = rsp.format_string(format="x")
+            lines.append(f"{addr}:\t{gdb.format_address(int(rsp.dereference()))}")
+            rsp += 1
+        return "\n".join(lines)
+
+    def render(self): 
+        if not self._tui_window.is_valid(): 
+            return
+        try:
+            contents = self.get_contents()
+        except gdb.error as exc: 
+            contents = str(exc)
+        self._tui_window.write(contents, True)
+
 
 gdb.register_window_type("fps", ForthParameterStack)
 gdb.register_window_type("frs", ForthReturnStack)
 gdb.register_window_type("fregs", ForthRegisterWindow)
+
+
 
 # GDB Python API Notes
 #
