@@ -8,14 +8,14 @@ move:
     # s3 = byte count (TOS)
     # 0(s4) = destination address
     # 4(s4) = source address
-    
-    # Check if count is zero
-    beq     s3, zero, 9f        # 9: move_done
-    
+
     # Load source and destination from data stack
     lw      t0, 4(s4)           # t0 = source address
     lw      t1, 0(s4)           # t1 = destination address
     addi    s4, s4, 8           # Pop 2 items from data stack
+
+    # Check if count is zero
+    beq     s3, zero, 9f        # 9: move_done
     
     # Check if source == destination
     beq     t0, t1, 9f          # 9: move_done

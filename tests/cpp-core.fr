@@ -756,7 +756,6 @@ T{ NOP NOP1 NOP NOP2 -> }T
 T{ NOP1 -> }T
 T{ NOP2 -> }T
 
-#ifdef DONT_SKIP # DOES> I think there is a way this will pass but not now  
 \ DOES> 
 T{ : DOES1 DOES> @ 1 + ; -> }T
 T{ : DOES2 DOES> @ 2 + ; -> }T
@@ -775,7 +774,7 @@ T{ WEIRD: W1 -> }T
 T{ ' W1 >BODY -> HERE }T
 T{ W1 -> HERE 1 + }T
 T{ W1 -> HERE 2 + }T
-#endif
+
 \ ------------------------------------------------------------------------
 
 TESTING EVALUATE
@@ -895,7 +894,7 @@ T{ GP6 -> <TRUE> }T
 T{ GP7 -> <TRUE> }T
 
 
-#ifdef DONT_SKIP # Missing >NUMBER
+#ifdef DONT_SKIP # Missing WORD
 \ >NUMBER TESTS
 CREATE GN-BUF 0 C,
 
@@ -937,7 +936,6 @@ T{ MAX-UINT DUP MAX-BASE GN1 -> MAX-UINT DUP 0 }T
 T{ GN2 -> 10 A }T
 #endif
 \ ------------------------------------------------------------------------
-#ifdef DONT_SKIP # Incompatible FILL, MOVE
 TESTING FILL MOVE
 
 CREATE FBUF 00 C, 00 C, 00 C,
@@ -970,7 +968,6 @@ T{ SEEBUF -> 12 12 34 }T
 
 T{ FBUF CHAR+ FBUF 2 CHARS MOVE -> }T
 T{ SEEBUF -> 12 34 34 }T
-#endif
 
 \ ------------------------------------------------------------------------
 #ifdef DONT_SKIP # This test requires visual inspection. Doesn't work in automated setting.

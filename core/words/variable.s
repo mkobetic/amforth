@@ -1,55 +1,22 @@
 # SPDX-License-Identifier: GPL-3.0-only
-# this is the old one 
-#COLON "variable", VARIABLE
-#      .word XT_CREATE
-#      .word XT_RAMHEREPLUSPLUS
-#      .word XT_COMMA
-#      .word XT_EXIT 
 
-# this is the very old one 
-# COLON "variable", VARIABLE
-#       .word XT_CREATE
-#       .word XT_HERE
-#       .word XT_CELLPLUS
-#       .word XT_COMMA
-#       .word XT_DOLITERAL, 4
-#       .word XT_ALLOT
-#       .word XT_EXIT      
+/*
+Skip leading space delimiters. Parse name delimited by a space. Create a definition for name with the execution semantics defined below.
+Reserve one cell of data space at an aligned address.
 
-.ifnb 
-
-COLON "variable" , VARIABLE
-      .word XT_FLAGDOTVAR
-      .word XT_DOTO
-      .word XT_FLAGDOTHEADER
-      .word XT_CREATE
-      .word XT_RAMHEREPLUSPLUS
-      .word XT_COMMA
-      .word XT_LBRACKET
-      .word XT_TOFLUSH 
-      .word XT_EXIT 
-
-COLON "variable~" , CLOAKED_VARIABLE
-      .word XT_FLAGDOTVAR
-      .word XT_FLAGDOTCLOAKED
-      .word XT_OR
-      .word XT_DOTO
-      .word XT_FLAGDOTHEADER
-      .word XT_CREATE
-      .word XT_RAMHEREPLUSPLUS
-      .word XT_COMMA
-      .word XT_LBRACKET
-      .word XT_TOFLUSH 
-      .word XT_EXIT 
-.else
-
-COLON "variable" , VARIABLE
+name execution: ( -- a-addr )
+a-addr is the address of the reserved cell. A program is responsible for initializing the contents of the reserved cell.
+*/
+COLON "variable", VARIABLE /* ( "<spaces>name" -- ) create variable definition for name */
       .word XT_FLAGDOTVAR
       .word XT_FLAGDOTPRIVATEQ
       .word XT_OR
       .word XT_DOTO
       .word XT_FLAGDOTHEADER
-      .word XT_CREATE
+      .word XT_DOCREATE
+      .word XT_REVEAL
+      .word XT_COMPILE
+      .word PFA_DOVARIABLE
       .word XT_RAMHEREPLUSPLUS
       .word XT_COMMA
       .word XT_LBRACKET
@@ -62,12 +29,13 @@ COLON "variable~" , CLOAKED_VARIABLE
       .word XT_OR
       .word XT_DOTO
       .word XT_FLAGDOTHEADER
-      .word XT_CREATE
+      .word XT_DOCREATE
+      .word XT_REVEAL
+      .word XT_COMPILE
+      .word PFA_DOVARIABLE
       .word XT_RAMHEREPLUSPLUS
       .word XT_COMMA
       .word XT_LBRACKET
 #      .word XT_TOFLUSH 
       .word XT_EXIT 
-
-.endif
 

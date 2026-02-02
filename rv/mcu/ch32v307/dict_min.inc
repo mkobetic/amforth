@@ -99,7 +99,6 @@ DO_EXECUTE:
 .include "pri-words/do-value.s"
 .include "pri-words/do-defer.s"
 .include "pri-words/do-user.s"
-.include "pri-words/do-does.s"
 .include "pri-words/up.s"
 
 .include "pri-words/1ms.s"
