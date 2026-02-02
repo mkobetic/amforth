@@ -85,8 +85,6 @@ DO_EXECUTE:
 .include "pri-words/execute.s"
 
 #.include "pri-words/pause.s"
-.include "pri-words/nop.s"
-
 
 .include "pri-words/do-do.s"
 .include "pri-words/do-loop.s"

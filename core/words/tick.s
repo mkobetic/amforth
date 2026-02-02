@@ -13,7 +13,7 @@ COLON "'", TICK
     .word XT_SWAP
     .word XT_FETCH
     .word XT_DOLITERAL
-    .word XT_NOOP
+    .word XT_NOP
     .word XT_EQUAL
     .word XT_OR
     .word XT_DOCONDBRANCH, PFA_TICK1

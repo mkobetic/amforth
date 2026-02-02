@@ -36,7 +36,7 @@ GDB ?= $(TC_DIR)/bin/$(CROSS)gdb
 GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py3
 
 ## Build all files
-all: build/amforth.bin build/amforth.hex build/amforth.lst build/amforth.sal build/amforth.sym build/amforth.toc
+all: build/amforth.bin build/amforth.hex build/amforth.lst build/amforth.sal build/amforth.sym build/amforth.toc build/amforth.txt build/amforth.html
 
 buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
@@ -84,8 +84,13 @@ build/%.dep: %.s buildinfo
 # table of contents: headers and location of all words in files listed by amforth.dep
 # the file paths are adjusted to be relative to $(AMFORTH) 
 build/%.toc: build/%.dep
-	awk -f $(AMFORTH)/core/dev/toc.awk $(shell sed 's|/dev/null:||; s| \\||' $<) | \
-	sed 's|$(AMFORTH)/||' >$@
+	@awk -f $(AMFORTH)/core/dev/toc.awk $(shell sed 's|/dev/null:||; s| \\||' $<) >$@
+
+build/%.txt: build/%.toc
+	$(AMFORTH)/tools/refcard.py >$@
+
+build/%.html: build/%.toc
+	$(AMFORTH)/tools/refcard.py --html >$@
 
 
 SORT_SYMS_BY_ADDRESS := grep -E '^[0-9a-f]{8} .*' | \

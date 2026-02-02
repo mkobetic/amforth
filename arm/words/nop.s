@@ -1,2 +1,0 @@
-CODEWORD "nop", NOOP
-NEXT

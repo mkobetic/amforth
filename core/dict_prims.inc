@@ -92,8 +92,6 @@
 .include "words/execute.s"
 
 #.include "words/pause.s"
-.include "words/nop.s"
-
 
 .include "words/do-do.s"
 .include "words/do-loop.s"
