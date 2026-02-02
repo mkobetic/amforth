@@ -1,6 +1,6 @@
 
-.include "config.inc"
-.include "macros.inc"
+.include "mcu/linux/config.inc"
+.include "arm/macros.inc"
 .include "user.inc"
 
 .syntax unified

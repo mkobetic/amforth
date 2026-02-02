@@ -5,8 +5,8 @@
 .global PFA_COLD
   j PFA_COLD
 
-.include "config.inc"
-.include "macros.inc"
+.include "mcu/hifive1/config.inc"
+.include "rv/macros.inc"
 .include "user.inc"
 
 .section amforth, "ax"

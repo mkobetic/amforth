@@ -36,7 +36,7 @@ GDB ?= $(TC_DIR)/bin/$(CROSS)gdb
 GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py3
 
 ## Build all files
-all: build/amforth.bin build/amforth.hex build/amforth.lst build/amforth.sal build/amforth.sym
+all: build/amforth.bin build/amforth.hex build/amforth.lst build/amforth.sal build/amforth.sym build/amforth.toc
 
 buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
@@ -51,10 +51,14 @@ endif
 # Needed for the INCLUDE amforth32.ld to work in linked files (-L must precede the -T !!!)
 LDFLAGS := -L $(AMFORTH)/core -T $(MCU_LD)
 
-# The include order is important: architecture > core > AMFORTH
-# for simple imports, e.g. config.inc or words/xx.s, the more specific directory wins
-# the AMFORTH root allows include files to import more general include files with the same name
+# The include order is important: architecture > core > AMFORTH.
+# For simple imports, e.g. config.inc or words/xx.s, the more specific directory wins.
+# AMFORTH root allows include files to import more general include files with the same name.
+ifdef WANT_ITC
+INCLUDES := -I $(AMFORTH)/core -I../.. -I $(AMFORTH)
+else
 INCLUDES := -I../.. -I $(AMFORTH)/core -I $(AMFORTH)
+endif
 build/%.o: %.s buildinfo
 	$(AS) $(ASFLAGS) $(INCLUDES) -o $@ $<
 
@@ -73,13 +77,26 @@ build/%.bin: build/%.elf
 build/%.lst: build/%.elf
 	$(OBJDUMP) --show-raw-insn --insn-width=4 --all-headers --disassemble-all --source --syms $< >$@
 
+# list all transitive dependencies of amforth.s (include tree traversal)
+build/%.dep: %.s buildinfo
+	$(AS) $(INCLUDES) -MD $@ -o /dev/null $<
+
+# table of contents: headers and location of all words in files listed by amforth.dep
+# the file paths are adjusted to be relative to $(AMFORTH) 
+build/%.toc: build/%.dep
+	awk -f $(AMFORTH)/core/dev/toc.awk $(shell sed 's|/dev/null:||; s| \\||' $<) | \
+	sed 's|$(AMFORTH)/||' >$@
+
+
 SORT_SYMS_BY_ADDRESS := grep -E '^[0-9a-f]{8} .*' | \
 	awk '{ printf "0x%s\n",$$0; }' | \
 	sort --key=1 --sort=numeric
 
+# symbol and line info
 build/%.sal: build/%.elf
-	$(NM) -l $< | $(SORT_SYMS_BY_ADDRESS) >$@
+	$(NM) --line-numbers $< | $(SORT_SYMS_BY_ADDRESS) >$@
 
+# full symbol dump
 build/%.sym: build/%.elf
 	$(OBJDUMP) --syms $< | $(SORT_SYMS_BY_ADDRESS) >$@
 
@@ -103,7 +120,7 @@ shell:
 # to do it from the inside, i.e. from AmForth running in it.
 TIMEOUT ?= 3s
 TESTER ?= $(AMFORTH)/lib/forth2012/tester/tester-amforth.frt
-SKIP := $(PP) -w -P
+SKIP := $(PP) -w -E --no-line-commands
 test:
 	{ cat $(TESTER); \
 	  echo '.s" TESTS STARTING"' ; \
@@ -167,3 +184,7 @@ symbols:
 		grep -E '^[0-9a-f]{8} .*' | \
 		awk '{ printf "0x%s\n",$$0; }' | \
 		sort --key=1 --sort=numeric
+
+## Dump contents of the debug info sections
+debug_info:
+	$(READELF) --debug-dump build/amforth.elf

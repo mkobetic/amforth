@@ -2,7 +2,7 @@
 .global PFA_COLD 
 
 .include "config.inc"
-.include "macros.inc"
+.include "arm/macros.inc"
 .include "user.inc"
 
 .syntax unified
@@ -10,7 +10,7 @@
 .thumb
 
 .section .vector, "ax"
-.include "vectors.s"
+.include "mcu/lm4f120/vectors.s"
 
 .section amforth, "ax"
 .include "isr.s"
