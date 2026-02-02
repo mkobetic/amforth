@@ -33,8 +33,6 @@ List of know issues and tasks that need to be done (by area)
 * [x] implement m-rot.s (see rv)
 * [x] implement umstar.s (see rv)
 * [ ] (exiti) likely needs work
-* [ ] we are not using the link register, would it speed things up if it was used to cache DO_NEXT?
-      (i.e. macro NEXT would do `b lr` instead of `b DO_NEXT`)
 * [ ] document dev tool setup
 * [ ] better HW fault handling
 
@@ -50,7 +48,9 @@ List of know issues and tasks that need to be done (by area)
 
 
 # RISC-V
-* [ ] implement native um/mod and optimize for narrow arguments (see ARM)
+* [ ] add readme.md
+* [ ] generalize flash dictionary write support (flash.s)
+* [ ] generalize eeprom support (eeprom.s)
 
 ## CH32V307
 * [ ] RAMALLOT reg_shadow differences between 307 ad QEM configuration
