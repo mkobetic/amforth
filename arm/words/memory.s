@@ -3,18 +3,17 @@
   CODEWORD  "fill",FILL  @ Fill memory with given byte.
   @ ( Destination Count Filling -- )
 @------------------------------------------------------------------------------
-  poptos r0
-  poptos r1
+  poptos r0 @ filler
+  poptos r1 @ count
   @ TOS      Destination
 
-  cmp r1, #0
-  beq 2f
-
-1:subs r1, #1
+  cbz r1, 2f
+1:
+  subs r1, #1
   strb r0, [tos, r1]
   bne 1b
-
-2:  ldm psp!, {tos}
+2:
+  loadtos
 
 NEXT
 

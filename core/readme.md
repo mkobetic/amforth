@@ -8,7 +8,6 @@ and with architecture compatible MCU specific words, e.g.
 * core/words/ + arm/words + arm/mcu/lm4f120/words (Stellaris Launchpad board)
 
 
-
 # Architecture
 
 ## Memory layout

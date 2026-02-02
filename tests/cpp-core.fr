@@ -342,7 +342,7 @@ T{ MAX-UINT MAX-UINT UM* -> 1 1 INVERT }T
 \ ------------------------------------------------------------------------
 TESTING DIVIDE: FM/MOD SM/REM UM/MOD */ */MOD / /MOD MOD
 
-#ifdef DONT_SKIP # missing FM/MOD (floored division)
+#ifdef DONT_SKIP # missing FM/MOD (floored division); 44 tests
 
 T{ 0 S>D 1 FM/MOD -> 0 0 }T
 T{ 1 S>D 1 FM/MOD -> 0 1 }T
@@ -796,7 +796,7 @@ T{ GE7 -> 124 }T
 
 
 \ ------------------------------------------------------------------------
-#ifdef DONT_SKIP # missing SCANS and WORD
+#ifdef DONT_SKIP # missing SCANS and WORD; 7 tests
 TESTING SOURCE >IN WORD
 
 
@@ -894,7 +894,7 @@ T{ GP6 -> <TRUE> }T
 T{ GP7 -> <TRUE> }T
 
 
-#ifdef DONT_SKIP # Missing WORD
+#ifdef DONT_SKIP # missing WORD (>NUMBER tests); 19 tests
 \ >NUMBER TESTS
 CREATE GN-BUF 0 C,
 
@@ -970,7 +970,7 @@ T{ FBUF CHAR+ FBUF 2 CHARS MOVE -> }T
 T{ SEEBUF -> 12 34 34 }T
 
 \ ------------------------------------------------------------------------
-#ifdef DONT_SKIP # This test requires visual inspection. Doesn't work in automated setting.
+#ifdef DONT_SKIP # requires visual inspection; not applicable
 TESTING OUTPUT: . ." CR EMIT SPACE SPACES TYPE U.
 
 : OUTPUT-TEST
@@ -997,7 +997,7 @@ T{ OUTPUT-TEST -> }T
 
 #endif
 \ ------------------------------------------------------------------------
-#ifdef DONT_SKIP # getting input in an automated test is not helpful
+#ifdef DONT_SKIP # requires input; not applicable
 TESTING INPUT: ACCEPT
 
 

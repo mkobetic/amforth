@@ -39,8 +39,8 @@ jobs:
       - name: apt-get update
         run: sudo apt-get update
         
-      # This doesn't seem to be able to install the RISC-V packages, possibly
-      # because of out of date index but apt-get update ahead of time doesn't fix it.
+      # This doesn't seem to be able to install the RISC-V packages, unfortunately
+      # Possibly because of the bad index but apt-get update ahead of time doesn't fix it.
       # - name: Cache and Install QEMU RISC-V 32
       #   uses: awalsh128/cache-apt-pkgs-action@latest
       #   with:
