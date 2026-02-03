@@ -1,62 +1,63 @@
 
 STACK:
-    pick -rot tuck ?dup nip dup rot swap over drop
-    2rot 2dup 2drop 2over 2nip 2swap 
+    dup ?dup swap over drop rot -rot tuck nip pick 
+    2dup  2swap 2over 2drop 2rot 2nip 
     depth sp0 sp sp! sp@
     rdrop rdepth rp rp! rp@ r@ r> >r nr> n>r 2r> 2>r 2r@
-MATH:
-    * + - / mod u/mod /mod */ */mod 1- 1+ 2- 2+ 2/ 2*
-    lshift rshift not or and xor ashift invert abs negate
 COMPARE:
     umin umax max min = <> u> u< > < <= >= 0< 0<> 0= 0> within
+MATH:
+    * + - / mod /mod */ */mod u/mod
+    1- 1+ 2- 2+ 2/ 2*
+    not or and xor invert lshift rshift ashift abs negate
 MIXED:
     m* m+ um* um/mod sm/rem m/mod
 DOUBLE:
-    s>d d= d0= d0< d> d< d/ d/mod ud/mod d2/ d2* d- d+ dnegate ud* dabs
+    s>d d= d0= d0< d> d<
+    d- d+ d/ d/mod ud* ud/mod
+    d2/ d2* dnegate dabs
 MEMORY:
     ! @ h! h@ c! c@ +! fill move
     2@ 2! char+ chars cells cell cell- cell+
     !i
-    ealign valign dalign ehere vhere dhere eallot ep vallot dallot
-    aligned allot align ram++ ram+ ram vp vp.max vp0  >ram >flash
+    align here allot aligned
+    valign vhere vallot vp vp.max vp0
+    dalign dhere  dallot dp dp0.ram dp.ram dp.flash
+    ealign ehere eallot ep 
+    ram++ ram+ ram >ram >flash
     up! up@
 STRING:
-    sub-string? search sliteral s, ." s"
-    number >number digit? toupper
+    s, ." s" sub-string? number >number digit? toupper
     /string parse parse-name cskip cscan
-    bounds compare
+    search bounds compare count
 DICTIONARY:
-    ' c, , h,
-    dp dp0.ram dp.ram dp.flash here reveal newest latest 
-    nfa>string nfa>xt lfa>ffa ffa>nfa xt>string >body name>flags ffa>string ffa2cfa ffa>lfa xt>ffa xt>nfa
+    ' c, , h, reveal newest latest 
+    value value~ is variable variable~ constant constant~ :noname header
     find find-xt forget words evaluate interpret execute
-    value is variable~ variable constant~ constant :noname header
+    nfa>string nfa>xt lfa>ffa ffa>nfa xt>string >body name>flags ffa>string ffa2cfa ffa>lfa xt>ffa xt>nfa
 WORDLIST:
     wordlist forth-wordlist ram-wordlist core-wordlist environment get-current  wlscope search-wordlist current show-wordlist traverse-wordlist
-    set-current previous set-order get-order order only 
+    set-current previous set-order get-order order only w1  order.table  (order) core forth order.forth order.core order.only cfg-order top> >top top
 COMPILER:
-    postpone immediate state
-    Udefer! Udefer@ 
-    ;i ; :~ : ( [ ]  recurse
-    defer! defer@ defer~ defer create  char ['] [compile] [char] \# \
-    compile xliteral literal 2literal
+    : ; ;i :~ ( \# \  recurse postpone immediate state
+    create does> char [ ] ['] [compile] [char] 
+    compile xliteral literal 2literal sliteral
+    Udefer! Udefer@ defer! defer@ defer~ defer
 FLOW:
     ?abort abort" abort trap! throw catch handler exit
-    +loop  loop  endloop do ?do j i unloop
-    leave >l l> lp lp0 repeat again else if while until then begin ahead
+    repeat again else if while until then begin ahead
+    +loop  loop  endloop do ?do j i unloop leave >l l> lp lp0 
 IO:
     serial-emit? serial-emit serial-key? serial-key emit? serial-emit-pause emit key? serial-key-pause key
-    tib #tib >in source-tib source
-    accept refill-tib refill
+    tib #tib >in source-tib source accept refill-tib refill ?crlf bs
 OUTPUT:
-    r.. r. hex. 8x. 2x. x. .8hex
-    . .k .s ud.r ud. u. d. d.
+    . .k .s ud.r ud. u. d. d. d.r r.. r. hex. 8x. 2x. x. .8hex
     spaces space bl cr base
     itype type pad binary hex decimal 
     sign #> #s # <# hold hld
 SYSTEM:
     ms us rev-info build-info turnkey appl-turnkey ver init-ram cold warm quit pause
 TOOLS:
-    debug empty dump ?stack 
+    debug empty dump ?stack vdump break
 OTHER:
-    arm-wordlist uart-init cacheflush inflash? flashpageerase c!flash w!flash !flash  chkdalign  (evaluate) evaluate.source evaluate.str evaluate.strlen (dallot)  mandelbrot dorow docell doescape init_vars count_and_test? escapes? .char zi_sq zr_sq ccount zimag zreal cimag creal s_escape rescale maxval minval maxiter  (to) pp  ||   ?ascii  -private +private public? memmode  (forget) forget.prior  trap.base m4fix mtog mclr mset value~  show.rom show.page show.flash show.ram show show.header show.what show.xt? -cloak +cloak cloak?   public private flag.private flag.cloaked flag.table flag.init flag.defer flag.value flag.immed flag.con flag.colon flag.dvar flag.var flag.code flag.private? flag.header           (create)          count  (qdocheck)  map-stack set-base bases         w1  order.table  (order) core forth order.forth order.core order.only cfg-order top> >top top  (c,)  (,)     .ready .ok .input .error ?crlf bs  r       first-run  false true -1 4 2 1 0       cfg-recognizer forth-recognizer split rectype-split rec-split rec-num rectype-dnum rectype-num rectype-xt rec-find rectype-null recognize   eeprom.empty?  eeprom.init eeprom.warm flash.low !i std.erase std.unlock          (aligned)               (exiti)  (exit)    nop
+    arm-wordlist uart-init cacheflush inflash? flashpageerase c!flash w!flash !flash  chkdalign  (evaluate) evaluate.source evaluate.str evaluate.strlen (dallot)  mandelbrot dorow docell doescape init_vars count_and_test? escapes? .char zi_sq zr_sq ccount zimag zreal cimag creal s_escape rescale maxval minval maxiter  (to) pp  ||   ?ascii  -private +private public? memmode  (forget) forget.prior  trap.base m4fix mtog mclr mset  show.rom show.page show.flash show.ram show show.header show.what show.xt? -cloak +cloak cloak?   public private flag.private flag.cloaked flag.table flag.init flag.defer flag.value flag.immed flag.con flag.colon flag.dvar flag.var flag.code flag.private? flag.header           (create)       (qdocheck)  map-stack set-base bases           (c,)  (,)     .ready .ok .input .error       first-run  false true -1 4 2 1 0       cfg-recognizer forth-recognizer split rectype-split rec-split rec-num rectype-dnum rectype-num rectype-xt rec-find rectype-null recognize   eeprom.empty?  eeprom.init eeprom.warm flash.low !i std.erase std.unlock          (aligned)               (exiti)  (exit)

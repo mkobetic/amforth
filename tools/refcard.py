@@ -99,6 +99,10 @@ def parse_toc(filepath, categories):
             if match:
                 word_type = match.group(1)
                 name = match.group(2)
+                # Replace double backslash with single backslash
+                name = name.replace('\\\\', '\\')
+                # Replace \xHH with ascii character for HH
+                name = re.sub(r'\\x([0-9a-fA-F]{2})', lambda m: chr(int(m.group(1), 16)), name)
                 label = match.group(3)
                 raw_comment = match.group(5).strip()
                 location = match.group(6)

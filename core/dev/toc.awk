@@ -15,7 +15,10 @@ function normalize(path) {
 }
 
 # match($0, /COLON[[:space:]]+".*",/) { print substr($0, RSTART + 7, RLENGTH - 9) }
-FNR == 1 { FN = normalize(FILENAME) }
+FNR == 1 {
+    if (FILENAME ~ /macros\.inc$/) nextfile;
+    FN = normalize(FILENAME)
+}
 /CODEWORD[[:space:]]+".*"/ { $1=$1; print $0 " @ " FN ":" FNR }
 /CODEALIAS[[:space:]]+".*"/ { $1=$1; print $0 " @ " FN ":" FNR }
 /HEADLESS[[:space:]]+".*"/ { $1=$1; print $0 " @ " FN ":" FNR }
