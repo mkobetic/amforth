@@ -9,7 +9,13 @@
 
 AMFORTH ?= $(shell git rev-parse --show-toplevel)
 
-REVISION := $(shell git status -bs -u no|tr / -)
+BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+COMMIT := $(shell git rev-parse --short HEAD)
+MODIFIED := $(shell git diff --quiet HEAD || echo "*")
+# Set REVISION to current branch name followed by the short ID of the HEAD commit,
+# add asterix at the end if there were modified files present.
+# example: main@0e24376*
+REVISION := $(BRANCH)@$(COMMIT)$(MODIFIED)
 ifeq ("$(REVISION)", "")
     REVISION := $(shell svnversion -n)
 endif
@@ -39,7 +45,7 @@ GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py3
 all: build/amforth.bin build/amforth.hex build/amforth.lst build/amforth.sal build/amforth.sym build/amforth.toc build/amforth.txt build/amforth.html
 
 buildinfo: words/build-info.tmpl
-	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
+	cat words/build-info.tmpl | sed "s/%d/ `date -Iseconds`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 	mkdir -p build
 
 ASFLAGS := -g --warn --fatal-warnings -ahlmn=build/amforth.lst-as

@@ -3,13 +3,16 @@ List of know issues and tasks that need to be done (by area)
 
 # CORE
 
+* [ ] review/simplify word flags
+* [ ] add END macro and make all words proper function blocks (debug_info)
+
 * [ ] core/aligned.s vs arm|rv/aligned.s
 * [ ] aligned.s and do-aligned.s are identical
 * [ ] remove doxliteral.s in favor of doliteral.s
 * [ ] remove HIDEWORD in favor of HEADLESS
 * [ ] document amforth32.ld (assumptions, section purpose, etc)
-* [x] move non-address constants from amforth32.ld to config.inc? (cellsize, region sizes, etc...)
 * [ ] is the RAM_upper/lower_fi area used for anything?
+* [ ] clean up all harcoded cell size values, replace with cellsize symbol (including alignment directives)
 
 * [ ] a way to build different configurations for a given MCU
 * [x] CI compilation tests
@@ -51,6 +54,7 @@ List of know issues and tasks that need to be done (by area)
 * [ ] add readme.md
 * [ ] generalize flash dictionary write support (flash.s)
 * [ ] generalize eeprom support (eeprom.s)
+* [ ] generalize GDB extensions to support RISC-V
 
 ## CH32V307
 * [ ] RAMALLOT reg_shadow differences between 307 ad QEM configuration
