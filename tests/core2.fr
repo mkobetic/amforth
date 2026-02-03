@@ -3,3 +3,41 @@ TESTING rot, -rot
 T{ 1 2 3 -rot -> 3 1 2 }T
 T{ 1 2 3 -rot rot -> 1 2 3 }T
 
+TESTING >NUMBER (alternative and additional tests)
+
+\                           LSB MSB U       U=0 converted U!=0 error
+T{ 0 0 s" 0"   >NUMBER nip -> 0   0 0 }T    \
+T{ 0 0 s" 1"   >NUMBER nip -> 1   0 0 }T    \
+T{ 0 0 s" -"   >NUMBER nip -> 0   0 1 }T	\ should fail to convert
+T{ 0 0 s" +"   >NUMBER nip -> 0   0 1 }T    \ should fail to convert
+T{ 0 0 s" ."   >NUMBER nip -> 0   0 1 }T    \ should fail to convert 
+T{ 0 0 s" +++" >NUMBER nip -> 0   0 3 }T    \ should fail to convert 
+
+T{ 0 0        s" F" >NUMBER nip ->        F     0  0 }T
+T{ 0 0       s" FF" >NUMBER nip ->       FF     0  0 }T
+T{ 0 0      s" FFF" >NUMBER nip ->      FFF     0  0 }T
+T{ 0 0     s" FFFF" >NUMBER nip ->     FFFF     0  0 }T
+T{ 0 0    s" FFFFF" >NUMBER nip ->    FFFFF     0  0 }T
+T{ 0 0   s" FFFFFF" >NUMBER nip ->   FFFFFF     0  0 }T
+T{ 0 0  s" FFFFFFF" >NUMBER nip ->  FFFFFFF     0  0 }T
+T{ 0 0 s" FFFFFFFF" >NUMBER nip -> FFFFFFFF     0  0 }T
+
+T{ 0 0 s" FFFFFFFFF" >NUMBER nip -> FFFFFFFF F  0 }T
+T{ 0 0 s" FFFFFFFFFF" >NUMBER nip -> FFFFFFFF FF  0 }T
+T{ 0 0 s" FFFFFFFFFFF" >NUMBER nip -> FFFFFFFF FFF  0 }T
+T{ 0 0 s" FFFFFFFFFFFF" >NUMBER nip -> FFFFFFFF FFFF  0 }T
+T{ 0 0 s" FFFFFFFFFFFFF" >NUMBER nip -> FFFFFFFF FFFFF  0 }T
+T{ 0 0 s" FFFFFFFFFFFFFF" >NUMBER nip -> FFFFFFFF FFFFFF  0 }T
+T{ 0 0 s" FFFFFFFFFFFFFFF" >NUMBER nip -> FFFFFFFF FFFFFFF  0 }T
+T{ 0 0 s" FFFFFFFFFFFFFFFF" >NUMBER nip -> FFFFFFFF FFFFFFFF  0 }T
+
+: >NUMBER-BASED BASE @ >R BASE ! >NUMBER R> BASE ! ;
+
+T{ 0 0  s" 2" 10 >NUMBER-BASED nip -> 2 0 0 }T
+T{ 0 0  s" 2"  2 >NUMBER-BASED nip -> 0 0 1 }T
+T{ 0 0  s" F" 10 >NUMBER-BASED nip -> F 0 0 }T
+T{ 0 0  s" G" 10 >NUMBER-BASED nip -> 0 0 1 }T
+
+T{ 0 0  s" G" MAX-BASE >NUMBER-BASED nip -> 10 0 0 }T
+T{ 0 0  s" Z" MAX-BASE >NUMBER-BASED nip -> 23 0 0 }T
+
