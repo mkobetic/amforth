@@ -43,7 +43,7 @@ COLON "constant", CONSTANT
     .word PFA_DOVARIABLE
     .word XT_COMMA
     .word XT_LBRACKET
-#    .word XT_TOFLUSH 
+    .word XT_FLASHDOTFLUSH
     .word XT_EXIT
 
 # will need this for the transpiler so keep !
@@ -60,7 +60,7 @@ COLON "constant~", CLOAKED_CONSTANT
     .word PFA_DOVARIABLE
     .word XT_COMMA
     .word XT_LBRACKET
-#    .word XT_TOFLUSH 
+    .word XT_FLASHDOTFLUSH
     .word XT_EXIT
 
 

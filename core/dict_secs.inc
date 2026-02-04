@@ -272,3 +272,5 @@
 
 .include "words/chkdalign.s"
 .include "words/vdump.s"
+.include "words/flush.s"
+.include "words/qnop.s"

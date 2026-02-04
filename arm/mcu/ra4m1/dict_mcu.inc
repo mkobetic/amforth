@@ -10,3 +10,6 @@
 .include "words/sci.s"
 .include "words/usart.s"
 .include "words/at-usart.s"
+
+.include "words/flash.s"
+.include "words/dwt.s"

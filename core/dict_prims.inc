@@ -121,6 +121,7 @@
 .include "words/move.s"
 
 .include "words/does.s"
+.include "words/naligned.s"
 
 # Include architecture specific primitives
 .include "arch_prims.inc"

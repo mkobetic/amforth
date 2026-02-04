@@ -12,5 +12,6 @@ IMMED "\x3b", SEMICOLON /* ( -- ) finish colon word definition */
 #    .word XT_COMMA
 # end addition
 #    .word XT_TOFLUSH  # this may be the correct place !!!
+    .word XT_FLASHDOTFLUSH
     .word XT_EXIT
 END SEMICOLON

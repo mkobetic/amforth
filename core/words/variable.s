@@ -20,7 +20,7 @@ COLON "variable", VARIABLE /* ( "<spaces>name" -- ) create variable definition f
       .word XT_RAMHEREPLUSPLUS
       .word XT_COMMA
       .word XT_LBRACKET
-#      .word XT_TOFLUSH 
+      .word XT_FLASHDOTFLUSH
       .word XT_EXIT 
 
 COLON "variable~" , CLOAKED_VARIABLE
@@ -36,6 +36,6 @@ COLON "variable~" , CLOAKED_VARIABLE
       .word XT_RAMHEREPLUSPLUS
       .word XT_COMMA
       .word XT_LBRACKET
-#      .word XT_TOFLUSH 
+      .word XT_FLASHDOTFLUSH
       .word XT_EXIT 
 

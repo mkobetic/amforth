@@ -10,7 +10,25 @@ CODEWORD "cold", COLD /* ( i*x -- )(R: j*y -- ) assembler part of startup sequen
    mov sp, r0
    ldr psp, =RAM_upper_datastack
 
+/* Copy RAM functions from Flash to RAM */
+
+
+   ldr r0, =RAM_lower_res    
+   ldr r1, =FSH_lower_res    
+   ldr r2, =RAM_upper_res    
+
+
+copy_ramfunc:
+   cmp r0, r2
+   beq done_copy
+   ldr r3, [r1], #4
+   str r3, [r0], #4
+   b copy_ramfunc
+    
+done_copy:
+
    ldr FORTHW, =XT_WARM
+   
    b DO_EXECUTE
 
 END COLD

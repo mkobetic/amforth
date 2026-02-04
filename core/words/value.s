@@ -60,7 +60,7 @@ COLON "value", VAL /* ( x "name" -- ) create value "name" with initial of x */
     .word XT_COMMA
     # added 
     .word XT_LBRACKET
-#    .word XT_TOFLUSH
+    .word XT_FLASHDOTFLUSH
     # end added 
     .word XT_EXIT
 END VAL
@@ -81,7 +81,7 @@ COLON "value~", CLOAKED_VALUE /* ( x "name" -- ) create cloaked value "name" wit
     .word XT_COMMA
     # added 
     .word XT_LBRACKET
-#    .word XT_TOFLUSH
+    .word XT_FLASHDOTFLUSH
     # end added 
     .word XT_EXIT
 END CLOAKED_VALUE
