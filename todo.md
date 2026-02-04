@@ -4,9 +4,10 @@ List of know issues and tasks that need to be done (by area)
 # CORE
 
 * [ ] 2rot and rot is the same thing?
-* [ ] what exactly does compare do? What is the return value? Length suffixed strings?
+* [ ] invert and not is the same thing?
 * [ ] review/simplify word flags
 * [ ] add END macro and make all words proper function blocks (debug_info)
+* [ ] add refcard legend
 
 * [ ] core/aligned.s vs arm|rv/aligned.s
 * [ ] aligned.s and do-aligned.s are identical
@@ -32,7 +33,7 @@ List of know issues and tasks that need to be done (by area)
 
 # ARM
 
-* [ ] what is the relationship between variable `rp` and `sp` ?
+* [ ] what is the relationship between variable `rp` and `sp`, and variable `sp` and `psp` ?
 * [ ] don't push{lr}/pop{pc} in leaf functions (just bx lr)
 * [ ] don't use ldm when not needed (poptos, popnos)
 * [ ] add readme.md

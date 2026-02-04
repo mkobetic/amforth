@@ -87,7 +87,7 @@ def parse_toc(filepath, categories):
 
     # Regex to capture: Type "Name" Label Comment @File
     # Example: CODEWORD "dup", DUP /* ( n -- n n ) Duplicate TOS */ @...
-    pattern = re.compile(r'^(\w+)\s+"([^"]+)"\s*,\s*(\S+)\s*((.*)\s+@\s+(\S+))?$')
+    pattern = re.compile(r'^(\w+)\s+"([^"]+)"\s*,\s*([^\s,]+)(\s*,\s*(\S+))?\s*((.*)\s+@\s+(\S+))?$')
 
     with open(filepath, 'r') as f:
         for line in f:
@@ -103,9 +103,10 @@ def parse_toc(filepath, categories):
                 name = name.replace('\\\\', '\\')
                 # Replace \xHH with ascii character for HH
                 name = re.sub(r'\\x([0-9a-fA-F]{2})', lambda m: chr(int(m.group(1), 16)), name)
-                label = match.group(3)
-                raw_comment = match.group(5).strip()
-                location = match.group(6)
+                symbol = match.group(3)
+                parameter = match.group(5)
+                raw_comment = match.group(7).strip()
+                location = match.group(8)
                 location = os.path.normpath(location.replace('\\', '/'))
                 
                 if raw_comment.startswith("/*") and raw_comment.endswith("*/"):
@@ -116,14 +117,15 @@ def parse_toc(filepath, categories):
                 description = raw_comment
                 
                 # Extract stack signature ( ... )
-                sig_match = re.match(r'^(\([^\)]+\))\s*(.*)$', raw_comment)
+                sig_match = re.match(r'^((\s*\([^\)]*\))*)\s*(.*)$', raw_comment)
                 if sig_match:
                     signature = sig_match.group(1)
-                    description = sig_match.group(2)
+                    description = sig_match.group(3)
                 
                 words_data[name] = {
                     'type': word_type,
-                    'label': label,
+                    'symbol': symbol,
+                    'parameter': parameter if parameter else '',
                     'signature': signature,
                     'description': description,
                     'location': location
@@ -131,7 +133,6 @@ def parse_toc(filepath, categories):
                 
                 
                 if 'mcu' in location.split('/'):
-                    is_mcu = True
                     mcu_words.add(name)
                     uncategorized_set.discard(name)
                     if name in word_category_map:
@@ -228,7 +229,10 @@ def generate_html_refcard(categories_file, toc_file):
             if data:
                 name = html.escape(word)
                 typ = html.escape(data['type'])
-                sig = html.escape(data['signature'])
+                if data['signature']:
+                    sig = html.escape(data['signature'])
+                else:
+                    sig = html.escape(data['parameter'])
                 desc = html.escape(data['description'])
                 loc = html.escape(data['location'])
                 print(f"<tr><td>{name}</td><td>{typ}</td><td>{sig}</td><td>{desc}</td><td>{loc}<td></tr>")

@@ -19,7 +19,7 @@
 @ Comparison operators
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "0=", ZEROEQUAL /* ( n -- f ) f is true if n is zero */
+  CODEWORD  "0=", ZEROEQUAL /* ( n -- f ) f = n == 0 */
 @ -----------------------------------------------------------------------------
   subs tos, #1
   sbcs tos, tos
@@ -27,7 +27,7 @@
 END ZEROEQUAL
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "0<>", NOTZEROEQUAL /* ( n -- f ) f is true if n is not zero */
+  CODEWORD  "0<>", NOTZEROEQUAL /* ( n -- f ) f = n != 0 */
 @ -----------------------------------------------------------------------------
   subs tos, #1
   sbcs tos, tos
@@ -36,7 +36,7 @@ END ZEROEQUAL
 END NOTZEROEQUAL
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "0<", ZEROLESS /* ( n -- f ) f is true if n less than zero */
+  CODEWORD  "0<", ZEROLESS /* ( n -- f ) f = n < 0 */
 @ -----------------------------------------------------------------------------
   movs tos, tos
   asr tos, #32    @ Turn MSB into 0xffffffff or 0x00000000
@@ -44,7 +44,7 @@ END NOTZEROEQUAL
 END ZEROLESS
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  ">=", GREATEREQUAL /* ( n1 n2 -- f ) f is true if n1 is greater or equal n2 */
+  CODEWORD  ">=", GREATEREQUAL /* ( n1 n2 -- f ) f = n1 >= n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}     @ Get x1 into a register.
   cmp r0, tos        @ Is x2 less?
@@ -55,7 +55,7 @@ END ZEROLESS
 END GREATEREQUAL 
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "<=", LESSEQUAL /* ( n1 n2 -- f ) f is true if n1 is less or equal n2 */
+  CODEWORD  "<=", LESSEQUAL /* ( n1 n2 -- f ) f = n1 <= n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}     @ Get x1 into a register.
   cmp r0, tos        @ Is x2 greater?
@@ -66,7 +66,7 @@ END GREATEREQUAL
 END LESSEQUAL
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "<", LESS /* ( n1 n2 -- f ) f is true if n1 is less than n2 */
+  CODEWORD  "<", LESS /* ( n1 n2 -- f ) f = n1 < n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}     @ Get x1 into a register.
   cmp r0, tos        @ Is x2 less?
@@ -77,7 +77,7 @@ END LESSEQUAL
 END LESS
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  ">", GREATER /* ( n1 n2 -- f ) f is true if n1 is greater than n2 */
+  CODEWORD  ">", GREATER /* ( n1 n2 -- f ) f = n1 > n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}     @ Get x1 into a register.
   cmp r0, tos        @ Is x2 greater?
@@ -88,7 +88,7 @@ END LESS
 END GREATER
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "u<", ULESS /* ( u1 u2 -- f ) f is true if u1 is less than u2 */
+  CODEWORD  "u<", ULESS /* ( u1 u2 -- f ) f = u1 < u2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}      @ Get u1 into a register.
   subs tos, r0, tos   @ subs tos, w, tos   @ TOS = a-b  -- carry set if a is less than b
@@ -97,7 +97,7 @@ END GREATER
 END ULESS
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "u>", UGREATER /* ( u1 u2 -- f ) f is true if u1 is greater than u2 */
+  CODEWORD  "u>", UGREATER /* ( u1 u2 -- f ) f = u1 > u2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}
   subs tos, r0
@@ -106,7 +106,7 @@ END ULESS
 END UGREATER
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "<>", NOTEQUAL /* ( n1 n2 -- f ) f is true if n1 is not equal n2 */
+  CODEWORD  "<>", NOTEQUAL /* ( n1 n2 -- f ) f = n1 != n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}      @ Get the next elt into a register.
   subs tos, r0        @ Z=equality; if equal, TOS=0
@@ -117,7 +117,7 @@ END UGREATER
 END NOTEQUAL
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "=", EQUAL /* ( n1 n2 -- f ) f is true if n1 is equal to  n2 */
+  CODEWORD  "=", EQUAL /* ( n1 n2 -- f ) f = n1 == n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}     @ Get the next elt into a register.
   subs tos, r0       @ Z=equality; if equal, TOS=0
@@ -128,7 +128,7 @@ END NOTEQUAL
 END EQUAL
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "min", MIN /* ( n1 n2 -- n2 ) n3 is the lesser of n1 and n2 */
+  CODEWORD  "min", MIN /* ( n1 n2 -- n3 ) n3 = min(n1, n2) */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}       @ Get x1 into a register.
   cmp r0, tos          @ Compare them.
@@ -138,7 +138,7 @@ END EQUAL
 END MIN
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "max", MAX /* ( n1 n2 -- n2 ) n3 is the greater of n1 and n2 */
+  CODEWORD  "max", MAX /* ( n1 n2 -- n3 ) n3 = max(n1, n2) */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}       @ Get x1 into a register.
   cmp r0, tos          @ Compare them.
@@ -148,7 +148,7 @@ END MIN
 END MAX
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "umax", UMAX /* ( u1 u2 -- u2 ) u3 is the greater of u1 and u2 */
+  CODEWORD  "umax", UMAX /* ( u1 u2 -- u3 ) u3 = max(u1, u2) */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}  @ Get u1 into a register.
   cmp r0, tos 
@@ -158,7 +158,7 @@ END MAX
 END UMAX
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "umin", UMIN /* ( u1 u2 -- u2 ) u3 is the lesser of u1 and u2 */
+  CODEWORD  "umin", UMIN /* ( u1 u2 -- u3 ) u3 = min(u1, u2) */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}  @ Get u1 into a register.
   cmp r0, tos

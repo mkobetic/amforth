@@ -1,4 +1,4 @@
-CODEWORD  "invert", INVERT /* ( n1 -- n2 ) n2 = ~n1; bit-wise inversion */
+CODEWORD  "invert", INVERT /* ( x1 -- x2 ) x2 = ~x1 (same as not??) */
   mvns tos,tos
   NEXT
 END INVERT

@@ -1,5 +1,5 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD "swap", SWAP /* ( x1 x2 -- x2 x1 ) swap top 2 cells of the stack */
+  CODEWORD "swap", SWAP /* ( x1 x2 -- x2 x1 ) swap top 2 cells on the stack */
 @ -----------------------------------------------------------------------------
   ldr r1,  [psp]  @ Load X from the stack, no SP change.
   str tos, [psp]  @ Replace it with TOS.

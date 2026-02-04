@@ -1,4 +1,4 @@
-CODEWORD "nr>", N_R_FROM /* ( -- xn .. x1 n ) (R: xn .. x1 n -- ) move n items from return stack to data stack */
+CODEWORD "nr>", N_R_FROM /* ( -- xu .. x1 u ) (R: xu .. x1 u -- ) move u items from return stack to data stack */
     pop {r1}
     mov r0, r1
     savetos

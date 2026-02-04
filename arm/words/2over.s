@@ -1,4 +1,4 @@
-CODEWORD "2over", 2OVER /* ( x1 x2 x3 x4 -- x1 x2 x3 x4 x1 x2 ) copy 3rd and 4th cell to top of the stack */
+CODEWORD "2over", 2OVER /* ( d1 d2 -- d1 d2 d1 ) copy 2nd cell pair to the top of the stack */
   ldr r0, [psp, #8]
   savetos
   sub psp, #4

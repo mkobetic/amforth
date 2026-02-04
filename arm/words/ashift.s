@@ -1,4 +1,4 @@
-CODEWORD "ashift", ASHIFT /* ( n1 n2 -- n3  ) n3 = n1 >> n2, arithmetic shift n1 right n2 bits (sign fill) */
+CODEWORD "ashift", ASHIFT /* ( n1 u -- n2  ) n2 = n1 >> u (arithmetic shift right, sign filled) */
   ldm psp!, {r0}
   asr r0, r0, tos
   movs tos, r0

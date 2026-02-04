@@ -1,5 +1,5 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD "nip", NIP /* ( x1 x2 -- x2 ) drop second stack cell */
+  CODEWORD "nip", NIP /* ( x1 x2 -- x2 ) drop NOS */
 @ -----------------------------------------------------------------------------
   adds psp, #4 @ Move SP to eliminate next element.
   NEXT

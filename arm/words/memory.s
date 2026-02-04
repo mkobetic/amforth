@@ -17,7 +17,7 @@
 END FILL
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "+!", PLUSSTORE /* ( n addr -- ) add n to the memory cell at addr */
+  CODEWORD  "+!", PLUSSTORE /* ( n addr -- ) [addr] = [addr] + n; add n to the word at addr */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0, r1} @ X is the new TOS after the store completes.
   ldr  r2, [tos]     @ Load the current cell value
@@ -28,14 +28,14 @@ END FILL
 END PLUSSTORE
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "c@", CFETCH /* ( addr -- c ) load byte at addr */
+  CODEWORD  "c@", CFETCH /* ( addr -- c ) c = byte([addr]); load byte at addr */
 @ -----------------------------------------------------------------------------
   ldrb tos, [tos]
   NEXT
 END CFETCH
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "c!", CSTORE /* ( c addr -- ) store byte c to addr */
+  CODEWORD  "c!", CSTORE /* ( c addr -- ) [addr] = byte(c); store byte c to addr */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0, r1} @ X is the new TOS after the store completes.
   strb r0, [tos]     @ Popping both saves a cycle.
@@ -44,14 +44,14 @@ END CFETCH
 END CSTORE
 
 # -----------------------------------------------------------------------------
-CODEWORD  "h@", HFETCH /* ( addr -- x ) load halfword at addr */
+CODEWORD  "h@", HFETCH /* ( addr -- x ) x = half([addr]); load halfword at addr */
 # -----------------------------------------------------------------------------
   ldrh tos, [tos]
   NEXT
 END HFETCH
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "h!", HSTORE /* ( x addr -- ) store halfword to addr */
+  CODEWORD  "h!", HSTORE /* ( x addr -- ) [addr] = half(x); store halfword x to addr */
 # -----------------------------------------------------------------------------
   popnos r0
   strh r0, [tos]

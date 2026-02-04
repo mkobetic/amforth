@@ -1,5 +1,5 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD "compare", COMPARE  /* ( addr1 n1 addr2 n2 -- f ) compares two strings */
+  CODEWORD "compare", COMPARE  /* ( addr1 n1 addr2 n2 -- f ) f is true if both strings are the same (based on WANT_IGNORECASE) */
 @ -----------------------------------------------------------------------------
   bl compare
   mvns tos,tos

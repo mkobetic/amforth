@@ -1,5 +1,5 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD "over", OVER /* ( n1 n2 -- n1 n2 n1 ) copy seconds stack cell to the top */
+  CODEWORD "over", OVER /* ( x1 x2 -- x1 x2 x1 ) copy NOS to the top */
 @ -----------------------------------------------------------------------------
   savetos
   ldr tos, [psp, #4] 

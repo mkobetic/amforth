@@ -1,4 +1,4 @@
-CODEWORD "2swap", 2SWAP /* ( d1 d2 -- d2 d1 ) swap two cell pairs at the top of the stack */
+CODEWORD "2swap", 2SWAP /* ( d1 d2 -- d2 d1 ) swap top two cell pairs on the stack */
   bl dswap
   NEXT
 

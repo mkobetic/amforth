@@ -1,5 +1,5 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD "@", FETCH /* (addr -- x) fetch cell from addr */
+  CODEWORD "@", FETCH /* (addr -- x) x = [addr]; load word at addr */
 @ -----------------------------------------------------------------------------
   
   ands r0, tos, #0x3     /* cell aligned?         */

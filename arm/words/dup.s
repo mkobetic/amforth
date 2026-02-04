@@ -1,5 +1,5 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD "dup", DUP /* ( x -- x x ) duplicate cell at top of the stack */
+  CODEWORD "dup", DUP /* ( x -- x x ) duplicate TOS */
 @ -----------------------------------------------------------------------------
   savetos
   NEXT

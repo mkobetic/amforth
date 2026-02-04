@@ -1,6 +1,6 @@
 
 @ -----------------------------------------------------------------------------
-  CODEWORD "rot", ROT /* (n1 n2 n3 -- n2 n3 n1) rotate stack so that 3rd cell is at TOS */
+  CODEWORD "rot", ROT /* (x1 x2 x3 -- x2 x3 x1) rotate top 3 cells on stack left, 3OS becomes TOS */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0, r1}
   subs psp, #8
