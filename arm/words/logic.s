@@ -1,37 +1,40 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD  "and",AND @ ( x1 x2 -- x1&x2 )
-                        @ Combines the top two stack elements using bitwise AND.
+  CODEWORD  "and", AND /* ( x1 x2 -- x3 ) x3 = x1 & x2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}
   ands tos, r0
-NEXT
+  NEXT
+END AND
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "or",OR @ ( x1 x2 -- x1|x2 )
-                       @ Combines the top two stack elements using bitwise OR.
+  CODEWORD  "or", OR /* ( x1 x2 -- x3 ) x3 = x1 | x2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}
   orrs tos, r0
-NEXT
+  NEXT
+END OR
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "not",NOT @ ( x -- ~x )
+  CODEWORD  "not", NOT /* ( x1 -- x2 ) x2 = ~x1 */
 @ -----------------------------------------------------------------------------
   mvns tos, tos
-NEXT
+  NEXT
+END NOT
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "rshift",RSHIFT @ ( x n -- x )
+  CODEWORD  "rshift", RSHIFT /* ( x1 n -- x2 ) x2 = x1 >> n */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}
   lsrs r0, tos
   movs tos, r0
-NEXT
+  NEXT
+END RSHIFT
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "lshift",LSHIFT @ ( x n -- x )
+  CODEWORD  "lshift", LSHIFT /* ( x1 n -- x2 ) x2 = x1 << n */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}
   lsls r0, tos
   movs tos, r0
-NEXT
+  NEXT
+END LSHIFT

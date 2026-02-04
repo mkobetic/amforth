@@ -1,10 +1,9 @@
-# this is the xt that will be added by semicolon 
-CODEWORD "(exit)", EXIT 
-    pop {FORTHIP}
+CODEWORD "(exit)", EXIT /* (R: addr -- ) loads addr into IP; compiled by semicolon */
+  pop {FORTHIP}
   NEXT
+END EXIT
 
-# this is the xt that will be added by exit
-CODEWORD "exit", FINISH
-# ( -- ) FLOW: exit word (instantly) 
-    pop {FORTHIP}
+CODEWORD "exit", FINISH /* (R: addr -- ) loads addr into IP; compiled by exit */
+  pop {FORTHIP}
   NEXT
+END FINISH

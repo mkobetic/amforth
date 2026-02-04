@@ -1,5 +1,6 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD "dup", DUP @ ( x -- x x )
+  CODEWORD "dup", DUP /* ( x -- x x ) duplicate cell at top of the stack */
 @ -----------------------------------------------------------------------------
   savetos
-NEXT
+  NEXT
+END DUP

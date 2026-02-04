@@ -1,11 +1,12 @@
-CODEWORD "nr>", N_R_FROM
+CODEWORD "nr>", N_R_FROM /* ( -- xn .. x1 n ) (R: xn .. x1 n -- ) move n items from return stack to data stack */
     pop {r1}
     mov r0, r1
     savetos
-N_R_FROM_LOOP:
+1:
     pop {tos}
     savetos
     subs r0,1
-    bne N_R_FROM_LOOP
+    bne 1b
     mov tos, r1
-NEXT
+    NEXT
+END N_R_FROM

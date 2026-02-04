@@ -10,4 +10,5 @@ HEADLESS DODO
 
  add rlooplimit, #0x80000000
  sub rloopindex, rlooplimit
-NEXT
+ NEXT
+END DODO

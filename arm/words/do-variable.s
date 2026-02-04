@@ -2,4 +2,5 @@
 HEADLESS DOVARIABLE
   savetos
   ldr tos, [FORTHW]
-NEXT
+  NEXT
+END DOVARIABLE

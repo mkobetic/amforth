@@ -1,6 +1,7 @@
 @------------------------------------------------------------------------------
-  CODEWORD "i", I @ Innermost loop index
+  CODEWORD "i", I /* ( -- n) inner-most loop index */
 @------------------------------------------------------------------------------
   savetos
   add tos, rloopindex,rlooplimit
-NEXT
+  NEXT
+END I

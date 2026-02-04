@@ -1,6 +1,7 @@
 HEADLESS DOLOOP
   ldr r0, =#1
   b PFA_DOPLUSLOOP_INTERN
+END DOLOOP
 
 HEADLESS DOPLUSLOOP
   mov r0, tos
@@ -10,9 +11,10 @@ PFA_DOPLUSLOOP_INTERN:
   adds rloopindex, r0
   bvs PFA_DOPLUSLOOP_LEAVE
   ldr FORTHIP, [FORTHIP]
-NEXT
+  NEXT
 
 PFA_DOPLUSLOOP_LEAVE:
   add FORTHIP, #4
   pop {rloopindex, rlooplimit}
-NEXT
+  NEXT
+END DOPLUSLOOP

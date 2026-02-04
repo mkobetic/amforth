@@ -2,4 +2,5 @@
 HEADLESS DODATA
   savetos
   mov tos, FORTHW
-NEXT
+  NEXT
+END DODATA

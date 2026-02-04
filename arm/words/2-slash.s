@@ -1,3 +1,4 @@
-CODEWORD "2/", 2SLASH @ ( n -- n/2 )
+CODEWORD "2/", 2SLASH /* ( n1 -- n2 ) n2 = n1 / 2 */
   asr tos, tos, #1
-NEXT
+  NEXT
+END 2SLASH

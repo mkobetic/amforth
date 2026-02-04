@@ -1,4 +1,4 @@
-CODEWORD "cell+", CELLPLUS @ ( x -- x+4 ) 
+CODEWORD "cell+", CELLPLUS /* ( n1 -- n2 ) n2 = n1 + cellsize */
   add tos, #cellsize
-NEXT
-
+  NEXT
+END CELLPLUS

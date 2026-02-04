@@ -1,5 +1,5 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD "@", FETCH @ ( 32-addr -- x )
+  CODEWORD "@", FETCH /* (addr -- x) fetch cell from addr */
 @ -----------------------------------------------------------------------------
   
   ands r0, tos, #0x3     /* cell aligned?         */
@@ -7,4 +7,5 @@
   throw EADRINV          /* not aligned so throw  */
 1:                       /* normal operation      */ 
   ldr tos, [tos]
-NEXT
+  NEXT
+END FETCH

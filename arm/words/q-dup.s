@@ -1,7 +1,9 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD "?dup", QDUP @ ( x -- 0 | x x )
+  CODEWORD "?dup", QDUP /* ( x -- x x | 0 ) duplicate TOS if it is not zero */
 @ -----------------------------------------------------------------------------
   cmp tos, #0
   beq 1f
   savetos
-1:NEXT
+1:
+  NEXT
+END QDUP

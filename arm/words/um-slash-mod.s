@@ -1,12 +1,7 @@
+CODEWORD "um/mod", UMSLASHMOD /* ( ud u1 -- u2 u3 ) u3 is the quotient and u2 the remainder of ud / u1 */
 /*
-WORD: "um/mod"
-STACK: ( ud u1 -- u2 u3 )
-CATEG: MATH
-SHORT: Divide ud by u1, giving the quotient u3 and the remainder u2.
-
-All values and arithmetic are unsigned. An ambiguous condition exists if u1 is zero or if the quotient lies outside the range of a single-cell unsigned integer.
+All values and arithmetic are unsigned. Throws if u1 is zero or if the quotient lies outside the range of a single-cell unsigned integer.
 */
-CODEWORD "um/mod", UMSLASHMOD
     @ Same algorithm as if performing the division by hand, just in binary.
     @ Inputs:  hi:lo = 64-bit dividend, tos = 32-bit divisor
     @ Outputs: hi:lo = 64-bit quotient, rem = 32-bit remainder
@@ -42,4 +37,5 @@ umslashmod:
     .unreq rem
     .unreq lo
     .unreq hi
-NEXT
+    NEXT
+END UMSLASHMOD

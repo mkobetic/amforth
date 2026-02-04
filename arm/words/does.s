@@ -1,5 +1,6 @@
 @ SPDX-License-Identifier: GPL-3.0-only
 
+IMMED "does>" , DOES /* () compiles (dodoes) followed by a jump and link to xdodoes */
 /*
 CREATE ... DOES> allows defining word creating words (parent words) that can define the execution semantics of their child words.
 The semantics are expressed with forth code following the DOES> word. The words between CREATE and DOES> construct the contents of
@@ -18,26 +19,27 @@ Child's CFA must point to machine code that will
  because the words following DOES> follow the synthetic jump.
  */
 
-IMMED "does>" , DOES /* () compiles (dodoes) followed by a jump and link to xdodoes */
-      .word XT_COMPILE , XT_DODOES
-      /*
-        Encode and compile BL instruction
-        Because it is a long jump it requires using BLX Rn,
-        and therefore the target address has to be loaded into Rn from memory.
-        So the final layout of the machine code looks like this:
-        0x4800 LDR R0, [PC, #0] @ LDR (literal) encoding: 01101 rrr iiiiiiii
-        0x4780 BLX R0 @ BLX (register) encoding: 0100 0111 1 rrrr 000
-        PFA_XDODOES+1 32-bit address loaded by the LDR instruction
-      */
-      .word XT_DOLITERAL
-      .word 0x47804800    @ LDR R0, [PC, #0] + BLX R0
-      .word XT_COMMA
-      .word XT_DOLITERAL
-      .word PFA_XDODOES
-      .word XT_1PLUS    @ MUST set the Thumb bit on the jump address!
-      .word XT_COMMA      
-      .word XT_EXIT
+  .word XT_COMPILE , XT_DODOES
+  /*
+    Encode and compile BL instruction
+    Because it is a long jump it requires using BLX Rn,
+    and therefore the target address has to be loaded into Rn from memory.
+    So the final layout of the machine code looks like this:
+    0x4800 LDR R0, [PC, #0] @ LDR (literal) encoding: 01101 rrr iiiiiiii
+    0x4780 BLX R0 @ BLX (register) encoding: 0100 0111 1 rrrr 000
+    PFA_XDODOES+1 32-bit address loaded by the LDR instruction
+  */
+  .word XT_DOLITERAL
+  .word 0x47804800    @ LDR R0, [PC, #0] + BLX R0
+  .word XT_COMMA
+  .word XT_DOLITERAL
+  .word PFA_XDODOES
+  .word XT_1PLUS    @ MUST set the Thumb bit on the jump address!
+  .word XT_COMMA      
+  .word XT_EXIT
+END DOES
 
+COLON "(dodoes)", DODOES /* (R: addr -- ) addr of the synthetic jump after (dodoes), stored in child's CFA */
 /*
   (dodoes) is compiled into the parent word's definition and is executed
   when the parent word is invoked to create a child word.
@@ -49,18 +51,18 @@ IMMED "does>" , DOES /* () compiles (dodoes) followed by a jump and link to xdod
   to return when (dodoes) finishes. Instead we want to return to the word that called the parent word,
   i.e the next address on the return stack.
 */
-COLON "(dodoes)", DODOES /* (R: addr -- ) addr of the synthetic jump after (dodoes), stored in child's CFA */
-        .word XT_MEMMODE , XT_DOCONDBRANCH , DODOES0
-        @ compiling to flash
-        .word XT_EXIT
+  .word XT_MEMMODE , XT_DOCONDBRANCH , 1f
+  @ compiling to flash
+  .word XT_EXIT
 
-DODOES0: @ compiling to ram
-        .word XT_R_FROM @ get the synthetic jump address from return stack
-        .word XT_NEWEST @ get the child word's CFA
-        .word XT_FETCH
-        .word XT_FFA2CFA
-        .word XT_STORE @ store the jump address in child's CFA
-        .word XT_EXIT
+1: @ compiling to ram
+  .word XT_R_FROM @ get the synthetic jump address from return stack
+  .word XT_NEWEST @ get the child word's CFA
+  .word XT_FETCH
+  .word XT_FFA2CFA
+  .word XT_STORE @ store the jump address in child's CFA
+  .word XT_EXIT
+END DODOES
 
 HEADLESS XDODOES /* ( -- u) prepares interpreter state for execution of the DOES> wordlist, u is child's PFA */
   /* W register has child's PFA, push it to TOS */ 
@@ -73,4 +75,5 @@ HEADLESS XDODOES /* ( -- u) prepares interpreter state for execution of the DOES
   The LR value has the thumb bit set, that's why +3 and not +4 */
   add lr, lr , #3  
   mov FORTHIP, lr
-NEXT
+  NEXT
+END XDODOES

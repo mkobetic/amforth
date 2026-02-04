@@ -1,17 +1,19 @@
 @ -----------------------------------------------------------------------------
-  COLON "mod", MOD @ ( n1 n2 -- rem )
+  COLON "mod", MOD /* ( n1 n2 -- n3 ) n3 is remainder of n1 / n2 */
 @ -----------------------------------------------------------------------------
   .word XT_SLASHMOD, XT_DROP
   .word XT_EXIT
+END MOD
 
 @ -----------------------------------------------------------------------------
-  COLON "/", SLASH @ ( n1 n2 -- n1/n2 )
+  COLON "/", SLASH /* ( n1 n2 -- n3 ) n3 is quotient of n1 / n2 */
 @ -----------------------------------------------------------------------------
   .word XT_SLASHMOD, XT_NIP
   .word XT_EXIT
+END SLASH
 
 @ -----------------------------------------------------------------------------
-  CODEWORD "/mod",SLASHMOD @ ( n1 n2 -- rem quot )
+  CODEWORD "/mod", SLASHMOD /* ( n1 n2 -- n3 n4 ) n3 is remainder and n4 the quotient of n1 / n2 */
 @ -----------------------------------------------------------------------------
   cbnz tos, slashmod  @ throw if divisor is zero
   throw EDIVZ
@@ -26,8 +28,11 @@ slashmod:
   subs psp, #4
   str r0, [psp]
   NEXT
+END SLASHMOD
+
 @ -----------------------------------------------------------------------------
-  CODEWORD "u/mod", USLASHMOD @ ( u1 u2 -- rem quot )
+  CODEWORD "u/mod", USLASHMOD /* ( u1 u2 -- u3 u4 ) u3 is remainder and u4 the quotient of u1 / u2 */
+@ -----------------------------------------------------------------------------
   cbnz tos, uslashmod  @ throw if divisor is zero
   throw EDIVZ
 uslashmod:  
@@ -39,3 +44,4 @@ uslashmod:
   subs psp, #4
   str r0, [psp]
   NEXT
+END USLASHMOD

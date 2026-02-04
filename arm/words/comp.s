@@ -16,142 +16,154 @@
 @    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 @
 
-@ Vergleichsoperatoren
-@ Comparision operators
+@ Comparison operators
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "0=", ZEROEQUAL @ ( x -- ? )
+  CODEWORD  "0=", ZEROEQUAL /* ( n -- f ) f is true if n is zero */
 @ -----------------------------------------------------------------------------
   subs tos, #1
   sbcs tos, tos
-NEXT
+  NEXT
+END ZEROEQUAL
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "0<>", NOTZEROEQUAL @ ( x -- ? ) @ Meins
+  CODEWORD  "0<>", NOTZEROEQUAL /* ( n -- f ) f is true if n is not zero */
 @ -----------------------------------------------------------------------------
   subs tos, #1
   sbcs tos, tos
   mvns tos, tos
-NEXT
+  NEXT
+END NOTZEROEQUAL
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "0<", ZEROLESS @ ( n -- ? )
+  CODEWORD  "0<", ZEROLESS /* ( n -- f ) f is true if n less than zero */
 @ -----------------------------------------------------------------------------
   movs tos, tos
   asr tos, #32    @ Turn MSB into 0xffffffff or 0x00000000
-NEXT
+  NEXT
+END ZEROLESS
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  ">=", GREATEREQUAL @ ( x1 x2 -- ? ) @ Meins
+  CODEWORD  ">=", GREATEREQUAL /* ( n1 n2 -- f ) f is true if n1 is greater or equal n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}     @ Get x1 into a register.
   cmp r0, tos        @ Is x2 less?
   ite lt             @ If so,
   movlt tos, #0      @  set all bits in TOS,
   movge tos, #-1     @  otherwise clear them all.
-NEXT
+  NEXT
+END GREATEREQUAL 
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "<=", LESSEQUAL @ ( x1 x2 -- ? ) @ Meins          
+  CODEWORD  "<=", LESSEQUAL /* ( n1 n2 -- f ) f is true if n1 is less or equal n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}     @ Get x1 into a register.
   cmp r0, tos        @ Is x2 greater?
   ite gt             @ If so,
   movgt tos, #0      @  set all bits in TOS,
   movle tos, #-1     @  otherwise clear them all.
-NEXT
+  NEXT
+END LESSEQUAL
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "<", LESS @ ( x1 x2 -- ? )
-                      @ Checks if x2 is less than x1.
+  CODEWORD  "<", LESS /* ( n1 n2 -- f ) f is true if n1 is less than n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}     @ Get x1 into a register.
   cmp r0, tos        @ Is x2 less?
   ite lt             @ If so,
   movlt tos, #-1     @  set all bits in TOS,
   movge tos, #0      @  otherwise clear them all.
-NEXT
+  NEXT
+END LESS
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  ">", GREATER @ ( x1 x2 -- ? )
-                      @ Checks if x2 is greater than x1.
+  CODEWORD  ">", GREATER /* ( n1 n2 -- f ) f is true if n1 is greater than n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}     @ Get x1 into a register.
   cmp r0, tos        @ Is x2 greater?
   ite gt             @ If so,
   movgt tos, #-1     @  set all bits in TOS,
   movle tos, #0      @  otherwise clear them all.
-NEXT
+  NEXT
+END GREATER
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "u<", ULESS @ ( u1 u2 -- ? )
+  CODEWORD  "u<", ULESS /* ( u1 u2 -- f ) f is true if u1 is less than u2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}      @ Get u1 into a register.
   subs tos, r0, tos   @ subs tos, w, tos   @ TOS = a-b  -- carry set if a is less than b
   sbcs tos, tos
-NEXT
+  NEXT
+END ULESS
+
 @ -----------------------------------------------------------------------------
-  CODEWORD  "u>", UGREATER @ ( u1 u2 -- ? ) @ Meins
+  CODEWORD  "u>", UGREATER /* ( u1 u2 -- f ) f is true if u1 is greater than u2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}
   subs tos, r0
   sbcs tos, tos
-NEXT
+  NEXT
+END UGREATER
+
 @ -----------------------------------------------------------------------------
-  CODEWORD  "<>", NOTEQUAL @ ( x1 x2 -- ? )
-                       @ Compares the top two stack elements for inequality.
+  CODEWORD  "<>", NOTEQUAL /* ( n1 n2 -- f ) f is true if n1 is not equal n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}      @ Get the next elt into a register.
   subs tos, r0        @ Z=equality; if equal, TOS=0
 
   it ne             @ If not equal,
   movne tos, #-1    @  set all bits in TOS.
-NEXT
+  NEXT
+END NOTEQUAL
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "=", EQUAL @ ( x1 x2 -- ? )
-                      @ Compares the top two stack elements for equality.
+  CODEWORD  "=", EQUAL /* ( n1 n2 -- f ) f is true if n1 is equal to  n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}     @ Get the next elt into a register.
   subs tos, r0       @ Z=equality; if equal, TOS=0
 
   subs tos, #1       @ Wenn es Null war, gibt es jetzt einen Überlauf
   sbcs tos, tos
-NEXT
+  NEXT
+END EQUAL
+
 @ -----------------------------------------------------------------------------
-  CODEWORD  "min", MIN @ ( x1 x2 -- x3 )
-                        @ x3 is the lesser of x1 and x2.
+  CODEWORD  "min", MIN /* ( n1 n2 -- n2 ) n3 is the lesser of n1 and n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}       @ Get x1 into a register.
   cmp r0, tos          @ Compare them.
   it lt                @ If X is less,
   movlt tos, r0        @  replace TOS with it.
-NEXT
+  NEXT
+END MIN
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "max", MAX @ ( x1 x2 -- x3 )
-                        @ x3 is the greater of x1 and x2.
+  CODEWORD  "max", MAX /* ( n1 n2 -- n2 ) n3 is the greater of n1 and n2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}       @ Get x1 into a register.
   cmp r0, tos          @ Compare them.
   it gt                @ If X is greater,
   movgt tos, r0        @  replace TOS with it.
-NEXT
+  NEXT
+END MAX
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "umax", UMAX @ ( u1 u2 -- u1|u2 )
+  CODEWORD  "umax", UMAX /* ( u1 u2 -- u2 ) u3 is the greater of u1 and u2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}  @ Get u1 into a register.
   cmp r0, tos 
   it hi           @ If W > TOS,
   movhi tos, r0   @  replace TOS with W.
-NEXT
+  NEXT
+END UMAX
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "umin",UMIN @ ( u1 u2 -- u1|u2 )
+  CODEWORD  "umin", UMIN /* ( u1 u2 -- u2 ) u3 is the lesser of u1 and u2 */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0}  @ Get u1 into a register.
   cmp r0, tos
   it lo           @ If W < TOS,
   movlo tos, r0   @  replace TOS with W.
-NEXT
+  NEXT
+END UMIN
+

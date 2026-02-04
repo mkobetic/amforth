@@ -1,6 +1,7 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD "over", OVER @ ( x y -- x y x )
+  CODEWORD "over", OVER /* ( n1 n2 -- n1 n2 n1 ) copy seconds stack cell to the top */
 @ -----------------------------------------------------------------------------
   savetos
   ldr tos, [psp, #4] 
-NEXT
+  NEXT
+END OVER

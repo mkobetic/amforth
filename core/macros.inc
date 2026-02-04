@@ -4,11 +4,11 @@
 .macro STARTDICT
   # .text should aready be in section amforth
   .p2align 2,0x55
-# Inject a NOP word as the first entry in the dictionary.
   .word 0
 97: # arch-wordlist
 98: # environment
 99: # forth-wordlist
+# Inject a NOP word as the first entry in the dictionary.
 VE_NOP: .word 0
         .byte 8f-7f
 7:      .ascii "nop"
@@ -74,20 +74,20 @@ VE_\Label:
     # Insert name string
 7:  .ascii "\Name"
     # Realign
-8:  .p2align 2,0xaa   
-   XT_\Label: .word \PFA
-   PFA_\Label: 
-.endm
-
-# Use to terminate COLON and CODEWORD definition
-.macro FINISH Label
-    .size _\Label, . - VE_\Label
-.endm
-
-.macro CODEWORD Name, Label
+8:  .p2align 2,0xaa
     .global _\Label
     .type _\Label, STT_FUNC
 _\Label:
+XT_\Label: .word \PFA
+PFA_\Label: 
+.endm
+
+# Use to terminate the function block of a word definition
+.macro END Label
+    .size _\Label, . - _\Label
+.endm
+
+.macro CODEWORD Name, Label
     HEADER Flag_visible, "\Name", \Label, PFA_\Label
 .endm
 
@@ -109,15 +109,15 @@ _\Label:
 .endm
 
 .macro HEADLESS Label
-  .p2align 2,0x55
-   XT_\Label: .word PFA_\Label
-   PFA_\Label: 
-.endm
-
-.macro COLON Name, Label
+    .p2align 2,0x55
     .global _\Label
     .type _\Label, STT_FUNC
 _\Label:
+XT_\Label: .word PFA_\Label
+PFA_\Label: 
+.endm
+
+.macro COLON Name, Label
     HEADER Flag_colon, "\Name", \Label, DOCOLON
 .endm
 
@@ -126,9 +126,12 @@ _\Label:
 .endm
 
 .macro NONAME Label
-  .p2align 2,0x55
-   XT_\Label: .word DOCOLON
-   PFA_\Label: 
+    .p2align 2,0x55
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:
+XT_\Label: .word DOCOLON
+PFA_\Label: 
 .endm
 
 .macro IMMED Name, Label
@@ -327,7 +330,10 @@ VE_ENV_\Label:
     # Insert name string
 7:  .ascii "\Name"
     # Realign
-8:  .p2align 2,0xf0        
+8:  .p2align 2,0xf0
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:        
 XT_ENV_\Label: .word DOCOLON
 PFA_ENV_\Label:
 .endm
@@ -351,6 +357,9 @@ VE_\Label:
 7:  .ascii "\Name"
     # Realign
 8:  .p2align 2,0xf0        
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:        
 XT_\Label: .word \PFA
 PFA_\Label: 
 .endm

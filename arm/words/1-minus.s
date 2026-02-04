@@ -1,3 +1,4 @@
-CODEWORD "1-", 1MINUS @ ( u -- u-1 )
+CODEWORD "1-", 1MINUS /* ( n1 -- n2 ) n2 = n1 - 1 */
   sub tos, #1
-NEXT
+  NEXT
+END 1MINUS
