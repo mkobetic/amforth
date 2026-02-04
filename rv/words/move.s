@@ -1,6 +1,7 @@
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "move",MOVE  # Move some bytes around. This can cope with overlapping memory areas.
+  CODEWORD  "move", MOVE /* ( addr1 addr2 n -- ) copy n bytes from addr1 to addr2 */
+/* This can cope with overlapping memory areas */
 # -----------------------------------------------------------------------------
 
 move:
@@ -61,3 +62,4 @@ move:
     addi    s4, s4, 4
     
     NEXT
+END MOVE

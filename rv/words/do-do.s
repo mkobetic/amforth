@@ -14,4 +14,5 @@ HIDEWORD "(DODO)" , DODO
     li t1, 0x80000000
     add s8, s8, t1
     sub  s7, s7, s8
-NEXT
+  NEXT
+END DODO

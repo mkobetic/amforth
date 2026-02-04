@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-CODEWORD "cold", COLD
+CODEWORD "cold", COLD /* ( i*x -- )(R: j*y -- ) cold start amforth, calls WARM */
 
   # set up the clock system and make it run
 
@@ -167,3 +167,4 @@ ant:
   # la s1, XT_WARM
 
   j DO_EXECUTE
+END COLD

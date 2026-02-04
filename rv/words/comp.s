@@ -2,48 +2,51 @@
 # Comparision operators
 
 # -----------------------------------------------------------------------------
-  CODEWORD "0=",ZEROEQUAL # ( n -- f ) COMP: f true if n is zero
-# ( x -- ? )
+  CODEWORD "0=",ZEROEQUAL /* ( n -- f ) f = n == 0 */
 # -----------------------------------------------------------------------------
   sltiu s3, s3, 1
   addi s3, s3, -1
   xori s3, s3, -1
   NEXT
+END ZEROEQUAL
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "0<>", NOTZEROEQUAL # ( n -- f ) COMP: f true if n is not zero 
+  CODEWORD  "0<>", NOTZEROEQUAL /* ( n -- f ) f = n != 0 */
 # -----------------------------------------------------------------------------
   sltiu s3, s3, 1
   addi s3, s3, -1
   NEXT
+END NOTZEROEQUAL
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "0<", ZEROLESS # ( n -- f ) COMP: f true if n is negative
+  CODEWORD  "0<", ZEROLESS /* ( n -- f ) f = n < 0 */
 # -----------------------------------------------------------------------------
   srai s3, s3, 31
   NEXT
+END ZEROLESS
 
 # -----------------------------------------------------------------------------
-  CODEWORD  ">=", GREATEREQUAL # ( n2 n1 -- f ) COMP: f true if n2 >= n1 
+  CODEWORD  ">=", GREATEREQUAL /* ( n1 n2 -- f ) f = n1 >= n2 */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
   slt s3, t0, s3
   addi s3, s3, -1
   NEXT
+END GREATEREQUAL
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "<=", LESSEQUAL # ( n2 n1 -- f ) COMP: f true if n2 <= n1          
+  CODEWORD  "<=", LESSEQUAL /* ( n1 n2 -- f ) f = n1 <= n2 */       
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
   slt s3, s3, t0
   addi s3, s3, -1
   NEXT
+END LESSEQUAL
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "<", LESS # ( n2 n1 -- f ) COMP: f true if n2 < n1 
-                      # Checks if s5 is less than ra.
+  CODEWORD  "<", LESS /* ( n1 n2 -- f ) f = n1 < n2 */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
@@ -51,10 +54,10 @@
   addi s3, s3, -1
   xori s3, s3, -1
   NEXT
+END LESS
 
 # -----------------------------------------------------------------------------
-  CODEWORD  ">", GREATER # ( n2 n1 -- f ) COMP: f true if n2 > n1 
-                      # Checks if s5 is greater than ra.
+  CODEWORD  ">", GREATER /* ( n1 n2 -- f ) f = n1 > n2 */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
@@ -62,27 +65,30 @@
   addi s3, s3, -1
   xori s3, s3, -1
   NEXT
+END GREATER
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "u>=", UGREATEREQUAL # ( u2 u1 -- f ) COMP: f true if unsigned u2 >= u1
+  CODEWORD  "u>=", UGREATEREQUAL /* ( u1 u2 -- f ) f = u1 >= u2 */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
   sltu s3, t0, s3
   addi s3, s3, -1
   NEXT
+END UGREATEREQUAL
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "u<=", ULESSEQUAL # ( u2 u1 -- f ) COMP: f true if unsigned u2 <= u1
+  CODEWORD  "u<=", ULESSEQUAL /* ( u1 u2 -- f ) f = u1 <= u2 */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
   sltu s3, s3, t0
   addi s3, s3, -1
   NEXT
+END ULESSEQUAL
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "u<", ULESS # ( u2 u1 -- f ) COMP: f true if unsigned u2 < u1 
+  CODEWORD  "u<", ULESS /* ( u1 u2 -- f ) f = u1 < u2 */ 
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
@@ -90,9 +96,10 @@
   addi s3, s3, -1
   xori s3, s3, -1
   NEXT
+END ULESS
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "u>", UGREATER # ( u2 u1 -- f ) COMP: f true if unsigned u2 > u1 
+  CODEWORD  "u>", UGREATER /* ( u1 u2 -- f ) f = u1 > u2 */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
@@ -100,11 +107,10 @@
   addi s3, s3, -1
   xori s3, s3, -1
   NEXT
+END UGREATER
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "<>", NOTEQUAL # ( n2 n1 -- f ) COMP: f true if n2 not equal n1 
-
-                       # Compares the top two stack elements for inequality.
+  CODEWORD  "<>", NOTEQUAL /* ( n1 n2 -- f ) f = n1 != n2 */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
@@ -112,10 +118,10 @@
   sltiu s3, s3, 1
   addi s3, s3, -1
   NEXT
+END NOTEQUAL
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "=", EQUAL # ( n2 n1 -- f ) COMP: f true if n2 equal n1 
-                      # Compares the top two stack elements for equality.
+  CODEWORD  "=", EQUAL /* ( n1 n2 -- f ) f = n1 == n2 */
 # -----------------------------------------------------------------------------
 equal_einsprung:
   lw t0, 0(s4)
@@ -125,41 +131,45 @@ equal_einsprung:
   addi s3, s3, -1
   xori s3, s3, -1
   NEXT
+END EQUAL
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "min", MIN # ( n2 n1 -- n ) COMP: n is lesser of n2 and n1 
-                        # s3 is the lesser of ra and s5.
+  CODEWORD  "min", MIN /* ( n1 n2 -- n3 ) n3 = min(n1, n2) */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
   blt s3, t0, 1f
     mv s3, t0
-1:NEXT
+1:
+  NEXT
+END MIN
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "max", MAX # ( n2 n1 -- n ) COMP: n is greater of n2 and n1 
-                        # s3 is the greater of ra and s5.
+  CODEWORD  "max", MAX /* ( n1 n2 -- n3 ) n3 = max(n1, n2) */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
   blt t0, s3, 1f
     mv s3, t0
 1:NEXT
+END MAX
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "umin", UMIN # ( u2 u1 -- u ) COMP: u is unsigned lesser of u2 and u1 
+  CODEWORD  "umin", UMIN /* ( u1 u2 -- u3 ) u3 = min(u1, u2) */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
   bltu s3, t0, 1f
     mv s3, t0
 1:NEXT
+END UMIN
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "umax", UMAX # ( u2 u1 -- u ) COMP: u is unsigned greater of u2 and u1 
+  CODEWORD  "umax", UMAX /* ( u1 u2 -- u3 ) u3 = max(u1, u2) */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
   bltu t0, s3, 1f
     mv s3, t0
 1:NEXT
+END UMAX

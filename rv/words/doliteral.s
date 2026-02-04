@@ -6,3 +6,4 @@ HIDEWORD "(DOLITERAL)" , DOLITERAL
     lw s3,0(s2)
     addi s2,s2,4
     NEXT
+END DOLITERAL

@@ -58,11 +58,11 @@
 
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "fill", FILL  # ( a u n -- ) MEM: Fill a...(a+u-1) memory with byte n 
-  # ( Destination Count Filling -- )
+  CODEWORD  "fill", FILL  /* ( addr n c -- ) fill n bytes from addr with c */
 # -----------------------------------------------------------------------------
-  # 6.1.1540 FILL CORE ( c-addr u char -- ) If u is greater than zero, store char in each of u consecutive characters of memory beginning at c-addr.
-
+/*
+ 6.1.1540 FILL CORE ( c-addr u char -- ) If u is greater than zero, store char in each of u consecutive characters of memory beginning at c-addr.
+*/
   addi s5, s5, -8
   sw a0,  4(s5)
   sw a1, 0(s5)
@@ -88,11 +88,10 @@
   addi s5, s5, 8
 
   NEXT
-
+END FILL
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "+!", PLUSSTORE # ( n a -- ) MEM: Add n to contents of address a [a]=[a]+n 
-
+  CODEWORD  "+!", PLUSSTORE /* ( n addr -- ) [addr] = [addr] + n; add n to the word at addr */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
     lw t1, 0(s3)
@@ -101,37 +100,38 @@
   lw s3, 4(s4)
   addi s4, s4, 8
   NEXT
+END PLUSSTORE
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "c@", CFETCH # ( a -- x ) MEM: put byte at a on data stack 
-                              # Loads the byte at 'addr'.
+  CODEWORD  "c@", CFETCH /* ( addr -- c ) c = byte([addr]); load byte at addr */
 # -----------------------------------------------------------------------------
   lbu s3, 0(s3)
   NEXT
+END CFETCH
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "c!", CSTORE # ( x a -- ) MEM: store byte x at a 
-# Given a value 'x' and an 8-bit-aligned address 'addr', stores 'x' to memory at 'addr', consuming both.
+  CODEWORD  "c!", CSTORE /* ( c addr -- ) [addr] = byte(c); store byte c to addr */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   sb t0, 0(s3)
   lw s3, 4(s4)
   addi s4, s4, 8
   NEXT
+END CSTORE
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "h@", HFETCH # ( a -- x ) MEM: put half-word at a on data stack 
-                              # Loads the byte at 'addr'.
+  CODEWORD  "h@", HFETCH /* ( addr -- x ) x = half([addr]); load halfword at addr */
 # -----------------------------------------------------------------------------
   lhu s3, 0(s3)
   NEXT
+END HFETCH
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "h!", HSTORE # ( x a -- ) MEM: store half-word x at a 
-# Given a value 'x' and an 8-bit-aligned address 'addr', stores 'x' to memory at 'addr', consuming both.
+  CODEWORD  "h!", HSTORE /* ( x addr -- ) [addr] = half(x); store halfword x to addr */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   sh t0, 0(s3)
   lw s3, 4(s4)
   addi s4, s4, 8
   NEXT
+END HSTORE

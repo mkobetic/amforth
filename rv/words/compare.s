@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # -----------------------------------------------------------------------------
-  CODEWORD "compare",COMPARE
+  CODEWORD "compare", COMPARE /* ( addr1 n1 addr2 n2 -- f ) f is true if both strings are the same (based on WANT_IGNORECASE) */
 # -----------------------------------------------------------------------------
 
 .if WANT_IGNORECASE==1
@@ -53,3 +53,5 @@
 
 4:
   NEXT
+
+END COMPARE

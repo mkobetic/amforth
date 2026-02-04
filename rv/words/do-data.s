@@ -4,3 +4,4 @@ HIDEWORD "(DODATA)" , DODATA
   savetos
   mv s3,s1
 NEXT
+END DODATA

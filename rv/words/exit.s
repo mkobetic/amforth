@@ -1,16 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-#CODEWORD "exit", EXIT
-#  pop s2   # IP
-#  NEXT
-
-# this is the xt that will be added by semicolon 
-CODEWORD "(exit)", EXIT 
+CODEWORD "(exit)", EXIT /* (R: addr -- ) loads addr into IP; compiled by semicolon */
   pop s2   # IP
   NEXT
+END EXIT
 
-# this is the xt that will be added by exit
-CODEWORD "exit", FINISH # ( -- ) FLOW: exit word (instantly) 
+CODEWORD "exit", FINISH /* (R: addr -- ) loads addr into IP; compiled by exit */
   pop s2   # IP
   NEXT
+END FINISH
 

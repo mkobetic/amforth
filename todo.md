@@ -3,6 +3,7 @@ List of know issues and tasks that need to be done (by area)
 
 # CORE
 
+* [ ] rv not vs arm not (logical vs bitwise)
 * [ ] 2rot and rot is the same thing?
 * [ ] invert and not is the same thing?
 * [ ] review/simplify word flags

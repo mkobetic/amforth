@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-CODEWORD "1ms", 1MS # ( -- ) SYSTEM: 1ms delay loop (96MHz system clock)
+CODEWORD "1ms", 1MS /* ( -- ) 1ms delay loop (96MHz system clock) */
 
 # For CH32V307 @ 96MHz
 # 96E6/1000 cycles and two instructions plus VM change
@@ -10,10 +10,10 @@ CODEWORD "1ms", 1MS # ( -- ) SYSTEM: 1ms delay loop (96MHz system clock)
 1:
     addi t0,t0,-1
     bne t0,zero,1b
-    
-NEXT
+    NEXT
+END 1MS
 
-CODEWORD "1s", 1S # ( -- ) SYSTEM: 1s delay loop (96MHz system clock)
+CODEWORD "1s", 1S /* ( -- ) SYSTEM: 1s delay loop (96MHz system clock) */
 
 # For CH32V307 @ 96MHz
 # 96E6/1000 cycles and two instructions plus VM change
@@ -24,7 +24,7 @@ CODEWORD "1s", 1S # ( -- ) SYSTEM: 1s delay loop (96MHz system clock)
 1:
     addi t0,t0,-1
     bne t0,zero,1b
-    
-NEXT
+    NEXT
+END 1S
 
 

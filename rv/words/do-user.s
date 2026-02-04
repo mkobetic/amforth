@@ -4,4 +4,5 @@ HIDEWORD "(DOUSER)" , DOUSER
   savetos
   lw s3,0(s1)
   add s3,s3,s6
-NEXT
+  NEXT
+END DOUSER

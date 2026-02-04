@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # -----------------------------------------------------------------------------
-  CODEWORD "um+", UMPLUS # ( n2 n1 -- n2+n1 carry ) MATHS: unsigned addtion with carry  
+  CODEWORD "um+", UMPLUS /* ( u1 u2 -- ud ) ud = u1 + u2 */
 # -----------------------------------------------------------------------------
   lw   t0, 0(s4)
   add  s3, s3, t0
   sw   s3, 0(s4)
   sltu s3, s3, t0
   NEXT
+END UMPLUS

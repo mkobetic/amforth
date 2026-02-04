@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
+IMMED "does>" , DOES /* () compiles (dodoes) followed by a jump and link to xdodoes */
 /*
 CREATE ... DOES> allows defining word creating words (parent words) that can define the execution semantics of their child words.
 The semantics are expressed with forth code following the DOES> word. The words between CREATE and DOES> construct the contents of
@@ -17,7 +18,6 @@ Child's CFA must point to machine code that will
  of this synthetic instruction. This brings the IP value we need into XDODOES through the link register,
  because the words following DOES> follow the synthetic jump.
  */
-IMMED "does>" , DOES #
       .word XT_COMPILE , XT_DODOES
 
       /* Compute PC relative jump offset to XDODOES
@@ -51,7 +51,9 @@ IMMED "does>" , DOES #
       .word XT_COMMA
 
       .word XT_EXIT
+END DOES
 
+COLON "(dodoes)", DODOES /* (R: addr -- ) addr of the synthetic jump after (dodoes), stored in child's CFA */
 /*
   (dodoes) is compiled into the parent word's definition and is executed
   when the parent word is invoked to create a child word.
@@ -63,8 +65,6 @@ IMMED "does>" , DOES #
   to return when (dodoes) finishes. Instead we want to return to the word that called the parent word,
   i.e the next address on the return stack.
 */
-COLON "(dodoes)" , DODOES
-
         .word XT_MEMMODE , XT_DOCONDBRANCH , DODOES0
 
          # compiling to flash
@@ -78,8 +78,9 @@ DODOES0: # compiling to ram
         .word XT_FFA2CFA
         .word XT_STORE # store the jump address in child's CFA
         .word XT_EXIT
+END DODOES
 
-HEADLESS XDODOES
+HEADLESS XDODOES /* ( -- u) prepares interpreter state for execution of the DOES> wordlist, u is child's PFA */
   savetos # push child's PFA (it's in the W register) to TOS 
   mv s3, s1
   /*  IP points to the word following the child's XT where it was called,
@@ -89,4 +90,5 @@ HEADLESS XDODOES
   push s2 
   mv s2 , t1 # set the IP to the address from the link register
   NEXT
+END XDODOES
 

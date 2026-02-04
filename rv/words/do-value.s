@@ -4,4 +4,5 @@ HIDEWORD "(DOVALUE)" , DOVALUE
   savetos
   lw s3,0(s1)
   lw s3,0(s3)
-NEXT
+  NEXT
+END DOVALUE

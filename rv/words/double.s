@@ -1,11 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 #------------------------------------------------------------------------------
-  CODEWORD  "s>d", S2D # ( n - dl dh ) Single --> Double conversion
+  CODEWORD  "s>d", S2D /* ( n -- d ) converts n to double cell d (MSB cell is higher in the stack) */
 #------------------------------------------------------------------------------
   savetos
   srai s3, s3, 31    # Turn MSB into 0xffffffff or 0x00000000
   NEXT
+END S2D
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -50,10 +51,7 @@ CODEWORD "ud/mod" , UDSLASHMOD # ( a b c -- c)
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-  CODEWORD  "ud/mod", UDSLASHMOD
-         # Unsigned divide 64/64 = 64 remainder 64
-         # ( ud1 ud2 -- ud ud)
-         # ( 1L 1H 2L tos: 2H -- Rem-L Rem-H Quot-L tos: Quot-H )
+  CODEWORD  "ud/mod", UDSLASHMOD /* (ud1 ud2 -- ud3 ud4 ) ud3 remainder, ud4 quotient of ud1 / ud2 */
 #------------------------------------------------------------------------------
 .macro addc dest, sour1, sour2
   add t2, \sour1, \sour2
@@ -162,14 +160,15 @@ ud_slash_mod_internal:
    NEXT
 
 #------------------------------------------------------------------------------
-  CODEWORD  "d0<", DZEROLESS # ( 1L 1H -- Flag ) Is double number negative ?
+  CODEWORD  "d0<", DZEROLESS /* ( d -- f ) f = d < 0 */
 #------------------------------------------------------------------------------
   addi s4, s4, 4
   srai s3, s3, 31    # Turn MSB into 0xffffffff or 0x00000000
   NEXT
+END DZEROLESS
 
 #------------------------------------------------------------------------------
-  CODEWORD  "d0=", DZEROEQUAL # ( 1L 1H -- Flag )
+  CODEWORD  "d0=", DZEROEQUAL /* ( d -- f ) f = d == 0 */
 #------------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
@@ -180,5 +179,6 @@ ud_slash_mod_internal:
   xori s3, s3, -1
 
   NEXT
+END DZEROEQUAL
 
 

@@ -2,22 +2,22 @@
 # Logic.
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "and", AND # ( n2 n1 -- n2 & n1 ) LOGIC: TOS is bitwise NOS AND TOS
-
+  CODEWORD  "and", AND /* ( x1 x2 -- x3 ) x3 = x1 & x2 */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
   and s3, t0, s3
   NEXT
+END AND
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "or", OR # ( n2 n1 -- n2 | n1 ) LOGIC: TOS is bitwise NOS OR TOS
-                       # Combines the top two stack elements using bitwise OR.
+  CODEWORD  "or", OR /* ( x1 x2 -- x3 ) x3 = x1 | x2 */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
   or s3, t0, s3
   NEXT
+END OR
 
 # I prefer a logical not as below  
 # -----------------------------------------------------------------------------
@@ -26,22 +26,25 @@
 #  xori s3, s3, -1
 #  NEXT
 
-COLON "not" , NOT # ( f -- ~f ) LOGIC: if f true ~f false (logical not) 
+COLON "not" , NOT /* ( f -- ~f ) LOGIC: if f true ~f false (logical not) */
       .word XT_ZEROEQUAL
       .word XT_EXIT 
-
+END NOT
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "rshift", RSHIFT # ( x n -- x ) LOGIC: shift x right n places (zero fill)
+  CODEWORD  "rshift", RSHIFT /* ( x1 u -- x2 ) x2 = x1 >> u */
 # -----------------------------------------------------------------------------
   lw t0, 0(s4)
   addi s4, s4, 4
   srl s3, t0, s3
   NEXT
+END RSHIFT
 
-  CODEWORD  "lshift", LSHIFT # ( x n -- x ) LOGIC: shift x left n places 
+CODEWORD  "lshift", LSHIFT /* ( x1 u -- x2 ) x2 = x1 << u */
   lw t0, 0(s4)
   addi s4, s4, 4
   sll s3, t0, s3
   NEXT
+END LSHIFT
+
 

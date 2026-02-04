@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-# -----------------------------------------------------------------------------
-  CODEWORD "2swap", 2SWAP # ( 4 3 2 1 -- 2 1 4 3 ) STACK: as per pattern! 
-# -----------------------------------------------------------------------------
+CODEWORD "2swap", 2SWAP /* ( d1 d2 -- d2 d1 ) swap top two cell pairs on the stack */
   mv t0, s3
   lw s3, 4(s4)
   sw t0, 4(s4)
@@ -11,4 +9,5 @@
   sw t0, 8(s4)
   sw t1, 0(s4)
   NEXT
+END 2SWAP
 
