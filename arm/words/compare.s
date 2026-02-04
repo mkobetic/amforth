@@ -1,5 +1,5 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD "compare",COMPARE  @ Compare two strings
+  CODEWORD "compare", COMPARE  /* ( addr1 n1 addr2 n2 -- f ) compares two strings */
 @ -----------------------------------------------------------------------------
   bl compare
   mvns tos,tos
@@ -61,3 +61,4 @@ compare:
    mvns tos, tos
    pop {pc}
 
+END COMPARE

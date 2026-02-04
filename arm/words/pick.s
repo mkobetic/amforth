@@ -2,4 +2,5 @@
   CODEWORD "pick", PICK /* ( xu .. x1 x0 u -- xu ... x1 x0 xu ) copy u-th stack entry to the top */
 @ -----------------------------------------------------------------------------
   ldr tos, [psp, tos, lsl #2]  
-NEXT
+  NEXT
+END PICK

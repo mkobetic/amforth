@@ -1,7 +1,6 @@
 
 @------------------------------------------------------------------------------
-  CODEWORD  "fill",FILL  @ Fill memory with given byte.
-  @ ( Destination Count Filling -- )
+  CODEWORD  "fill", FILL /* ( addr n c -- ) fill n bytes from addr with c */
 @------------------------------------------------------------------------------
   poptos r0 @ filler
   poptos r1 @ count
@@ -14,48 +13,48 @@
   bne 1b
 2:
   loadtos
-
-NEXT
+  NEXT
+END FILL
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "+!", PLUSSTORE @ ( x 32-addr -- )
-                               @ Adds 'x' to the memory cell at 'addr'.
+  CODEWORD  "+!", PLUSSTORE /* ( n addr -- ) add n to the memory cell at addr */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0, r1} @ X is the new TOS after the store completes.
   ldr  r2, [tos]     @ Load the current cell value
   adds r2, r0        @ Do the add
   str  r2, [tos]     @ Store it back
   movs tos, r1
-NEXT
+  NEXT
+END PLUSSTORE
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "c@", CFETCH @ ( 8-addr -- x )
-                              @ Loads the byte at 'addr'.
+  CODEWORD  "c@", CFETCH /* ( addr -- c ) load byte at addr */
 @ -----------------------------------------------------------------------------
   ldrb tos, [tos]
-NEXT
+  NEXT
+END CFETCH
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "c!", CSTORE @ ( x 8-addr -- )
-@ Given a value 'x' and an 8-bit-aligned address 'addr', stores 'x' to memory at 'addr', consuming both.
+  CODEWORD  "c!", CSTORE /* ( c addr -- ) store byte c to addr */
 @ -----------------------------------------------------------------------------
   ldm psp!, {r0, r1} @ X is the new TOS after the store completes.
   strb r0, [tos]     @ Popping both saves a cycle.
   movs tos, r1
-NEXT
+  NEXT
+END CSTORE
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "h@", HFETCH @ ( addr -- x ) MEM: put half-word at addr on data stack 
-                              # Loads the halfword at 'addr'.
+CODEWORD  "h@", HFETCH /* ( addr -- x ) load halfword at addr */
 # -----------------------------------------------------------------------------
   ldrh tos, [tos]
   NEXT
+END HFETCH
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "h!", HSTORE @ ( x a -- ) MEM: store half-word x at a 
-# Given a value 'x' and an 8-bit-aligned address 'addr', stores 'x' to memory at 'addr', consuming both.
+  CODEWORD  "h!", HSTORE /* ( x addr -- ) store halfword to addr */
 # -----------------------------------------------------------------------------
   popnos r0
   strh r0, [tos]
   loadtos
   NEXT
+END HSTORE

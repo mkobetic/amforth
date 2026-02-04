@@ -1,25 +1,15 @@
 @------------------------------------------------------------------------------
-  CODEWORD  "m*", MSTAR
-  @ Multiply signed 32*32 = 64
-  @ ( n n -- d )
+  CODEWORD  "m*", MSTAR /* ( n1 n2 -- d ) d = n1*n2 */
 @------------------------------------------------------------------------------
     ldr r0, [psp]
     smull r0, tos, tos, r0
     str r0, [psp]
     NEXT
+END MSTAR
 
 @------------------------------------------------------------------------------
-  CODEWORD  "ud/mod", UDSLASHMOD
-         @ Unsigned divide 64/64 = 64 remainder 64
-         @ ( ud1 ud2 -- ud ud)
-         @ ( 1L 1H 2L tos: 2H -- Rem-L Rem-H Quot-L tos: Quot-H )
+  CODEWORD  "ud/mod", UDSLASHMOD /* (ud1 ud2 -- ud3 ud4 ) ud3 remainder, ud4 quotient of ud1 / ud2 */
 @------------------------------------------------------------------------------
-@ use faster um/mod if divisor is 32-bits
-@ TODO: This crashes hard in QEMU, why?
-@   cbnz tos, 1f
-@   loadtos
-@   b umslashmod
-@ 1:
 @  throw if divisor is zero
   ldr  r0, [psp, #0]
   orrs r0, r0, tos
@@ -27,7 +17,7 @@
   throw EDIVZ
 2:
   bl ud_slash_mod
-NEXT
+  NEXT
 
 ud_slash_mod:
    push {r4, r5}
@@ -88,11 +78,11 @@ ud_slash_mod:
    .unreq dsrlo
    .unreq remlo
    .unreq remhi
+END UDSLASHMOD
 
 @------------------------------------------------------------------------------
-  CODEWORD  "d/mod", DSLASHMOD
-              @ Signed symmetric divide 64/64 = 64 remainder 64
-              @ ( d1 d2 -- d d )
+  CODEWORD  "d/mod", DSLASHMOD /* (d1 d2 -- d3 d4 ) d3 remainder, d4 quotient of d1 / d2 */
+@------------------------------------------------------------------------------
   @ throw if dividend is zero
   ldr  r0, [psp, #0]
   orrs r0, r0, tos
@@ -149,25 +139,24 @@ d_slash_mod:  @ ( 1L 1H 2L tos: 2H -- Rem-L Rem-H Quot-L tos: Quot-H )
     bl dswap
     bl ud_slash_mod
     pop {pc}
+END DSLASHMOD
 
 @------------------------------------------------------------------------------
-  CODEWORD  "d/", DSLASH
+  CODEWORD  "d/", DSLASH /* ( d1 d2 -- d3 ) d3 is quotient of d1 / d2 */
 @------------------------------------------------------------------------------
   bl d_slash_mod
   ldm psp!, {r0, r1, r2}
   subs psp, #4
   str r0, [psp]
   NEXT
-
+END DSLASH
 
 @------------------------------------------------------------------------------
 @ --- Double comparisions ---
 @------------------------------------------------------------------------------
 
 @------------------------------------------------------------------------------
-  CODEWORD  "d<", DLESS
-  @ ( 2L 2H 1L 1H -- Flag )
-  @   8y 4x 0w tos
+  CODEWORD  "d<", DLESS /* ( d1 d2 -- f ) f is true if d1 is less than d2 */
 @------------------------------------------------------------------------------
   ldm psp!, {r0, r1, r2}
 
@@ -183,17 +172,16 @@ d_slash_mod:  @ ( 1L 1H 2L tos: 2H -- Rem-L Rem-H Quot-L tos: Quot-H )
 
 @ False:
 1:movs tos, #0
-NEXT
+  NEXT
 
 @ True
 2:movs tos, #0
   mvns tos, tos
-NEXT
+  NEXT
+END DLESS
 
 @------------------------------------------------------------------------------
-  CODEWORD  "d>", DGREATER
-  @ ( 2L 2H 1L 1H -- Flag )
-  @   8y 4x 0w tos
+  CODEWORD  "d>", DGREATER /* ( d1 d2 -- f ) f is true if d1 is greater than d2 */
 @------------------------------------------------------------------------------
   ldm psp!, {r0, r1, r2}
 
@@ -209,49 +197,54 @@ NEXT
 
 @ False:
 1:movs tos, #0
-NEXT
+  NEXT
 
 @ True
 2:movs tos, #0
   mvns tos, tos
-NEXT
+  NEXT
+END DGREATER
 
 @------------------------------------------------------------------------------
-  CODEWORD  "d0<", DZEROLESS @ ( 1L 1H -- Flag ) Is double number negative ?
+  CODEWORD  "d0<", DZEROLESS /* ( d -- f ) f is true if d is less than zero */
 @------------------------------------------------------------------------------
   adds psp, #4
   movs TOS, TOS, asr #31    @ Turn MSB into 0xffffffff or 0x00000000
-NEXT
+  NEXT
+END DZEROLESS
 
 @------------------------------------------------------------------------------
-  CODEWORD  "d0=", DZEROEQUAL @ ( 1L 1H -- Flag )
+  CODEWORD  "d0=", DZEROEQUAL /* ( d -- f ) f is true if d is zero */
 @------------------------------------------------------------------------------
   ldm psp!, {r0}
   cmp r0, #0
   beq 1f
     movs tos, #0
-NEXT
+  NEXT
 
 1:subs tos, #1
   sbcs tos, tos
-NEXT
+  NEXT
+END DZEROEQUAL
 
 @------------------------------------------------------------------------------
-  CODEWORD  "d=", DEQUAL @ ( 1L 1H 2L 2H -- Flag )
+  CODEWORD  "d=", DEQUAL /* ( d1 d2 -- f ) f is true if d1 is equal to d2 */
 @------------------------------------------------------------------------------
   ldm psp!, {r0, r1, r2}
 
   cmp r0, r2
   beq 1f
     movs tos, #0
-NEXT
+  NEXT
 
 1:subs tos, r1       @ Z=equality; if equal, TOS=0
   subs tos, #1      @ Wenn es Null war, gibt es jetzt einen Überlauf
   sbcs tos, tos
-NEXT
+  NEXT
+END DEQUAL
 
-CODEWORD  "s>d", S2D
+CODEWORD  "s>d", S2D /* ( n -- d ) converts n to double cell d (MSB cell is higher in the stack) */
   savetos
   movs tos, tos, asr #31
-NEXT
+  NEXT
+END S2D

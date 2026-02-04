@@ -3,6 +3,8 @@ List of know issues and tasks that need to be done (by area)
 
 # CORE
 
+* [ ] 2rot and rot is the same thing?
+* [ ] what exactly does compare do? What is the return value? Length suffixed strings?
 * [ ] review/simplify word flags
 * [ ] add END macro and make all words proper function blocks (debug_info)
 
@@ -30,11 +32,10 @@ List of know issues and tasks that need to be done (by area)
 
 # ARM
 
-* [x] implement CHAR+
-* [x] fix core test freeze
+* [ ] what is the relationship between variable `rp` and `sp` ?
+* [ ] don't push{lr}/pop{pc} in leaf functions (just bx lr)
+* [ ] don't use ldm when not needed (poptos, popnos)
 * [ ] add readme.md
-* [x] implement m-rot.s (see rv)
-* [x] implement umstar.s (see rv)
 * [ ] (exiti) likely needs work
 * [ ] document dev tool setup
 * [ ] better HW fault handling

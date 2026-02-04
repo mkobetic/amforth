@@ -1,5 +1,5 @@
 @------------------------------------------------------------------------------
-  CODEWORD "dnegate", DNEGATE
+  CODEWORD "dnegate", DNEGATE /* ( d1 -- d2 ) d2 = -d1 */
 @------------------------------------------------------------------------------
 
   bl dnegate
@@ -15,3 +15,4 @@ dnegate:
   adcs tos, r1
   str r0, [psp]
   pop {pc}
+END DNEGATE

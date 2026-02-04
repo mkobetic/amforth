@@ -1,7 +1,8 @@
 @------------------------------------------------------------------------------
-  CODEWORD  "move",MOVE  @ Move some bytes around. This can cope with overlapping memory areas.
+CODEWORD  "move", MOVE /* ( addr1 addr2 n -- ) copy n bytes from addr1 to addr2 */
+/* This can cope with overlapping memory areas */
 @------------------------------------------------------------------------------
-
+  # TODO: Why are we saving these? We don't do that anywhere.
   push {r0, r1, r2}
 
   poptos r1
@@ -38,3 +39,4 @@
 3:  ldm psp!, {tos}
   pop {r0, r1, r2}
   NEXT
+END MOVE

@@ -1,3 +1,4 @@
-CODEWORD "2*", 2STAR @ ( n -- n*2 )
+CODEWORD "2*", 2STAR /* ( n1 -- n2 ) n2 = 2 * n1 */
   add tos, tos
-NEXT
+  NEXT
+END 2STAR

@@ -1,14 +1,18 @@
 @ -----------------------------------------------------------------------------
-  CODEWORD "rp@", RP_FETCH @ ( -- a-addr )
+  CODEWORD "rp@", RP_FETCH /* ( -- addr ) addr is current return stack pointer */
 @ -----------------------------------------------------------------------------
   savetos
   mov tos, sp
-NEXT
+  NEXT
+END RP_FETCH
+
 @ -----------------------------------------------------------------------------
-  CODEWORD "rp!", RP_STORE @ ( a-addr -- )
+  CODEWORD "rp!", RP_STORE /* ( addr -- ) set return stack pointer to addr */
 @ -----------------------------------------------------------------------------
   mov sp, tos
   ldm psp!, {tos}
-NEXT
+  NEXT
+END RP_STORE
 
-USER "rp", RP, USER_RP
+USER "rp", RP, USER_RP /* ( -- addr ) address of return stack pointer */
+END RP

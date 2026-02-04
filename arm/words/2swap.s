@@ -1,8 +1,6 @@
-@ -----------------------------------------------------------------------------
-  CODEWORD "2swap", 2SWAP @ ( 4 3 2 1 -- 2 1 4 3 )
-@ -----------------------------------------------------------------------------
+CODEWORD "2swap", 2SWAP /* ( d1 d2 -- d2 d1 ) swap two cell pairs at the top of the stack */
   bl dswap
-NEXT
+  NEXT
 
 dswap:
   push {lr}
@@ -14,3 +12,4 @@ dswap:
   str r2, [psp]
   movs tos, r1
   pop {pc}
+END 2SWAP

@@ -1,5 +1,4 @@
-
-CODEWORD "cold", COLD
+CODEWORD "cold", COLD /* ( i*x -- )(R: j*y -- ) cold start amforth, calls WARM */
 
    ldr r0, =RAM_upper_returnstack
    mov sp, r0
@@ -8,4 +7,5 @@ CODEWORD "cold", COLD
 
    ldr FORTHW, =XT_WARM
 
-  b DO_EXECUTE
+   b DO_EXECUTE
+END COLD
