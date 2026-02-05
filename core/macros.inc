@@ -235,21 +235,6 @@ PFA_\Label:
    .word XT_STORE
 .endm
 
-.macro PVALUE Name, Label, Default
-    HEADER Flag_visible|Flag_value|Flag_init, "\Name", \Label, PFA_DOVALUE
-   .section amramlo,"aw",%nobits
-   .balign 4
-    # Capture current location counter
-   .set \Label\()_ram, .          
-   .space 4
-   .section amforth
-   # Write the captured address into flash
-   .word \Label\()_ram             
-   .word \Default
-   .word XT_FETCH
-   .word XT_PVSTORE
-.endm
-
 # .macro ALTVAL Name, Label, Default
 #     HEADER Flag_visible|Flag_value|Flag_init, "\Name", \Label, PFA_DOVALUE
 #    .word rampointer

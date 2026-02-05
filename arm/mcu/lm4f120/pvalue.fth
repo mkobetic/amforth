@@ -41,3 +41,36 @@ pvarena2 pvasize $ff fill
     \ ( pvp++ -1 )
     drop to pvp \ update pvp
 ;
+
+\ TODO: What follows is just a test script demonstrating the functionality
+hex
+
+\ show initial setup
+pvp .
+pvarena .
+pvarena 10 - 5 dump
+
+\ create a value and update it persistently multiple times
+42 value xx
+xx .       \ value of xx
+vaddr xx . \ RAM address of xx
+1 pvto xx
+xx .
+2 pvto xx
+xx .
+3 pvto xx
+xx .
+
+pvarena 10 - 5 dump \ show the arena
+pvp .
+
+\ reset the value and pvp
+0 is pvp
+0 vaddr xx !
+xx .
+
+pvalue.init \ run init for pvalues
+xx .
+pvp .
+
+
