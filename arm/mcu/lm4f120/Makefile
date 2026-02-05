@@ -1,5 +1,9 @@
-MCU_LD ?= stellaris.ld
-
+# Default to the QEMU target since the real boards were discontinued
+ifeq ($(strip $(TARGET)), LM4)
+MCU_LD ?= lm4f120.ld
+else
+MCU_LD ?= lm3s6965qem.ld
+endif
 
 BOARD=$(shell uname -m)
 ifeq ("$(BOARD)", "armv7l")
