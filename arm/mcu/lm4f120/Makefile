@@ -19,26 +19,27 @@ upload: build/amforth.elf
 # https://www.qemu.org/docs/master/system/arm/stellaris.html
 QEMU=qemu-system-arm -M lm3s6965evb -display none -bios none -kernel build/amforth.elf
 
-# Starts amforth under QEMU
-run:
+## Starts amforth under QEMU
+stdio:
 	$(QEMU) -serial stdio
 
-# Starts amforth under QEMU with serial port connected to a pty.
+## Starts amforth under QEMU with serial port connected to a pty.
 # Use this when you want more powerful terminal emulator than the very basic stdio.
 # The pty device is printed after start, connect to it with a terminal emulator,
 # e.g.: tio --map=ODELBS /dev/ttys019	// ODELBS fixes backspace behavior
-runpty:
+pty:
 	$(QEMU) -serial pty
 #	Following was an attempt to predefine the device filename
 #	Unsuccessful so far: Failed to create PTY symlink: Operation not permitted
 #	$(QEMU) -chardev pty,path=/dev/stellaris,id=stellaris -serial chardev:stellaris
 
-# Like runpty but halts on start and waits for GDB to attach to it.
+## Like pty but allows GDB to attach to it.
 # Add -S if you want QEMU to not start the quest.
+# WARNING: GDB TUI struggles to start properly when the target has not started (-S).
 debug:
 	$(QEMU) -serial pty -s
 
-# Connect GDB to running amforth (must be running with the -S -s flags!)
+## Connect GDB to running amforth (must be running with -s, see debug)
 gdb:
 	$(CROSS)gdb-py build/amforth.elf --quiet \
 		-ex 'target remote :1234' \
