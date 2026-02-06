@@ -69,14 +69,17 @@
     pvarena1 pvarena = if pvarena2 else pvarena1 then
 ;
 
-: pvarena.erase ( addr -- ) \ erase arena addr from the end
-    dup pvasize + pvpgsize - do
-        i df.erase
-    pvpgsize negate +loop
+: pvarena.erase ( addr -- ) \ erase arena at addr from the end
+    dup pvasize + pvpgsize -
+    begin 2dup <= while
+        dup df.erase
+        pvpgsize - 
+    repeat
+    2drop
 ;
 
-\ TODO: should be a hidden word
-: pv.checkword ( awp ffa - awp++ ) \ write pvalue record at awp if ffa is pvalue, advance awp
+\ used to prepare dormant arena for arena swap
+: pv.writeword ( awp ffa - awp++ ) \ write pvalue record at awp if ffa is pvalue, advance awp
     dup @ flag.pvalue and if
         ffa2cfa >body @ \ (awp pv-ram)
         2dup swap !df @ \ write record ID (awp [pv-ram] )
@@ -90,29 +93,33 @@
 \ second cell of the arena record is written first to mark it dirty
 \ if arena is dirty it is erased completely first (erase the first block last)
 \ first cell of arena record is written last, with ID +1 of the active arena,
-\ this makes the arena complete and active.
-: pvarena.swap ( -- ) \ write fresh pvalues into the dormant arena and swap arenas ;
+\ this marks the arena complete and active.
+: pvarena.swap ( -- ) \ write fresh pvalues into the dormant arena and swap arenas
     pvarena.dormant 
     \ check if it needs to be erased
     dup cell+ dup @df 1+ 0<> if dup pvarena.erase then
     \ write dirty mark ( arena arena+ )
     dup 0 swap !df cell+ \ ( arena arena++ )
     \ write fresh record for each persistent value in forth-wordlist
-    ' pv.checkword forth-wordlist traverse-wordlist
+    ['] pv.writeword forth-wordlist traverse-wordlist
     swap \ swap the arena pointers ( awp arena )
     \ write arena ID (this must happen last)
     dup pvarena @df 1+ swap !df
     \ swap arenas ( awp arena )
-    to pvarena
-    to pvp
+    pvarena swap ( awp old-arena new-arena )
+    to pvarena swap \ set pvarena
+    to pvp \ set pvp
+    pvarena.erase \ erase old arena
 ;
 
 \ TODO: What follows is just a test script demonstrating the functionality
 hex
 
-\ Make sure the arenas are "erased" to the expected blank flash state
+\ Make sure arenas are "erased" to the expected blank flash state
 pvarena1 pvarena.erase
+pvarena1 10 - 5 dump \ check arena1
 pvarena2 pvarena.erase
+pvarena2 10 - 5 dump \ check arena2
 
 \ show initial setup
 pv.init
@@ -142,7 +149,7 @@ pv2 .
 pvarena 10 - 5 dump \ show the arena
 pvp .
 
-\ reset the value and pvp
+\ reset the values and pvp
 0 is pvp
 0 vaddr pv1 !
 pv1 .
@@ -161,4 +168,5 @@ pvp .
 pvarena.swap
 pvp .
 pvarena .
-pvarena 10 - 5 dump
+pvarena 10 - 5 dump \ show the new arena
+pvarena.dormant 10 - 5 dump \ show the old arena
