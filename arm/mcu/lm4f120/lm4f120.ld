@@ -7,7 +7,7 @@ DataFlashSize = 0x2000;
 MEMORY
 {
    FLASH(RX)   : ORIGIN = 0x00000000, LENGTH = 0x40000 - DataFlashSize
-   /* Allocate and of FLASH as DATA_FLASH */
+   /* Allocate end of FLASH as DATA_FLASH */
    DATA_FLASH(WRX) : ORIGIN = ORIGIN(FLASH) + LENGTH(FLASH), LENGTH = DataFlashSize
    RAM(WAIL) : ORIGIN = 0x20000000, LENGTH = 0x8000
 }

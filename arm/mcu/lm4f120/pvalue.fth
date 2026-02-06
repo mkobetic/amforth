@@ -25,12 +25,39 @@ pvarena2 pvasize $ff fill
 : pvto ( x "name" -- ) \ set value to x and write pvalue record for it
     vaddr pvstore ;
 
-\ TODO: This should be called from warm after the normal value init runs,
-\ and after the current arena is determined and pvarena is set.
+\ Arena state is stored in the first record of the arena.
+\ First cell is a counter with MSB set (so that it doesn't match any real RAM address).
+\ Second cell is either -1 or 0. Erased dormant arena has both cells set to -1.
+\ Current arena is the one with higher ID that is not -1.
+: pvarena.init ( -- ) \ set pvarena to whichever arena should be current ;
+    pvarena1 @df dup 1+ if \ is arena1 dormant? (ID = -1)
+        pvarena2 @df dup 1+ if \ is arena2 dormant?
+            \ (a1id a2id) higher ID wins
+            < if pvarena2 to pvarena
+            else pvarena1 to pvarena
+            then
+        else \ arena2 is dormant ( a1id -1 )
+            pvarena1 to pvarena
+            2drop \ unused arena IDs
+        then
+    else \ arena1 is dormant ( -1 )
+        pvarena2 @df 1+ if \ is arena2 dormant?
+            pvarena2 to pvarena
+        else \ arena2 is dormant
+            \ both arenas are blank, initialize arena1 and use it.
+            $80000000 pvarena1 !df
+            0 pvarena1 cell+ !df
+            pvarena1 to pvarena
+        then
+        drop \ unused arena1 ID
+    then ;
+
+\ TODO: This should be called from warm after the normal value init runs.
 \ The pvalues must be initialized with their default values first (like any values),
 \ then this will replay all the pvalue records, ending up with the latest persisted state.
-: pvalue.init ( -- ) \ replay pvarena records, set pvp
-    pvarena cell+ cell+ \ TODO: skip the arena record for now
+: pv.init ( -- ) \ replay pvarena records, set pvp
+    pvarena.init \ initialize pvarena
+    pvarena cell+ cell+ \ skip the arena record
     begin
     dup @df dup 1+ while \ if record id is not all 1 bits, i.e. -1
         \ ( pvp pv-ram )
@@ -46,6 +73,7 @@ pvarena2 pvasize $ff fill
 hex
 
 \ show initial setup
+pv.init
 pvp .
 pvarena .
 pvarena 10 - 5 dump
@@ -69,7 +97,7 @@ pvp .
 0 vaddr xx !
 xx .
 
-pvalue.init \ run init for pvalues
+pv.init \ reinitialize pvalue system
 xx .
 pvp .
 
