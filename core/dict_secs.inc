@@ -195,6 +195,7 @@
 
 .include "words/show.s"
 .include "words/value.s"
+.include "words/pvalue.s"
 .include "words/mop.s"
 .include "words/traps.s"
 .include "words/forget.s"

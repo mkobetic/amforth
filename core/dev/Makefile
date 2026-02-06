@@ -48,14 +48,14 @@ buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date -Iseconds`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 	mkdir -p build
 
-ASFLAGS := -g --warn --fatal-warnings -ahlmn=build/amforth.lst-as
+ASFLAGS += -g --warn --fatal-warnings -ahlmn=build/amforth.lst-as
 # if you want to run standard tests you need WANT_IGNORECASE flag set
 ifdef WANT_IGNORECASE
 ASFLAGS +=--defsym WANT_IGNORECASE=$(WANT_IGNORECASE)
 endif
 
 # Needed for the INCLUDE amforth32.ld to work in linked files (-L must precede the -T !!!)
-LDFLAGS := -L $(AMFORTH)/core -T $(MCU_LD)
+LDFLAGS += -L $(AMFORTH)/core -T $(MCU_LD) -Map build/amforth.map
 
 # The include order is important: architecture > core > AMFORTH.
 # For simple imports, e.g. config.inc or words/xx.s, the more specific directory wins.
@@ -81,7 +81,7 @@ build/%.bin: build/%.elf
 	$(OBJCOPY) -O binary $< $@
 
 build/%.lst: build/%.elf
-	$(OBJDUMP) --show-raw-insn --insn-width=4 --all-headers --disassemble-all --source --syms $< >$@
+	$(OBJDUMP) --show-raw-insn --insn-width=4 --section-headers --file-headers --disassemble $< >$@
 
 # list all transitive dependencies of amforth.s (include tree traversal)
 build/%.dep: %.s buildinfo

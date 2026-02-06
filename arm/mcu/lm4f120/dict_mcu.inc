@@ -7,4 +7,3 @@
 .include "words/delay.s"
 
 .include "words/usart.s"
-.include "pvalue.s"

@@ -25,10 +25,10 @@ END PVARENA1
 CONSTANT "pvarena2", PVARENA2, pvarena2_lower /* ( -- addr ) address of pvalue arena 2  */
 END PVARENA2
 
-CONSTANT "pvasize", PVASIZE, pvasize /* ( -- u ) size of pvalue arena (multiple of flash page size) */
+CONSTANT "pvasize", PVASIZE, pvarena.size /* ( -- u ) size of pvalue arena (multiple of flash page size) */
 END PVASIZE
 
-CONSTANT "pvpgsize", PVPGSIZE, DataFlashPageSize /* ( -- u ) size of arena page (flash page size) */
+CONSTANT "pvpgsize", PVPGSIZE, pvflash.page /* ( -- u ) size of arena page (flash page size) */
 END PVPGSIZE
 
 /* pvalue runtime values, must be initialized by pv.init */

@@ -3,9 +3,10 @@ List of know issues and tasks that need to be done (by area)
 
 # CORE
 
-* sort out issues with `to` word (to.s/alto.s)
 * rv not vs arm not (logical vs bitwise)
-* figure out if values should have setter/getter XTs
+* !i must not be permitted to write below dp0.flash
+* sort out issues with `to` word (to.s/alto.s)
+* figure out if value setter/getter XTs are used and drop them if not
 * add END macro and make all words proper function blocks (debug_info)
 * review/simplify word flags
 * ARM: 2rot and rot is the same thing (see RV)

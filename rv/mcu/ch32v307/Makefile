@@ -167,6 +167,8 @@ else
 FLAGS += -march=rv32imafc -mabi=ilp32f
 endif
 
+
+
 # Needed for the INCLUDE amforth32.ld to work in linked files (-L must preceed the -T !!!)
 FLAGS += -L $(AMFORTH)/core
 
@@ -181,9 +183,8 @@ endif
 ASFLAGS  := $(FLAGS) -x assembler-with-cpp  $(INCLUDES) -MMD -MP $(DEFINES) 
 CPPFLAGS := $(FLAGS) $(INCLUDES) -MMD -MP $(DEFINES)
 
-#LDFLAGS += -nostartfiles -Xlinker -t -Xlinker --gc-sections -Xlinker --verbose --specs=nano.specs --specs=nosys.specs \
-                                                -Xlinker -Map $(BUILD_DIR)/$(TARGET_MAP)
-
+# ASFLAGS :=--defsym BUILD_$(strip $(TARGET))=YES -march=rv32imafc -mabi=ilp32
+# LDFLAGS += -nostartfiles -t --gc-sections
 # ----------------------------------------------------------------------
 # Targets below 
 # ----------------------------------------------------------------------

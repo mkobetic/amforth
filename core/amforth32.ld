@@ -219,7 +219,48 @@ SECTIONS
         . = . + eeprom_size;
     } >RAM 
 
-ASSERT(_eusrstack == ORIGIN(RAM) + LENGTH(RAM) - eeprom_size - slack, "Stack and EEPROM overlap!")
+	ASSERT(_eusrstack == ORIGIN(RAM) + LENGTH(RAM) - eeprom_size - slack, "Stack and EEPROM overlap!")
 
-    PROVIDE(rampointer = rampool_end);
+
+	/* 
+		The pvarena sections are used to store pvalue records, persisting updates to pvalues.
+		They must be located in PVFLASH memory region that each MCU must define.
+		It can be a section of code flash that is allocated for this purpose or dedicated data flash.
+		It can also be part of RAM although the persistence aspect is of course moot then.
+
+		The region length, PVFLASH_SIZE, must be an even multiple of PVFLASH_PAGE
+		and the region origin must be aligned on the page size as well.
+		PVFLASH_SIZE can be 0 but PVFLASH region must still be defined explicitly with length 0
+		otherwise it will default to occupying the entire memory space.
+
+		The region will be consumed entirely by two equal size arenas.
+		For proper pvalue function the size of an arena should be multiple of maximum number of pvalues
+		in the system multiplied by the size of pvalue record (2 * cellsize). You want enough room in 
+		the arena so that it is at least half empty when the records are compacted. More if you expect
+		larger amounts of pvalue updates. You want to avoid compacting the arenas too frequently,
+		wearing the flash out faster.
+	*/
+	pvfdiv = PVFLASH_PAGE ? PVFLASH_PAGE : 1;
+	ASSERT(ORIGIN(PVFLASH) % pvfdiv == 0, "PVFLASH origin is not aligned to PVFLASH_PAGE!")
+	ASSERT(LENGTH(PVFLASH) % pvfdiv == 0, "PVFLASH length is not a multiple of PVFLASH_PAGE!")
+	ASSERT((LENGTH(PVFLASH) / pvfdiv) % 2 == 0, "PVFLASH length is not an even multiple of PVFLASH_PAGE!")
+
+	PROVIDE(pvflash.page = PVFLASH_PAGE);
+	PROVIDE(pvflash.start = ORIGIN(PVFLASH));
+	PROVIDE(pvflash.size = LENGTH(PVFLASH));
+
+	/* predefined size of pvalue arenas, use whole PVFLASH. */
+	PROVIDE(pvarena.size = LENGTH(PVFLASH) / 2);
+
+	pvarena1 : {
+		PROVIDE(pvarena1_lower = . );
+		. = . + pvarena.size;
+		PROVIDE(pvarena1_upper = .);
+	} >PVFLASH
+
+	pvarena2 : {
+		PROVIDE(pvarena2_lower = . );
+		. = . + pvarena.size;
+		PROVIDE(pvarena2_upper = .);
+	} >PVFLASH
 }

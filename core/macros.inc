@@ -4,12 +4,12 @@
 .macro STARTDICT
   # .text should aready be in section amforth
   .p2align 2,0x55
-  .word 0
+VE_NOP: .word 0
 97: # arch-wordlist
 98: # environment
 99: # forth-wordlist
 # Inject a NOP word as the first entry in the dictionary.
-VE_NOP: .word 0
+        .word 0
         .byte 8f-7f
 7:      .ascii "nop"
 8:      .p2align 2,0xAA
@@ -250,24 +250,6 @@ PFA_\Label:
    .word XT_FETCH
    .word XT_STORE
 .endm
-
-# .macro ALTVAL Name, Label, Default
-#     HEADER Flag_visible|Flag_value|Flag_init, "\Name", \Label, PFA_DOVALUE
-#    .word rampointer
-#     .equ RAM_\Label,rampointer # for listing
-#    .set rampointer, rampointer+4
-#    .word rom_pointer
-#    .section amrom,"ax"
-#    .word \Default
-#    .section amforth,"ax"
-# #   .set keep , .
-# #   .org rom_pointer
-# #   .word \Default
-# #   .org keep
-#    .set rom_pointer , rom_pointer + 4
-#    .word XT_FETCH
-#    .word XT_STORE
-# .endm
 
 .macro DEFER Name, Label, XT
     HEADER Flag_visible|Flag_defer|Flag_init, "\Name", \Label, PFA_DODEFER
