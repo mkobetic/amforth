@@ -1,7 +1,3 @@
-\ Make sure the arenas are "erased" to the expected blank flash state
-pvarena1 pvasize $ff fill
-pvarena2 pvasize $ff fill
-
 \ Updating a pvalue means writing a new pvalue record in the current pvarena,
 \ and then updating the corresponding RAM cell with the same value.
 : pvstore ( x addr -- ) \ update pvalue with RAM address addr to value x
@@ -29,7 +25,7 @@ pvarena2 pvasize $ff fill
 \ First cell is a counter with MSB set (so that it doesn't match any real RAM address).
 \ Second cell is either -1 or 0. Erased dormant arena has both cells set to -1.
 \ Current arena is the one with higher ID that is not -1.
-: pvarena.init ( -- ) \ set pvarena to whichever arena should be current ;
+: pvarena.init ( -- ) \ set pvarena to whichever arena should be current
     pvarena1 @df dup 1+ if \ is arena1 dormant? (ID = -1)
         pvarena2 @df dup 1+ if \ is arena2 dormant?
             \ (a1id a2id) higher ID wins
@@ -69,8 +65,54 @@ pvarena2 pvasize $ff fill
     drop to pvp \ update pvp
 ;
 
+: pvarena.dormant ( -- addr ) \ return address of the other arena
+    pvarena1 pvarena = if pvarena2 else pvarena1 then
+;
+
+: pvarena.erase ( addr -- ) \ erase arena addr from the end
+    dup pvasize + pvpgsize - do
+        i df.erase
+    pvpgsize negate +loop
+;
+
+\ TODO: should be a hidden word
+: pv.checkword ( awp ffa - awp++ ) \ write pvalue record at awp if ffa is pvalue, advance awp
+    dup @ flag.pvalue and if
+        ffa2cfa >body @ \ (awp pv-ram)
+        2dup swap !df @ \ write record ID (awp [pv-ram] )
+        swap cell+ tuck !df \ (awp+)
+        cell+ \ (awp++)
+    else drop \ drop the ffa (awp)
+    then
+    true
+;
+
+\ second cell of the arena record is written first to mark it dirty
+\ if arena is dirty it is erased completely first (erase the first block last)
+\ first cell of arena record is written last, with ID +1 of the active arena,
+\ this makes the arena complete and active.
+: pvarena.swap ( -- ) \ write fresh pvalues into the dormant arena and swap arenas ;
+    pvarena.dormant 
+    \ check if it needs to be erased
+    dup cell+ dup @df 1+ 0<> if dup pvarena.erase then
+    \ write dirty mark ( arena arena+ )
+    dup 0 swap !df cell+ \ ( arena arena++ )
+    \ write fresh record for each persistent value in forth-wordlist
+    ' pv.checkword forth-wordlist traverse-wordlist
+    swap \ swap the arena pointers ( awp arena )
+    \ write arena ID (this must happen last)
+    dup pvarena @df 1+ swap !df
+    \ swap arenas ( awp arena )
+    to pvarena
+    to pvp
+;
+
 \ TODO: What follows is just a test script demonstrating the functionality
 hex
+
+\ Make sure the arenas are "erased" to the expected blank flash state
+pvarena1 pvarena.erase
+pvarena2 pvarena.erase
 
 \ show initial setup
 pv.init
@@ -78,27 +120,45 @@ pvp .
 pvarena .
 pvarena 10 - 5 dump
 
-\ create a value and update it persistently multiple times
-42 value xx
-xx .       \ value of xx
-vaddr xx . \ RAM address of xx
-1 pvto xx
-xx .
-2 pvto xx
-xx .
-3 pvto xx
-xx .
+\ update pvalues multiple times
+vaddr pv1 . \ RAM address of pv1
+pv1 .       \ value of pv1
+1 pvto pv1
+pv1 .
+2 pvto pv1
+pv1 .
+
+vaddr pv2 . \ RAM address of pv2
+pv2 .       \ value of pv1
+3 pvto pv2
+pv2 .
+
+4 pvto pv1
+pv1 .
+
+5 pvto pv2
+pv2 .
 
 pvarena 10 - 5 dump \ show the arena
 pvp .
 
 \ reset the value and pvp
 0 is pvp
-0 vaddr xx !
-xx .
+0 vaddr pv1 !
+pv1 .
+
+0 vaddr pv2 !
+pv2 .
+
 
 pv.init \ reinitialize pvalue system
-xx .
+pv1 .
+pv2 .
+pv3 .
 pvp .
 
-
+\ swap arenas
+pvarena.swap
+pvp .
+pvarena .
+pvarena 10 - 5 dump

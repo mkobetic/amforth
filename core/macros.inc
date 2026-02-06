@@ -53,6 +53,7 @@ VALUE "forth-wordlist", FORTH_WORDLIST, 99b
 .equ Flag_defer,      0x0040
 .equ Flag_init,       0x0080
 .equ Flag_table,      0x0100
+.equ Flag_pvalue,     0x0200
 
 # Ramallot means that RAM is reserved and initialised by catchflashpointers for this definition on startup
 .equ Flag_ramallot,   Flag_visible | 0x0100 
@@ -207,6 +208,21 @@ PFA_\Label:
 
 .macro VALUE Name, Label, Default
     HEADER Flag_visible|Flag_value|Flag_init, "\Name", \Label, PFA_DOVALUE
+   .section amramlo,"aw",%nobits
+   .balign 4
+    # Capture current location counter
+   .set \Label\()_ram, .          
+   .space 4
+   .section amforth
+   # Write the captured address into flash
+   .word \Label\()_ram             
+   .word \Default
+   .word XT_FETCH
+   .word XT_STORE
+.endm
+
+.macro PVALUE Name, Label, Default
+    HEADER Flag_visible|Flag_pvalue|Flag_init, "\Name", \Label, PFA_DOVALUE
    .section amramlo,"aw",%nobits
    .balign 4
     # Capture current location counter

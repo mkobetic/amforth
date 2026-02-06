@@ -2,6 +2,7 @@
 OUTPUT_FORMAT("elf32-littlearm")
 OUTPUT_ARCH(arm)
 
+DataFlashPageSize = 0x400; /* 1K */
 DataFlashSize = 0x2000;
 
 MEMORY
