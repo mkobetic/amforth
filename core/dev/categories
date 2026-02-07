@@ -57,6 +57,10 @@ OUTPUT:
     sign #> #s # <# hold hld
 SYSTEM:
     ms us rev-info build-info turnkey appl-turnkey ver init-ram cold warm quit pause
+    pv.do pv.init vaddr pv.store pvp
+    pvflash.size pvflash.page pvflash.ff pvflash.erase @pvf !pvf
+    pvarena.size pvarena.init pvarena.swap pvarena.erase pvarena pvarena.dormant pvarena1 pvarena2  
+
 TOOLS:
     debug empty dump ?stack vdump break
 OTHER:

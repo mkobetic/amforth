@@ -8,10 +8,12 @@
 \ Updating a pvalue means writing a new pvalue record in the current pvarena,
 \ and then updating the corresponding RAM cell with the same value.
 : pv.store ( x xt -- ) \ update pvalue identified by xt to value x
-    \ check that there is room in the current arena, compact and swap arenas otherwise
-    pvarena pvarena.size + pvp <= if pvarena.swap then
     \ translate xt to the value RAM address
     >body @ (x addr)
+    \ if pvarena.size is 0 do just the RAM update, skip the rest
+    pvarena.size dup 0= if ! exit then
+    \ check that there is room in the current arena, compact and swap arenas otherwise
+    pvarena + pvp <= if pvarena.swap then
     \ write pvalue RAM address as the record ID
     dup pvp !pvf \ store addr at pvp
     over pvp cell+ tuck \ ( x addr pvp+ x pvp+ )
@@ -54,6 +56,8 @@
 \ The pvalues must be initialized with their default values first (like any values),
 \ then this will replay all the pvalue records, ending up with the latest persisted state.
 : pv.init ( -- ) \ replay pvarena records, set pvp
+    \ if pvarena.size is 0 do nothing
+    pvarena.size 0= if exit then
     pvarena.init \ initialize pvarena
     pvarena cell+ cell+ \ skip the arena record
     begin
@@ -185,7 +189,7 @@ END PVFLASH_SIZE
 VALUE "pvp", PVP, 0 /* ( -- addr ) address of the next free cell in active arena */
 END PVP
 
-VALUE "pvarena", PVARENA, 0 /* ( -- addr ) start address of active arena */
+VALUE "pvarena", PVARENA, 0 /* ( -- addr ) start address of the active arena */
 END PVARENA
 
 /* test pvalues */
@@ -202,19 +206,22 @@ END PV3
 COLON "pv.store", PV_STORE /* ( x xt -- ) update pvalue identified by xt to value x */
 /*  Updating a pvalue means writing a new pvalue record in the current pvarena,
     and then updating the corresponding RAM cell with the same value.
-    If current arena is full it will run pvarena.swap first. */
+    If current arena is full run pvarena.swap first. */
+    /* convert XT to RAM address */
+    .word XT_TO_BODY, XT_FETCH
+    /* if pvarena.size is 0 do just the RAM update, skip the rest */
+    .word XT_PVARENA_SIZE, XT_DUP, XT_ZEROEQUAL, XT_DOCONDBRANCH, 1f
+        .word XT_STORE, XT_EXIT
+1:
     /*  check that there is room in the current arena,
         compact and swap arenas otherwise */
 	.word XT_PVARENA
-	.word XT_PVARENA_SIZE
 	.word XT_PLUS
 	.word XT_PVP
 	.word XT_LESSEQUAL
-	.word XT_DOCONDBRANCH,PV_STORE_0001
-	.word XT_PVARENA_SWAP
-PV_STORE_0001: # then
-    /* convert XT to RAM address */
-    .word XT_TO_BODY, XT_FETCH
+	.word XT_DOCONDBRANCH, 2f
+	    .word XT_PVARENA_SWAP
+ 2: # then
     /* (x addr) */
     /* write pvalue RAM address as the record ID */
 	.word XT_DUP
@@ -252,6 +259,10 @@ COLON "pvarena.init", PVARENA_INIT /* ( -- ) set pvarena to whichever arena shou
     First cell is a counter with MSB set (so that it doesn't match any real RAM address).
     Second cell is either -1 or 0. Erased dormant arena has both cells set to -1.
     Current arena is the one with higher ID that is not -1. */
+    /* if pvarena.size is 0 do nothing, just exit */
+    .word XT_PVARENA_SIZE, XT_ZEROEQUAL, XT_DOCONDBRANCH, 1f
+        .word XT_EXIT
+1:
 	.word XT_PVARENA1
 	.word XT_FETCH_PVF
 	.word XT_DUP
@@ -341,7 +352,7 @@ END PV_INIT
 
 # ----------------------------------------------------------------------
 
-COLON "pvarena.dormant", PVARENA_DORMANT /* ( -- addr ) return address of the other arena */
+COLON "pvarena.dormant", PVARENA_DORMANT /* ( -- addr ) start address of the dormant arena */
 	.word XT_PVARENA1
 	.word XT_PVARENA
 	.word XT_EQUAL
@@ -356,7 +367,7 @@ END PVARENA_DORMANT
 
 # ----------------------------------------------------------------------
 
-COLON "pvarena.erase", PVARENA_ERASE /* ( addr -- ) erase arena at addr from the end */
+COLON "pvarena.erase", PVARENA_ERASE /* ( addr -- ) erase arena at addr */
 /* erase the first block last in case the erase operation is interrupted */
 	.word XT_DUP
 	.word XT_PVARENA_SIZE
