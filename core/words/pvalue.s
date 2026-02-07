@@ -20,7 +20,7 @@
     ' >body @ ;
 
 \ TODO: This is just for testing in the interpreter,
-\ ITC will want to call PVSTORE with literal XTs of predefined flash values.
+\ ITC will want to call PV_STORE with literal XTs of predefined flash values.
 : pvto ( x "name" -- ) \ set value to x and write pvalue record for it
     vaddr pvstore ;
 
@@ -118,17 +118,17 @@
 
 /* following deferred words are data flash primitives that need to be implemented by the MCU */
 
-DEFER "!df", STORE_DF, XT_STORE /* (x addr -- ) store x at addr in the data flash */
-END STORE_DF
+DEFER "!pvf", STORE_PVF, XT_STORE /* (x addr -- ) store x at addr in the PV flash */
+END STORE_PVF
 
-DEFER "@df", FETCH_DF, XT_FETCH /* (addr -- x) load cell at addr in the data flash */
-END FETCH_DF
+DEFER "@pvf", FETCH_PVF, XT_FETCH /* (addr -- x) load cell at addr in the PV flash */
+END FETCH_PVF
 
-DEFER "df.erase", DF_ERASE, XT_FAUXERASE /* ( addr -- ) erase data flash page at addr */
-END FETCH_DF
+DEFER "pvflash.erase", PVF_ERASE, XT_FAUXERASE /* ( addr -- ) erase PV flash page at addr */
+END FETCH_PVF
 
 NONAME FAUXERASE /* :noname pvpgsize $FF fill ; */
-    .word XT_PVPGSIZE, XT_FF, XT_FILL, XT_EXIT
+    .word XT_PVFLASH_SIZE, XT_FF, XT_FILL, XT_EXIT
 END FAUXERASE
 
 /* this is just a hack to avoid XT_DOLITERAL, 0xFF in FAUXERASE
@@ -143,11 +143,11 @@ END PVARENA1
 CONSTANT "pvarena2", PVARENA2, pvarena2_lower /* ( -- addr ) address of pvalue arena 2  */
 END PVARENA2
 
-CONSTANT "pvasize", PVASIZE, pvarena.size /* ( -- u ) size of pvalue arena (multiple of flash page size) */
-END PVASIZE
+CONSTANT "pvarena.size", PVARENA_SIZE, pvarena.size /* ( -- u ) size of pvalue arena (multiple of flash page size) */
+END PVARENA_SIZE
 
-CONSTANT "pvpgsize", PVPGSIZE, pvflash.page /* ( -- u ) size of arena page (flash page size) */
-END PVPGSIZE
+CONSTANT "pvflash.size", PVFLASH_SIZE, pvflash.page /* ( -- u ) size of arena page (flash page size) */
+END PVFLASH_SIZE
 
 /* pvalue runtime values, must be initialized by pv.init */
 
@@ -168,33 +168,33 @@ END PV3
 
 # ----------------------------------------------------------------------
 
-COLON "pvstore", PVSTORE /* ( x addr -- ) update pvalue with RAM address addr to value x */
+COLON "pv.store", PV_STORE /* ( x addr -- ) update pvalue with RAM address addr to value x */
 /*  Updating a pvalue means writing a new pvalue record in the current pvarena,
     and then updating the corresponding RAM cell with the same value. */
 	.word XT_PVARENA
-	.word XT_PVASIZE
+	.word XT_PVARENA_SIZE
 	.word XT_PLUS
 	.word XT_PVP
 	.word XT_LESSEQUAL
-	.word XT_DOCONDBRANCH,PVSTORE_0001
+	.word XT_DOCONDBRANCH,PV_STORE_0001
 	.word XT_DOLITERAL
 	.word -8
 	.word XT_THROW
-PVSTORE_0001: # then
+PV_STORE_0001: # then
 	.word XT_DUP
 	.word XT_PVP
-	.word XT_STORE_DF
+	.word XT_STORE_PVF
 	.word XT_OVER
 	.word XT_PVP
 	.word XT_CELLPLUS
 	.word XT_TUCK
-	.word XT_STORE_DF
+	.word XT_STORE_PVF
 	.word XT_CELLPLUS
 	.word XT_DOTO
 	.word XT_PVP
 	.word XT_STORE
 	.word XT_EXIT
-END PVSTORE
+END PV_STORE
 
 # ----------------------------------------------------------------------
 
@@ -213,12 +213,12 @@ COLON "pvarena.init", PVARENADOTINIT /* ( -- ) set pvarena to whichever arena sh
     Second cell is either -1 or 0. Erased dormant arena has both cells set to -1.
     Current arena is the one with higher ID that is not -1. */
 	.word XT_PVARENA1
-	.word XT_FETCH_DF
+	.word XT_FETCH_PVF
 	.word XT_DUP
 	.word XT_1PLUS
 	.word XT_DOCONDBRANCH,PVARENADOTINIT_0001
 	.word XT_PVARENA2
-	.word XT_FETCH_DF
+	.word XT_FETCH_PVF
 	.word XT_DUP
 	.word XT_1PLUS
 	.word XT_DOCONDBRANCH,PVARENADOTINIT_0002
@@ -243,7 +243,7 @@ PVARENADOTINIT_0005: # then
 	.word XT_DOBRANCH,PVARENADOTINIT_0006
 PVARENADOTINIT_0001: # else
 	.word XT_PVARENA2
-	.word XT_FETCH_DF
+	.word XT_FETCH_PVF
 	.word XT_1PLUS
 	.word XT_DOCONDBRANCH,PVARENADOTINIT_0007
 	.word XT_PVARENA2
@@ -254,11 +254,11 @@ PVARENADOTINIT_0007: # else
 	.word XT_DOLITERAL
 	.word 0x80000000
 	.word XT_PVARENA1
-	.word XT_STORE_DF
+	.word XT_STORE_PVF
 	.word XT_ZERO
 	.word XT_PVARENA1
 	.word XT_CELLPLUS
-	.word XT_STORE_DF
+	.word XT_STORE_PVF
 	.word XT_PVARENA1
 	.word XT_DOTO
 	.word XT_PVARENA
@@ -279,14 +279,14 @@ COLON "pv.init", PVDOTINIT /* ( -- ) replay pvarena records, set pvp */
 	.word XT_CELLPLUS
 PVDOTINIT_0001: # begin
 	.word XT_DUP
-	.word XT_FETCH_DF
+	.word XT_FETCH_PVF
 	.word XT_DUP
 	.word XT_1PLUS
 	.word XT_DOCONDBRANCH,PVDOTINIT_0002
 	.word XT_SWAP
 	.word XT_CELLPLUS
 	.word XT_TUCK
-	.word XT_FETCH_DF
+	.word XT_FETCH_PVF
 	.word XT_SWAP
 	.word XT_STORE
 	.word XT_CELLPLUS
@@ -317,17 +317,17 @@ END PVARENADOTDORMANT
 
 COLON "pvarena.erase", PVARENADOTERASE /* ( addr -- ) erase arena at addr from the end */
 	.word XT_DUP
-	.word XT_PVASIZE
+	.word XT_PVARENA_SIZE
 	.word XT_PLUS
-	.word XT_PVPGSIZE
+	.word XT_PVFLASH_SIZE
 	.word XT_MINUS
 PVARENADOTERASE_0001: # begin
 	.word XT_2DUP
 	.word XT_LESSEQUAL
 	.word XT_DOCONDBRANCH,PVARENADOTERASE_0002
 	.word XT_DUP
-	.word XT_DF_ERASE
-	.word XT_PVPGSIZE
+	.word XT_PVF_ERASE
+	.word XT_PVFLASH_SIZE
 	.word XT_MINUS
 	.word XT_DOBRANCH,PVARENADOTERASE_0001
 PVARENADOTERASE_0002:
@@ -337,7 +337,7 @@ END PVARENADOTERASE
 
 # ----------------------------------------------------------------------
 
-COLON "pv.writeword", PVDOTWRITEWORD /* ( awp ffa - awp++ ) write pvalue record at awp if ffa is pvalue, advance awp */
+NONAME PVDOTWRITEWORD /* ( awp ffa - awp++ ) write pvalue record at awp if ffa is pvalue, advance awp */
 /*  Used to prepare dormant arena for arena swap */
 	.word XT_DUP
 	.word XT_FETCH
@@ -349,12 +349,12 @@ COLON "pv.writeword", PVDOTWRITEWORD /* ( awp ffa - awp++ ) write pvalue record 
 	.word XT_FETCH
 	.word XT_2DUP
 	.word XT_SWAP
-	.word XT_STORE_DF
+	.word XT_STORE_PVF
 	.word XT_FETCH
 	.word XT_SWAP
 	.word XT_CELLPLUS
 	.word XT_TUCK
-	.word XT_STORE_DF
+	.word XT_STORE_PVF
 	.word XT_CELLPLUS
 	.word XT_DOBRANCH,PVDOTWRITEWORD_0002
 PVDOTWRITEWORD_0001: # else
@@ -375,7 +375,7 @@ COLON "pvarena.swap", PVARENADOTSWAP /* ( -- ) write fresh pvalues into the dorm
 	.word XT_DUP
 	.word XT_CELLPLUS
 	.word XT_DUP
-	.word XT_FETCH_DF
+	.word XT_FETCH_PVF
 	.word XT_1PLUS
 	.word XT_NOTZEROEQUAL
 	.word XT_DOCONDBRANCH,PVARENADOTSWAP_0001
@@ -385,7 +385,7 @@ PVARENADOTSWAP_0001: # then
 	.word XT_DUP
 	.word XT_ZERO
 	.word XT_SWAP
-	.word XT_STORE_DF
+	.word XT_STORE_PVF
 	.word XT_CELLPLUS
 	.word XT_DOLITERAL
 	.word XT_PVDOTWRITEWORD
@@ -394,10 +394,10 @@ PVARENADOTSWAP_0001: # then
 	.word XT_SWAP
 	.word XT_DUP
 	.word XT_PVARENA
-	.word XT_FETCH_DF
+	.word XT_FETCH_PVF
 	.word XT_1PLUS
 	.word XT_SWAP
-	.word XT_STORE_DF
+	.word XT_STORE_PVF
 	.word XT_PVARENA
 	.word XT_SWAP
 	.word XT_DOTO

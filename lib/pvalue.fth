@@ -1,7 +1,7 @@
 
 \ A test script demonstrating the pvalue functionality
 : pvto ( x "name" -- ) \ set value to x and write pvalue record for it
-    vaddr pvstore ;
+    vaddr pv.store ;
 
 hex
 
