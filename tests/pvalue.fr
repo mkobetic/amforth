@@ -1,0 +1,64 @@
+\ These tests should only be run against emulated targets with faux PVFLASH in RAM.
+\ They start with erasing the PVFLASH!
+
+TESTING pvarena.erase
+
+pvarena1 pvarena.erase
+T{ pvarena1 @pvf -> -1 }T
+T{ pvarena1 pvarena.size + cell- @pvf -> -1 }T
+
+pvarena2 pvarena.erase
+T{ pvarena2 @pvf -> -1 }T
+T{ pvarena2 pvarena.size + cell- @pvf -> -1 }T
+
+TESTING pv.init initial
+
+pv.init
+T{ pvarena -> pvarena1 }T \ initialized to arena1
+T{ pvarena @pvf -> $80000000 }T \ initial arena ID
+T{ pvarena cell+ @pvf -> 0 }T \ arena marked dirty
+T{ pvp -> pvarena1 cell+ cell+ }T \ pvp points at first pvrecord slot
+ 
+TESTING pv.store
+\ We are using regular values here, which should be mostly fine,
+\ but that means pvarena.swap won't find them in the dictionary (wrong flags),
+\ so their records will be gone after the swap
+
+42 value pvt1
+42 value pvt2
+
+1 ' pvt1 pv.store
+T{ pvt1 pvp -> 1 pvarena #4 cells + }T
+T{ pvp cell- @pvf -> 1 }T
+T{ pvp cell- cell- @pvf -> vaddr pvt1 }T
+
+2 ' pvt1 pv.store
+T{ pvt1 pvp -> 2 pvarena #6 cells + }T
+
+3 ' pvt2 pv.store
+T{ pvt2 pvp -> 3 pvarena #8 cells + }T
+
+4 ' pvt1 pv.store
+T{ pvt1 pvp -> 4 pvarena #10 cells + }T
+
+5 ' pvt2 pv.store
+T{ pvt2 pvp -> 5 pvarena #12 cells + }T
+
+TESTING pv.init reinitialization
+\ reset the values and pvp
+0 to pvp
+0 vaddr pvt1 !
+0 vaddr pvt2 !
+pv.init
+
+T{ pvarena -> pvarena1 }T
+T{ pvp -> pvarena #12 cells + }T
+T{ pvt1 -> 4 }T
+T{ pvt2 -> 5 }T
+
+
+\ pvarena.swap
+\ pvp .
+\ pvarena .
+\ pvarena 10 - 5 dump \ show the new arena
+\ pvarena.dormant 10 - 5 dump \ show the old arena

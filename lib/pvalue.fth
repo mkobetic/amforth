@@ -1,8 +1,6 @@
 
-\ A test script demonstrating the pvalue functionality
-: pvto ( x "name" -- ) \ set value to x and write pvalue record for it
-    vaddr pv.store ;
-
+\ A test script demonstrating the pvalue functionality with fake RAM based PVFLASH
+\ Do not use this on real MCU it will wipe your PVFLASH (see below)
 hex
 
 \ Make sure arenas are "erased" to the expected blank flash state
@@ -20,20 +18,20 @@ pvarena 10 - 5 dump
 \ update pvalues multiple times
 vaddr pv1 . \ RAM address of pv1
 pv1 .       \ value of pv1
-1 pvto pv1
+1 ' pv1 pv.store
 pv1 .
-2 pvto pv1
+2 ' pv1 pv.store
 pv1 .
 
 vaddr pv2 . \ RAM address of pv2
 pv2 .       \ value of pv1
-3 pvto pv2
+3 ' pv2 pv.store
 pv2 .
 
-4 pvto pv1
+4 ' pv1 pv.store
 pv1 .
 
-5 pvto pv2
+5 ' pv2 pv.store
 pv2 .
 
 pvarena 10 - 5 dump \ show the arena

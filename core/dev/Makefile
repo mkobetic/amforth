@@ -132,6 +132,8 @@ shell:
 # `WANT_IGNORECASE=1 make` should do it.
 # Uses timeout command to terminate QEMU, because there is no way
 # to do it from the inside, i.e. from AmForth running in it.
+# WARNING: some of the tests can run destructive operations,
+# don't run against real MCUs without reviewing the tests.
 TIMEOUT ?= 3s
 TESTER ?= $(AMFORTH)/lib/forth2012/tester/tester-amforth.frt
 SKIP := $(PP) -w -E --no-line-commands
@@ -140,6 +142,7 @@ test:
 	  echo '.s" TESTS STARTING"' ; \
 	  $(SKIP) $(AMFORTH)/tests/cpp-core.fr; \
 	  cat $(AMFORTH)/tests/core2.fr; \
+	  cat $(AMFORTH)/tests/pvalue.fr; \
 	  echo '.s" TESTS FINISHED"' ; \
 	} | timeout -s TERM $(TIMEOUT) $(QEMU) -serial stdio | \
 	tee build/tests.log | \

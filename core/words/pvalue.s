@@ -1,11 +1,17 @@
 /* 
 \ transpiling pval.f on 2026/02/06 18:38:12
 
+\ Main goals of the pvalue subsystem are:
+\ * simplicity over more optimal in some respect but more complex solution
+\ * robustness - should be able to recover in face of reset without losing persisted state
+
 \ Updating a pvalue means writing a new pvalue record in the current pvarena,
 \ and then updating the corresponding RAM cell with the same value.
-: pv.store ( x addr -- ) \ update pvalue with RAM address addr to value x
+: pv.store ( x xt -- ) \ update pvalue identified by xt to value x
     \ check that there is room in the current arena, compact and swap arenas otherwise
     pvarena pvarena.size + pvp <= if pvarena.swap then
+    \ translate xt to the value RAM address
+    >body @ (x addr)
     \ write pvalue RAM address as the record ID
     dup pvp !pvf \ store addr at pvp
     over pvp cell+ tuck \ ( x addr pvp+ x pvp+ )
@@ -16,11 +22,6 @@
 
 : vaddr ( "name" -- addr ) \ RAM address of value "name"
     ' >body @ ;
-
-\ TODO: This is just for testing in the interpreter,
-\ ITC will want to call PV_STORE with literal XTs of predefined flash values.
-: pvto ( x "name" -- ) \ set value to x and write pvalue record for it
-    vaddr pv.store ;
 
 \ Arena state is stored in the first record of the arena.
 \ First cell is a counter with MSB set (so that it doesn't match any real RAM address).
@@ -71,6 +72,7 @@
 ;
 
 : pvarena.erase ( addr -- ) \ erase arena at addr from the end
+\ erase the first block last in case the erase operation is interrupted
     dup pvarena.size + pvflash.page -
     begin 2dup <= while
         dup pvflash.erase
@@ -92,9 +94,11 @@
 ;
 
 \ second cell of the arena record is written first to mark it dirty
-\ if arena is dirty it is erased completely first (erase the first block last)
+\ if arena is dirty it is erased completely first (erase the first block last in case the erase operation is interrupted)
 \ first cell of arena record is written last, with ID +1 of the active arena,
 \ this marks the arena complete and active.
+\ it should be always possible to rerun a swap if it fails to complete for whatever reason (e.g. reset)
+\ it can also be run explicitly, doesn't have to be invoked automatically by pv.store
 : pvarena.swap ( -- ) \ write fresh pvalues into the dormant arena and swap arenas
     pvarena.dormant
     \ check if it needs to be erased
@@ -171,19 +175,24 @@ END PV3
 
 # ----------------------------------------------------------------------
 
-COLON "pv.store", PV_STORE /* ( x addr -- ) update pvalue with RAM address addr to value x */
+COLON "pv.store", PV_STORE /* ( x xt -- ) update pvalue identified by xt to value x */
 /*  Updating a pvalue means writing a new pvalue record in the current pvarena,
-    and then updating the corresponding RAM cell with the same value. */
+    and then updating the corresponding RAM cell with the same value.
+    If current arena is full it will run pvarena.swap first. */
+    /*  check that there is room in the current arena,
+        compact and swap arenas otherwise */
 	.word XT_PVARENA
 	.word XT_PVARENA_SIZE
 	.word XT_PLUS
 	.word XT_PVP
 	.word XT_LESSEQUAL
 	.word XT_DOCONDBRANCH,PV_STORE_0001
-	.word XT_DOLITERAL
-	.word -8
-	.word XT_THROW
+	.word XT_PVARENADOTSWAP
 PV_STORE_0001: # then
+    /* convert XT to RAM address */
+    .word XT_TO_BODY, XT_FETCH
+    /* (x addr) */
+    /* write pvalue RAM address as the record ID */
 	.word XT_DUP
 	.word XT_PVP
 	.word XT_STORE_PVF
@@ -191,17 +200,21 @@ PV_STORE_0001: # then
 	.word XT_PVP
 	.word XT_CELLPLUS
 	.word XT_TUCK
+    /* ( x addr pvp+ x pvp+ ) */
+    /* write x next */
 	.word XT_STORE_PVF
+    /* update PVP */
 	.word XT_CELLPLUS
 	.word XT_DOTO
 	.word XT_PVP
+    /* update RAM */
 	.word XT_STORE
 	.word XT_EXIT
 END PV_STORE
 
 # ----------------------------------------------------------------------
 
-COLON "vaddr", VADDR /* ( "name" -- addr ) RAM address of value or variable "name" */
+COLON "vaddr", VADDR /* ( "name" -- addr ) RAM address of value "name" */
 	.word XT_TICK
 	.word XT_TO_BODY
 	.word XT_FETCH
@@ -244,7 +257,7 @@ PVARENADOTINIT_0002: # else
 	.word XT_2DROP
 PVARENADOTINIT_0005: # then
 	.word XT_DOBRANCH,PVARENADOTINIT_0006
-PVARENADOTINIT_0001: # else
+PVARENADOTINIT_0001: /* else \ arena1 is dormant */
 	.word XT_PVARENA2
 	.word XT_FETCH_PVF
 	.word XT_1PLUS
@@ -254,6 +267,7 @@ PVARENADOTINIT_0001: # else
 	.word XT_PVARENA
 	.word XT_DOBRANCH,PVARENADOTINIT_0008
 PVARENADOTINIT_0007: # else
+    /* both arenas are blank, initialize arena1 and use it. */
 	.word XT_DOLITERAL
 	.word 0x80000000
 	.word XT_PVARENA1
@@ -319,6 +333,7 @@ END PVARENADOTDORMANT
 # ----------------------------------------------------------------------
 
 COLON "pvarena.erase", PVARENADOTERASE /* ( addr -- ) erase arena at addr from the end */
+/* erase the first block last in case the erase operation is interrupted */
 	.word XT_DUP
 	.word XT_PVARENA_SIZE
 	.word XT_PLUS
@@ -370,10 +385,12 @@ END PVDOTWRITEWORD
 # ----------------------------------------------------------------------
 
 COLON "pvarena.swap", PVARENADOTSWAP /* ( -- ) write fresh pvalues into the dormant arena and swap arenas */
-/*  second cell of the arena record is written first to mark it dirty
-    if arena is dirty it is erased completely first (erase the first block last)
-    first cell of arena record is written last, with ID +1 of the active arena,
-    this marks the arena complete and active. */
+/*  Second cell of the arena record is written first to mark it dirty.
+    If arena is dirty it is erased completely first (erase the first block last in case the erase is interrupted.)
+    First cell of arena record is written last, with ID +1 of the active arena,
+    this marks the arena complete and active.
+    It should be always possible to rerun a swap if it fails to complete for whatever reason (e.g. reset)
+    It can also be run explicitly, doesn't have to be invoked automatically by pv.store. */
 	.word XT_PVARENADOTDORMANT
 	.word XT_DUP
 	.word XT_CELLPLUS

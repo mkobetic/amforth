@@ -338,6 +338,10 @@ debug:
 QEMU := $(QEMU_RV32) -M virt -display none -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF)
 
 ## redirect operator uart to stdio
+pty:
+	$(QEMU) -serial pty
+
+## redirect operator uart to stdio
 stdio:
 	$(QEMU) -serial stdio
 
