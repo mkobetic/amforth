@@ -81,15 +81,29 @@
     2drop
 ;
 
-\ used to prepare dormant arena for arena swap (this should be noname)
-: pv.writeword ( awp ffa - awp++ ) \ write pvalue record at awp if ffa is pvalue, advance awp
+\ helper for pv.do that follows
+:noname ( xt ffa -- xt f ) 
     dup @ flag.pvalue and if
-        ffa2cfa >body @ \ (awp pv-ram)
-        2dup swap !pvf @ \ write record ID (awp [pv-ram] )
-        swap cell+ tuck !pvf \ (awp+)
-        cell+ \ (awp++)
-    else drop \ drop the ffa (awp)
-    then
+        \ need to stow the xt away while executing it
+        \ so that the word can work with the underlying stack
+        \ afterwards restore the xt to the stack and return the result on top
+        ffa2cfa swap dup >r execute r> swap
+    else drop true then
+;
+
+ \ this definition must follow the noname above, assumes its xt on the stack (see literal)
+: pv.do ( xt -- ) \ run xt ( pv-xt -- f ) for every pvalue in forth-wordlist
+    literal forth-wordlist traverse-wordlist
+    drop \ drop the xt at the end
+;
+
+
+\ used to prepare dormant arena for arena swap (this should be noname)
+: pv.write ( awp ffa - awp++ f ) \ write pvalue record at awp, advance awp
+    >body @ \ (awp pv-ram)
+    2dup swap !pvf @ \ write record ID (awp [pv-ram] )
+    swap cell+ tuck !pvf \ write the value (awp+)
+    cell+ \ (awp++)
     true
 ;
 
@@ -106,7 +120,7 @@
     \ write dirty mark ( arena arena+ )
     dup 0 swap !pvf cell+ \ ( arena arena++ )
     \ write fresh record for each persistent value in forth-wordlist
-    ['] pv.writeword forth-wordlist traverse-wordlist
+    ['] pv.write pv.do
     swap \ swap the arena pointers ( awp arena )
     \ write arena ID (this must happen last)
     dup pvarena @pvf 1+ swap !pvf
@@ -116,6 +130,16 @@
     to pvp \ set pvp
     pvarena.erase \ erase old arena
 ;
+
+: noname ( xt ffa -- xt f ) \ helper for pv.do
+    dup @ flag.pvalue and if
+        ffa2cfa over execute
+    else drop true then
+;
+: pv.do ( xt -- ) run xt ( pv-xt -- f ) for every pvalue in forth-wordlist
+    literal , forth-wordlist traverse-wordlist
+;
+
 */
 
 /* following deferred words are data flash primitives that need to be implemented by the MCU */
@@ -187,7 +211,7 @@ COLON "pv.store", PV_STORE /* ( x xt -- ) update pvalue identified by xt to valu
 	.word XT_PVP
 	.word XT_LESSEQUAL
 	.word XT_DOCONDBRANCH,PV_STORE_0001
-	.word XT_PVARENADOTSWAP
+	.word XT_PVARENA_SWAP
 PV_STORE_0001: # then
     /* convert XT to RAM address */
     .word XT_TO_BODY, XT_FETCH
@@ -223,7 +247,7 @@ END VADDR
 
 # ----------------------------------------------------------------------
 
-COLON "pvarena.init", PVARENADOTINIT /* ( -- ) set pvarena to whichever arena should be current */
+COLON "pvarena.init", PVARENA_INIT /* ( -- ) set pvarena to whichever arena should be current */
 /*  Arena state is stored in the first record of the arena.
     First cell is a counter with MSB set (so that it doesn't match any real RAM address).
     Second cell is either -1 or 0. Erased dormant arena has both cells set to -1.
@@ -232,41 +256,41 @@ COLON "pvarena.init", PVARENADOTINIT /* ( -- ) set pvarena to whichever arena sh
 	.word XT_FETCH_PVF
 	.word XT_DUP
 	.word XT_1PLUS
-	.word XT_DOCONDBRANCH,PVARENADOTINIT_0001
+	.word XT_DOCONDBRANCH,PVARENA_INIT_0001
 	.word XT_PVARENA2
 	.word XT_FETCH_PVF
 	.word XT_DUP
 	.word XT_1PLUS
-	.word XT_DOCONDBRANCH,PVARENADOTINIT_0002
+	.word XT_DOCONDBRANCH,PVARENA_INIT_0002
 	.word XT_LESS
-	.word XT_DOCONDBRANCH,PVARENADOTINIT_0003
+	.word XT_DOCONDBRANCH,PVARENA_INIT_0003
 	.word XT_PVARENA2
 	.word XT_DOTO
 	.word XT_PVARENA
-	.word XT_DOBRANCH,PVARENADOTINIT_0004
-PVARENADOTINIT_0003: # else
+	.word XT_DOBRANCH,PVARENA_INIT_0004
+PVARENA_INIT_0003: # else
 	.word XT_PVARENA1
 	.word XT_DOTO
 	.word XT_PVARENA
-PVARENADOTINIT_0004: # then
-	.word XT_DOBRANCH,PVARENADOTINIT_0005
-PVARENADOTINIT_0002: # else
+PVARENA_INIT_0004: # then
+	.word XT_DOBRANCH,PVARENA_INIT_0005
+PVARENA_INIT_0002: # else
 	.word XT_PVARENA1
 	.word XT_DOTO
 	.word XT_PVARENA
 	.word XT_2DROP
-PVARENADOTINIT_0005: # then
-	.word XT_DOBRANCH,PVARENADOTINIT_0006
-PVARENADOTINIT_0001: /* else \ arena1 is dormant */
+PVARENA_INIT_0005: # then
+	.word XT_DOBRANCH,PVARENA_INIT_0006
+PVARENA_INIT_0001: /* else \ arena1 is dormant */
 	.word XT_PVARENA2
 	.word XT_FETCH_PVF
 	.word XT_1PLUS
-	.word XT_DOCONDBRANCH,PVARENADOTINIT_0007
+	.word XT_DOCONDBRANCH,PVARENA_INIT_0007
 	.word XT_PVARENA2
 	.word XT_DOTO
 	.word XT_PVARENA
-	.word XT_DOBRANCH,PVARENADOTINIT_0008
-PVARENADOTINIT_0007: # else
+	.word XT_DOBRANCH,PVARENA_INIT_0008
+PVARENA_INIT_0007: # else
     /* both arenas are blank, initialize arena1 and use it. */
 	.word XT_DOLITERAL
 	.word 0x80000000
@@ -279,27 +303,27 @@ PVARENADOTINIT_0007: # else
 	.word XT_PVARENA1
 	.word XT_DOTO
 	.word XT_PVARENA
-PVARENADOTINIT_0008: # then
+PVARENA_INIT_0008: # then
 	.word XT_DROP
-PVARENADOTINIT_0006: # then
+PVARENA_INIT_0006: # then
 	.word XT_EXIT
-END PVARENADOTINIT
+END PVARENA_INIT
 
 # ----------------------------------------------------------------------
 
-COLON "pv.init", PVDOTINIT /* ( -- ) replay pvarena records, set pvp */
+COLON "pv.init", PV_INIT /* ( -- ) replay pvarena records, set pvp */
 /*  The pvalues must be initialized with their default values first (like any values),
     then this will replay all the pvalue records, ending up with the latest persisted state. */
-	.word XT_PVARENADOTINIT
+	.word XT_PVARENA_INIT
 	.word XT_PVARENA
 	.word XT_CELLPLUS
 	.word XT_CELLPLUS
-PVDOTINIT_0001: # begin
+PV_INIT_0001: # begin
 	.word XT_DUP
 	.word XT_FETCH_PVF
 	.word XT_DUP
 	.word XT_1PLUS
-	.word XT_DOCONDBRANCH,PVDOTINIT_0002
+	.word XT_DOCONDBRANCH,PV_INIT_0002
 	.word XT_SWAP
 	.word XT_CELLPLUS
 	.word XT_TUCK
@@ -307,62 +331,56 @@ PVDOTINIT_0001: # begin
 	.word XT_SWAP
 	.word XT_STORE
 	.word XT_CELLPLUS
-	.word XT_DOBRANCH,PVDOTINIT_0001
-PVDOTINIT_0002:
+	.word XT_DOBRANCH,PV_INIT_0001
+PV_INIT_0002:
 	.word XT_DROP
 	.word XT_DOTO
 	.word XT_PVP
 	.word XT_EXIT
-END PVDOTINIT
+END PV_INIT
 
 # ----------------------------------------------------------------------
 
-COLON "pvarena.dormant", PVARENADOTDORMANT /* ( -- addr ) return address of the other arena */
+COLON "pvarena.dormant", PVARENA_DORMANT /* ( -- addr ) return address of the other arena */
 	.word XT_PVARENA1
 	.word XT_PVARENA
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,PVARENADOTDORMANT_0001
+	.word XT_DOCONDBRANCH,PVARENA_DORMANT_0001
 	.word XT_PVARENA2
-	.word XT_DOBRANCH,PVARENADOTDORMANT_0002
-PVARENADOTDORMANT_0001: # else
+	.word XT_DOBRANCH,PVARENA_DORMANT_0002
+PVARENA_DORMANT_0001: # else
 	.word XT_PVARENA1
-PVARENADOTDORMANT_0002: # then
+PVARENA_DORMANT_0002: # then
 	.word XT_EXIT
-END PVARENADOTDORMANT
+END PVARENA_DORMANT
 
 # ----------------------------------------------------------------------
 
-COLON "pvarena.erase", PVARENADOTERASE /* ( addr -- ) erase arena at addr from the end */
+COLON "pvarena.erase", PVARENA_ERASE /* ( addr -- ) erase arena at addr from the end */
 /* erase the first block last in case the erase operation is interrupted */
 	.word XT_DUP
 	.word XT_PVARENA_SIZE
 	.word XT_PLUS
 	.word XT_PVFLASH_PAGE
 	.word XT_MINUS
-PVARENADOTERASE_0001: # begin
+PVARENA_ERASE_0001: # begin
 	.word XT_2DUP
 	.word XT_LESSEQUAL
-	.word XT_DOCONDBRANCH,PVARENADOTERASE_0002
+	.word XT_DOCONDBRANCH,PVARENA_ERASE_0002
 	.word XT_DUP
 	.word XT_PVF_ERASE
 	.word XT_PVFLASH_PAGE
 	.word XT_MINUS
-	.word XT_DOBRANCH,PVARENADOTERASE_0001
-PVARENADOTERASE_0002:
+	.word XT_DOBRANCH,PVARENA_ERASE_0001
+PVARENA_ERASE_0002:
 	.word XT_2DROP
 	.word XT_EXIT
-END PVARENADOTERASE
+END PVARENA_ERASE
 
 # ----------------------------------------------------------------------
 
-NONAME PVDOTWRITEWORD /* ( awp ffa - awp++ ) write pvalue record at awp if ffa is pvalue, advance awp */
+NONAME PV_WRITE /* ( awp ffa - awp++ f ) write pvalue record at awp, advance awp */
 /*  Used to prepare dormant arena for arena swap */
-	.word XT_DUP
-	.word XT_FETCH
-    .word XT_FLAGDOTPVALUE
-	.word XT_AND
-	.word XT_DOCONDBRANCH,PVDOTWRITEWORD_0001
-	.word XT_FFA2CFA
 	.word XT_TO_BODY
 	.word XT_FETCH
 	.word XT_2DUP
@@ -374,43 +392,38 @@ NONAME PVDOTWRITEWORD /* ( awp ffa - awp++ ) write pvalue record at awp if ffa i
 	.word XT_TUCK
 	.word XT_STORE_PVF
 	.word XT_CELLPLUS
-	.word XT_DOBRANCH,PVDOTWRITEWORD_0002
-PVDOTWRITEWORD_0001: # else
-	.word XT_DROP
-PVDOTWRITEWORD_0002: # then
 	.word XT_TRUE
 	.word XT_EXIT
-END PVDOTWRITEWORD
+END PV_WRITE
 
 # ----------------------------------------------------------------------
 
-COLON "pvarena.swap", PVARENADOTSWAP /* ( -- ) write fresh pvalues into the dormant arena and swap arenas */
+COLON "pvarena.swap", PVARENA_SWAP /* ( -- ) write fresh pvalues into the dormant arena and swap arenas */
 /*  Second cell of the arena record is written first to mark it dirty.
     If arena is dirty it is erased completely first (erase the first block last in case the erase is interrupted.)
     First cell of arena record is written last, with ID +1 of the active arena,
     this marks the arena complete and active.
     It should be always possible to rerun a swap if it fails to complete for whatever reason (e.g. reset)
     It can also be run explicitly, doesn't have to be invoked automatically by pv.store. */
-	.word XT_PVARENADOTDORMANT
+	.word XT_PVARENA_DORMANT
 	.word XT_DUP
 	.word XT_CELLPLUS
 	.word XT_DUP
 	.word XT_FETCH_PVF
 	.word XT_1PLUS
 	.word XT_NOTZEROEQUAL
-	.word XT_DOCONDBRANCH,PVARENADOTSWAP_0001
+	.word XT_DOCONDBRANCH,PVARENA_SWAP_0001
 	.word XT_DUP
-	.word XT_PVARENADOTERASE
-PVARENADOTSWAP_0001: # then
+	.word XT_PVARENA_ERASE
+PVARENA_SWAP_0001: # then
 	.word XT_DUP
 	.word XT_ZERO
 	.word XT_SWAP
 	.word XT_STORE_PVF
 	.word XT_CELLPLUS
 	.word XT_DOLITERAL
-	.word XT_PVDOTWRITEWORD
-	.word XT_FORTH_WORDLIST
-	.word XT_TRAVERSEWORDLIST
+	.word XT_PV_WRITE
+	.word XT_PV_DO
 	.word XT_SWAP
 	.word XT_DUP
 	.word XT_PVARENA
@@ -425,6 +438,45 @@ PVARENADOTSWAP_0001: # then
 	.word XT_SWAP
 	.word XT_DOTO
 	.word XT_PVP
-	.word XT_PVARENADOTERASE
+	.word XT_PVARENA_ERASE
 	.word XT_EXIT
-END PVARENADOTSWAP
+END PVARENA_SWAP
+
+NONAME PV_DO1 /* ( xt ffa -- xt f ) helper for pv.do */
+/*  :noname ( xt ffa -- xt f ) \ helper for pv.do
+    dup @ flag.pvalue and if
+        \ need to stow the xt away while executing it
+        \ so that it can work with the underlying stack,
+        \ afterwards restore the xt to the stack and return the boolean on top
+        ffa2cfa swap dup >r execute r> swap
+    else drop true then
+; */
+	.word XT_DUP
+	.word XT_FETCH
+    .word XT_FLAGDOTPVALUE
+	.word XT_AND
+	.word XT_DOCONDBRANCH, 1f
+	.word XT_FFA2CFA
+	.word XT_SWAP, XT_DUP, XT_TO_R
+	.word XT_EXECUTE
+    .word XT_R_FROM, XT_SWAP
+	.word XT_DOBRANCH, 2f
+1: # else
+	.word XT_DROP
+	.word XT_TRUE
+2: # then
+	.word XT_EXIT
+END PV_DO1
+
+COLON "pv.do", PV_DO /* ( xt -- ) run xt ( pv-xt -- f ) for every pvalue in forth-wordlist */
+/*  \ this definition must follow the noname above, assumes its xt on the stack.
+    : pv.do ( xt -- ) \ run xt ( pv-xt -- f ) for every pvalue in forth-wordlist
+    literal forth-wordlist traverse-wordlist
+    drop \ drop the xt at the end
+; */
+    .word XT_DOLITERAL, XT_PV_DO1
+    .word XT_FORTH_WORDLIST
+	.word XT_TRAVERSEWORDLIST
+    .word XT_DROP
+    .word XT_EXIT
+END PV_DO

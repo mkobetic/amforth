@@ -1,5 +1,6 @@
 \ These tests should only be run against emulated targets with faux PVFLASH in RAM.
 \ They start with erasing the PVFLASH!
+hex
 
 TESTING pvarena.erase
 
@@ -24,8 +25,8 @@ TESTING pv.store
 \ but that means pvarena.swap won't find them in the dictionary (wrong flags),
 \ so their records will be gone after the swap
 
-42 value pvt1
-42 value pvt2
+#42 value pvt1
+#42 value pvt2
 
 1 ' pvt1 pv.store
 T{ pvt1 pvp -> 1 pvarena #4 cells + }T
@@ -56,9 +57,12 @@ T{ pvp -> pvarena #12 cells + }T
 T{ pvt1 -> 4 }T
 T{ pvt2 -> 5 }T
 
+TESTING pvarena.swap
 
-\ pvarena.swap
-\ pvp .
-\ pvarena .
-\ pvarena 10 - 5 dump \ show the new arena
-\ pvarena.dormant 10 - 5 dump \ show the old arena
+\ count pvalues in the system
+0 :noname drop 1+ true ; pv.do constant pvcount
+
+pvarena.swap
+T{ pvarena -> pvarena2 }T \ pvarena2 is current arena now
+T{ pvp -> pvcount 1+ cells 2* pvarena + }T \ pvcount records were written (1+ for arena record)
+T{ pvarena1 @pvf -> -1 }T \ pvarena1 erased

@@ -13,7 +13,6 @@ List of know issues and tasks that need to be done (by area)
 * invert and not is the same thing?
 * add refcard legend
 
-* stepping through XT_DOLITERAL is very painful, should we have something simpler? (constants are)
 * core/aligned.s vs arm|rv/aligned.s
 * aligned.s and do-aligned.s are identical
 * remove doxliteral.s in favor of doliteral.s
