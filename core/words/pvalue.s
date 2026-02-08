@@ -161,21 +161,6 @@ Following forth code documents the implementation. It is transpiled into ITC bel
 ;
 */
 
-/* following deferred words are data flash primitives that need to be implemented by the MCU */
-
-DEFER "!pvf", STORE_PVF, XT_STORE /* ( x addr -- ) store x at addr in the PV flash */
-END STORE_PVF
-
-DEFER "@pvf", FETCH_PVF, XT_FETCH /* ( addr -- x ) load cell at addr in the PV flash */
-END FETCH_PVF
-
-DEFER "pvflash.erase", PVFLASH_ERASE, XT_FAUXERASE /* ( addr -- ) erase PV flash page at addr */
-END PVFLASH_ERASE
-
-NONAME FAUXERASE /* :noname pvflash.page $FF fill ; */
-    .word XT_PVFLASH_PAGE, XT_DOLITERAL, 0xFF, XT_FILL, XT_EXIT
-END FAUXERASE
-
 /* pvalue memory constants */
 
 CONSTANT "pvarena1", PVARENA1, pvarena1_lower /* address of pvalue arena 1  */
@@ -199,6 +184,25 @@ END PVFLASH_ERASED
 CONSTANT "pvflash.size", PVFLASH_SIZE, pvflash.size /* total size of PV flash */
 END PVFLASH_SIZE
 
+
+/* following deferred words are data flash primitives that need to be implemented by the MCU */
+
+DEFER "!pvf", STORE_PVF, XT_STORE /* ( x addr -- ) store x at addr in the PV flash */
+END STORE_PVF
+
+DEFER "@pvf", FETCH_PVF, XT_FETCH /* ( addr -- x ) load cell at addr in the PV flash */
+END FETCH_PVF
+
+DEFER "pvflash.erase", PVFLASH_ERASE, XT_FAUXERASE /* ( addr -- ) erase PV flash page at addr */
+END PVFLASH_ERASE
+
+NONAME FAUXERASE /* ( addr -- ) erase PV flash page at addr */
+    .word XT_DUP, XT_PVFLASH_PAGE, XT_PLUS, XT_SWAP, XT_DODO
+1:	
+		.word XT_PVFLASH_ERASED, XT_I, XT_STORE
+	.word XT_DOLITERAL, 4, XT_DOPLUSLOOP, 1b
+	.word XT_EXIT
+END FAUXERASE
 
 /* pvalue runtime values, must be initialized by pv.init */
 

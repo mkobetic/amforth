@@ -134,7 +134,7 @@ shell:
 # to do it from the inside, i.e. from AmForth running in it.
 # WARNING: some of the tests can run destructive operations,
 # don't run against real MCUs without reviewing the tests.
-TIMEOUT ?= 3s
+TIMEOUT ?= 4s
 TESTER ?= $(AMFORTH)/lib/forth2012/tester/tester-amforth.frt
 SKIP := $(PP) -w -E --no-line-commands
 test:

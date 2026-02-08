@@ -5,12 +5,12 @@ hex
 TESTING pvarena.erase
 
 pvarena1 pvarena.erase
-T{ pvarena1 @pvf -> -1 }T
-T{ pvarena1 pvarena.size + cell- @pvf -> -1 }T
+T{ pvarena1 @pvf -> pvflash.erased }T
+T{ pvarena1 pvarena.size + cell- @pvf -> pvflash.erased }T
 
 pvarena2 pvarena.erase
-T{ pvarena2 @pvf -> -1 }T
-T{ pvarena2 pvarena.size + cell- @pvf -> -1 }T
+T{ pvarena2 @pvf -> pvflash.erased }T
+T{ pvarena2 pvarena.size + cell- @pvf -> pvflash.erased }T
 
 TESTING pv.init initial
 
@@ -65,4 +65,4 @@ TESTING pvarena.swap
 pvarena.swap
 T{ pvarena -> pvarena2 }T \ pvarena2 is current arena now
 T{ pvp -> pvcount 1+ cells 2* pvarena + }T \ pvcount records were written (1+ for arena record)
-T{ pvarena1 @pvf -> -1 }T \ pvarena1 erased
+T{ pvarena1 @pvf -> pvflash.erased }T \ pvarena1 erased
