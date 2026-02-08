@@ -2,9 +2,10 @@
 ENTRY( _start )
 
 /* fast flash mode 
-FLASH_PAGE = 256; /* bytes */
-FLASH_CELL = 256; /* bytes */
+FLASH_PAGE = 256;
+FLASH_CELL = 256;
 */
+
 /* standard flash mode */
 FLASH_PAGE = 4K;
 FLASH_CELL = 2; /* bytes */
