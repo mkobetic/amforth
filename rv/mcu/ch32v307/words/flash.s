@@ -400,7 +400,7 @@ HBANGI_0002: # then
     .word XT_1MS
 	.word XT_EXIT
 
-CODEWORD "std.erase" , STDDOTERASE # ( a-flash -- ) FLASH: Erase 256B page flash-a is in 
+CODEWORD "std.erase" , STDDOTERASE # ( a-flash -- ) FLASH: Erase 4K page flash-a is in 
 
       li  t3, OFFSET
       add s3, s3, t3

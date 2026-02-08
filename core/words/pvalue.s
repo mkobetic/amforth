@@ -20,8 +20,8 @@ The log entries (pvalue records) are 2 words:
 2) VALUE: the new value of the pvalue
 
 First record of the arena is used to capture arena state. The two words have following meaning
-1) COUNTER: starts at 0 and is incremented by one for each new arena activation after the swap
-2) DIRTY: -1 for blank dormant arena, 0 for arena that has been written into
+1) COUNTER: starts at 0 and is incremented for each new arena activation after the swap
+2) DIRTY: flash.erased for blank dormant arena, 0 for arena that has been written into
 
 COUNTER has its MSB always set to make it distinct from usual RAM addresses. It counts up to pvflash.erased (usually -1) so there needs to be enough room for all the swaps (normally shouldn't be a problem).
 DIRTY is the first cell of a blank arena that is written, COUNTER is last. These are written only
@@ -34,7 +34,7 @@ Following forth code documents the implementation. It is transpiled into ITC bel
 \ and then updating the corresponding RAM cell with the same value.
 : pv.store ( x xt -- ) \ update pvalue identified by xt to value x
     \ translate xt to the value RAM address
-    >body @ (x addr)
+    >body @ ( x addr )
     \ if pvarena.size is 0 do just the RAM update, skip the rest
     pvarena.size dup 0= if ! exit then
     \ check that there is room in the current arena, compact and swap arenas otherwise
@@ -55,17 +55,17 @@ Following forth code documents the implementation. It is transpiled into ITC bel
 \ Second cell is either -1 or 0. Erased dormant arena has both cells set to -1.
 \ Current arena is the one with higher ID that is not -1.
 : pvarena.init ( -- ) \ set pvarena to whichever arena should be current
-    pvarena1 @pvf dup pvflash.erased <> if \ is arena1 dormant? (ID = -1)
+    pvarena1 @pvf dup pvflash.erased <> if \ is arena1 dormant? (ID == pvlfash.erased)
         pvarena2 @pvf dup pvflash.erased <> if \ is arena2 dormant?
             \ (a1id a2id) higher ID wins
             < if pvarena2 to pvarena
             else pvarena1 to pvarena
             then
-        else \ arena2 is dormant ( a1id -1 )
+        else \ arena2 is dormant ( a1id pvlfash.erased )
             pvarena1 to pvarena
             2drop \ unused arena IDs
         then
-    else \ arena1 is dormant ( -1 )
+    else \ arena1 is dormant ( pvlfash.erased )
         pvarena2 @pvf pvflash.erased <> if \ is arena2 dormant?
             pvarena2 to pvarena
         else \ arena2 is dormant
@@ -86,7 +86,7 @@ Following forth code documents the implementation. It is transpiled into ITC bel
     pvarena.init \ initialize pvarena
     pvarena cell+ cell+ \ skip the arena record
     begin
-    dup @pvf dup 1+ while \ if record id is not all 1 bits, i.e. -1
+    dup @pvf dup pvflash.erased <> while \ if record id is not all 1 bits, i.e. -1
         \ ( pvp pv-ram )
         swap cell+ tuck @pvf \ ( pvp+ pv-ram [pvp+] )
         swap ! \ update pvalue in RAM ( pvp+ )
@@ -129,10 +129,10 @@ Following forth code documents the implementation. It is transpiled into ITC bel
 
 \ used to prepare dormant arena for arena swap (this should be noname)
 : pv.write ( awp ffa - awp++ f ) \ write pvalue record at awp, advance awp
-    >body @ \ (awp pv-ram)
-    2dup swap !pvf @ \ write record ID (awp [pv-ram] )
-    swap cell+ tuck !pvf \ write the value (awp+)
-    cell+ \ (awp++)
+    >body @ \ ( awp pv-ram )
+    2dup swap !pvf @ \ write record ID ( awp [pv-ram] )
+    swap cell+ tuck !pvf \ write the value ( awp+ )
+    cell+ \ ( awp++ )
     true
 ;
 
@@ -163,10 +163,10 @@ Following forth code documents the implementation. It is transpiled into ITC bel
 
 /* following deferred words are data flash primitives that need to be implemented by the MCU */
 
-DEFER "!pvf", STORE_PVF, XT_STORE /* (x addr -- ) store x at addr in the PV flash */
+DEFER "!pvf", STORE_PVF, XT_STORE /* ( x addr -- ) store x at addr in the PV flash */
 END STORE_PVF
 
-DEFER "@pvf", FETCH_PVF, XT_FETCH /* (addr -- x) load cell at addr in the PV flash */
+DEFER "@pvf", FETCH_PVF, XT_FETCH /* ( addr -- x ) load cell at addr in the PV flash */
 END FETCH_PVF
 
 DEFER "pvflash.erase", PVFLASH_ERASE, XT_FAUXERASE /* ( addr -- ) erase PV flash page at addr */
@@ -349,7 +349,7 @@ PV_INIT_0001: # begin
 	.word XT_DUP
 	.word XT_FETCH_PVF
 	.word XT_DUP
-	.word XT_1PLUS
+	.word XT_PVFLASH_ERASED, XT_NOTEQUAL
 	.word XT_DOCONDBRANCH,PV_INIT_0002
 	.word XT_SWAP
 	.word XT_CELLPLUS

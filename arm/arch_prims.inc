@@ -16,7 +16,7 @@ COLON "std.unlock", STDDOTUNLOCK
     .word XT_EXIT
 
 CODEWORD "std.erase" , STDDOTERASE
-# ( a-flash -- ) FLASH: Erase 256B page flash-a is in 
+# ( a-flash -- ) FLASH: Erase the page a-flash is in 
     .word XT_EXIT
 
 COLON "!i", BANGI
