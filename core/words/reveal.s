@@ -1,8 +1,10 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "reveal", REVEAL
+COLON "reveal", REVEAL /* ( -- ) makes the newest word entry visible in its wordlist */
     .word XT_NEWEST,XT_CELLPLUS,XT_FETCH
     .word XT_QDUP,XT_DOCONDBRANCH, REVEAL1
     .word XT_NEWEST,XT_FETCH,XT_SWAP,XT_DOTO1
 REVEAL1:
     .word XT_EXIT
+END REVEAL
+

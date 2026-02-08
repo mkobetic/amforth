@@ -4,6 +4,7 @@
 # AMFORTH ?= $(shell git rev-parse --show-toplevel)
 # include AMFORTH/arm/dev/Makefile
 
+ARCH ?= arm
 CROSS ?= arm-none-eabi-
 AMFORTH ?= $(shell git rev-parse --show-toplevel)
 HOST_OS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')

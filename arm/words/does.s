@@ -52,8 +52,8 @@ COLON "(dodoes)", DODOES /* (R: addr -- ) addr of the synthetic jump after (dodo
   i.e the next address on the return stack.
 */
   .word XT_MEMMODE , XT_DOCONDBRANCH , 1f
-  @ compiling to flash
-  .word XT_EXIT
+  @ compiling to flash not supported yet
+  .word XT_DOLITERAL, EUNSUP, XT_THROW
 
 1: @ compiling to ram
   .word XT_R_FROM @ get the synthetic jump address from return stack

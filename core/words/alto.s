@@ -56,6 +56,7 @@ NONAME DOTO
     .word XT_FETCH
     .word XT_DOTO1
     .word XT_EXIT
+END DOTO
 
 NONAME DOTO1
     .word XT_CELLPLUS
@@ -66,6 +67,7 @@ NONAME DOTO1
     .word XT_FETCH
     .word XT_EXECUTE
     .word XT_EXIT
+END DOTO1
 
 # which leaves us free to define a "to" which overwrite the value pointed to
 # by the memory location pointed to by the PFA. 
@@ -81,6 +83,7 @@ IMMED "pp", PP
     .word XT_DOPP
     .word XT_COMMA
     .word XT_EXIT
+END PP
 
 COLON "(to)" , DOPP
     .word XT_R_FROM
@@ -90,8 +93,10 @@ COLON "(to)" , DOPP
     .word XT_FETCH
     .word XT_DOPP1
     .word XT_EXIT
+END DOPP
 
 NONAME DOPP1
     .word XT_FETCH
     .word XT_STORE
     .word XT_EXIT
+END DOPP1

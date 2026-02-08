@@ -1,9 +1,11 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "parse-name", PARSENAME
+COLON "parse-name", PARSENAME /* ( "<spaces>name" -- c-addr u ) parse whitespace delimited string from SOURCE */
+/* Returns string address within SOURCE. */
     .word XT_BL
     .word XT_SKIPSCANCHAR
-    .word XT_EXIT 
+    .word XT_EXIT
+END PARSENAME
 
 NONAME SKIPSCANCHAR
     .word XT_TO_R
@@ -25,3 +27,4 @@ NONAME SKIPSCANCHAR
     .word XT_TO_IN
     .word XT_STORE
     .word XT_EXIT
+END SKIPSCANCHAR
