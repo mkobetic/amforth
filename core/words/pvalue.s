@@ -23,7 +23,7 @@ First record of the arena is used to capture arena state. The two words have fol
 1) COUNTER: starts at 0 and is incremented by one for each new arena activation after the swap
 2) DIRTY: -1 for blank dormant arena, 0 for arena that has been written into
 
-COUNTER has its MSB always set to make it distinct from normal RAM addresses.
+COUNTER has its MSB always set to make it distinct from usual RAM addresses. It counts up to pvflash.erased (usually -1) so there needs to be enough room for all the swaps (normally shouldn't be a problem).
 DIRTY is the first cell of a blank arena that is written, COUNTER is last. These are written only
 during very first initialization and during a swap. A swap hasn't been successful until the
 COUNTER is written.
@@ -55,8 +55,8 @@ Following forth code documents the implementation. It is transpiled into ITC bel
 \ Second cell is either -1 or 0. Erased dormant arena has both cells set to -1.
 \ Current arena is the one with higher ID that is not -1.
 : pvarena.init ( -- ) \ set pvarena to whichever arena should be current
-    pvarena1 @pvf dup 1+ if \ is arena1 dormant? (ID = -1)
-        pvarena2 @pvf dup 1+ if \ is arena2 dormant?
+    pvarena1 @pvf dup pvflash.erased <> if \ is arena1 dormant? (ID = -1)
+        pvarena2 @pvf dup pvflash.erased <> if \ is arena2 dormant?
             \ (a1id a2id) higher ID wins
             < if pvarena2 to pvarena
             else pvarena1 to pvarena
@@ -66,7 +66,7 @@ Following forth code documents the implementation. It is transpiled into ITC bel
             2drop \ unused arena IDs
         then
     else \ arena1 is dormant ( -1 )
-        pvarena2 @pvf 1+ if \ is arena2 dormant?
+        pvarena2 @pvf pvflash.erased <> if \ is arena2 dormant?
             pvarena2 to pvarena
         else \ arena2 is dormant
             \ both arenas are blank, initialize arena1 and use it.
@@ -145,7 +145,7 @@ Following forth code documents the implementation. It is transpiled into ITC bel
 : pvarena.swap ( -- ) \ write fresh pvalues into the dormant arena and swap arenas
     pvarena.dormant
     \ check if it needs to be erased
-    dup cell+ dup @pvf 1+ 0<> if dup pvarena.erase then
+    dup cell+ dup @pvf pvflash.erased <> if dup pvarena.erase then
     \ write dirty mark ( arena arena+ )
     dup 0 swap !pvf cell+ \ ( arena arena++ )
     \ write fresh record for each persistent value in forth-wordlist
@@ -192,6 +192,9 @@ END PVFLASH_PAGE
 
 CONSTANT "pvflash.cell", PVFLASH_CELL, pvflash.cell /* size of PV flash cell (write size) */
 END PVFLASH_CELL
+
+CONSTANT "pvflash.erased", PVFLASH_ERASED, pvflash.erased /* value of a cell in erased flash */
+END PVFLASH_ERASED
 
 CONSTANT "pvflash.size", PVFLASH_SIZE, pvflash.size /* total size of PV flash */
 END PVFLASH_SIZE
@@ -279,12 +282,12 @@ COLON "pvarena.init", PVARENA_INIT /* ( -- ) set pvarena to whichever arena shou
 	.word XT_PVARENA1
 	.word XT_FETCH_PVF
 	.word XT_DUP
-	.word XT_1PLUS
+	.word XT_PVFLASH_ERASED, XT_NOTEQUAL
 	.word XT_DOCONDBRANCH,PVARENA_INIT_0001
 	.word XT_PVARENA2
 	.word XT_FETCH_PVF
 	.word XT_DUP
-	.word XT_1PLUS
+	.word XT_PVFLASH_ERASED, XT_NOTEQUAL
 	.word XT_DOCONDBRANCH,PVARENA_INIT_0002
 	.word XT_LESS
 	.word XT_DOCONDBRANCH,PVARENA_INIT_0003
@@ -308,7 +311,7 @@ PVARENA_INIT_0005: # then
 PVARENA_INIT_0001: /* else \ arena1 is dormant */
 	.word XT_PVARENA2
 	.word XT_FETCH_PVF
-	.word XT_1PLUS
+	.word XT_PVFLASH_ERASED, XT_NOTEQUAL
 	.word XT_DOCONDBRANCH,PVARENA_INIT_0007
 	.word XT_PVARENA2
 	.word XT_DOTO
@@ -434,7 +437,7 @@ COLON "pvarena.swap", PVARENA_SWAP /* ( -- ) write fresh pvalues into the dorman
 	.word XT_CELLPLUS
 	.word XT_DUP
 	.word XT_FETCH_PVF
-	.word XT_1PLUS
+	.word XT_PVFLASH_ERASED, XT_NOTEQUAL
 	.word XT_NOTZEROEQUAL
 	.word XT_DOCONDBRANCH,PVARENA_SWAP_0001
 	.word XT_DUP
