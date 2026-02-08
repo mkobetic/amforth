@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-IMMED "\x3b", SEMICOLON
+IMMED "\x3b", SEMICOLON /* ( -- ) finish colon word defintion */ 
+/* Compiles (exit) and returns to interpret state */
     .word XT_COMPILE
     .word XT_EXIT
     .word XT_LBRACKET
@@ -12,5 +13,6 @@ IMMED "\x3b", SEMICOLON
 # end addition
 #    .word XT_TOFLUSH  # this may be the correct place !!!
     .word XT_EXIT
+END SEMICOLON
 
 

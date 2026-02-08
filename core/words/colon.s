@@ -31,7 +31,7 @@
 
 .ifnb
 
-COLON ":", COLON
+COLON ":", COLON /* ( "name" -- ) create a colon word entry in the dictionary */
     .word XT_FLAGDOTCOLON
     .word XT_DOTO
     .word XT_FLAGDOTHEADER
@@ -39,7 +39,7 @@ COLON ":", COLON
     .word XT_COLONNONAME
     .word XT_DROP
     .word XT_EXIT
-
+END COLON
 
 COLON ":~", CLOAKED_COLON 
     .word XT_FLAGDOTCOLON
@@ -51,10 +51,11 @@ COLON ":~", CLOAKED_COLON
     .word XT_COLONNONAME
     .word XT_DROP
     .word XT_EXIT
+END CLOAKED_COLON
 
 .else
 
-COLON ":", COLON
+COLON ":", COLON /* ( "name" -- ) create a colon word entry in the dictionary */
     .word XT_FLAGDOTCOLON
     .word XT_FLAGDOTPRIVATEQ
     .word XT_OR
@@ -64,7 +65,7 @@ COLON ":", COLON
     .word XT_COLONNONAME
     .word XT_DROP
     .word XT_EXIT
-
+END COLON
 
 COLON ":~", CLOAKED_COLON 
     .word XT_FLAGDOTCOLON
@@ -76,5 +77,6 @@ COLON ":~", CLOAKED_COLON
     .word XT_COLONNONAME
     .word XT_DROP
     .word XT_EXIT
+END CLOAKED_COLON
 
 .endif
