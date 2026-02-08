@@ -3,6 +3,12 @@
 __stack_size = 2048;
 PROVIDE( _stack_size = __stack_size );
 
+PROVIDE( flash.page = FLASH_PAGE );
+PROVIDE( flash.cell = FLASH_CELL );
+PROVIDE( flash.erased = FLASH_ERASED );
+PROVIDE( flash.size = LENGTH(FLASH) );
+PROVIDE( flash.start = ORIGIN(FLASH) );
+
 SECTIONS
 {
 
@@ -119,7 +125,7 @@ SECTIONS
 
         userdict :
         {
-            . = ALIGN(4096) ;
+            . = ALIGN(FLASH_PAGE) ;
             PROVIDE( dp0.flash = . );
             PROVIDE( flash.high = . );
             PROVIDE( flash.max = ORIGIN(FLASH) + LENGTH(FLASH));
@@ -246,6 +252,8 @@ SECTIONS
 	ASSERT((LENGTH(PVFLASH) / pvfdiv) % 2 == 0, "PVFLASH length is not an even multiple of PVFLASH_PAGE!")
 
 	PROVIDE(pvflash.page = PVFLASH_PAGE);
+	PROVIDE(pvflash.cell = PVFLASH_CELL);
+	PROVIDE(pvflash.erased = PVFLASH_ERASED);
 	PROVIDE(pvflash.start = ORIGIN(PVFLASH));
 	PROVIDE(pvflash.size = LENGTH(PVFLASH));
 

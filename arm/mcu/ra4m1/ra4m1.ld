@@ -14,9 +14,16 @@ FLASH_IMAGE_START = 0x4000;
 VECTOR_TABLE_LENGTH = 0x100;
 BSP_CFG_STACK_MAIN_BYTES = 0x400;
 
+FLASH_PAGE = 2K;
+FLASH_CELL = 8; /* bytes */
+FLASH_SIZE = 256K;
+FLASH_ERASED = 0xFFFFFFFF; /* a word in erased flash */
+
 /* Dedicate the entire data flash to pvalues */
 PVFLASH_PAGE = 1K;
+PVFLASH_CELL = 1; /* bytes */
 PVFLASH_SIZE = DATA_FLASH_LENGTH; /* 8K */
+PVFLASH_ERASED = FLASH_ERASED;
 
 MEMORY
 {

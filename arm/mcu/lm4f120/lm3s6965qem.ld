@@ -2,7 +2,16 @@
 OUTPUT_FORMAT("elf32-littlearm")
 OUTPUT_ARCH(arm)
 
+FLASH_SIZE = 256K;
+/* TODO: this is made up, needs correcting */
+FLASH_PAGE = 1K;
+FLASH_CELL = 4; /* bytes */
+FLASH_ERASED = 0xFFFFFFFF; /* a word in erased flash */
+
+/* RAM emulated PVFLASH */
 PVFLASH_PAGE = 1K;
+PVFLASH_CELL = 4; /* bytes */
+PVFLASH_ERASED = FLASH_ERASED;
 PVFLASH_SIZE = 8K;
 
 MEMORY

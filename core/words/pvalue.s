@@ -184,11 +184,14 @@ END PVARENA1
 CONSTANT "pvarena2", PVARENA2, pvarena2_lower /* address of pvalue arena 2  */
 END PVARENA2
 
-CONSTANT "pvarena.size", PVARENA_SIZE, pvarena.size /* size of pvalue arena (multiple of flash page size) */
+CONSTANT "pvarena.size", PVARENA_SIZE, pvarena.size /* size of pvalue arena */
 END PVARENA_SIZE
 
-CONSTANT "pvflash.page", PVFLASH_PAGE, pvflash.page /* size of PV flash page */
+CONSTANT "pvflash.page", PVFLASH_PAGE, pvflash.page /* size of PV flash page (erase size) */
 END PVFLASH_PAGE
+
+CONSTANT "pvflash.cell", PVFLASH_CELL, pvflash.cell /* size of PV flash cell (write size) */
+END PVFLASH_CELL
 
 CONSTANT "pvflash.size", PVFLASH_SIZE, pvflash.size /* total size of PV flash */
 END PVFLASH_SIZE

@@ -1,11 +1,24 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 ENTRY( _start )
 
-PVFLASH_PAGE = 64; /* bytes */
-PVFLASH_SIZE = 8K;
+/* fast flash mode 
+FLASH_PAGE = 256; /* bytes */
+FLASH_CELL = 256; /* bytes */
+*/
+/* standard flash mode */
+FLASH_PAGE = 4K;
+FLASH_CELL = 2; /* bytes */
 FLASH_SIZE = 256K;
 FLASH_ORIGIN = 0x00000000;
-PVFLASH_ORIGIN = FLASH_SIZE - PVFLASH_SIZE;
+FLASH_ERASED = 0xE339E339; /* a word in erased flash */
+
+/* Allocate end of FLASH as PVFLASH */
+PVFLASH_PAGE = FLASH_PAGE;
+PVFLASH_CELL = FLASH_CELL;
+PVFLASH_SIZE = 4 * FLASH_PAGE;
+PVFLASH_ORIGIN = FLASH_ORIGIN + FLASH_SIZE - PVFLASH_SIZE;
+PVFLASH_ERASED = FLASH_ERASED;
+
 
 MEMORY
 {
@@ -26,7 +39,6 @@ MEMORY
    FLASH-288K + RAM-32K  
 */
 	FLASH (rx)  : ORIGIN = FLASH_ORIGIN, LENGTH = FLASH_SIZE - PVFLASH_SIZE
-   /* Allocate end of FLASH as PVFLASH */
    PVFLASH(rw) : ORIGIN = PVFLASH_ORIGIN, LENGTH = PVFLASH_SIZE
  	RAM (xrw)   : ORIGIN = 0x20000000, LENGTH = 64K
 
