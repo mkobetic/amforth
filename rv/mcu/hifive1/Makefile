@@ -14,7 +14,7 @@ include $(AMFORTH)/rv/dev/Makefile
 GDB_PORT ?= 3333
 
 RISCV_OPENOCD = openocd
-OPENOCDCFG = ./openocd.cfg
+OPENOCDCFG = dev/openocd.cfg
 OPENOCDARGS += -f $(OPENOCDCFG)
 
 GDB_UPLOAD_ARGS = --batch
