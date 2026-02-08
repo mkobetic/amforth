@@ -1,7 +1,7 @@
 ENTRY (_start)
 
-PVFLASH_PAGE = 0x400; /* 1K */
-PVFLASH_SIZE = 0x2000; /* 8K */
+PVFLASH_PAGE = 1K;
+PVFLASH_SIZE = 8K;
 
 MEMORY {
     /* It's all RAM we can allocate as much as we want */

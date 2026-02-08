@@ -1,9 +1,34 @@
 /* 
-\ transpiling pval.f on 2026/02/06 18:38:12
 
-\ Main goals of the pvalue subsystem are:
-\ * simplicity over more optimal in some respect but more complex solution
-\ * robustness - should be able to recover in face of reset without losing persisted state
+    PVALUES
+
+The pvalue subsystem provides persistency for system values that require it. Persistency
+is achieved by writing a rolling log of update records into flash backed PVFLASH memory region.
+When the system restarts the log is replayed to initialize the pvalues to the latest recorded state (pv.init).
+Main goals of the implementation were:
+ * simplicity - over optimal but more complex solution
+ * robustness - ability to recover from unexpected resets without losing persisted state
+
+To be able to compact the log when PVFLASH fills up, the region is divided into two equal size arenas,
+only one of which is active at a time (pvarena). When the arena fills up, compact and swap operation
+is triggerred automatically on next record write attempt (pvarena.swap). If the swap doesn't complete
+for whatever reason, it will be attempted again, until it finishes successfully.
+It can also be invoked explicitly at any time.
+
+The log entries (pvalue records) are 2 words:
+1) ID: identifies which pvalue the record belongs to, the pvalue RAM address is used as the ID
+2) VALUE: the new value of the pvalue
+
+First record of the arena is used to capture arena state. The two words have following meaning
+1) COUNTER: starts at 0 and is incremented by one for each new arena activation after the swap
+2) DIRTY: -1 for blank dormant arena, 0 for arena that has been written into
+
+COUNTER has its MSB always set to make it distinct from normal RAM addresses.
+DIRTY is the first cell of a blank arena that is written, COUNTER is last. These are written only
+during very first initialization and during a swap. A swap hasn't been successful until the
+COUNTER is written.
+
+Following forth code documents the implementation. It is transpiled into ITC below.
 
 \ Updating a pvalue means writing a new pvalue record in the current pvarena,
 \ and then updating the corresponding RAM cell with the same value.
@@ -134,16 +159,6 @@
     to pvp \ set pvp
     pvarena.erase \ erase old arena
 ;
-
-: noname ( xt ffa -- xt f ) \ helper for pv.do
-    dup @ flag.pvalue and if
-        ffa2cfa over execute
-    else drop true then
-;
-: pv.do ( xt -- ) run xt ( pv-xt -- f ) for every pvalue in forth-wordlist
-    literal , forth-wordlist traverse-wordlist
-;
-
 */
 
 /* following deferred words are data flash primitives that need to be implemented by the MCU */
@@ -154,17 +169,12 @@ END STORE_PVF
 DEFER "@pvf", FETCH_PVF, XT_FETCH /* (addr -- x) load cell at addr in the PV flash */
 END FETCH_PVF
 
-DEFER "pvflash.erase", PVF_ERASE, XT_FAUXERASE /* ( addr -- ) erase PV flash page at addr */
-END FETCH_PVF
+DEFER "pvflash.erase", PVFLASH_ERASE, XT_FAUXERASE /* ( addr -- ) erase PV flash page at addr */
+END PVFLASH_ERASE
 
 NONAME FAUXERASE /* :noname pvflash.page $FF fill ; */
-    .word XT_PVFLASH_PAGE, XT_PVFLASH_FF, XT_FILL, XT_EXIT
+    .word XT_PVFLASH_PAGE, XT_DOLITERAL, 0xFF, XT_FILL, XT_EXIT
 END FAUXERASE
-
-/* this is just a hack to avoid XT_DOLITERAL, 0xFF in FAUXERASE
- because it's insanely complicated to step through */
-CONSTANT "pvflash.ff", PVFLASH_FF, 0xFF /* value of an erased byte in flash */
-END PVFLASH_FF
 
 /* pvalue memory constants */
 
@@ -379,7 +389,7 @@ PVARENA_ERASE_0001: # begin
 	.word XT_LESSEQUAL
 	.word XT_DOCONDBRANCH,PVARENA_ERASE_0002
 	.word XT_DUP
-	.word XT_PVF_ERASE
+	.word XT_PVFLASH_ERASE
 	.word XT_PVFLASH_PAGE
 	.word XT_MINUS
 	.word XT_DOBRANCH,PVARENA_ERASE_0001
