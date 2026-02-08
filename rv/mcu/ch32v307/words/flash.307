@@ -219,7 +219,7 @@ CODEWORD "std.unlock", STDDOTUNLOCK # ( -- ) FLASH: Unlock flash
       NEXT
 
 
-CODEWORD "std.erase" , STDDOTERASE # ( a-flash -- ) FLASH: Erase 256B page flash-a is in 
+CODEWORD "std.erase" , STDDOTERASE # ( a-flash -- ) FLASH: Erase 4K page flash-a is in 
 
       li  t3, OFFSET
       add s3, s3, t3

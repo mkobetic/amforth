@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "compile", COMPILE
+COLON "compile", COMPILE /* ( -- ) append the XT that follows in the calling word to the dictionary */
+/* Assumes it's invoked by an immediate during compilation */
     .word XT_R_FROM
     .word XT_DUP
     .word XT_CELLPLUS
@@ -8,3 +9,5 @@ COLON "compile", COMPILE
     .word XT_FETCH
     .word XT_COMMA
     .word XT_EXIT
+END COMPILE
+

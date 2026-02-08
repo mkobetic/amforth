@@ -18,6 +18,7 @@ CONSTANT "flag.value"     , FLAGDOTVALUE    , 0x020
 CONSTANT "flag.defer"     , FLAGDOTDEFER    , 0x040
 CONSTANT "flag.init"      , FLAGDOTINIT     , 0x080
 CONSTANT "flag.table"     , FLAGDOTTABLE    , 0x100
+CONSTANT "flag.pvalue"    , FLAGDOTPVALUE   , 0x200
 CONSTANT "flag.cloaked"   , FLAGDOTCLOAKED  , 0x80000000
 CONSTANT "flag.private"   , FLAGDOTPRIVATE  , 0x80000000
 

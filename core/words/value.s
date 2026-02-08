@@ -1,8 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 .ifnb
 
-COLON "value", VAL
-# ( n "name" -- ) create value "name" with initial of n 
+COLON "value", VAL /* ( x "name" -- ) create value "name" with initial of x */
     .word XT_FLAGDOTVALUE
     .word XT_DOTO
     .word XT_FLAGDOTHEADER
@@ -19,9 +18,9 @@ COLON "value", VAL
     .word XT_TOFLUSH
     # end added 
     .word XT_EXIT
+END VAL
 
-COLON "value~", CLOAKED_VALUE
-# ( n "name" -- ) create value "name" with initial of n 
+COLON "value~", CLOAKED_VALUE /* ( x "name" -- ) create value "name" with initial of x */
     .word XT_FLAGDOTVALUE
     .word XT_FLAGDOTCLOAKED
     .word XT_OR
@@ -40,12 +39,12 @@ COLON "value~", CLOAKED_VALUE
     .word XT_TOFLUSH
     # end added 
     .word XT_EXIT
+END CLOAKED_VALUE
 
 .else
 
 
-COLON "value", VAL
-# ( n "name" -- ) create value "name" with initial of n 
+COLON "value", VAL /* ( x "name" -- ) create value "name" with initial of x */
     .word XT_FLAGDOTVALUE
     .word XT_FLAGDOTPRIVATEQ
     .word XT_OR
@@ -64,9 +63,9 @@ COLON "value", VAL
 #    .word XT_TOFLUSH
     # end added 
     .word XT_EXIT
+END VAL
 
-COLON "value~", CLOAKED_VALUE
-# ( n "name" -- ) create value "name" with initial of n 
+COLON "value~", CLOAKED_VALUE /* ( x "name" -- ) create cloaked value "name" with initial of x */
     .word XT_FLAGDOTVALUE
     .word XT_FLAGDOTPRIVATE
     .word XT_OR
@@ -85,5 +84,6 @@ COLON "value~", CLOAKED_VALUE
 #    .word XT_TOFLUSH
     # end added 
     .word XT_EXIT
+END CLOAKED_VALUE
 
 .endif 

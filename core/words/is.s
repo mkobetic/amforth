@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
-# This is only for debuging related words
 
-IMMED "is" , IS
+IMMED "is" , IS /* ( xt "name" -- ) set deferred action "name" to xt */
     .word XT_STATE
     .word XT_FETCH
     .word XT_DOCONDBRANCH , AT0
@@ -12,6 +11,6 @@ AT0:
     .word XT_TICK
     .word XT_DEFER_STORE
     .word XT_EXIT
-
+END IS
 
       

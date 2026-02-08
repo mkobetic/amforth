@@ -48,14 +48,14 @@ buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date -Iseconds`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 	mkdir -p build
 
-ASFLAGS := -g --warn --fatal-warnings -ahlmn=build/amforth.lst-as
+ASFLAGS += -g --warn --fatal-warnings -ahlmn=build/amforth.lst-as
 # if you want to run standard tests you need WANT_IGNORECASE flag set
 ifdef WANT_IGNORECASE
 ASFLAGS +=--defsym WANT_IGNORECASE=$(WANT_IGNORECASE)
 endif
 
 # Needed for the INCLUDE amforth32.ld to work in linked files (-L must precede the -T !!!)
-LDFLAGS := -L $(AMFORTH)/core -T $(MCU_LD)
+LDFLAGS += -L $(AMFORTH)/core -T $(MCU_LD) -Map build/amforth.map
 
 # The include order is important: architecture > core > AMFORTH.
 # For simple imports, e.g. config.inc or words/xx.s, the more specific directory wins.
@@ -81,7 +81,7 @@ build/%.bin: build/%.elf
 	$(OBJCOPY) -O binary $< $@
 
 build/%.lst: build/%.elf
-	$(OBJDUMP) --show-raw-insn --insn-width=4 --all-headers --disassemble-all --source --syms $< >$@
+	$(OBJDUMP) --show-raw-insn --insn-width=4 --section-headers --file-headers --disassemble $< >$@
 
 # list all transitive dependencies of amforth.s (include tree traversal)
 build/%.dep: %.s buildinfo
@@ -132,7 +132,9 @@ shell:
 # `WANT_IGNORECASE=1 make` should do it.
 # Uses timeout command to terminate QEMU, because there is no way
 # to do it from the inside, i.e. from AmForth running in it.
-TIMEOUT ?= 3s
+# WARNING: some of the tests can run destructive operations,
+# don't run against real MCUs without reviewing the tests.
+TIMEOUT ?= 4s
 TESTER ?= $(AMFORTH)/lib/forth2012/tester/tester-amforth.frt
 SKIP := $(PP) -w -E --no-line-commands
 test:
@@ -140,6 +142,7 @@ test:
 	  echo '.s" TESTS STARTING"' ; \
 	  $(SKIP) $(AMFORTH)/tests/cpp-core.fr; \
 	  cat $(AMFORTH)/tests/core2.fr; \
+	  cat $(AMFORTH)/tests/pvalue.fr; \
 	  echo '.s" TESTS FINISHED"' ; \
 	} | timeout -s TERM $(TIMEOUT) $(QEMU) -serial stdio | \
 	tee build/tests.log | \

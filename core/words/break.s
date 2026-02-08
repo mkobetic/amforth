@@ -1,9 +1,3 @@
-/*
-WORD: "break"
-STACK: ( -- )
-CATEG: TOOLS
-SHORT: does nothing, suitable as a breakpoint
- */
-
-CODEWORD "break", BREAK
-NEXT
+CODEWORD "break", BREAK /* ( -- ) does nothing, suitable for a breakpoint (hbreak PFA_BREAK) */
+    NEXT
+END BREAK

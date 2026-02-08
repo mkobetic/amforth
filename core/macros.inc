@@ -4,12 +4,12 @@
 .macro STARTDICT
   # .text should aready be in section amforth
   .p2align 2,0x55
-  .word 0
+VE_NOP: .word 0
 97: # arch-wordlist
 98: # environment
 99: # forth-wordlist
 # Inject a NOP word as the first entry in the dictionary.
-VE_NOP: .word 0
+        .word 0
         .byte 8f-7f
 7:      .ascii "nop"
 8:      .p2align 2,0xAA
@@ -53,6 +53,7 @@ VALUE "forth-wordlist", FORTH_WORDLIST, 99b
 .equ Flag_defer,      0x0040
 .equ Flag_init,       0x0080
 .equ Flag_table,      0x0100
+.equ Flag_pvalue,     0x0200
 
 # Ramallot means that RAM is reserved and initialised by catchflashpointers for this definition on startup
 .equ Flag_ramallot,   Flag_visible | 0x0100 
@@ -220,6 +221,21 @@ PFA_\Label:
    .word XT_STORE
 .endm
 
+.macro PVALUE Name, Label, Default
+    HEADER Flag_visible|Flag_pvalue|Flag_init, "\Name", \Label, PFA_DOVALUE
+   .section amramlo,"aw",%nobits
+   .balign 4
+    # Capture current location counter
+   .set \Label\()_ram, .          
+   .space 4
+   .section amforth
+   # Write the captured address into flash
+   .word \Label\()_ram             
+   .word \Default
+   .word XT_FETCH
+   .word XT_STORE
+.endm
+
 .macro CLOAKED_VALUE Name, Label, Default
     HEADER Flag_visible|Flag_value|Flag_init|Flag_cloaked, "\Name", \Label, PFA_DOVALUE
    .section amramlo,"aw",%nobits
@@ -234,24 +250,6 @@ PFA_\Label:
    .word XT_FETCH
    .word XT_STORE
 .endm
-
-# .macro ALTVAL Name, Label, Default
-#     HEADER Flag_visible|Flag_value|Flag_init, "\Name", \Label, PFA_DOVALUE
-#    .word rampointer
-#     .equ RAM_\Label,rampointer # for listing
-#    .set rampointer, rampointer+4
-#    .word rom_pointer
-#    .section amrom,"ax"
-#    .word \Default
-#    .section amforth,"ax"
-# #   .set keep , .
-# #   .org rom_pointer
-# #   .word \Default
-# #   .org keep
-#    .set rom_pointer , rom_pointer + 4
-#    .word XT_FETCH
-#    .word XT_STORE
-# .endm
 
 .macro DEFER Name, Label, XT
     HEADER Flag_visible|Flag_defer|Flag_init, "\Name", \Label, PFA_DODEFER

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "words", WORDS
+COLON "words", WORDS /* ( -- ) list words in forth-wordlist */
     .word XT_FORTH_WORDLIST, XT_SHOWWORDLIST
     .word XT_EXIT
+END WORDS

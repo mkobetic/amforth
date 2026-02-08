@@ -1,19 +1,31 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 OUTPUT_ARCH( "riscv" )
 
-MEMORY
-{
-   FLASH (RWX)   : ORIGIN = 0x80000000, LENGTH = 256K
-   RAM   (WAIXL) : ORIGIN = 0x80040000, LENGTH = 256K
-}                                
-
-FLASH_PAGE = 0x00000040 ;
+FLASH_PAGE = 0x00000040 ; /* TODO: is this correct? */
+FLASH_CELL = 2 ; /* bytes */
 FLASH_MASK = FLASH_PAGE - 1  ;
 FLASH_VEIL = 0xFFFFFFFF - FLASH_MASK ; 
+FLASH_ERASED = 0xE339E339; /* a word in erased flash */
 
 PROVIDE( flash.page = FLASH_PAGE ); /* size of flash page        */
 PROVIDE( flash.mask = FLASH_MASK ); /* AND to get byte in page   */
 PROVIDE( flash.veil = FLASH_VEIL ); /* AND to get page in FLASH  */
-PROVIDE( page_size = FLASH_PAGE ) ; 
+PROVIDE( page_size = FLASH_PAGE ) ;
+
+/* RAM emulated PVFLASH */
+PVFLASH_PAGE = 1K;
+PVFLASH_CELL = 4;
+PVFLASH_SIZE = 8 * PVFLASH_PAGE;
+PVFLASH_ERASED = FLASH_ERASED;
+RAM_ORIGIN = 0x80040000;
+RAM_SIZE = 256K - PVFLASH_SIZE;
+PVFLASH_ORIGIN = RAM_ORIGIN + RAM_SIZE;
+
+MEMORY
+{
+   FLASH (RWX)   : ORIGIN = 0x80000000, LENGTH = 256K
+   RAM   (WAIXL) : ORIGIN = RAM_ORIGIN, LENGTH = RAM_SIZE
+   PVFLASH(WRX) : ORIGIN = PVFLASH_ORIGIN, LENGTH = PVFLASH_SIZE
+}                                
 
 INCLUDE amforth32.ld

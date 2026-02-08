@@ -131,3 +131,8 @@ define bde
     step 2
   end
 end
+
+# set breakpoint in the `break` word
+define bb
+  hbreak PFA_BREAK
+end

@@ -4,39 +4,22 @@
 # for values defined in assembler but NOT from forth source, in any
 # way I have tried. In .s files only XT_DOTO is ever executed, never XT_TO
 
-# IMMED "to", TO
-#     .word XT_TICK
-#     .word XT_TO_BODY
-#     .word XT_STATE
-#     .word XT_FETCH
-#     .word XT_DOCONDBRANCH, PFA_DOTO1
-#       .word XT_COMPILE
-#       .word XT_DOTO
-#       .word XT_COMMA
-#       .word XT_EXIT
+# Until this is sorted, replicate the definition of `is` which seems to work for normal values,
+# albeit it won't for values with custom get/set XTs.
 
-# NONAME DOTO
-#     .word XT_R_FROM
-#     .word XT_DUP
-#     .word XT_CELLPLUS
-#     .word XT_TO_R
-#     .word XT_FETCH
-#     .word XT_DOTO1
-#     .word XT_EXIT
+IMMED "to", TO /* ( x "name" -- ) set value "name" to x */
+    .word XT_STATE
+    .word XT_FETCH
+    .word XT_DOCONDBRANCH , 1f
+    .word XT_BRACKETTICK
+    .word XT_COMPILE , XT_DEFER_STORE
+    .word XT_FINISH
+1:
+    .word XT_TICK
+    .word XT_DEFER_STORE
+    .word XT_EXIT
+END TO
 
-# NONAME DOTO1
-#     .word XT_CELLPLUS
-#     .word XT_DUP, XT_FETCH, XT_SWAP
-#     .word XT_CELLPLUS
-#     .word XT_CELLPLUS
-#     .word XT_CELLPLUS
-#     .word XT_FETCH
-#     .word XT_EXECUTE
-#     .word XT_EXIT
-
-# So XT_DOTO is needed, but this "to" is so is commented out 
-# without issue (so far) 
-#
 # IMMED "to", TO
 #     .word XT_TICK
 #     .word XT_TO_BODY
