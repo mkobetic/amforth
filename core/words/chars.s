@@ -1,12 +1,4 @@
 # SPDX-License-Identifier: GPL-3.0-only
-/*
-WORD:  chars
-STACK: ( n1 -- n2 )
-MOTIF: 
-CATEG:
-STDID: core/CHARS
-SHORT: n2 is the size in address units of n1 characters.
-*/
-
-IMMED "chars", MYCHARS
+IMMED "chars", MYCHARS /* ( n1 -- n2 ) n2 = n1 * char-size (1) */
       .word XT_EXIT
+END MYCHARS

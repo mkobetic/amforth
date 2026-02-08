@@ -1,17 +1,11 @@
-/*
-WORD: "m/mod"
-STACK: ( d n1 -- n2 n3 )
-CATEG: MATH
-SHORT: Divide d by n1, giving the quotient n3 and the remainder n2.
+COLON "m/mod", MSLASHMOD /* ( d n1 -- n2 n3 ) n3 is quotient and n2 remainder of d / n1 */
+/* Divide d by n1, giving the quotient n3 and the remainder n2.
 
 All values and arithmetic are signed. Throw if n1 is zero or if the quotient n3 lies outside the range of a single-cell signed integer.
 OUTLINE:
     * perform the operation on unsigned values um/mod
     * if the signs were different then the quotient is negative
-    * if the dividend was negative then the remainder is negative
-*/
-
-COLON "m/mod", MSLASHMOD
+    * if the dividend was negative then the remainder is negative */
 # ( dividend divisor -- reminder quotient )
     /* throw if divisor is zero */
     .word XT_DUP, XT_ZEROEQUAL, XT_DOCONDBRANCH, 1f
@@ -35,14 +29,8 @@ COLON "m/mod", MSLASHMOD
     .word XT_NEGATE
 
 5:  .word XT_EXIT
+END MSLASHMOD
 
-/*
-WORD: sm/rem
-STACK: ( d1 n1 -- n2 n3 )
-CATEG: MATH
-SHORT: Divide d1 by n1, giving the symmetric quotient n3 and the remainder n2. (alias for m/mod)
-
-Input and output stack arguments are signed. Throw if n1 is zero or if the quotient lies outside the range of a single-cell signed integer.
- */
-COLON "sm/rem", SMSLASHREM
+COLON "sm/rem", SMSLASHREM /* ( d n1 -- n2 n3 ) alias for m/mod */
     .word XT_MSLASHMOD, XT_EXIT
+END SMSLASHREM
