@@ -59,11 +59,11 @@ OUTPUT:
     itype type pad binary hex decimal 
     sign #> #s # <# hold hld
 SYSTEM:
-    ms us rev-info build-info turnkey appl-turnkey ver init-ram cold warm quit pause
+    cold warm init-ram turnkey appl-turnkey quit pause
+    ms us ver rev-info build-info 
     pv.do pv.init vaddr pv.store pvp
     pvflash.size pvflash.page pvflash.cell pvflash.erased pvflash.erase @pvf !pvf
-    pvarena.size pvarena.init pvarena.swap pvarena.erase pvarena pvarena.dormant pvarena1 pvarena2  
-
+    pvarena.size pvarena.init pvarena.swap pvarena.erase pvarena pvarena.dormant pvarena1 pvarena2
 TOOLS:
     debug empty dump ?stack vdump break
 OTHER:
