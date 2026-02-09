@@ -1,0 +1,15 @@
+# DIRTY
+
+COLON "warm", WARM # ( -- ) SYSTEM: Reset Forth (asm build)
+
+  .word XT_INIT_RAM   # XT_INIT_RAM
+
+  .word XT_LBRACKET   # XT_LBRACKET
+
+#  .word XT_WARM_RELOAD 
+  
+  .word XT_TURNKEY    # XT_TURNKEY
+  
+  .word XT_QUIT       # XT_QUIT
+ 
+  .word XT_EXIT       # XT_EXIT 
