@@ -44,10 +44,8 @@
 .global flash_page
 .equ flash_cell, 4
 .global flash_cell
-.equ flash_erased, 0xFFFFFFFF /* a word in erased flash */
+.equ flash_erased, 0x00000000 /* a word in erased flash */
 .global flash_erased
-.equ flash_size, 256*1024
-.global flash_size
 
 /*
     RA_FLASH
@@ -86,7 +84,7 @@
 
 .equ WANT_USB_OPERATOR , NO
 .if WANT_USB_OPERATOR
-.ifdef BUILD_QEM
+.ifdef TARGET_QEM
 .error "Cannot use WANT_USB_OPERATOR with QEM target"
 .endif
 .endif

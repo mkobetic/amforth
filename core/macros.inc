@@ -256,11 +256,11 @@ PFA_\Label:
    .section amramlo,"aw",%nobits
    .balign 4
    # Capture current location counter
-   .set \Label\()_ram, .           
+   .set _\Label\()_ram, .           
    .space 4
    .section amforth
    # Write the captured address into flash
-   .word \Label\()_ram             
+   .word _\Label\()_ram             
    .word \XT
    .word XT_FETCH
    .word XT_STORE

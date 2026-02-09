@@ -62,7 +62,7 @@ SYSTEM:
     cold warm init-ram turnkey appl-turnkey quit pause
     ms us ver rev-info build-info 
     pv.do pv.init vaddr pv.store pvp
-    pvflash.size pvflash.page pvflash.cell pvflash.erased pvflash.erase @pvf !pvf
+    pvflash.size pvflash.page pvflash.cell pvflash.erased pvflash.erase @ 2!pvf
     pvarena.size pvarena.init pvarena.swap pvarena.erase pvarena pvarena.dormant pvarena1 pvarena2
 TOOLS:
     debug || dump vdump break

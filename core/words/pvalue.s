@@ -11,7 +11,7 @@ Main goals of the implementation were:
 
 To be able to compact the log when PVFLASH fills up, the region is divided into two equal size arenas,
 only one of which is active at a time (pvarena). When the arena fills up, compact and swap operation
-is triggerred automatically on next record write attempt (pvarena.swap). If the swap doesn't complete
+is triggered automatically on next record write attempt (pvarena.swap). If the swap doesn't complete
 for whatever reason, it will be attempted again, until it finishes successfully.
 It can also be invoked explicitly at any time.
 
@@ -21,12 +21,13 @@ The log entries (pvalue records) are 2 words:
 
 First record of the arena is used to capture arena state. The two words have following meaning
 1) COUNTER: starts at 0 and is incremented for each new arena activation after the swap
-2) DIRTY: flash.erased for blank dormant arena, 0 for arena that has been written into
+2) DIRTY: pvflash.erased for blank dormant arena, ~pvflash.erased for arena that has been written into
 
-COUNTER has its MSB always set to make it distinct from usual RAM addresses. It counts up to pvflash.erased (usually -1) so there needs to be enough room for all the swaps (normally shouldn't be a problem).
-DIRTY is the first cell of a blank arena that is written, COUNTER is last. These are written only
-during very first initialization and during a swap. A swap hasn't been successful until the
-COUNTER is written.
+COUNTER has its MSB always set to make it distinct from usual RAM addresses. It counts up to pvflash.erased (usually -1)
+so there needs to be enough room for all the swaps (normally shouldn't be a problem, given the usual flash memory lifetime).
+Arena record is the last thing written into the new arena during a swap. This allows detecting unfinished swaps,
+a swap hasn't been successful until the COUNTER is written.
+The only other time when arena record is written is during the very first initialization (first-boot).
 
 Following forth code documents the implementation. It is transpiled into ITC below.
 
@@ -39,11 +40,9 @@ Following forth code documents the implementation. It is transpiled into ITC bel
     pvarena.size dup 0= if ! exit then
     \ check that there is room in the current arena, compact and swap arenas otherwise
     pvarena + pvp <= if pvarena.swap then
-    \ write pvalue RAM address as the record ID
-    dup pvp !pvf \ store addr at pvp
-    over pvp cell+ tuck \ ( x addr pvp+ x pvp+ )
-    !pvf \ store x at pvp+
-    cell+ to pvp \ update pvp to pvp++
+    \ write pvalue RAM address as the record ID, then the value
+	2dup pvp 2!pvf
+    pvp cell+ cell+ to pvp \ increment pvp
     ! \ update ram
 ;
 
@@ -55,8 +54,8 @@ Following forth code documents the implementation. It is transpiled into ITC bel
 \ Second cell is either -1 or 0. Erased dormant arena has both cells set to -1.
 \ Current arena is the one with higher ID that is not -1.
 : pvarena.init ( -- ) \ set pvarena to whichever arena should be current
-    pvarena1 @pvf dup pvflash.erased <> if \ is arena1 dormant? (ID == pvlfash.erased)
-        pvarena2 @pvf dup pvflash.erased <> if \ is arena2 dormant?
+    pvarena1 @ dup pvflash.erased <> if \ is arena1 dormant? (ID == pvlfash.erased)
+        pvarena2 @ dup pvflash.erased <> if \ is arena2 dormant?
             \ (a1id a2id) higher ID wins
             < if pvarena2 to pvarena
             else pvarena1 to pvarena
@@ -66,12 +65,11 @@ Following forth code documents the implementation. It is transpiled into ITC bel
             2drop \ unused arena IDs
         then
     else \ arena1 is dormant ( pvlfash.erased )
-        pvarena2 @pvf pvflash.erased <> if \ is arena2 dormant?
+        pvarena2 @ pvflash.erased <> if \ is arena2 dormant?
             pvarena2 to pvarena
         else \ arena2 is dormant
             \ both arenas are blank, initialize arena1 and use it.
-            $80000000 pvarena1 !pvf
-            0 pvarena1 cell+ !pvf
+            pvflash.erased invert $80000000 pvarena1 2!pvf
             pvarena1 to pvarena
         then
         drop \ unused arena1 ID
@@ -86,9 +84,9 @@ Following forth code documents the implementation. It is transpiled into ITC bel
     pvarena.init \ initialize pvarena
     pvarena cell+ cell+ \ skip the arena record
     begin
-    dup @pvf dup pvflash.erased <> while \ if record id is not all 1 bits, i.e. -1
+    dup @ dup pvflash.erased <> while \ if record id is not all 1 bits, i.e. -1
         \ ( pvp pv-ram )
-        swap cell+ tuck @pvf \ ( pvp+ pv-ram [pvp+] )
+        swap cell+ tuck @ \ ( pvp+ pv-ram [pvp+] )
         swap ! \ update pvalue in RAM ( pvp+ )
         cell+ \ ( pvp++ )
     repeat
@@ -129,10 +127,10 @@ Following forth code documents the implementation. It is transpiled into ITC bel
 
 \ used to prepare dormant arena for arena swap (this should be noname)
 : pv.write ( awp ffa - awp++ f ) \ write pvalue record at awp, advance awp
-    >body @ \ ( awp pv-ram )
-    2dup swap !pvf @ \ write record ID ( awp [pv-ram] )
-    swap cell+ tuck !pvf \ write the value ( awp+ )
-    cell+ \ ( awp++ )
+	swap dup rot \ ( awp awp ffa )
+    >body @ dup @ swap rot \ ( awp [pv-ram] pv-ram awp )
+    2!pvf \ write the record
+    cell+ cell+ \ ( awp++ )
     true
 ;
 
@@ -144,15 +142,16 @@ Following forth code documents the implementation. It is transpiled into ITC bel
 \ it can also be run explicitly, doesn't have to be invoked automatically by pv.store
 : pvarena.swap ( -- ) \ write fresh pvalues into the dormant arena and swap arenas
     pvarena.dormant
-    \ check if it needs to be erased
-    dup cell+ dup @pvf pvflash.erased <> if dup pvarena.erase then
-    \ write dirty mark ( arena arena+ )
-    dup 0 swap !pvf cell+ \ ( arena arena++ )
+    \ check if it needs to be erased, was the first pvalue record written?
+    dup cell+ cell+ dup @ pvflash.erased <> if over pvarena.erase then
+    \ ( arena arena++ )
     \ write fresh record for each persistent value in forth-wordlist
     ['] pv.write pv.do
     swap \ swap the arena pointers ( awp arena )
-    \ write arena ID (this must happen last)
-    dup pvarena @pvf 1+ swap !pvf
+    \ write arena record, this MUST happen last
+    dup pvflash.erased invert swap ( awp arena dirty arena )
+	pvarena @ 1+ swap ( awp arena dirty id arena )
+	2!pvf
     \ swap arenas ( awp arena )
     pvarena swap ( awp old-arena new-arena )
     to pvarena swap \ set pvarena
@@ -184,25 +183,25 @@ END PVFLASH_ERASED
 CONSTANT "pvflash.size", PVFLASH_SIZE, pvflash.size /* total size of PV flash */
 END PVFLASH_SIZE
 
+CONSTANT "pvflash.start", PVFLASH_START, pvflash.start /* start address of PV flash */
+END PVFLASH_START
+
 
 /* following deferred words are data flash primitives that need to be implemented by the MCU */
 
-DEFER "!pvf", STORE_PVF, XT_STORE /* ( x addr -- ) store x at addr in the PV flash */
-END STORE_PVF
+DEFER "2!pvf", 2STORE_PVF, XT_2STORE /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
+END 2STORE_PVF
 
-DEFER "@pvf", FETCH_PVF, XT_FETCH /* ( addr -- x ) load cell at addr in the PV flash */
-END FETCH_PVF
-
-DEFER "pvflash.erase", PVFLASH_ERASE, XT_FAUXERASE /* ( addr -- ) erase PV flash page at addr */
+DEFER "pvflash.erase", PVFLASH_ERASE, XT_PVFAUXERASE /* ( addr -- ) erase PV flash page at addr */
 END PVFLASH_ERASE
 
-NONAME FAUXERASE /* ( addr -- ) erase PV flash page at addr */
+NONAME PVFAUXERASE /* ( addr -- ) erase PV flash page at addr */
     .word XT_DUP, XT_PVFLASH_PAGE, XT_PLUS, XT_SWAP, XT_DODO
 1:	
 		.word XT_PVFLASH_ERASED, XT_I, XT_STORE
 	.word XT_DOLITERAL, 4, XT_DOPLUSLOOP, 1b
 	.word XT_EXIT
-END FAUXERASE
+END PVFAUXERASE
 
 /* pvalue runtime values, must be initialized by pv.init */
 
@@ -241,24 +240,12 @@ COLON "pv.store", PV_STORE /* ( x xt -- ) update pvalue identified by xt to valu
 	.word XT_LESSEQUAL
 	.word XT_DOCONDBRANCH, 2f
 	    .word XT_PVARENA_SWAP
- 2: # then
-    /* (x addr) */
-    /* write pvalue RAM address as the record ID */
-	.word XT_DUP
-	.word XT_PVP
-	.word XT_STORE_PVF
-	.word XT_OVER
-	.word XT_PVP
-	.word XT_CELLPLUS
-	.word XT_TUCK
-    /* ( x addr pvp+ x pvp+ ) */
-    /* write x next */
-	.word XT_STORE_PVF
-    /* update PVP */
-	.word XT_CELLPLUS
-	.word XT_DOTO
-	.word XT_PVP
-    /* update RAM */
+ 2: /* then */
+    /* ( x addr ) write pvalue RAM address as the record ID */
+	.word XT_2DUP, XT_PVP, XT_2STORE_PVF
+    /* ( x addr ) update PVP */
+	.word XT_PVP, XT_CELLPLUS, XT_CELLPLUS, XT_DOTO, XT_PVP
+    /* ( x addr ) update RAM */
 	.word XT_STORE
 	.word XT_EXIT
 END PV_STORE
@@ -284,12 +271,12 @@ COLON "pvarena.init", PVARENA_INIT /* ( -- ) set pvarena to whichever arena shou
         .word XT_EXIT
 1:
 	.word XT_PVARENA1
-	.word XT_FETCH_PVF
+	.word XT_FETCH
 	.word XT_DUP
 	.word XT_PVFLASH_ERASED, XT_NOTEQUAL
 	.word XT_DOCONDBRANCH,PVARENA_INIT_0001
 	.word XT_PVARENA2
-	.word XT_FETCH_PVF
+	.word XT_FETCH
 	.word XT_DUP
 	.word XT_PVFLASH_ERASED, XT_NOTEQUAL
 	.word XT_DOCONDBRANCH,PVARENA_INIT_0002
@@ -314,7 +301,7 @@ PVARENA_INIT_0005: # then
 	.word XT_DOBRANCH,PVARENA_INIT_0006
 PVARENA_INIT_0001: /* else \ arena1 is dormant */
 	.word XT_PVARENA2
-	.word XT_FETCH_PVF
+	.word XT_FETCH
 	.word XT_PVFLASH_ERASED, XT_NOTEQUAL
 	.word XT_DOCONDBRANCH,PVARENA_INIT_0007
 	.word XT_PVARENA2
@@ -323,17 +310,11 @@ PVARENA_INIT_0001: /* else \ arena1 is dormant */
 	.word XT_DOBRANCH,PVARENA_INIT_0008
 PVARENA_INIT_0007: # else
     /* both arenas are blank, initialize arena1 and use it. */
-	.word XT_DOLITERAL
-	.word 0x80000000
+	.word XT_PVFLASH_ERASED, XT_INVERT
+	.word XT_DOLITERAL, 0x80000000
 	.word XT_PVARENA1
-	.word XT_STORE_PVF
-	.word XT_ZERO
-	.word XT_PVARENA1
-	.word XT_CELLPLUS
-	.word XT_STORE_PVF
-	.word XT_PVARENA1
-	.word XT_DOTO
-	.word XT_PVARENA
+	.word XT_2STORE_PVF
+	.word XT_PVARENA1, XT_DOTO, XT_PVARENA
 PVARENA_INIT_0008: # then
 	.word XT_DROP
 PVARENA_INIT_0006: # then
@@ -351,14 +332,14 @@ COLON "pv.init", PV_INIT /* ( -- ) replay pvarena records, set pvp */
 	.word XT_CELLPLUS
 PV_INIT_0001: # begin
 	.word XT_DUP
-	.word XT_FETCH_PVF
+	.word XT_FETCH
 	.word XT_DUP
 	.word XT_PVFLASH_ERASED, XT_NOTEQUAL
 	.word XT_DOCONDBRANCH,PV_INIT_0002
 	.word XT_SWAP
 	.word XT_CELLPLUS
 	.word XT_TUCK
-	.word XT_FETCH_PVF
+	.word XT_FETCH
 	.word XT_SWAP
 	.word XT_STORE
 	.word XT_CELLPLUS
@@ -412,18 +393,14 @@ END PVARENA_ERASE
 
 NONAME PV_WRITE /* ( awp ffa - awp++ f ) write pvalue record at awp, advance awp */
 /*  Used to prepare dormant arena for arena swap */
-	.word XT_TO_BODY
-	.word XT_FETCH
-	.word XT_2DUP
-	.word XT_SWAP
-	.word XT_STORE_PVF
-	.word XT_FETCH
-	.word XT_SWAP
-	.word XT_CELLPLUS
-	.word XT_TUCK
-	.word XT_STORE_PVF
-	.word XT_CELLPLUS
+	.word XT_SWAP, XT_DUP, XT_ROT /* ( awp awp ffa ) */
+	.word XT_TO_BODY, XT_FETCH, XT_DUP, XT_FETCH, XT_SWAP, XT_ROT
+	/* ( awp [pv-ram] pv-ram awp ) */
+	.word XT_2STORE_PVF
+	/* update awp */
+	.word XT_CELLPLUS, XT_CELLPLUS
 	.word XT_TRUE
+	/* ( awp++ true ) */
 	.word XT_EXIT
 END PV_WRITE
 
@@ -437,39 +414,27 @@ COLON "pvarena.swap", PVARENA_SWAP /* ( -- ) write fresh pvalues into the dorman
     It should be always possible to rerun a swap if it fails to complete for whatever reason (e.g. reset)
     It can also be run explicitly, doesn't have to be invoked automatically by pv.store. */
 	.word XT_PVARENA_DORMANT
-	.word XT_DUP
-	.word XT_CELLPLUS
-	.word XT_DUP
-	.word XT_FETCH_PVF
-	.word XT_PVFLASH_ERASED, XT_NOTEQUAL
-	.word XT_NOTZEROEQUAL
-	.word XT_DOCONDBRANCH,PVARENA_SWAP_0001
-	.word XT_DUP
-	.word XT_PVARENA_ERASE
-PVARENA_SWAP_0001: # then
-	.word XT_DUP
-	.word XT_ZERO
-	.word XT_SWAP
-	.word XT_STORE_PVF
-	.word XT_CELLPLUS
-	.word XT_DOLITERAL
-	.word XT_PV_WRITE
-	.word XT_PV_DO
-	.word XT_SWAP
-	.word XT_DUP
-	.word XT_PVARENA
-	.word XT_FETCH_PVF
-	.word XT_1PLUS
-	.word XT_SWAP
-	.word XT_STORE_PVF
-	.word XT_PVARENA
-	.word XT_SWAP
-	.word XT_DOTO
-	.word XT_PVARENA
-	.word XT_SWAP
-	.word XT_DOTO
-	.word XT_PVP
-	.word XT_PVARENA_ERASE
+	/* check if it needs to be erased, was the first pvalue record written? */
+	.word XT_DUP, XT_CELLPLUS, XT_CELLPLUS, XT_DUP, XT_FETCH, XT_PVFLASH_ERASED
+	/* ( arena arena++ [arena++] erased ) */
+	.word XT_NOTEQUAL, XT_DOCONDBRANCH, 1f
+		.word XT_OVER, XT_PVARENA_ERASE
+1:	/* then */
+	/* ( arena arena++ ) write fresh record for each persistent value in forth-wordlist */
+	.word XT_DOLITERAL, XT_PV_WRITE, XT_PV_DO
+	/* ( arena awp ) awp is arena write pointer, next free cell */
+	/* write arena record, this MUST happen last */
+	.word XT_SWAP, XT_DUP, XT_PVFLASH_ERASED, XT_INVERT, XT_SWAP
+	/* ( awp arena dirty arena ) */
+	.word XT_PVARENA, XT_FETCH, XT_1PLUS, XT_SWAP
+	/* ( awp arena dirty id arena ) */
+	.word XT_2STORE_PVF
+	/* update arena pointers */
+	.word XT_PVARENA, XT_SWAP
+	/* ( awp old-arena new-arena ) */
+	.word XT_DOTO, XT_PVARENA /* set pvarena */
+	.word XT_SWAP, XT_DOTO, XT_PVP /* set pvp */
+	.word XT_PVARENA_ERASE /* ( old-arena ) erase old arena */
 	.word XT_EXIT
 END PVARENA_SWAP
 
@@ -511,3 +476,14 @@ COLON "pv.do", PV_DO /* ( xt -- ) run xt ( pv-xt -- f ) for every pvalue in fort
     .word XT_DROP
     .word XT_EXIT
 END PV_DO
+
+COLON "pv.reset-hard", PV_RESET_HARD /* ( -- ) erase entire pvflash and reinitialize pvalue system */
+/* WARNING: All pvalue records will be wiped, they will reset to their default values on next restart.
+	However you may want to do this before uploading a new build of AmForth to the board.
+	You do not want pv.init replaying invalid records with wrong RAM addresses,
+	which is likely if pvalues moved around in the new build. */
+	.word XT_PVARENA_DORMANT, XT_PVFLASH_ERASE
+	.word XT_PVARENA, XT_PVFLASH_ERASE
+	.word XT_PV_INIT
+	.word XT_EXIT
+END PV_RESET_HARD

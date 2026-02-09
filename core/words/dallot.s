@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 DEFER "(dallot)", LPARENDALLOTRPAREN, XT_NOP
+END LPARENDALLOTRPAREN
 
-COLON "dallot", DALLOT 
+COLON "dallot", DALLOT /* ( u -- allocate u bytes in the dictionary ) */
     .word XT_MEMMODE
     .word XT_DOCONDBRANCH,DALLOT_0001 /* if */
     .word XT_LPARENDALLOTRPAREN
@@ -14,5 +15,4 @@ DALLOT_0001: /* else */
     .word XT_DP
 DALLOT_0002: /* then */
     .word XT_EXIT
-
-
+END DALLOT

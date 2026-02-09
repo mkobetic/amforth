@@ -43,13 +43,15 @@ GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py3
 
 ## Build all files
 all: build/amforth.bin build/amforth.hex build/amforth.lst build/amforth.sal build/amforth.sym build/amforth.toc build/amforth.txt build/amforth.html
-	@echo INFO: Built $(REVISION) using $(TC_DIR)
+	@echo INFO: Built $(TARGET) $(REVISION) using $(TC_DIR)
 
 buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date -Iseconds`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 	mkdir -p build
 
-ASFLAGS += -g --warn --fatal-warnings -ahlmn=build/amforth.lst-as
+# Basic assembly flags and defining TARGET_XXX symbol.
+# String value symbols cannot be defined through command line, so TARGET=XXX wouldn't work.
+ASFLAGS += -g --warn --fatal-warnings -ahlmn=build/amforth.lst-as --defsym TARGET_$(TARGET)=1
 # if you want to run standard tests you need WANT_IGNORECASE flag set
 ifdef WANT_IGNORECASE
 ASFLAGS +=--defsym WANT_IGNORECASE=1

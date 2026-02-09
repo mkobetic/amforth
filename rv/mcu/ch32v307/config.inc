@@ -1,27 +1,23 @@
 # SPDX-License-Identifier: GPL-3.0-only
-# options
 
 .include "core/config.inc"
 
-.ifdef BUILD_QEM
-
+.ifdef TARGET_QEM
 .equ flash_page, 4*1024
 .equ flash_cell, 2
-.equ flash_erased, 0xE339E339 /* a word in erased flash */
-.equ flash_size, 256*1024
+.equ flash_erased, 0x00000000 /* a word in erased flash */
 .equ flash_mask, flash_page - 1
 .equ flash_veil, 0xFFFFFFFF - flash_mask
 
-.else /* BUILD_307 */
+.else /* TARGET_307 */
 
 .equ flash_page, 4*1024
 .equ flash_cell, 2
 .equ flash_erased, 0xE339E339 /* a word in erased flash */
-.equ flash_size, 256*1024
 
 .endif
 
-/* fast flash mode 
+/* fast flash mode
 .equ flash_page, 256
 .equ flash_cell, 256
 */
@@ -30,10 +26,8 @@
 # the equivalent defines set too. No easy way to do it from here.
 
 # Choose NO if you want to include C code in the lib_???_user dir 
-
 .equ WANT_ASM_BUILD    , YES
 
-#.equ WANT_IGNORECASE   , YES
 .equ WANT_NESTED_ISR   , NO
 
 # if WANT_ASM_BUILD is YES the USB options will be ignored 

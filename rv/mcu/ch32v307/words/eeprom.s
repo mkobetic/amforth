@@ -44,7 +44,7 @@ COLON "eeprom.xxxx" , EEPROMDOTXXXX # ( -- ) EEPROM: clear all
     .word XT_EEPROMDOTSAVE 
     .word XT_EEPROMDOTLOCK 
     .word XT_STDDOTUNLOCK 
-    .word XT_DP0DOTFLASH
+    .word XT_DP0_FLASH
     .word XT_STDDOTERASE 
     .word XT_EEPROMDOTWARM
 	.word XT_EXIT
@@ -63,9 +63,9 @@ COLON "eeprom.init" , EEPROMDOTINIT # ( -- ) EEPROM: if first run init eeprom an
     .word XT_EEPROMDOTCLEAR 
     .word XT_EEPROMDOTSAVE 
     .word XT_EEPROMDOTLOCK 
-    .word XT_STDDOTUNLOCK 
-    .word XT_DP0DOTFLASH
-    .word XT_STDDOTERASE 
+    # .word XT_STDDOTUNLOCK 
+    # .word XT_DP0_FLASH
+    # .word XT_STDDOTERASE 
 EEPROMDOTINIT_0001: # then
 	.word XT_EXIT
 
@@ -83,7 +83,7 @@ COLON "eeprom.freeze" , EEPROMDOTFREEZE # ( -- ) EEPROM:
 EEPROMDOTFREEZE_0001: # else
 	.word XT_DP_FLASH
 EEPROMDOTFREEZE_0002: # then    
-    .word XT_DP0DOTFLASH , XT_MINUS
+    .word XT_DP0_FLASH , XT_MINUS
     .word XT_EEP_BUF , XT_ONE , XT_CELLS , XT_PLUS 
     .word XT_STORE     
 
@@ -104,7 +104,7 @@ COLON "eeprom.warm" , EEPROMDOTWARM # ( -- ) EEPROM:
 
   # update flash_dp
   .word XT_EEP_BUF , XT_ONE , XT_CELLS , XT_PLUS , XT_FETCH
-  .word XT_DP0DOTFLASH , XT_PLUS 
+  .word XT_DP0_FLASH , XT_PLUS 
   .word XT_DOTO , XT_DP_FLASH 
 
   # update ram pool pointer 
@@ -343,7 +343,8 @@ CODEWORD "flash.unlock", FLASH_UNLOCK # ( -- ) FLASH: Unlock flash
 
       NEXT
 
-CODEWORD "flash.erase" , FLASH_ERASE # ( a-flash -- ) FLASH: Erase 256B page flash-a is in 
+/* TODO: Had to rename this as it now conflicts with flash.erase in flash-common.s */
+CODEWORD "eeflash.erase" , EEFLASH_ERASE # ( a-flash -- ) FLASH: Erase 256B page flash-a is in 
 
       li  t0 , 0xFFFFFF00     # make the page address 
       and s3 , s3, t0         # from TOS
@@ -373,4 +374,4 @@ CODEWORD "flash.erase" , FLASH_ERASE # ( a-flash -- ) FLASH: Erase 256B page fla
   
       loadtos
       NEXT
-
+END EEFLASH_ERASE

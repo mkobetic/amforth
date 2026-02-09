@@ -3,16 +3,11 @@
 \ Do not use this on real MCU it will wipe your PVFLASH (see below)
 hex
 
-\ CH32 init
-\ ' ~!i is !pvf
-\ ' std.erase is pvflash.erase
-\ std.unlock
-
 \ Make sure arenas are "erased" to the expected blank flash state
-pvarena1 pvarena.erase
-pvarena1 10 - 5 dump \ check arena1
-pvarena2 pvarena.erase
-pvarena2 10 - 5 dump \ check arena2
+\ pvarena1 pvarena.erase
+\ pvarena1 10 - 5 dump \ check arena1
+\ pvarena2 pvarena.erase
+\ pvarena2 10 - 5 dump \ check arena2
 
 \ show initial setup
 pv.init

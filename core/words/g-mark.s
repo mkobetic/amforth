@@ -16,7 +16,7 @@ COLON "gmark", GMARK
 	.word XT_DOCONDBRANCH,GMARK_0001 /* if */
 	.word XT_DP
 	.word XT_DUP
-    .word XT_FLASHDOTCELL
+    .word XT_FLASH_CELL
     .word XT_PLUS
     .word XT_DOTO
 	.word XT_DP

@@ -6,7 +6,7 @@ ENVIRONMENT "board", BOARD
     STRING "WCH CH32V203"
 .endif
 
-.ifdef BUILD_307
+.ifdef TARGET_307
     STRING "WCH CH32V307"
 .endif
 
@@ -14,7 +14,7 @@ ENVIRONMENT "board", BOARD
     STRING "WCH CH32V305"
 .endif
 
-.ifdef BUILD_QEM
+.ifdef TARGET_QEM
     STRING "QEMU"
 .endif
 

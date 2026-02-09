@@ -38,7 +38,7 @@
 
 # keep for education 
 .ifnb 
-CODEWORD "flash.write" , FLASHDOTWRITE # ( flash ram -- )
+CODEWORD "flash.write" , FLASH_WRITE # ( flash ram -- )
    mv a0 , s3 
    lw a1 , 0(s4)
    jal FLASH_ProgramPage_Fast
@@ -50,7 +50,7 @@ CODEWORD "flash.write" , FLASHDOTWRITE # ( flash ram -- )
 
 # .ifnb 
 
-# CODEWORD "flash.write" , FLASHDOTWRITE # ( a-ram a-flash -- ) FLASH: write 256 bytes at a-ram to a-flash
+# CODEWORD "flash.write" , FLASH_WRITE # ( a-ram a-flash -- ) FLASH: write 256 bytes at a-ram to a-flash
 
 #         li t0 , 0xFFFFFF00 
 #         mv t3 , s3              # flash address
@@ -120,7 +120,7 @@ CODEWORD "flash.write" , FLASHDOTWRITE # ( flash ram -- )
 #         NEXT
 # .else        
 # #----------------------------------------------------------------------
-# COLON "flash.write", FLASHDOTWRITE # ( a-ram a-flash -- ) FLASH: write 256 bytes at a-ram to a-flash
+# COLON "flash.write", FLASH_WRITE # ( a-ram a-flash -- ) FLASH: write 256 bytes at a-ram to a-flash
 #         .word XT_DOLITERAL
 #         .word 0xFFFFFF00
 #         .word XT_AND 
@@ -132,7 +132,7 @@ CODEWORD "flash.write" , FLASHDOTWRITE # ( flash ram -- )
 # 	.word 64
 # 	.word XT_ZERO
 # 	.word XT_DODO
-# FLASHDOTWRITE_0002: # do
+# FLASH_WRITE_0002: # do
 # 	.word XT_2DUP
 # 	.word XT_FETCH
 # 	.word XT_SWAP
@@ -142,8 +142,8 @@ CODEWORD "flash.write" , FLASHDOTWRITE # ( flash ram -- )
 # 	.word XT_CELLPLUS
 # 	.word XT_SWAP
 # 	.word XT_WAIT_FLASH_WRITING
-# 	.word XT_DOLOOP,FLASHDOTWRITE_0002 # loop
-# FLASHDOTWRITE_0001: # (for ?do IF required) 
+# 	.word XT_DOLOOP,FLASH_WRITE_0002 # loop
+# FLASH_WRITE_0001: # (for ?do IF required) 
 # 	.word XT_FLASH_PROG
 # 	.word XT_WAIT_FLASH_BUSY
 # 	.word XT_MINUS_FLASH_PROG
@@ -225,7 +225,6 @@ CODEWORD "~flash.eop" , WAIT_FLASH_EOP # ( -- ) FLASH: Busy loop exit when FLASH
 
 
 CONSTANT "EOW" , EOW , 0xE339E339 
-CONSTANT "flash.low"    , FLASH_LOW   , flash.low
 
 #CODEWORD "flash.mode" , FLASH_MODE
 #  mv a0 , s3
@@ -281,7 +280,7 @@ QCOMMA_0002: # then
 # ----------------------------------------------------------------------
 # THIS IS THE PART TW 
 
-.ifdef BUILD_QEM
+.ifdef TARGET_QEM
 
     COLON "(h!i)" , INT_STORE
     .word XT_HSTORE

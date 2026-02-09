@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "s,", SCOMMA 
+COLON "s,", SCOMMA /* ( addr u -- ) append string at addr to the dictionary (with count prefix) */
 	.word XT_DUP
 	.word XT_CCOMMA
 	.word XT_ZERO
@@ -28,4 +28,5 @@ SCOMMA_0004: # do
 	.word XT_DOLOOP,SCOMMA_0004 /* loop */
 SCOMMA_0003: # (for ?do IF required) 
 	.word XT_EXIT
+END SCOMMA
 

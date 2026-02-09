@@ -11,7 +11,11 @@ COLON "warm", WARM /* ( -- ) high level part of the boot sequence, VM is running
   /* initialize values and defers to their defaults */
   .word XT_INIT_RAM
 
+  /* initialize flash system */
+  .word XT_FLASH_INIT
+
   /* initialize pvalue system */
+  .word XT_PVFLASH_INIT
   .word XT_QFIRST_BOOT, XT_DOCONDBRANCH, 1f
     .word XT_PVARENA1, XT_DOTO, XT_PVARENA, XT_PV_RESET_HARD
     .word XT_DOBRANCH, 2f 
@@ -20,10 +24,20 @@ COLON "warm", WARM /* ( -- ) high level part of the boot sequence, VM is running
 2:
   /* check and mark first-boot done */
   .word XT_QFIRST_BOOT, XT_DOCONDBRANCH, 1f
+    .word XT_ZERO, XT_DOTO, XT_PV1
     .word XT_FIRST_BOOT_DONE
 1:
-  .word XT_LBRACKET
+
+  .word XT_LBRACKET   
   .word XT_TURNKEY    
   .word XT_QUIT       
-  .word XT_EXIT
+  .word XT_EXIT       
 END WARM
+
+NONAME PVFLASH_INIT
+  /* ' 2!i is 2!pvf */
+  .word XT_DOLITERAL, XT_2STOREI, XT_DOLITERAL, XT_2STORE_PVF, XT_DEFER_STORE  
+  /* ' (flash.erase) is pvflash.erase */
+  .word XT_DOLITERAL, XT_DOFLASH_ERASE, XT_DOLITERAL, XT_PVFLASH_ERASE, XT_DEFER_STORE  
+  .word XT_EXIT
+END PVFLASH_INIT
