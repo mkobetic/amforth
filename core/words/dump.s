@@ -10,7 +10,7 @@
 #           then ;
 
 
-COLON "?ascii", QASCII
+COLON "?ascii", QASCII /* ( c -- f ) f is true if c is printable character */
     .word XT_DUP, XT_DOLITERAL,0x20,XT_LESS
     .word XT_DOCONDBRANCH,PFA_QASCII1
 	.word XT_DROP, XT_DOLITERAL,0x2e
@@ -21,7 +21,7 @@ PFA_QASCII1:
 	.word XT_DROP, XT_DOLITERAL,0x2e
 PFA_QASCII2:
     .word XT_EXIT
-
+END QASCII
 
 # MFD COLON ".2hex", DOT2HEX 
 #     .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX
@@ -39,26 +39,24 @@ PFA_QASCII2:
 #     .word XT_R_FROM,XT_BASE,XT_STORE
 #     .word XT_EXIT
 
-COLON ".8hex", DOT8HEX
-# ( u -- ) OUTPUT: Display u as 8 digit hex
+COLON ".8hex", DOT8HEX /* ( u -- ) display u as 8 digit hex */
     .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX
     .word XT_S2D,XT_L_SHARP,XT_SHARP,XT_SHARP,XT_SHARP,XT_SHARP
     .word XT_SHARP,XT_SHARP,XT_SHARP,XT_SHARP
     .word XT_SHARP_G,XT_TYPE
     .word XT_R_FROM,XT_BASE,XT_STORE
     .word XT_EXIT
-
+END DOT8HEX
      
-COLON "x." XDOT
-# ( n -- ) OUTPUT: Display u without trailing space 
+COLON "x." XDOT /* ( u -- ) display u without trailing space */
     .word XT_S2D,XT_SWAP,XT_OVER,XT_DABS
     .word XT_L_SHARP,XT_SHARP_S
     .word XT_ROT,XT_SIGN
     .word XT_SHARP_G,XT_TYPE
     .word XT_EXIT
+END XDOT
 
-COLON "2x." 2XDOT
-# ( u -- ) OUTPUT: Display u as 2 digit hex
+COLON "2x." 2XDOT /* ( u -- ) display u as 2 digit hex */
     .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX  
     .word XT_DOLITERAL, 0 
     .word XT_L_SHARP
@@ -66,9 +64,9 @@ COLON "2x." 2XDOT
     .word XT_SHARP_G,XT_TYPE
     .word XT_R_FROM,XT_BASE,XT_STORE
     .word XT_EXIT
+END 2XDOT
 
-COLON "8x." 8XDOT
-# ( u -- ) OUTPUT: Display u as 8 digit hex no space
+COLON "8x." 8XDOT /* ( u -- ) display u as 8 digit hex no space */
     .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX  
     .word XT_DOLITERAL, 0 
     .word XT_L_SHARP
@@ -79,9 +77,9 @@ COLON "8x." 8XDOT
     .word XT_SHARP_G,XT_TYPE
     .word XT_R_FROM,XT_BASE,XT_STORE
     .word XT_EXIT
+END 8XDOT
 
-COLON "hex." HEXDOT
-# ( n -- ) OUTPUT: output n as unsigned 32 bit hex 
+COLON "hex." HEXDOT /* ( u -- ) output u as unsigned 32 bit hex  */
     .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX  
     .word XT_DOLITERAL, 0 
     .word XT_L_SHARP
@@ -92,16 +90,16 @@ COLON "hex." HEXDOT
     .word XT_SHARP_G,XT_TYPE,XT_SPACE 
     .word XT_R_FROM,XT_BASE,XT_STORE
     .word XT_EXIT
-            
-COLON "r.", RDOT
-# ( n -- ) OUTPUT: output n as 32 bit binary with crib 
+END HEXDOT
+
+COLON "r.", RDOT /* ( n -- ) output n as 32 bit binary with crib  */
     STRING "..28 ..24 ..20 ..16 ..12 ..08 ..04 ..00"
     .word XT_TYPE,XT_CR
     .word XT_RDOTDOT
     .word XT_EXIT
+END RDOT
 
-COLON "r..", RDOTDOT
-# ( n -- ) OUTPUT: output n as 32 bit binary 
+COLON "r..", RDOTDOT /* ( n -- ) output n as 32 bit binary  */
     .word XT_BASE,XT_FETCH,XT_TO_R,XT_DOLITERAL,2,XT_BASE,XT_STORE 
     .word XT_DOLITERAL, 0 
     .word XT_L_SHARP
@@ -124,8 +122,7 @@ RDOTDOT_0001:
 #     $10 + cr 
 #  $10 +loop drop ;
 
-COLON "dump" , DUMP
-# ( a u -- ) SYSTEM: Dump u lines of 16 bytes including [a]
+COLON "dump" , DUMP /* ( a u -- ) dump u lines of 16 bytes including [a] */
 #    .word XT_SWAP,XT_DOLITERAL, 0xf, XT_INVERT,XT_AND,XT_SWAP
     .word XT_SWAP,XT_DOLITERAL, 0x3, XT_INVERT,XT_AND,XT_SWAP
     .word XT_CR,XT_ZERO
@@ -151,6 +148,7 @@ PFA_DUMP4:
     .word XT_DOLITERAL,0x10,XT_PLUS,XT_CR,XT_DOLOOP,PFA_DUMP0
 
     .word XT_DROP,XT_EXIT
+END DUMP
 
 #COLON "dump", DUMP
 #    .word XT_SWAP,XT_DOLITERAL, 0xfffffff0, XT_AND,XT_SWAP

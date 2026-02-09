@@ -1,4 +1,4 @@
-COLON "vdump", VDUMP 
+COLON "vdump", VDUMP /* ( addr u -- ) dump u bytes from addr as words */
 	.word XT_ZERO
 	.word XT_DODO
 VDUMP_0002: /* do */
@@ -15,4 +15,4 @@ VDUMP_0002: /* do */
 VDUMP_0001: /* # (for ?do IF required) */
 	.word XT_DROP
 	.word XT_EXIT
-# ----------------------------------------------------------------------
+END VDUMP

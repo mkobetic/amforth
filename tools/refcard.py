@@ -75,9 +75,9 @@ def parse_toc(filepath, categories):
     words_data = {}
     
     word_category_map = {}
-    for _, words in categories:
+    for category, words in categories:
         for word in words:
-            word_category_map[word] = words
+            word_category_map[word] = category
     uncategorized_set = set()
     mcu_words = set()
     
@@ -132,14 +132,11 @@ def parse_toc(filepath, categories):
                 }
                 
                 
-                if 'mcu' in location.split('/'):
-                    mcu_words.add(name)
-                    uncategorized_set.discard(name)
-                    if name in word_category_map:
-                        word_category_map[name].remove(name)
-                        del word_category_map[name]
-                elif name not in word_category_map:
-                    uncategorized_set.add(name)
+                if name not in word_category_map:
+                    if 'mcu' in location.split('/'):
+                        mcu_words.add(name)
+                    else:
+                        uncategorized_set.add(name)
     
     if mcu_words:
         categories.append(("MCU", sorted(mcu_words)))
