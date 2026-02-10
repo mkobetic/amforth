@@ -2,6 +2,7 @@
 .globl PFA_COLD 
 
 .include "config.inc"
+.include "build-config.inc"
 .include "arm/macros.inc"
 .include "user.inc"
 

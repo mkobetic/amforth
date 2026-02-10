@@ -17,3 +17,4 @@ QNOP_0002: /* then */
 QNOP_0001: /* then */
 .endif 
 	.word XT_EXIT
+END QNOP

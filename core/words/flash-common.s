@@ -1,4 +1,18 @@
 # SPDX-License-Identifier: GPL-3.0-only
+/*	Common aspects of flash support, relied on by the core.
+	Expected to be supported by all MCUs.
+*/
+
+CONSTANT  "flash.page"  , FLASHDOTPAGE , flash_page
+END FLASHDOTPAGE
+CONSTANT  "flash.cell"  , FLASHDOTCELL , flash_cell
+END FLASHDOTCELL
+CONSTANT  "flash.erased"  , FLASHDOTERASED , flash_erased
+END FLASHDOTERASED
+CONSTANT "dp0.flash"   , DP0DOTFLASH  , dp0.flash
+END DP0DOTFLASH
+CONSTANT "flash.max"    , FLASH_MAX  , flash.max
+END FLASH_MAX
 
 .ifdef FLUSH_REQUIRED
 
@@ -22,6 +36,7 @@ NONAME LBRAFLUSHRBRA
 	.word XT_DALLOT
 FLASHDOTFLUSH_0001: /* then */
 	.word XT_EXIT
+END LBRAFLUSHRBRA
 
 .endif
 
@@ -30,7 +45,7 @@ COLON "flush", FLUSH /* ( -- ) force flush (write) of flash.cache */
     .word XT_LBRAFLUSHRBRA
 .endif
     .word XT_EXIT
-
+END FLUSH
 
 #COLON "flash.flush", FLASHDOTFLUSH /* ( -- ) force flush (write) of flash.cache */
 NONAME FLASHDOTFLUSH                /* ( -- ) force flush (write) of flash.cache */
@@ -38,3 +53,4 @@ NONAME FLASHDOTFLUSH                /* ( -- ) force flush (write) of flash.cache
     .word XT_LBRAFLUSHRBRA 
 .endif
     .word XT_EXIT
+END FLASHDOTFLUSH

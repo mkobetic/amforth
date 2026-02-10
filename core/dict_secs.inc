@@ -31,6 +31,8 @@
 .include "words/num-constants.s"
 #.include "words/dicthelp.s"
 
+.include "words/flash-common.s"
+
 .ifdef BUILD_QEM
     .include "words/warm.qem"
 .else
@@ -272,5 +274,4 @@
 
 .include "words/chkdalign.s"
 .include "words/vdump.s"
-.include "words/flush.s"
 .include "words/qnop.s"

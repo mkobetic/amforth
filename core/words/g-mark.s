@@ -29,4 +29,4 @@ GMARK_0001: /* else */
 #   .word -1
 GMARK_0002: /* # then */
 	.word XT_EXIT
-
+END GMARK

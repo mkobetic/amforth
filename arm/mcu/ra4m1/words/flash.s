@@ -1,14 +1,11 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-.equ flash_cell , 8 
-
 VALUE     "dp.cache"    , DPDOTCACHE , 0
-CONSTANT  "flash.cell"  , FLASHDOTCELL , flash_cell 
-CONSTANT  "flash.page"  , FLASHDOTPAGE , 2048
+END DPDOTCACHE
 NVARIABLE "flash.cache" , FLASHDOTCACHE , flash_cell / cellsize
-NVARIABLE "flash.shadow" , FLASHDOTSHADOW , flash_cell / cellsize 
-CONSTANT "dp0.flash"   , DP0DOTFLASH  , dp0.flash
-CONSTANT "flash.max"    , FLASH_MAX  , flash.max
+END FLASHDOTCACHE
+NVARIABLE "flash.shadow" , FLASHDOTSHADOW , flash_cell / cellsize
+END FLASHDOTSHADOW
 
 #======================================================================
 
@@ -16,26 +13,28 @@ CODEWORD "flash.erase" , FLASHDOTERASE /* ( fa -- ) erase page containing fa */
     ldr r3, =__flash_erase__       // Load RAM address of xxx
     orr r3, r3, #1                 // thumb bit fix 
     blx r3                         // Call it
-NEXT
+	NEXT
+END FLASHDOTERASE
 
 CODEWORD "(flash.write)" , LBRAFLASHDOTWRITERBRA
     ldr r3, =__flash_write__       // Load RAM address of xxx
     orr r3, r3, #1                 // thumb bit fix 
     blx r3                         // Call it
-NEXT 
+	NEXT 
+END LBRAFLASHDOTWRITERBRA
 
 COLON "flash.write" , FLASHDOTWRITE /* ( fa -- ) write flash.cache to flash at fa - flash.cell */
     .word XT_FLASHDOTCELL
     .word XT_MINUS
     .word XT_LBRAFLASHDOTWRITERBRA
     .word XT_EXIT
+END FLASHDOTWRITE
 
 #======================================================================
 
 COLON "flash.init" , FLASHDOTINIT /* ( -- ) set defers for NFF */ 
 
-     /* ' ~(dallot) to (dallot) */
-     
+     /* ' ~(dallot) to (dallot) */     
     .word XT_DOLITERAL
     .word XT_TILDELPARENDALLOTRPAREN
     .word XT_DOLITERAL    
@@ -45,7 +44,6 @@ COLON "flash.init" , FLASHDOTINIT /* ( -- ) set defers for NFF */
 	.word XT_STORE
 
      /* ' ~(c,) to (c,) */
-     
     .word XT_DOLITERAL
     .word XT_TILDELPARENCCOMMARPAREN
     .word XT_DOLITERAL
@@ -55,7 +53,6 @@ COLON "flash.init" , FLASHDOTINIT /* ( -- ) set defers for NFF */
 	.word XT_STORE
 
      /* ' ~(,) to (,) */
-     
     .word XT_DOLITERAL
     .word XT_TILDELPARENCOMMARPAREN
     .word XT_DOLITERAL
@@ -65,7 +62,6 @@ COLON "flash.init" , FLASHDOTINIT /* ( -- ) set defers for NFF */
 	.word XT_STORE
 
      /* '~!i to !i */
-     
     .word XT_DOLITERAL
     .word XT_TILDEBANGI 
     .word XT_DOLITERAL
@@ -75,6 +71,7 @@ COLON "flash.init" , FLASHDOTINIT /* ( -- ) set defers for NFF */
 	.word XT_STORE
 
     .word XT_EXIT
+END FLASHDOTINIT
 
 #======================================================================
 # NFF defer targets ( the words that do the work ) 
@@ -85,6 +82,7 @@ COLON "callot" , CALLOT
      .word XT_DOTO
      .word XT_DPDOTCACHE
      .word XT_EXIT
+END CALLOT
      
 COLON "~(c,)", TILDELPARENCCOMMARPAREN 
 	.word XT_FLASHDOTCACHE
@@ -94,6 +92,7 @@ COLON "~(c,)", TILDELPARENCCOMMARPAREN
     .word XT_ONE
     .word XT_DALLOT
 	.word XT_EXIT
+END TILDELPARENCCOMMARPAREN
 
 COLON "~(,)",  TILDELPARENCOMMARPAREN 
 	.word XT_FLASHDOTCACHE
@@ -103,6 +102,7 @@ COLON "~(,)",  TILDELPARENCOMMARPAREN
 	.word XT_CELL
 	.word XT_DALLOT
 	.word XT_EXIT
+END TILDELPARENCOMMARPAREN
 
 COLON "~!i", TILDEBANGI 
 	.word XT_DUP
@@ -134,6 +134,7 @@ TILDEBANGI_0001: /* # then */
 	.word XT_FLASHDOTCELL
 	.word XT_MOVE
 	.word XT_EXIT
+END TILDEBANGI
 
 # ----------------------------------------------------------------------
 
@@ -194,5 +195,5 @@ TILDELPARENDALLOTRPAREN_0006: /* else */
 TILDELPARENDALLOTRPAREN_0007: /* then */
 TILDELPARENDALLOTRPAREN_0005: /* then */
 	.word XT_EXIT
-
+END TILDELPARENDALLOTRPAREN
 

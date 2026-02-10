@@ -1,5 +1,6 @@
 
-.include "mcu/linux/config.inc"
+.include "config.inc"
+.include "build-config.inc"
 .include "arm/macros.inc"
 .include "user.inc"
 

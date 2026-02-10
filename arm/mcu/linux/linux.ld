@@ -1,16 +1,13 @@
 ENTRY (_start)
 
 /* It's all RAM we can allocate as much as we want */
-FLASH_PAGE = 1K;
-FLASH_CELL = 4; /* bytes */
-FLASH_ERASED = 0xFFFFFFFF; /* a word in erased flash */
-PVFLASH_PAGE = FLASH_PAGE;
-PVFLASH_CELL = FLASH_CELL;
-PVFLASH_ERASED = FLASH_ERASED;
+PVFLASH_PAGE = flash_page;
+PVFLASH_CELL = flash_cell;
+PVFLASH_ERASED = flash_erased;
 PVFLASH_SIZE = 8K;
 
 MEMORY {
-    FLASH (rwx) : ORIGIN = 0x00010000, LENGTH = 1M - PVFLASH_SIZE
+    FLASH (rwx) : ORIGIN = 0x00010000, LENGTH = flash_size - PVFLASH_SIZE
     PVFLASH(WRX) : ORIGIN = ORIGIN(FLASH) + LENGTH(FLASH), LENGTH = PVFLASH_SIZE
     RAM (rwx)  : ORIGIN = 0x10000000, LENGTH = 1M
 }

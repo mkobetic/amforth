@@ -3,10 +3,6 @@
 __stack_size = 2048;
 PROVIDE( _stack_size = __stack_size );
 
-PROVIDE( flash.page = FLASH_PAGE );
-PROVIDE( flash.cell = FLASH_CELL );
-PROVIDE( flash.erased = FLASH_ERASED );
-PROVIDE( flash.size = LENGTH(FLASH) );
 PROVIDE( flash.start = ORIGIN(FLASH) );
 
 SECTIONS
@@ -141,7 +137,7 @@ SECTIONS
 
         userdict :
         {
-            . = ALIGN(FLASH_PAGE) ;
+            . = ALIGN(flash_page) ;
             PROVIDE( dp0.flash = . );
             PROVIDE( flash.high = . );
             PROVIDE( flash.max = ORIGIN(FLASH) + LENGTH(FLASH));

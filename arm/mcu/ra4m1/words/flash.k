@@ -26,8 +26,8 @@
     .equ FWBH1,     0x407EC144
 
     @ ======== Timing (48 MHz ICLK) ========
-    .equ TDIS_LOOPS, 32         @ ~2 µs
-    .equ TMS_LOOPS,  80         @ ~5 µs
+    .equ TDIS_LOOPS, 32         @ ~2 ï¿½s
+    .equ TMS_LOOPS,  80         @ ~5 ï¿½s
 
 
 @ ============================================================
@@ -46,7 +46,7 @@ write_fpmcr:
     strb    r3, [r2]            @ FPMCR = ~value
     strb    r0, [r2]            @ FPMCR = value
     bx      lr
-
+.size write_fpmcr, . - write_fpmcr
 
 @ ============================================================
 @ enter_cf_pe_mode - Enter Code Flash P/E mode
@@ -94,7 +94,7 @@ enter_cf_pe_mode:
 
     movs    r0, #0
     pop     {r4, pc}
-
+.size enter_cf_pe_mode, . - enter_cf_pe_mode
 
 @ ============================================================
 @ exit_cf_pe_mode - Exit to Read mode
@@ -140,7 +140,7 @@ exit_cf_pe_mode:
 .Lexit_fail:
     movs    r0, #1
     pop     {r4, pc}
-
+.size exit_cf_pe_mode, . -  exit_cf_pe_mode
 
 @ ============================================================
 @ erase_cf_block - Erase one 2 KB code flash block
@@ -218,7 +218,7 @@ erase_cf_block:
     strb    r0, [r1]
     movs    r0, #2
     pop     {r4, pc}
-
+.size erase_cf_block, . - erase_cf_block
 
 @ ============================================================
 @ program_cf - Program 8 bytes to code flash
@@ -304,11 +304,10 @@ program_cf:
     strb    r0, [r1]
     movs    r0, #2
     pop     {r4, r5, pc}
+.size program_cf, . - program_cf
 
-
-.global __flash_erase__
-.global __flash_write__
-
+    .global __flash_erase__
+    .type __flash_erase__, %function
 __flash_erase__:
     push {r0,lr}
     cpsid   i
@@ -319,7 +318,10 @@ __flash_erase__:
     loadtos    
     cpsie   i
     pop {r0,pc}
+.size __flash_erase__, . - __flash_erase__
 
+    .global __flash_write__
+    .type __flash_write__, %function
 __flash_write__:
     push {r0,lr}
     cpsid   i
@@ -331,3 +333,4 @@ __flash_write__:
     loadtos 
     cpsie   i
     pop {r0,pc}
+.size __flash_write__, . - __flash_write__

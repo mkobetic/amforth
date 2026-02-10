@@ -21,7 +21,8 @@ CODEWORD "dwt.init" , DWTDOTINIT /* ( -- ) initialise the DWT CYCCNT 32b counter
     mov   r1, #0
     str   r1, [r0]
 
-NEXT
+    NEXT
+END DWTDOTINIT
 
 CODEWORD "-dwt" , MINUSDWT /* ( -- ) reset the DWT CYCCNT 32b counter to zero */
 
@@ -29,7 +30,8 @@ CODEWORD "-dwt" , MINUSDWT /* ( -- ) reset the DWT CYCCNT 32b counter to zero */
     mov   r1, #0
     str   r1, [r0]
 
-NEXT
+    NEXT
+END MINUSDWT
 
 CODEWORD "+dwt" , PLUSDWT /* ( -- ) start the DWT CYCCNT 32b counter */
 
@@ -38,7 +40,8 @@ CODEWORD "+dwt" , PLUSDWT /* ( -- ) start the DWT CYCCNT 32b counter */
     orr   r1, r1, #1         /* Set CYCCNTENA bit (bit 0) */
     str   r1, [r0]
 
-NEXT
+    NEXT
+END PLUSDWT
 
 CODEWORD "dwt@" , DWT_FETCH /* ( -- n ) read the DWT CYCCNT 32b counter */
 
@@ -46,7 +49,8 @@ CODEWORD "dwt@" , DWT_FETCH /* ( -- n ) read the DWT CYCCNT 32b counter */
     savetos 
     ldr   tos, [r0]          /* r0 = cycle count */
     
-NEXT
+    NEXT
+END DWT_FETCH
 
 CODEWORD "dwt-ms" , DWT_MS /* ( n -- ) delay (busy) n milliseconds (max int delay is 89s) */
 
@@ -61,7 +65,8 @@ CODEWORD "dwt-ms" , DWT_MS /* ( n -- ) delay (busy) n milliseconds (max int dela
     cmp   r3, r0              /* Compare elapsed to target */
     blo   1b                  /* Loop until elapsed >= target */
     loadtos 
-NEXT
+    NEXT
+END DWT_MS
 
 CODEWORD "dwt-us" , DWT_US /* ( n -- ) delay (busy) n microseconds (max int delay is 89s) */
 
@@ -76,8 +81,8 @@ CODEWORD "dwt-us" , DWT_US /* ( n -- ) delay (busy) n microseconds (max int dela
     cmp   r3, r0              /* Compare elapsed to target */
     blo   1b                  /* Loop until elapsed >= target */
     loadtos 
-NEXT
-
+    NEXT
+END DWT_US
         
 /*
 > show dwt
@@ -101,5 +106,3 @@ LFA..... (LFA)... FFA..... (FFA)... NFA..... XT...... (XT)....
 
 */
 
-
-    

@@ -7,6 +7,7 @@
 .globl main
 
 .include "config.inc"
+.include "build-config.inc"
 
 main:                       # executed from startup.inc 
 

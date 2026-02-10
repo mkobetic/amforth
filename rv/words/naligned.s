@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-CODEWORD "naligned" , XT_NALIGNED /* ( n a1 -- a2 ) a2 is n aligned a1 )  */
+CODEWORD "naligned", NALIGNED /* ( n a1 -- a2 ) a2 is n aligned a1 )  */
 naligned:
     lw      t1, 0(s4)       # t1 = n (byte count from NOS)
     addi    sp, sp, 4       # pop stack (remove n)
@@ -12,3 +12,4 @@ naligned:
 
     # s3 now contains aligned address (new TOS)
     NEXT                    # return to Forth interpreter
+END NALIGNED

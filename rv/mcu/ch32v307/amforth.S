@@ -9,6 +9,7 @@
 # are needed by both C and AmForth-RV 
 
 .include "mcu/ch32v307/config.inc"   # most configuration options are in this file
+.include "build-config.inc"
 
 .ifdef BUILD_203
 .print "INFO: using 203 startup"	

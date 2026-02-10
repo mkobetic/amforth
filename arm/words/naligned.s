@@ -12,3 +12,4 @@ naligned:
 
     @ tos now contains aligned address (new TOS)
     NEXT                    @ return to Forth interpreter
+END NALIGNED
