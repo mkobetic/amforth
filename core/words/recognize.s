@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "recognize", RECOGNIZE
+COLON "recognize", RECOGNIZE /* (addr len recstack -- i*x rectype-? | rectype-null ) walk the recognizer stack */
 
     .word XT_DOLITERAL
     .word XT_RECOGNIZE_A
@@ -12,6 +12,7 @@ COLON "recognize", RECOGNIZE
       .word XT_RECTYPE_NULL
 PFA_RECOGNIZE1:
     .word XT_EXIT
+END RECOGNIZE
 
 NONAME RECOGNIZE_A
    .word XT_ROT
@@ -34,3 +35,4 @@ PFA_RECOGNIZE_A1:
    .word XT_NIP
    .word XT_TRUE
    .word XT_EXIT
+END RECOGNIZE_A

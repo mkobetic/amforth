@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON ":noname", COLONNONAME /* ( -- xt ) create an unnamed colon word, return its XT */
+COLON ":noname", COLONNONAME /* ( -- ) start an unnamed colon word */
     .word XT_DP
     .word XT_DUP
     .word XT_LATEST
