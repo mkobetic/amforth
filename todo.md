@@ -21,6 +21,7 @@ List of know issues and tasks that need to be done (by area)
 * clean up all harcoded cell size values, replace with cellsize symbol (including alignment directives)
 * add long word description to the html refcard as title attribute, so that it shows on hover
 
+* add selected options to build-info (e.g. WANT_IGNORECASE)
 * make target for listing unused words/ files (see build/amforth.dep)
 * a way to build different configurations for a given MCU
 * Standardized Makefile targets across all MCUs 
