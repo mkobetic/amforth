@@ -5,7 +5,8 @@
 .global PFA_COLD
   j PFA_COLD
 
-.include "mcu/hifive1/config.inc"
+.include "config.inc"
+.include "build-config.inc"
 .include "rv/macros.inc"
 .include "user.inc"
 

@@ -3,10 +3,6 @@
 __stack_size = 2048;
 PROVIDE( _stack_size = __stack_size );
 
-PROVIDE( flash.page = FLASH_PAGE );
-PROVIDE( flash.cell = FLASH_CELL );
-PROVIDE( flash.erased = FLASH_ERASED );
-PROVIDE( flash.size = LENGTH(FLASH) );
 PROVIDE( flash.start = ORIGIN(FLASH) );
 
 SECTIONS
@@ -123,13 +119,31 @@ SECTIONS
 
         } >FLASH AT>FLASH
 
+    	amramres :
+		{
+			. = ALIGN(4) ;
+			PROVIDE(RAM_lower_res = . );
+			*(amres)
+	  		PROVIDE(RAM_upper_res = . );
+        } >RAM AT>FLASH
+
+		PROVIDE(RAM_size_res = RAM_upper_res - RAM_lower_res) ;
+		PROVIDE(RAM_stuf_res = SIZEOF(amramres)) ;
+		PROVIDE(FSH_lower_res = LOADADDR(amramres)) ;
+		PROVIDE(FSH_upper_res = LOADADDR(amramres) + SIZEOF(amramres)) ;
+
+		ASSERT(ADDR(eeprom) + SIZEOF(eeprom) <= FSH_lower_res ,"*ERROR* amramres and eeprom overlap")
+
+
         userdict :
         {
-            . = ALIGN(FLASH_PAGE) ;
+            . = ALIGN(flash_page) ;
             PROVIDE( dp0.flash = . );
             PROVIDE( flash.high = . );
             PROVIDE( flash.max = ORIGIN(FLASH) + LENGTH(FLASH));
         } >FLASH AT>FLASH
+
+		ASSERT(FSH_upper_res <= dp0.flash , "*ERROR* amramres and userdict overlap")
 
 	.dalign :
 	{
@@ -190,8 +204,11 @@ SECTIONS
 
     } >RAM
 
+	ASSERT(RAM_upper_res <= RAM_lower_fi ,"*ERROR* amramres and amramlo overlap") 
     amramhi :
     {
+        . = ALIGN(4) ;
+        
         PROVIDE( vp0 = . ) ;
         . = . + rampool_size ;
         PROVIDE( vp.max = . ) ;
@@ -202,6 +219,9 @@ SECTIONS
         PROVIDE( HERESTART = . ) ;
 
     } > RAM 
+
+	ASSERT(RAM_upper_fi <= vp0 ,"*ERROR* amramlo and amramhi overlap") 
+
 
     slack = cellsize ;
 

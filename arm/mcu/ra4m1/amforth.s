@@ -2,6 +2,7 @@
 .globl PFA_COLD 
 
 .include "config.inc"
+.include "build-config.inc"
 .include "arm/macros.inc"
 .include "user.inc"
 
@@ -11,6 +12,11 @@
 
 .section .vector, "ax"
 .include "mcu/ra4m1/vectors.s"
+
+.section amres, "ax"
+.include "mcu/ra4m1/words/flash.k"
+
+.p2align 2
 
 .section amforth, "ax"
 .include "mcu/ra4m1/isr.s"

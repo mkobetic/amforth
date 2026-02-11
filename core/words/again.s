@@ -2,6 +2,7 @@
 
 IMMED "again", AGAIN
 # ( -- ) FLOW: end of a begin...again loop
+    .word XT_QNOP
     .word XT_COMPILE
     .word XT_DOBRANCH
     .word XT_LRESOLVE

@@ -12,6 +12,7 @@ List of know issues and tasks that need to be done (by area)
 * ARM: 2rot and rot is the same thing (see RV)
 * clean/document amforth32.ld (assumptions, section purpose, etc)
 * add refcard legend
+* clean up placeholders in dict_mcu.s files
 
 * core/aligned.s vs arm|rv/aligned.s
 * aligned.s and do-aligned.s are identical
@@ -32,7 +33,6 @@ List of know issues and tasks that need to be done (by area)
 * figure out what to do about docs
 * document conventions and standard practices
 * document dev tool setup
-* add enabled feature list to the greeting
 
 
 # ARM
@@ -56,6 +56,7 @@ List of know issues and tasks that need to be done (by area)
 
 ## LINUX
 
+
 # RISC-V
 
 * add readme.md
@@ -63,6 +64,7 @@ List of know issues and tasks that need to be done (by area)
 
 ## CH32V307
 
+* flash.qem vs flash.307 vs flash.s (flash.low defined multiple times)
 * unify the build setup with the rest of MCUs (gcc vs as)
 * RAMALLOT reg_shadow differences between 307 ad QEM configuration
 * generalize eeprom support (eeprom.s)
@@ -71,10 +73,12 @@ List of know issues and tasks that need to be done (by area)
 
 * get it running under qemu -M sifive_e (SiFive E31 core)
 
+
 # TOOLS
 
 * document/instrument Python setup for the tools
 * make sure all tools work
+
 
 # DOCS
 

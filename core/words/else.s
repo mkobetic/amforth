@@ -2,7 +2,7 @@
 
 IMMED "else", ELSE
 # ( -- ) FLOW: if f of if t then do body of else 
-
+    .word XT_QNOP
     .word XT_COMPILE
     .word XT_DOBRANCH
     .word XT_GMARK

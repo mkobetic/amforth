@@ -41,17 +41,11 @@ CONSTANT "EOW" , EOW , 0xE339E339
 
 CONSTANT "flash.low"    , FLASH_LOW   , flash.low
 
-CONSTANT "dp0.flash"   , DP0DOTFLASH  , dp0.flash
-CONSTANT "flash.max"    , FLASH_MAX  , flash.max
-
-
 # ----------------------------------------------------------------------
 
 .ifdef BUILD_307
 
 VALUE    "dp.cache" , DPDOTCACHE , 0
-CONSTANT "flash.cell" , FLASHDOTCELL , 2
-CONSTANT "flash.page" , FLASHDOTPAGE , 4096
 VARIABLE "flash.cache" , FLASHDOTCACHE 
 
 #--

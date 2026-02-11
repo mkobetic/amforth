@@ -225,11 +225,7 @@ CODEWORD "~flash.eop" , WAIT_FLASH_EOP # ( -- ) FLASH: Busy loop exit when FLASH
 
 
 CONSTANT "EOW" , EOW , 0xE339E339 
-
 CONSTANT "flash.low"    , FLASH_LOW   , flash.low
-
-CONSTANT "dp0.flash"   , DP0DOTFLASH  , dp0.flash
-CONSTANT "flash.max"    , FLASH_MAX  , flash.max
 
 #CODEWORD "flash.mode" , FLASH_MODE
 #  mv a0 , s3

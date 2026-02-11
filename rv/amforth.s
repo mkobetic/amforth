@@ -6,6 +6,7 @@
   j PFA_COLD
 
 .include "config.inc"
+.include "build-config.inc"
 .include "rv/macros.inc"
 .include "user.inc"
 
