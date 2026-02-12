@@ -41,6 +41,43 @@ SIZE ?= $(TC_DIR)/bin/$(CROSS)size
 GDB ?= $(TC_DIR)/bin/$(CROSS)gdb
 GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py3
 
+#? --- Common ---
+
+# Credit to below
+# https://github.com/wuxx/CH32V003-makefile-example
+
+# COLORS
+BLACK  := $(shell tput -Txterm setaf 0)
+RED    := $(shell tput -Txterm setaf 1)
+GREEN  := $(shell tput -Txterm setaf 2)
+YELLOW := $(shell tput -Txterm setaf 3)
+VIOLET := $(shell tput -Txterm setaf 5)
+AQUA   := $(shell tput -Txterm setaf 6)
+WHITE  := $(shell tput -Txterm setaf 7)
+RESET  := $(shell tput -Txterm sgr0)
+
+## Show help
+help:
+	@echo ''
+	@echo 'USAGE: [TARGET=${YELLOW}<build target>${RESET}] make${RESET} ${GREEN}<make target>${RESET}'
+	@echo '<build target> is one of { ${YELLOW}$(TARGETS)${RESET} }; default ${YELLOW}$(TARGET)${RESET}'
+	@echo ''
+	@echo 'Make targets:'
+	@awk '/^#\? / { \
+	text = substr($$0, 4); \
+	printf "  %s\n", text; \
+	} \
+	/^[a-zA-Z\-_0-9]+:/ { \
+	helpMessage = match(lastLine, /^## (.*)/); \
+	if (helpMessage) { \
+	helpCommand = substr($$1, 0, index($$1, ":")-1); \
+	helpMessage = substr(lastLine, RSTART + 2, RLENGTH); \
+	printf "  ${GREEN}%-$(TARGET_MAX_CHAR_NUM)s${RESET}\t%s${RESET}\n", helpCommand, helpMessage; \
+	} \
+	} \
+	{ lastLine = $$0 }' $(MAKEFILE_LIST)
+	@echo ''
+
 ## Build all files
 all: build/amforth.bin build/amforth.hex build/amforth.lst build/amforth.sal build/amforth.sym build/amforth.toc build/amforth.txt build/amforth.html
 	@echo INFO: Built $(TARGET) $(REVISION) using $(TC_DIR)
@@ -117,18 +154,33 @@ build/%.sal: build/%.elf
 build/%.sym: build/%.elf
 	$(OBJDUMP) --syms $< | $(SORT_SYMS_BY_ADDRESS) >$@
 
+## Delete the build artifacts
 clean:
 	rm -f build/* words/build-info.s
+
+## Show build configuration
+config:
+	@echo ""
+	@echo "Build Configuration:"
+	@echo "  ${GREEN}TARGET${RESET} \t= $(TARGET)"
+	@echo "  ${GREEN}REVISION${RESET} \t= $(REVISION)"
+	@echo "  ${GREEN}MCU_LD${RESET} \t= $(MCU_LD)"
+	@echo "  ${GREEN}CROSS${RESET} \t= $(CROSS)"
+	@echo "  ${GREEN}TC_DIR${RESET} \t= $(TC_DIR)"
+	@echo "  ${GREEN}Includes${RESET} \t="
+	@echo "\t$(INCLUDES)" | sed 's/ -I/\n\t-I/g'
+	@echo ""
 
 SPEED ?= 115200
 AMSHELL=$(AMFORTH)/tools/amforth-shell.py --port $(MODEM) --speed $(SPEED) $1
 export AMFORTH_LIB=.:$(AMFORTH)/tests:$(AMFORTH)/lib
-## Connect via AmShell
-# export EDITOR in your .env file to make the #edit shell directive work.
+
+## Connect via AmShell (needs MODEM)
 shell:
+	# export EDITOR in your .env file to make the #edit shell directive work.
 	$(AMSHELL) --no-error-on-output -i
 
-## Run standard tests, output failures and summarize the results.
+# Running full test suite:
 # Not finished means we didn't get through the whole test file.
 # Requires WANT_IGNORECASE, because the standard tests
 # are in all caps and all AmForth words are in lowercase;
@@ -140,7 +192,8 @@ shell:
 TIMEOUT ?= 4s
 TESTER ?= $(AMFORTH)/lib/forth2012/tester/tester-amforth.frt
 SKIP := $(PP) -w -E --no-line-commands
-test:
+## Run standard tests, output failures and summarize the results (QEMU only)
+tests:
 	{ cat $(TESTER); \
 	  echo '.s" TESTS STARTING"' ; \
 	  $(SKIP) $(AMFORTH)/tests/cpp-core.fr; \
@@ -151,7 +204,7 @@ test:
 	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
 
-## A detailed dump of ELF sections for debugging linker issues
+## Detailed dump of ELF sections for debugging linker issues
 sections: sec-type sec-addr sec-sum
 
 sec-type:

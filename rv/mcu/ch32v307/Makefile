@@ -1,20 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # AmForth-RV Makefile
 
-# Credit to below
-# https://github.com/wuxx/CH32V003-makefile-example
-
-# COLORS
-BLACK  := $(shell tput -Txterm setaf 0)
-RED    := $(shell tput -Txterm setaf 1)
-GREEN  := $(shell tput -Txterm setaf 2)
-YELLOW := $(shell tput -Txterm setaf 3)
-VIOLET := $(shell tput -Txterm setaf 5)
-AQUA   := $(shell tput -Txterm setaf 6)
-WHITE  := $(shell tput -Txterm setaf 7)
-RESET  := $(shell tput -Txterm sgr0)
-
-
 AMFORTH ?= $(shell git rev-parse --show-toplevel)
 
 # Choices 
@@ -99,7 +85,7 @@ CHIPSET=
 
 # Default target to build
 TARGET ?= 307
-$(info TARGET: $(TARGET))
+TARGETS = 307, QEM
 
 ifeq ($(strip $(TARGET)),203)
 CHIPSET=203
@@ -125,7 +111,7 @@ else
 $(error Unknown TARGET '$(TARGET)')
 endif
 
-# Included after various configuration bits are defined (importantly MCU_LD)
+# Included after various configuration bits are defined (importantly MCU_LD and TARGET)
 include $(AMFORTH)/rv/dev/Makefile
 
 
@@ -182,42 +168,6 @@ CPPFLAGS := $(FLAGS) $(INCLUDES) -MMD -MP $(DEFINES)
 # ----------------------------------------------------------------------
 # Targets below 
 # ----------------------------------------------------------------------
-
-## Show help
-help:
-	@echo 'Usage: [TARGET=<target config>] make${RESET} ${GREEN}<make target>${RESET}'
-	@echo '<target config> is one of 307, 305, 203, QEM'
-	@echo ''
-	@echo 'Compiler, assembler and library:'
-	@printf "  ${YELLOW}TOOLCHAIN${RESET}\t\t$(TOOLCHAIN)\n"
-	@printf "  ${YELLOW}CHIP VARIANT${RESET}\t\t$(CHIPSET)\n"
-	@printf "  ${YELLOW}VENDOR LIB${RESET}\t\t$(LIB_WCH)\n"
-	@printf "  ${YELLOW}USER LIB${RESET}\t\t$(LIB_USER)\n"
-	@printf "  ${YELLOW}HEX FILE${RESET}\t\t$(BUILD_DIR)/$(TARGET_HEX)\n"
-	@echo ''
-	@printf "Build options extracted from ${RED}top${RESET} of config.inc\n"
-	@printf "  ${YELLOW}WANT_ASM_BUILD${RESET}\t${ASMONLY} (will override some options)\n"
-	@printf "  ${YELLOW}WANT_FLOAT${RESET}\t\t$(WANT_FLOAT)\n"
-	@printf "  ${YELLOW}WANT_SEE${RESET}\t\t${WANT_SEE}\n"
-	@printf "  ${YELLOW}WANT_CASE${RESET}\t\t${WANT_CASE}\n"
-	@printf "  ${YELLOW}WANT_MATCH${RESET}\t\t${WANT_MATCH}\n"
-	@printf "  ${YELLOW}WANT_TABLE${RESET}\t\t${WANT_TABLE}\n"
-	@printf "  ${YELLOW}WANT_FORNEXT${RESET}\t\t${WANT_FORNEXT}\n"
-	@echo ''
-	@echo 'Make targets:'
-	@awk '/^#\? / { \
-	text = substr($$0, 4); \
-	printf "  %s\n", text; \
-	} \
-	/^[a-zA-Z\-_0-9]+:/ { \
-	helpMessage = match(lastLine, /^## (.*)/); \
-	if (helpMessage) { \
-	helpCommand = substr($$1, 0, index($$1, ":")-1); \
-	helpMessage = substr(lastLine, RSTART + 2, RLENGTH); \
-	printf "  ${GREEN}%-$(TARGET_MAX_CHAR_NUM)s${RESET}\t%s${RESET}\n", helpCommand, helpMessage; \
-	} \
-	} \
-	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
 
 # ----------------------------------------------------------------------
@@ -283,37 +233,13 @@ $(BUILD_DIR)/%.cpp.o: %.cpp buildinfo
 
 .PHONY: clean info shell speed save uu 
 
-## Connect via USB 
-uu:
-	$(UU) 
-
-w:
-	$(AMSHELL) --no-error-on-output -i ./w.f
-
-float:
-	$(AMSHELL) --no-error-on-output -i ./float.f
-
-speed:
-	time $(AMSHELL) --no-error-on-output tester-amforth.frt
-
-## Run gdb 
-gdb:
-	$(BIN_STUB)-gdb --ex 'target extended-remote :3333' $(BUILD_DIR)/$(TARGET_ELF)
-
-## Run openocd 
-open:
-	$(OPENOCD) -f $(OPENCFG)
-
-## Connect via minicom 
-min:
-	$(RM) minicom.cap
-	$(MINICOM) -D $(MODEM) --color=on -C minicom.cap
-
-## Flash hex file to the device  
-flash:
+## Upload hex file to the device  
+upload:
 	$(WLINK) flash $(BUILD_DIR)/$(TARGET_HEX)
 
-debug:
+
+## Show build configuration
+config:
 	@echo "Configuration:"
 	@echo "  WANT_203 = $(WANT_203)"
 	@echo "  LIB_WCH = $(LIB_WCH)"
@@ -328,23 +254,72 @@ debug:
 	@echo "INC (selectively linked):"
 	@echo "$(INCLUDES)" | tr ' ' '\n'
 
+## Show MCU configuration
+mcu_config:
+	@echo 'Compiler, assembler and library:'
+	@printf "  ${YELLOW}TOOLCHAIN${RESET}\t\t$(TOOLCHAIN)\n"
+	@printf "  ${YELLOW}CHIP VARIANT${RESET}\t\t$(CHIPSET)\n"
+	@printf "  ${YELLOW}VENDOR LIB${RESET}\t\t$(LIB_WCH)\n"
+	@printf "  ${YELLOW}USER LIB${RESET}\t\t$(LIB_USER)\n"
+	@printf "  ${YELLOW}HEX FILE${RESET}\t\t$(BUILD_DIR)/$(TARGET_HEX)\n"
+	@echo ''
+	@printf "Build options extracted from ${RED}top${RESET} of config.inc\n"
+	@printf "  ${YELLOW}WANT_ASM_BUILD${RESET}\t${ASMONLY} (will override some options)\n"
+	@printf "  ${YELLOW}WANT_FLOAT${RESET}\t\t$(WANT_FLOAT)\n"
+	@printf "  ${YELLOW}WANT_SEE${RESET}\t\t${WANT_SEE}\n"
+	@printf "  ${YELLOW}WANT_CASE${RESET}\t\t${WANT_CASE}\n"
+	@printf "  ${YELLOW}WANT_MATCH${RESET}\t\t${WANT_MATCH}\n"
+	@printf "  ${YELLOW}WANT_TABLE${RESET}\t\t${WANT_TABLE}\n"
+	@printf "  ${YELLOW}WANT_FORNEXT${RESET}\t\t${WANT_FORNEXT}\n"
+
+## Connect via USB 
+uu:
+	$(UU) 
+
+## Connect via minicom 
+min:
+	$(RM) minicom.cap
+	$(MINICOM) -D $(MODEM) --color=on -C minicom.cap
+
+w:
+	$(AMSHELL) --no-error-on-output -i ./w.f
+
+float:
+	$(AMSHELL) --no-error-on-output -i ./float.f
+
+speed:
+	time $(AMSHELL) --no-error-on-output tester-amforth.frt
+
 #? --- QEM ---
 QEMU := $(QEMU_RV32) -M virt -display none -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF)
 
-## redirect operator uart to stdio
-pty:
-	$(QEMU) -serial pty
-
-## redirect operator uart to stdio
+## Start AmForth under QEMU with operator uart connected to stdio
 stdio:
 	$(QEMU) -serial stdio
 
-## create with socket
+## Start AmForth under QEMU with operator uart connected to a pty
+pty:
+	$(QEMU) -serial pty
+
+# Add -S if you want QEMU to not start the quest.
+# WARNING: GDB TUI struggles to start properly when the target has not started (-S).
+## Like pty but allows GDB to attach to it (-s).
+debug:
+	$(QEMU) -serial pty -s
+
+## Start AmForth under QEMU with operator uart connected to a socket
 sock:
 	$(QEMU) -serial tcp:localhost:4321,server,nowait  # need to terminate
 
-## socket shell  
+## Start sock shell  
 sksh:
 	$(SOCKSHELL) --no-error-on-output -i 
 
- 
+#? --- Debugging ---
+## Start GDB 
+gdb:
+	$(BIN_STUB)-gdb --ex 'target extended-remote :3333' $(BUILD_DIR)/$(TARGET_ELF)
+
+## Start OpenOCD 
+ocd:
+	$(OPENOCD) -f $(OPENCFG)
