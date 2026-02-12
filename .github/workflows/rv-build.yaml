@@ -59,10 +59,10 @@ jobs:
         run: sudo apt-get install qemu-system-riscv32
 
       - name: CH32V307 Core Tests
-        run: cd rv/mcu/ch32v307 && QEMU_RV32=qemu-system-riscv32 TIMEOUT=5s make test
+        run: cd rv/mcu/ch32v307 && QEMU_RV32=qemu-system-riscv32 TIMEOUT=5s make tests
 
       - name: Build CH32 for QEMU (WANT_ITC)
         run: cd rv/mcu/ch32v307 && TARGET=QEM WANT_IGNORECASE=1 WANT_ITC=1 make all
 
       - name: CH32V307 Core Tests
-        run: cd rv/mcu/ch32v307 && QEMU_RV32=qemu-system-riscv32 TIMEOUT=5s make test
+        run: cd rv/mcu/ch32v307 && QEMU_RV32=qemu-system-riscv32 TIMEOUT=5s make tests

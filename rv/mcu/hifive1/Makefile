@@ -1,5 +1,6 @@
 
 TARGET ?= HIFIVE1
+TARGETS = $(TARGET)
 ifeq ($(strip $(TARGET)), HIFIVE1)
 MCU_LD ?= hifive1.ld
 else
@@ -34,6 +35,7 @@ GDB_UPLOAD_CMDS += -ex "monitor resume"
 GDB_UPLOAD_CMDS += -ex "monitor shutdown"
 GDB_UPLOAD_CMDS += -ex "quit"
 
+## Upload hex file to the device
 upload:
 	$(RISCV_OPENOCD) $(OPENOCDARGS) & \
 	$(GDB) build/amforth.hex $(GDB_UPLOAD_ARGS) $(GDB_UPLOAD_CMDS) && \
@@ -43,6 +45,6 @@ upload:
 # But doesn't really work.
 QEMU=qemu-system-riscv32 -M sifive_e -display none -bios none -kernel build/amforth.elf
 
-# Starts amforth under QEMU
-run:
+## Start AmForth under QEMU with operator uart connected to stdio
+stdio:
 	$(QEMU) -serial stdio

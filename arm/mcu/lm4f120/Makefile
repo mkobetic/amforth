@@ -1,6 +1,6 @@
 # Default to the QEMU target since the real boards were discontinued
 TARGET ?= LM3QEM
-
+TARGETS = LM4, LM3QEM
 ifeq ($(strip $(TARGET)), LM4)
 MCU_LD ?= lm4f120.ld
 else ifeq ($(strip $(TARGET)), LM3QEM)
@@ -20,6 +20,7 @@ AMFORTH ?= $(shell git rev-parse --show-toplevel)
 # Included after various configuration bits are defined (importantly MCU_LD)
 include $(AMFORTH)/arm/dev/Makefile
 
+## Upload bin file to the device
 upload: build/amforth.elf
 	lm4flash build/amforth.bin
 
@@ -27,23 +28,23 @@ upload: build/amforth.elf
 # https://www.qemu.org/docs/master/system/arm/stellaris.html
 QEMU=qemu-system-arm -M lm3s6965evb -display none -bios none -kernel build/amforth.elf
 
-## Starts amforth under QEMU
+## Start AmForth under QEMU with operator uart connected to a pty
 stdio:
 	$(QEMU) -serial stdio
 
-## Starts amforth under QEMU with serial port connected to a pty.
 # Use this when you want more powerful terminal emulator than the very basic stdio.
 # The pty device is printed after start, connect to it with a terminal emulator,
 # e.g.: tio --map=ODELBS /dev/ttys019	// ODELBS fixes backspace behavior
+## Start AmForth under QEMU with operator uart connected to a pty
 pty:
 	$(QEMU) -serial pty
 #	Following was an attempt to predefine the device filename
 #	Unsuccessful so far: Failed to create PTY symlink: Operation not permitted
 #	$(QEMU) -chardev pty,path=/dev/stellaris,id=stellaris -serial chardev:stellaris
 
-## Like pty but allows GDB to attach to it.
 # Add -S if you want QEMU to not start the quest.
 # WARNING: GDB TUI struggles to start properly when the target has not started (-S).
+## Like pty but allows GDB to attach to it (-s).
 debug:
 	$(QEMU) -serial pty -s
 

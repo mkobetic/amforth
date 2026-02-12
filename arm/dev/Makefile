@@ -20,9 +20,11 @@ TC_DIR ?= $(AMFORTH)/toolchain/$(CROSS)$(TC_VER)
 
 include $(AMFORTH)/core/dev/Makefile
 
-# Install development toolchain in TC_DIR
+#? --- Setup ---
+
 ARCHIVE = arm-gnu-toolchain-$(TC_VER)-$(HOST)-$(TARGET).tar.xz
 URL=https://developer.arm.com/-/media/Files/downloads/gnu/$(TC_VER)/binrel/$(ARCHIVE)
+## Install development toolchain in TC_DIR
 toolchain:
 ifneq ($(and $(findstring darwin,$(HOST_OS)), $(findstring arm-linux-gnueabihf,$(TARGET))),)
 	@echo "WARNING: arm-linux-gnueabihf for MacOS is not available from developer.arm.com"

@@ -14,6 +14,7 @@
 -include .env
 
 TARGET ?= UNOR4
+TARGETS = UNOR4
 ifeq ($(strip $(TARGET)), UNOR4)
 MCU_LD ?= ra4m1.ld
 else
@@ -47,32 +48,32 @@ OPENOCD ?= openocd
 # Alternatively the touch1200bps utility can achieve the same as well.
 #
 # Note: it seems only the Arduino version of bossac works with UNO R4 (https://github.com/arduino/BOSSA)
+## Upload bin file to the device  
 upload: build/amforth.bin touch1200bps
 	touch1200bps/touch1200bps /dev/$(MODEM)
 	$(BOSSAC) --debug --port=$(MODEM) --write build/amforth.bin --reset
 
 # This builds the touch1200bps binary; requires a reasonably recent version of Golang installed.
 # This is used above for the upload target.
+# Build touch1200bps utility (requires Golang)
 touch1200bps: touch1200bps/*
 	cd ./touch1200bps && go build
 
 .PHONY: clean upload touch1200bps ocd gdb
 
-## Start OpenOCD
 # You can connect to the OpenOCD telnet port with: nc localhost 50002
 # You can also send commands to OpenOCD through GDB's 'monitor' command
-# ocd: build/amforth.elf
+## Start OpenOCD
 ocd:
 	$(OPENOCD) -c "gdb_port 50000" -c "tcl_port 50001" -c "telnet_port 50002" \
 		-c "adapter driver cmsis-dap" \
 		-c "transport select swd" \
 		-f dev/R7FA4M1AB.cfg
 
-## Start gdb and connect to OpenOCD
 # If you don't have/want python enabled GDB you can
 # * replace $(GDBPY) with $(GDB)
 # * replace tui-full.gdb with tui-basic.gdb
-# gdb: build/amforth.elf
+## Start gdb and connect to OpenOCD
 gdb:
 	$(GDBPY) -tui build/amforth.elf --quiet \
 		-ex "target extended-remote localhost:50000" \
@@ -84,6 +85,7 @@ gdb:
 
 GOBUILD = cd ./touch1200bps && go build -o dist/ .
 TAR = cd touch1200bps/dist && tar zcf
+# Build touch1200bps release artifacts
 dist1200bps:
 	export GOOS=darwin GOARCH=arm64; $(GOBUILD)
 	$(TAR) touch1200bps-osx-arm64.tgz touch1200bps

@@ -11,6 +11,7 @@ endif
 LANG=C
 
 TARGET ?= LINUX
+TARGETS = LINUX
 ifeq ($(strip $(TARGET)), LINUX)
 MCU_LD ?= linux.ld
 else
@@ -29,6 +30,7 @@ build/amforth: build/amforth.o
 # To run amforth in emulated container you can use a container runtime that supports --platform linux/arm/v7
 # For MacOS check out https://orbstack.dev/ (Free for personal use)
 # See Dockerfile for the details of what goes into the container image, tweak to heart's desire.
+## Build docker image with AmForth (see Dockerfile)
 image: build/amforth
 	docker build --tag amforth:latest .
 
@@ -37,24 +39,18 @@ image: build/amforth
 # The whole host amforth directory is mounted in the container at /amforth.
 # Apparently cannot run gdb inside the container, because ptrace sys call is not supported in emulation.
 DOCKER = docker run --rm --volume $(AMFORTH):/amforth
+## Run AmForth in docker container
 drun: image
 	$(DOCKER) --interactive --tty amforth:latest
 
 # Run standard tests and output the results, requires WANT_IGNORECASE enabled above
 # because the standard tests are in all caps and all amforth words are in lowercase.
 # Run with: `WANT_IGNORECASE=1 make dtest`
-# Currently segfaults towards the end:
-# ...
-# > TESTING DO LOOP +LOOP I J UNLOOP LEAVE EXIT
-# > TESTING DEFINING WORDS: : ; CONSTANT VARIABLE CREATE DOES> >BODY
-# > TESTING <# # #S #> HOLD SIGN BASE >NUMBER HEX DECIMAL
-# qemu: uncaught target signal 11 (Segmentation fault) - core dumped
-# FINISHED: N, PASS: 342, FAIL: 1
-# Segmentation fault
-dtest: image
+## Run standard tests (in Docker), output failures and summarize the results
+dtests: image
 	$(DOCKER) amforth:latest /bin/sh -c ' \
 		cd amforth/arm/mcu/linux; \
-		QEMU=amforth AMFORTH=/amforth PP=cpp make test '
+		QEMU=amforth AMFORTH=/amforth PP=cpp make tests '
 
 # Starts amforth under QEMU
 # WARNING(mk): This seems incomplete and does not work at least on MacOSX;

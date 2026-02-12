@@ -39,10 +39,10 @@ jobs:
         run: cd arm/mcu/lm4f120 && WANT_IGNORECASE=1 WANT_ITC=1 make all
 
       - name: LM4F120 Core Tests (WANT_ITC)
-        run: cd arm/mcu/lm4f120 && TIMEOUT=5s make test
+        run: cd arm/mcu/lm4f120 && TIMEOUT=5s make tests
 
       - name: Build LM4F120
         run: cd arm/mcu/lm4f120 && WANT_IGNORECASE=1 make all
 
       - name: LM4F120 Core Tests
-        run: cd arm/mcu/lm4f120 && TIMEOUT=5s make test
+        run: cd arm/mcu/lm4f120 && TIMEOUT=5s make tests

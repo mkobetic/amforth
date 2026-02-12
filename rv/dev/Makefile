@@ -18,6 +18,8 @@ TC_DIR ?= $(AMFORTH)/toolchain/$(CROSS)$(TC_VER)
 
 include $(AMFORTH)/core/dev/Makefile
 
+#? --- Setup ---
+
 ARCHIVE = xpack-$(CROSS)gcc-$(TC_VER)-$(HOST).tar.gz
 URL = https://github.com/xpack-dev-tools/$(CROSS)gcc-xpack/releases/download/v$(TC_VER)/$(ARCHIVE)
 ## Install development toolchain in TC_DIR
