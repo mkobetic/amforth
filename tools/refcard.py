@@ -224,6 +224,7 @@ def generate_html_refcard(categories_file, toc_file):
             data = words_db.get(word)
             if data:
                 name = html.escape(word)
+                symbol = html.escape(data['symbol'])
                 typ = html.escape(data['type'])
                 if data['signature']:
                     sig = html.escape(data['signature'])
@@ -231,7 +232,7 @@ def generate_html_refcard(categories_file, toc_file):
                     sig = html.escape(data['parameter'])
                 desc = html.escape(data['description'])
                 loc = html.escape(data['location'])
-                print(f"<tr><td>{name}</td><td>{typ}</td><td>{sig}</td><td>{desc}</td><td>{loc}<td></tr>")
+                print(f"<tr><td title=\"{symbol}\">{name}</td><td>{typ}</td><td>{sig}</td><td>{desc}</td><td>{loc}<td></tr>")
             else:
                 name = html.escape(word)
                 print(f"<tr><td>{name}</td></tr>")

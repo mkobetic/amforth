@@ -66,6 +66,7 @@ List of know issues and tasks that need to be done (by area)
 ## CH32V307
 
 * flash.qem vs flash.307 vs flash.s
+* a lot of code duplication between flash and eeprom
 * unify the build setup with the rest of MCUs (gcc vs as)
 * RAMALLOT reg_shadow differences between 307 ad QEM configuration
 * generalize eeprom support (eeprom.s)
