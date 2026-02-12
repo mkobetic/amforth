@@ -11,18 +11,8 @@ COLON "h,", HCOMMA
 
 # FLASH
 
-COLON "std.unlock", STDDOTUNLOCK
-# ( -- ) FLASH: Unlock flash
-    .word XT_EXIT
-
-CODEWORD "std.erase" , STDDOTERASE
-# ( a-flash -- ) FLASH: Erase the page a-flash is in 
-    .word XT_EXIT
-
 COLON "!i", BANGI
     .word XT_EXIT
-
-CONSTANT "flash.low"    , FLASH_LOW   , flash.low
     
 # EEPROM
 

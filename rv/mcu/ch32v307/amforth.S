@@ -21,12 +21,12 @@
 .include "startup.307"  # startup and master_int handler for both C and Forth
 .endif 
 
-.ifdef BUILD_307
+.ifdef TARGET_307
 .print "INFO: using 307 startup"		
 .include "startup.307"  # startup and master_int handler for both C and Forth
 .endif 
 
-.ifdef BUILD_QEM
+.ifdef TARGET_QEM
 .print "INFO: using QEM startup"		
 .include "startup.qem"  # startup and master_int handler for both C and Forth
 .endif 

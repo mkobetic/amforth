@@ -1,9 +1,14 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 
+/* C stack size */
 __stack_size = 2048;
 PROVIDE( _stack_size = __stack_size );
 
+/* Memory region info */
 PROVIDE( flash.start = ORIGIN(FLASH) );
+PROVIDE( flash.size = LENGTH(FLASH) );
+PROVIDE( ram.start = ORIGIN(RAM) );
+PROVIDE( ram.size = LENGTH(RAM) );
 
 SECTIONS
 {
@@ -18,11 +23,15 @@ SECTIONS
 		_einit = .;
 	} >FLASH AT>FLASH
 
-  .vector :
-  {
-      *(.vector);
-	  . = ALIGN(64);
-  } >FLASH AT>FLASH
+	/* Hardware interrupt table */
+
+	.vector :
+	{
+		*(.vector);
+		. = ALIGN(64);
+	} >FLASH AT>FLASH
+
+	/* C code sections */
 
 	.text :
 	{
@@ -100,50 +109,78 @@ SECTIONS
 	  KEEP (*(.dtors))
 	} >FLASH AT>FLASH 
 
-        amforth :
-        {
-            . = ALIGN( cellsize ) ;
-            PROVIDE( flash.low = . );
-            *(amforth)
-            *amforth.o(.text .text.*)
+	/*
+		This is the main AmForth flash section housing all the predefined words.
+	*/
+	amforth :
+	{
+		. = ALIGN( cellsize ) ;
+		PROVIDE( flash.low = . );
+		*(amforth)
+		*amforth.o(.text .text.*)
 
-        } >FLASH AT>FLASH
+	} >FLASH AT>FLASH
 
-        eeprom :
-        {
-            . = ALIGN(256) ;
-            PROVIDE( eeprom = . );
-            FILL(0xDEADBEEF);
-            . = . + 256 - 1 ;  
-            BYTE(0);
+	/*
+		This section is used for CH32 eeprom support.
+		See rv/mcu/ch32v307/words/eeprom.s 
+	*/
+	eeprom :
+	{
+		. = ALIGN(256) ;
+		PROVIDE( eeprom = . );
+		FILL(0xDEADBEEF);
+		. = . + 256 - 1 ;  
+		BYTE(0);
 
-        } >FLASH AT>FLASH
+	} >FLASH AT>FLASH
 
-    	amramres :
-		{
-			. = ALIGN(4) ;
-			PROVIDE(RAM_lower_res = . );
-			*(amres)
-	  		PROVIDE(RAM_upper_res = . );
-        } >RAM AT>FLASH
+	amramres :
+	{
+		. = ALIGN(4) ;
+		PROVIDE(RAM_lower_res = . );
+		*(amres)
+		PROVIDE(RAM_upper_res = . );
+	} >RAM AT>FLASH
 
-		PROVIDE(RAM_size_res = RAM_upper_res - RAM_lower_res) ;
-		PROVIDE(RAM_stuf_res = SIZEOF(amramres)) ;
-		PROVIDE(FSH_lower_res = LOADADDR(amramres)) ;
-		PROVIDE(FSH_upper_res = LOADADDR(amramres) + SIZEOF(amramres)) ;
+	PROVIDE(RAM_size_res = RAM_upper_res - RAM_lower_res) ;
+	PROVIDE(RAM_stuf_res = SIZEOF(amramres)) ;
+	PROVIDE(FSH_lower_res = LOADADDR(amramres)) ;
+	PROVIDE(FSH_upper_res = LOADADDR(amramres) + SIZEOF(amramres)) ;
 
-		ASSERT(ADDR(eeprom) + SIZEOF(eeprom) <= FSH_lower_res ,"*ERROR* amramres and eeprom overlap")
+	ASSERT(ADDR(eeprom) + SIZEOF(eeprom) <= FSH_lower_res ,"*ERROR* amramres and eeprom overlap")
 
+	/*
+		userdict represents the free space used for new words created in at runtime in flash (and therefore persistent).
+		It generally occupies the rest of the FLASH memory region.
+	*/
+	userdict :
+	{
+		. = ALIGN(flash_page) ;
+		PROVIDE( dp0.flash = . );
+		PROVIDE( flash.high = . );
+		PROVIDE( flash.max = ORIGIN(FLASH) + LENGTH(FLASH));
+	} >FLASH AT>FLASH
 
-        userdict :
-        {
-            . = ALIGN(flash_page) ;
-            PROVIDE( dp0.flash = . );
-            PROVIDE( flash.high = . );
-            PROVIDE( flash.max = ORIGIN(FLASH) + LENGTH(FLASH));
-        } >FLASH AT>FLASH
+	/*
+		This is not a real section, it just marks a flash page that is filled with known value on upload
+		and that will be erased at the end of the first boot.
+		It used to detect when newly uploaded AmForth boots for the first time.
+		It is expected for userdict to overlap this section.
+		See core/words/first-boot.s
+	*/
+	first_boot : {
+		. = ALIGN( flash_page );
+		PROVIDE( first_boot = . );
+		PROVIDE( first_boot_marker = ABSOLUTE(0xEFBEADDE) );
+		FILL(0xDEADBEEF); /* fill value MUST match first_boot_marker */
+		. = . + flash_page - 1;
+		BYTE(0); /* seems to be needed to actually get a write */
+	} >FLASH AT>FLASH
 
-		ASSERT(FSH_upper_res <= dp0.flash , "*ERROR* amramres and userdict overlap")
+	/* C data sections */
+
+	ASSERT(FSH_upper_res <= dp0.flash , "*ERROR* amramres and userdict overlap")
 
 	.dalign :
 	{
@@ -194,6 +231,8 @@ SECTIONS
 	PROVIDE( _end = _ebss);
 	PROVIDE( end = . );    
 
+	/* AmForth RAM sections */
+
     amramlo :
     {
         . = ALIGN(256) ;
@@ -222,9 +261,10 @@ SECTIONS
 
 	ASSERT(RAM_upper_fi <= vp0 ,"*ERROR* amramlo and amramhi overlap") 
 
+	/* Sections at the high end of RAM */
 
+	/* C stack section */
     slack = cellsize ;
-
     .stack ORIGIN(RAM) + LENGTH(RAM) - __stack_size  - eeprom_size - slack :
     {
         PROVIDE( _heap_end = . );    
@@ -235,8 +275,12 @@ SECTIONS
     } >RAM
 	PROVIDE( dp.ram.max = ADDR(.stack) - slack );
 
+
+	/*
+		This section is used for CH32 eeprom support.
+		See rv/mcu/ch32v307/words/eeprom.s 
+	*/
     eeprom_size = 256 ;
-    
     .eeprom ORIGIN(RAM) + LENGTH(RAM) - eeprom_size :
     {
         . = ALIGN(4);
@@ -247,16 +291,17 @@ SECTIONS
 
 	ASSERT(_eusrstack == ORIGIN(RAM) + LENGTH(RAM) - eeprom_size - slack, "Stack and EEPROM overlap!")
 
+	/* End of RAM sections */
 
 	/* 
 		The pvarena sections are used to store pvalue records, persisting updates to pvalues.
-		They must be located in PVFLASH memory region that each MCU must define.
+		They must be located in a dedicated PVFLASH memory region that each MCU must define.
 		It can be a section of code flash that is allocated for this purpose or dedicated data flash.
 		It can also be part of RAM although the persistence aspect is of course moot then.
 
 		The region length, PVFLASH_SIZE, must be an even multiple of PVFLASH_PAGE
 		and the region origin must be aligned on the page size as well.
-		PVFLASH_SIZE can be 0 but PVFLASH region must still be defined explicitly with length 0
+		PVFLASH_SIZE can be 0 but PVFLASH region must still be defined explicitly with length 0,
 		otherwise it will default to occupying the entire memory space.
 
 		The region will be consumed entirely by two equal size arenas.
@@ -271,6 +316,7 @@ SECTIONS
 	ASSERT(LENGTH(PVFLASH) % pvfdiv == 0, "PVFLASH length is not a multiple of PVFLASH_PAGE!")
 	ASSERT((LENGTH(PVFLASH) / pvfdiv) % 2 == 0, "PVFLASH length is not an even multiple of PVFLASH_PAGE!")
 
+	/* PVFLASH memory parameters */
 	PROVIDE(pvflash.page = PVFLASH_PAGE);
 	PROVIDE(pvflash.cell = PVFLASH_CELL);
 	PROVIDE(pvflash.erased = PVFLASH_ERASED);

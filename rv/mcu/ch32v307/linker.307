@@ -7,11 +7,12 @@ FLASH_ORIGIN = 0x00000000;
 /* Allocate end of FLASH as PVFLASH */
 PVFLASH_PAGE = flash_page;
 PVFLASH_CELL = flash_cell;
-PVFLASH_SIZE = 4 * PVFLASH_PAGE;
-PVFLASH_ORIGIN = FLASH_ORIGIN + flash_size - PVFLASH_SIZE;
 PVFLASH_ERASED = flash_erased;
+PVFLASH_SIZE = 16K;
+FLASH_SIZE = 256K - PVFLASH_SIZE;
+PVFLASH_ORIGIN = FLASH_ORIGIN + FLASH_SIZE;
 
-
+/* !! Memory regions are defined early and their parameters MUST NOT be computed from object file symbols !! */
 MEMORY
 {
 /* CH32V30x_D8C - CH32V305RB-CH32V305FB
@@ -30,10 +31,10 @@ MEMORY
    FLASH-256K + RAM-64K  
    FLASH-288K + RAM-32K  
 */
-	FLASH (rx)  : ORIGIN = FLASH_ORIGIN, LENGTH = flash_size - PVFLASH_SIZE
+   /* Use end of code flash as PVFLASH */
+	FLASH (rx)  : ORIGIN = FLASH_ORIGIN, LENGTH = FLASH_SIZE
    PVFLASH(rw) : ORIGIN = PVFLASH_ORIGIN, LENGTH = PVFLASH_SIZE
  	RAM (xrw)   : ORIGIN = 0x20000000, LENGTH = 64K
-
 }
 
 INCLUDE amforth32.ld

@@ -4,7 +4,7 @@ COLON "qnop", QNOP
 .ifdef RA_FLASH
 	.word XT_MEMMODE
 	.word XT_DOCONDBRANCH,QNOP_0001 /* if */
-    .word XT_FLASHDOTCELL
+    .word XT_FLASH_CELL
 	.word XT_DP
     .word XT_NALIGNED
 	.word XT_DP

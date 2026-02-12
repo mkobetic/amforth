@@ -1,19 +1,19 @@
 # ----------------------------------------------------------------------
-COLON "~(dallot)", TILDELPARENDALLOTRPAREN 
+COLON "~(dallot)", TILDEDODALLOT 
 	.word XT_DP
 	.word XT_PLUS
     .word XT_DOTO
 	.word XT_DP
 	.word XT_EXIT
 # ----------------------------------------------------------------------
-COLON "~(c,)", TILDELPARENCCOMMARPAREN 
+COLON "~(c,)", TILDEDOCCOMMA 
 	.word XT_DP
 	.word XT_CSTORE
 	.word XT_ONE
 	.word XT_DALLOT
 	.word XT_EXIT
 # ----------------------------------------------------------------------
-COLON "~(,)", TILDELPARENCOMMARPAREN 
+COLON "~(,)", TILDEDOCOMMA 
 	.word XT_DP
 	.word XT_STORE
 	.word XT_CELL
@@ -25,7 +25,7 @@ COLON "flash.qem" , FLASHDOTQEM
      # ' ~(dallot) to (dallot)
      
     .word XT_DOLITERAL
-    .word XT_TILDELPARENDALLOTRPAREN
+    .word XT_TILDEDODALLOT
     .word XT_DOLITERAL    
     .word XT_LPARENDALLOTRPAREN
     .word XT_CELLPLUS
@@ -35,7 +35,7 @@ COLON "flash.qem" , FLASHDOTQEM
      # ' ~(c,) to (c,)
      
     .word XT_DOLITERAL
-    .word XT_TILDELPARENCCOMMARPAREN
+    .word XT_TILDEDOCCOMMA
     .word XT_DOLITERAL
     .word XT_LPARENCCOMMARPAREN
     .word XT_CELLPLUS
@@ -45,7 +45,7 @@ COLON "flash.qem" , FLASHDOTQEM
      # ' ~(,) to (,)
      
     .word XT_DOLITERAL
-    .word XT_TILDELPARENCOMMARPAREN
+    .word XT_TILDEDOCOMMA
     .word XT_DOLITERAL
     .word XT_LPARENCOMMARPAREN
     .word XT_CELLPLUS

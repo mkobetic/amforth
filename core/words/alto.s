@@ -32,22 +32,22 @@ END TO
 #       .word XT_EXIT
 
 NONAME DOTO
-    .word XT_R_FROM
+    .word XT_R_FROM /* address of the next word in the calling word */
     .word XT_DUP
     .word XT_CELLPLUS
-    .word XT_TO_R
-    .word XT_FETCH
+    .word XT_TO_R /* skip the immediately following word when we return */
+    .word XT_FETCH /* ( xt ) of the following word in the caller */
     .word XT_DOTO1
     .word XT_EXIT
 END DOTO
 
 NONAME DOTO1
+    .word XT_CELLPLUS /* ( xt ) */
+    .word XT_DUP, XT_FETCH, XT_SWAP /* ( ram-address pfa ) */
     .word XT_CELLPLUS
-    .word XT_DUP, XT_FETCH, XT_SWAP
     .word XT_CELLPLUS
     .word XT_CELLPLUS
-    .word XT_CELLPLUS
-    .word XT_FETCH
+    .word XT_FETCH /* ( ram-address setter-xt ) */
     .word XT_EXECUTE
     .word XT_EXIT
 END DOTO1

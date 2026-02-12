@@ -4,16 +4,18 @@ List of know issues and tasks that need to be done (by area)
 # CORE
 
 * rv not vs arm not (logical vs bitwise), also invert and not is the same thing
-* !i must not be permitted to write below dp0.flash
-* sort out issues with `to` word (to.s/alto.s)
-* figure out if value setter/getter XTs are used and drop them if not
-* add END macro and make all words proper function blocks (debug_info)
-* review/simplify word flags
+* clean up placeholders in dict_mcu.s files
+* !i must not be permitted to write below dp0.flash (!i vs ~!i)
 * ARM: 2rot and rot is the same thing (see RV)
+* review/simplify word flags
+* sort out issues with `to` word (to.s/alto.s)
+* add END macro and make all words proper function blocks (debug_info)
+* figure out if value setter/getter XTs are used and drop them if not
 * clean/document amforth32.ld (assumptions, section purpose, etc)
 * add refcard legend
-* clean up placeholders in dict_mcu.s files
+* Makefile: build/amforth.dep setup forces second amforth.o compilation
 
+* push WANT_USB_OPERATOR, TARGET_QEM out of core (into ch32)
 * core/aligned.s vs arm|rv/aligned.s
 * aligned.s and do-aligned.s are identical
 * remove doxliteral.s in favor of doliteral.s
@@ -24,10 +26,9 @@ List of know issues and tasks that need to be done (by area)
 
 * add selected options to build-info (e.g. WANT_IGNORECASE)
 * make target for listing unused words/ files (see build/amforth.dep)
-* a way to build different configurations for a given MCU
-* Standardized Makefile targets across all MCUs 
-* Extract OS and personal details from Makefiles (.env files?)
-* Automated compiled artifact releases
+* standardized Makefile targets across all MCUs 
+* extract OS and personal details from Makefiles (.env files?)
+* automated compiled artifact releases
 * proper, and extractable comments for all words
 * automated ref-card generation
 * figure out what to do about docs
@@ -64,7 +65,7 @@ List of know issues and tasks that need to be done (by area)
 
 ## CH32V307
 
-* flash.qem vs flash.307 vs flash.s (flash.low defined multiple times)
+* flash.qem vs flash.307 vs flash.s
 * unify the build setup with the rest of MCUs (gcc vs as)
 * RAMALLOT reg_shadow differences between 307 ad QEM configuration
 * generalize eeprom support (eeprom.s)

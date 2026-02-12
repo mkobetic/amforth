@@ -327,7 +327,7 @@ __flash_write__:
     cpsid   i
     bl      enter_cf_pe_mode
     mov     r0, tos 
-    ldr     r1, =FLASHDOTCACHE_ram
+    ldr     r1, =FLASH_CACHE_ram
     bl      program_cf
     bl      exit_cf_pe_mode
     loadtos 

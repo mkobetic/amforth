@@ -9,7 +9,13 @@ else
 endif
 
 LANG=C
+
+TARGET ?= LINUX
+ifeq ($(strip $(TARGET)), LINUX)
 MCU_LD ?= linux.ld
+else
+$(error Unknown TARGET '$(TARGET)')
+endif
 
 AMFORTH ?= $(shell git rev-parse --show-toplevel)
 

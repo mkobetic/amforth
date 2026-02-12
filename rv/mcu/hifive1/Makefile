@@ -1,6 +1,12 @@
-BOARD ?= freedom-e300-hifive1
-MCU_LD ?= hifive1.ld
 
+TARGET ?= HIFIVE1
+ifeq ($(strip $(TARGET)), HIFIVE1)
+MCU_LD ?= hifive1.ld
+else
+$(error Unknown TARGET '$(TARGET)')
+endif
+
+BOARD ?= freedom-e300-hifive1
 AMFORTH ?= $(shell git rev-parse --show-toplevel)
 
 # Included after various configuration bits are defined (importantly MCU_LD)

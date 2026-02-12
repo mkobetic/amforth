@@ -13,7 +13,12 @@
 # OPENOCD = $(ARDUINO_TOOLS)/openocd/0.11.0-arduino2/bin/openocd
 -include .env
 
+TARGET ?= UNOR4
+ifeq ($(strip $(TARGET)), UNOR4)
 MCU_LD ?= ra4m1.ld
+else
+$(error Unknown TARGET '$(TARGET)')
+endif
 
 LANG=C
 BOARD = UNOR4
@@ -22,7 +27,7 @@ SPEED = 115200
 
 AMFORTH ?= $(shell git rev-parse --show-toplevel)
 
-# Included after various configuration bits are defined (importantly MCU_LD)
+# Included after various configuration bits are defined (importantly MCU_LD and TARGET)
 include $(AMFORTH)/arm/dev/Makefile
 
 # Using bossac as the uploader, based on what Arduino IDE uses to program the board.

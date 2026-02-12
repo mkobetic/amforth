@@ -2,7 +2,7 @@
 
 # MFD wrong chip .include "words/pll.s"
 
-.ifdef BUILD_QEM
+.ifdef TARGET_QEM
     .print "INFO: using QEM MCU words"	
     .include "words/serial.qem"
     .include "words/flash.qem"
@@ -10,7 +10,7 @@
     .include "words/eeprom.s"    
 .endif
 
-.ifdef BUILD_307
+.ifdef TARGET_307
     .print "INFO: using 307 MCU words"	
     .include "words/flash.307"  
     .include "words/usart.s"

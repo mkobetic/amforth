@@ -4,7 +4,11 @@
 # they represend data instead of code
 #
 
-.include "words/quit.s"     
+.include "words/flash-common.s"
+.include "words/warm.s"
+.include "words/first-boot.s"
+
+.include "words/quit.s"
 .include "words/interpret.s"
 
 .include "words/recognize.s"
@@ -30,14 +34,6 @@
 
 .include "words/num-constants.s"
 #.include "words/dicthelp.s"
-
-.include "words/flash-common.s"
-
-.ifdef BUILD_QEM
-    .include "words/warm.qem"
-.else
-    .include "words/warm.s"
-.endif
 
 .include "words/cr.s"
 .include "words/bl.s"

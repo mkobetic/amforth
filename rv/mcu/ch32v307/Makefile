@@ -122,7 +122,7 @@ MCU_LD := ./linker.qem
 LIB_WCH := ./lib_qem
 LIB_USER := ./lib_qem_user
 else 
-$(error Unknown target configuration $(TARGET))
+$(error Unknown TARGET '$(TARGET)')
 endif
 
 # Included after various configuration bits are defined (importantly MCU_LD)
@@ -158,32 +158,26 @@ USER_OBJS := $(filter-out $(BUILD_DIR)/$(LIB_WCH)/% \
 
 INCLUDES := -I . $(INCLUDES)
 
-
 # Compiler flags 
-FLAGS := -Wa,--defsym,BUILD_$(strip $(TARGET))=YES -msmall-data-limit=8 -mno-save-restore -Os -Wunused -Wuninitialized -g
+FLAGS := -msmall-data-limit=8 -mno-save-restore -Os -Wunused -Wuninitialized -g
 ifeq ($(strip $(TARGET)),203)
 FLAGS += -march=rv32imac -mabi=ilp32 
 else
 FLAGS += -march=rv32imafc -mabi=ilp32f
 endif
-
-
-
 # Needed for the INCLUDE amforth32.ld to work in linked files (-L must preceed the -T !!!)
 FLAGS += -L $(AMFORTH)/core
 
 DEFINES := -DSYSCLK_FREQ_96MHz
-
+DEFINES += -Wa,--defsym,TARGET_$(strip $(TARGET))=1
 # Need WANT_IGNORECASE if running core tests
 ifdef WANT_IGNORECASE
 DEFINES += -Wa,--defsym,WANT_IGNORECASE=1
 endif
 
-#ASFLAGS  := $(FLAGS) -x assembler $(INCLUDES) -MMD -MP $(DEFINES) 
 ASFLAGS  := $(FLAGS) -x assembler-with-cpp  $(INCLUDES) -MMD -MP $(DEFINES) 
 CPPFLAGS := $(FLAGS) $(INCLUDES) -MMD -MP $(DEFINES)
 
-# ASFLAGS :=--defsym BUILD_$(strip $(TARGET))=YES -march=rv32imafc -mabi=ilp32
 # LDFLAGS += -nostartfiles -t --gc-sections
 # ----------------------------------------------------------------------
 # Targets below 
@@ -238,7 +232,7 @@ help:
 
 ## Build hex file (will clean first)
 all: clean $(BUILD_DIR)/$(TARGET_ELF)
-	@echo INFO: Built $(BUILD_DIR)/$(TARGET_ELF) for target $(TARGET) using $(TOOLCHAIN)
+	@echo INFO: Built $(TARGET) $(REVISION) using $(TOOLCHAIN)
 
 # Create static library from:
 # - lib_wch or lib_203 (vendor peripheral drivers)
@@ -266,7 +260,7 @@ $(BUILD_DIR)/$(TARGET_ELF): $(USER_OBJS) $(BUILD_DIR)/libcode.a
 ifneq ($(strip $(LIB_OBJS)),)
 	$(CC) $(FLAGS) -T $(MCU_LD) -nostartfiles -o $@ $(USER_OBJS) -Wl,--start-group $(BUILD_DIR)/libcode.a -Wl,--end-group --verbose --specs=nano.specs --specs=nosys.specs
 else
-	$(CC) $(FLAGS) -T $(MCU_LD) -nostartfiles -o $@ $(USER_OBJS) --verbose --specs=nano.specs --specs=nosys.specs
+	$(CC) $(FLAGS) -T $(MCU_LD) -nostartfiles -o $@ $(USER_OBJS) --verbose --specs=nano.specs --specs=nosys.specs -Wl,-Map,build/amforth.map
 endif
 	$(OBJCOPY) -Oihex   $@ $(BUILD_DIR)/$(TARGET_HEX)
 	$(OBJCOPY) -Obinary $@ $(BUILD_DIR)/$(TARGET_BIN)

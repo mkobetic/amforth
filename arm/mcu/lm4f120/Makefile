@@ -1,8 +1,12 @@
 # Default to the QEMU target since the real boards were discontinued
+TARGET ?= LM3QEM
+
 ifeq ($(strip $(TARGET)), LM4)
 MCU_LD ?= lm4f120.ld
-else
+else ifeq ($(strip $(TARGET)), LM3QEM)
 MCU_LD ?= lm3s6965qem.ld
+else
+$(error Unknown TARGET '$(TARGET)')
 endif
 
 BOARD=$(shell uname -m)
