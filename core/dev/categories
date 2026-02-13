@@ -20,22 +20,23 @@ DOUBLE:
 MEMORY:
     ! @ h! h@ c! c@ +! fill move
     2@ 2! char+ chars cells cell cell- cell+
-    !i
     align here allot aligned (aligned)
     valign vhere vallot vp vp.max vp0
-    dalign dhere  dallot (dallot) dp dp0.ram dp.ram dp.flash
+    dalign dhere  dallot (dallot) dp dp0.ram dp.ram dp0.flash dp.flash
     ealign ehere eallot ep 
-    ram++ ram+ ram >ram >flash
+    ram++ ram+ ram >ram >flash memmode
     up! up@
 STRING:
-    s, ." s" sub-string? number >number digit? toupper
+    ." s" sub-string? number >number digit? toupper
     /string parse parse-name cskip cscan
     search bounds compare count
+    cfg-recognizer forth-recognizer split rectype-split rec-split rec-num rectype-dnum rectype-num rectype-xt rec-find rectype-null recognize
 DICTIONARY:
-    ' c, , h, (c,) (,) chkdalign reveal newest latest 
+    ' c, , h, (c,) (,) s, chkdalign reveal newest latest 
     value value~ to (to) is variable variable~ constant constant~ :noname header
     find find-xt forget words  interpret execute
     nfa>string nfa>xt lfa>ffa ffa>nfa xt>string >body name>flags ffa>string ffa2cfa ffa>lfa xt>ffa xt>nfa
+    flag.private flag.cloaked flag.table flag.init flag.defer flag.value flag.pvalue flag.immed flag.con flag.colon flag.dvar flag.var flag.code flag.private? flag.header
 WORDLIST:
     wordlist forth-wordlist ram-wordlist core-wordlist environment rv-wordlist arm-wordlist
     get-current  wlscope search-wordlist current show-wordlist traverse-wordlist
@@ -47,7 +48,7 @@ COMPILER:
     Udefer! Udefer@ defer! defer@ defer~ defer
     evaluate (evaluate) evaluate.source evaluate.str evaluate.strlen
 FLOW:
-    ?abort abort" abort trap! throw catch handler exit (exit) (exiti)  
+    ?abort abort" abort trap.base trap! throw catch handler exit (exit) (exiti)  
     repeat again else if while until then begin ahead
     +loop  loop  endloop do ?do (qdocheck) j i unloop leave >l l> lp lp0 
 IO:
@@ -60,21 +61,20 @@ OUTPUT:
     sign #> #s # <# hold hld
 SYSTEM:
     cold warm init-ram turnkey appl-turnkey quit pause
-    ms us ver rev-info build-info 
+    first-boot.done ?first-boot first-boot.marker first-boot.start
+    ms us ver rev-info build-info
     pv.do pv.init vaddr pv.store pvp
-    pvflash.size pvflash.page pvflash.cell pvflash.erased pvflash.erase @ 2!pvf
+    pvflash.size pvflash.page pvflash.cell pvflash.erased pvflash.erase 2!pvf
     pvarena.size pvarena.init pvarena.swap pvarena.erase pvarena pvarena.dormant pvarena1 pvarena2
 TOOLS:
-    debug || dump vdump break
+    debug || dump ?ascii vdump break
+FLASH:
+    flash.cell flash.page flash.erased flash.start flash.low flash.max flash.erase flush naligned
+    !i 2!i
 OTHER:
-    uart-init
-    cacheflush inflash? flashpageerase c!flash w!flash !flash memmode
-    pp     ?ascii  -private +private public? 
-    (forget) forget.prior  trap.base m4fix mtog mclr mset
-    -cloak +cloak cloak?
-    public private flag.private flag.cloaked flag.table flag.init flag.defer flag.value flag.pvalue flag.immed flag.con flag.colon flag.dvar flag.var flag.code flag.private? flag.header
-    map-stack set-base bases .ready .ok .input .error first-run
     false true -1 4 2 1 0
-    cfg-recognizer forth-recognizer split rectype-split rec-split rec-num rectype-dnum rectype-num rectype-xt rec-find rectype-null recognize
-    empty eeprom.empty? eeprom.init eeprom.warm
-    flash.low ~!i !i std.erase std.unlock                         
+    pp  -private +private public? public private 
+    (forget) forget.prior 
+    m4fix mtog mclr mset
+    -cloak +cloak cloak?
+    map-stack set-base bases .ready .ok .input .error first-run

@@ -131,9 +131,10 @@ build/%.dep: %.s buildinfo
 # the file paths are adjusted to be relative to $(AMFORTH) 
 build/%.toc: build/%.dep
 	@awk -f $(AMFORTH)/core/dev/toc.awk $(shell sed 's|/dev/null:||; s| \\||' $<) >$@
-	@echo 'VALUE "environment", ENVIRONMENT /* FFA of last word */ @ core/macros.inc' >>$@
-	@echo 'VALUE "forth-wordlist", FORTH_WORDLIST /* FFA of last word */ @ core/macros.inc' >>$@
-	@echo 'VALUE "$(ARCH)-wordlist", ARCH_WORDLIST /* FFA of last word */ @ core/macros.inc' >>$@
+	@echo 'VALUE "environment", ENVIRONMENT /* FFA of last word; standard environment search list */ @ core/macros.inc' >>$@
+	@echo 'VALUE "forth-wordlist", FORTH_WORDLIST /* FFA of last word; system default wordlist */ @ core/macros.inc' >>$@
+	@echo 'VALUE "$(ARCH)-wordlist", ARCH_WORDLIST /* FFA of last word; architecture specific words */ @ core/macros.inc' >>$@
+	@echo 'CONSTANT "core-wordlist", CORE_WORDLIST /* FFA of last word; core words compiled at build time */ @ core/macros.inc' >>$@
 
 build/%.txt: build/%.toc
 	$(AMFORTH)/tools/refcard.py >$@

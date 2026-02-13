@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "search-wordlist",SEARCH_WORDLIST
+COLON "search-wordlist", SEARCH_WORDLIST /* ( c-addr len wid -- [ 0 ] | [ xt [-1|1]] ) searches the word list wid for the word at c-addr/len */
 
     .word XT_TO_R
     .word XT_ZERO
@@ -22,6 +22,7 @@ PFA_SEARCH_WORDLIST1:
 # MFD      .word XT_NAME2FLAGS
       .word XT_IMMEDIATEQ
     .word XT_EXIT
+END SEARCH_WORDLIST
 
 NONAME ISWORD
     .word XT_TO_R
@@ -41,3 +42,4 @@ PFA_ISWORD3:
       .word XT_R_FROM
       .word XT_ZERO
       .word XT_EXIT
+END ISWORD

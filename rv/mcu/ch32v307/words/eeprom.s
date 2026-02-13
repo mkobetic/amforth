@@ -15,7 +15,6 @@
 .extern eeprom_buf
 .extern eeprom
 
-CONSTANT "core-wordlist" , CORE_WORDLIST , core_wordlist
 CONSTANT "eeprom"       , EEPROM     , eeprom 
 CONSTANT "(eeprom)"     , EEP_BUF    , eeprom_buf   # 256B ram buffer
 VALUE "dp.eeprom"       , DP_EEP     , 0 

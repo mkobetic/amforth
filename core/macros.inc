@@ -21,10 +21,15 @@ PFA_NOP:
 # save the beginning of the wordlists
 .macro ENDDICT_ARCH ARCH
 VALUE "\ARCH-wordlist", ARCH_WORDLIST, 97b
+END ARCH_WORDLIST
 VALUE "environment", ENVIRONMENT, 98b
+END ENVIRONMENT
 VALUE "forth-wordlist", FORTH_WORDLIST, 99b
+END FORTH_WORDLIST
 .set core_wordlist , 99b
 .set DPSTART, 99b
+CONSTANT "core-wordlist", CORE_WORDLIST, core_wordlist
+END CORE_WORDLIST
 .endm
 
 .macro STRING string
