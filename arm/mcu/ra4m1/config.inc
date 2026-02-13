@@ -6,5 +6,6 @@
 .equ flash_cell, 8
 .equ flash_erased, 0xFFFFFFFF /* a word in erased flash */
 
+# RA4 has non-rewritable code flash with 8 byte flash page.
 .equ RA_FLASH, YES
 

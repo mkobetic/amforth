@@ -20,7 +20,7 @@ OUTLINE:
     .word XT_DOCONDBRANCH, 3f, XT_DNEGATE
 
     /* now perform the unsigned um/mod */
-3:  .word XT_BREAK, XT_ROT, XT_UMSLASHMOD /* (rem quo) (R: divsor-neg? divend-neg?) */
+3:  .word XT_ROT, XT_UMSLASHMOD /* (rem quo) (R: divsor-neg? divend-neg?) */
     /* negate remainder if divend-neg? */
     .word XT_R_FETCH, XT_DOCONDBRANCH, 4f
     .word XT_SWAP, XT_NEGATE, XT_SWAP

@@ -162,6 +162,9 @@ SECTIONS
 		PROVIDE( flash.max = ORIGIN(FLASH) + LENGTH(FLASH));
 	} >FLASH AT>FLASH
 
+	ASSERT(FSH_upper_res <= dp0.flash ,"*ERROR* userdict overlaps amramres")
+
+
 	/*
 		This is not a real section, it just marks a flash page that is filled with known value on upload
 		and that will be erased at the end of the first boot.
@@ -178,9 +181,10 @@ SECTIONS
 		BYTE(0); /* seems to be needed to actually get a write */
 	} >FLASH AT>FLASH
 
+	ASSERT(FSH_upper_res <= first_boot , "*ERROR* first_boot overlaps amramres")
+
 	/* C data sections */
 
-	ASSERT(FSH_upper_res <= dp0.flash , "*ERROR* amramres and userdict overlap")
 
 	.dalign :
 	{

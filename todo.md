@@ -10,10 +10,12 @@ List of know issues and tasks that need to be done (by area)
 * review/simplify word flags
 * sort out issues with `to` word (to.s/alto.s)
 * add END macro and make all words proper function blocks (debug_info)
-* figure out if value setter/getter XTs are used and drop them if not
 * clean/document amforth32.ld (assumptions, section purpose, etc)
 * add refcard legend
 * Makefile: build/amforth.dep setup forces second amforth.o compilation
+* compiling broken colon word into flash can make forth-wordlist word disappear
+* RA4: compiling across flash page boundary breaks compilation (dallot unfinished?)
+* add words to show memory stats
 
 * push WANT_USB_OPERATOR, TARGET_QEM out of core (into ch32)
 * core/aligned.s vs arm|rv/aligned.s
@@ -81,6 +83,7 @@ List of know issues and tasks that need to be done (by area)
 
 * document/instrument Python setup for the tools
 * make sure all tools work
+* amshell: translate exception number to mnemonic
 
 
 # DOCS

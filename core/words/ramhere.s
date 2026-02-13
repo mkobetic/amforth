@@ -4,7 +4,7 @@ CONSTANT "vp0"    , VP0      , vp0 /* start of the RAM pool */
 END VP0
 CONSTANT "vp.max" , VPDOTMAX , vp.max /* end of the RAM pool */
 END VPDOTMAX
-VALUE    "vp"     , VP       , vp0 /* RAM pool pointer */
+PVALUE    "vp"     , VP       , vp0 /* RAM pool pointer */
 END VP
 
 COLON "ram", RAMHERE /* ( -- a ) current value of ram pool pointer */

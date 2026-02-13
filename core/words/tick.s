@@ -16,9 +16,7 @@ COLON "'", TICK /* ( "name" -- xt ) leave xt of "name" on stack */
     .word XT_EQUAL
     .word XT_OR
     .word XT_DOCONDBRANCH, PFA_TICK1
-      .word XT_DOLITERAL
-      .word -13
-      .word XT_THROW
+      .word XT_DOLITERAL, -13, XT_THROW
 PFA_TICK1:
     .word XT_DROP
     .word XT_EXIT

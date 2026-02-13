@@ -31,23 +31,23 @@ END TO
 #       .word XT_COMMA
 #       .word XT_EXIT
 
-NONAME DOTO
+NONAME DOTO /* ( x -- ) update value identified by xt in the cell following XT_DOTO to x, skip that cell in execution */
     .word XT_R_FROM /* address of the next word in the calling word */
     .word XT_DUP
     .word XT_CELLPLUS
-    .word XT_TO_R /* skip the immediately following word when we return */
+    .word XT_TO_R /* update return IP to skip the immediately following word when we return */
     .word XT_FETCH /* ( xt ) of the following word in the caller */
     .word XT_DOTO1
     .word XT_EXIT
 END DOTO
 
-NONAME DOTO1
-    .word XT_CELLPLUS /* ( xt ) */
-    .word XT_DUP, XT_FETCH, XT_SWAP /* ( ram-address pfa ) */
+NONAME DOTO1 /* ( x xt ) update value identified by xt to x */
+    .word XT_CELLPLUS /* ( x xt ) */
+    .word XT_DUP, XT_FETCH, XT_SWAP /* ( x ram-address pfa ) */
     .word XT_CELLPLUS
     .word XT_CELLPLUS
     .word XT_CELLPLUS
-    .word XT_FETCH /* ( ram-address setter-xt ) */
+    .word XT_FETCH /* ( x ram-address setter-xt ) */
     .word XT_EXECUTE
     .word XT_EXIT
 END DOTO1

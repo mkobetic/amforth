@@ -63,8 +63,8 @@ SYSTEM:
     cold warm init-ram turnkey appl-turnkey quit pause
     first-boot.done ?first-boot first-boot.marker first-boot.start
     ms us ver rev-info build-info
-    pv.do pv.init vaddr pv.store pvp
-    pvflash.size pvflash.page pvflash.cell pvflash.erased pvflash.erase 2!pvf
+    pv.do pv.init vaddr pv.store pvp pv.reset-hard
+    pvflash.start pvflash.size pvflash.page pvflash.cell pvflash.erased pvflash.erase 2!pvf
     pvarena.size pvarena.init pvarena.swap pvarena.erase pvarena pvarena.dormant pvarena1 pvarena2
 TOOLS:
     debug || dump ?ascii vdump break

@@ -3,9 +3,7 @@ COLON "?stack", QSTACK /* ( -- ) throw if stack depth is negative */
     .word XT_DEPTH
     .word XT_ZEROLESS
     .word XT_DOCONDBRANCH,PFA_QSTACK1
-      .word XT_DOLITERAL
-      .word -4
-      .word XT_THROW
+      .word XT_DOLITERAL, -4, XT_THROW
 PFA_QSTACK1:
     .word XT_EXIT
 END QSTACK

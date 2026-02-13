@@ -2,6 +2,10 @@
 \ They start with erasing the PVFLASH!
 hex
 
+\ test values
+#42 value pvt1
+#42 value pvt2
+
 TESTING pvarena.erase
 
 pvarena1 pvarena.erase
@@ -25,24 +29,21 @@ TESTING pv.store
 \ but that means pvarena.swap won't find them in the dictionary (wrong flags),
 \ so their records will be gone after the swap
 
-#42 value pvt1
-#42 value pvt2
-
-1 ' pvt1 pv.store
+1 vaddr pvt1 pv.store
 T{ pvt1 pvp -> 1 pvarena #4 cells + }T
 T{ pvp cell- @ -> 1 }T
 T{ pvp cell- cell- @ -> vaddr pvt1 }T
 
-2 ' pvt1 pv.store
+2 vaddr pvt1 pv.store
 T{ pvt1 pvp -> 2 pvarena #6 cells + }T
 
-3 ' pvt2 pv.store
+3 vaddr pvt2 pv.store
 T{ pvt2 pvp -> 3 pvarena #8 cells + }T
 
-4 ' pvt1 pv.store
+4 vaddr pvt1 pv.store
 T{ pvt1 pvp -> 4 pvarena #10 cells + }T
 
-5 ' pvt2 pv.store
+5 vaddr pvt2 pv.store
 T{ pvt2 pvp -> 5 pvarena #12 cells + }T
 
 TESTING pv.init reinitialization

@@ -6,6 +6,4 @@ DATA "rectype-null", RECTYPE_NULL
     .word XT_FAIL  
 
 NONAME FAIL
-    .word XT_DOLITERAL
-    .word -13
-    .word XT_THROW
+    .word XT_DOLITERAL, -13, XT_THROW

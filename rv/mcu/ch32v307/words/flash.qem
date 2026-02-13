@@ -27,7 +27,7 @@ COLON "flash.qem" , FLASHDOTQEM
     .word XT_DOLITERAL
     .word XT_TILDEDODALLOT
     .word XT_DOLITERAL    
-    .word XT_LPARENDALLOTRPAREN
+    .word XT_DODALLOT
     .word XT_CELLPLUS
 	.word XT_FETCH
 	.word XT_STORE
@@ -37,7 +37,7 @@ COLON "flash.qem" , FLASHDOTQEM
     .word XT_DOLITERAL
     .word XT_TILDEDOCCOMMA
     .word XT_DOLITERAL
-    .word XT_LPARENCCOMMARPAREN
+    .word XT_DOCCOMMA
     .word XT_CELLPLUS
 	.word XT_FETCH
 	.word XT_STORE

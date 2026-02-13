@@ -33,9 +33,7 @@ Following forth code documents the implementation. It is transpiled into ITC bel
 
 \ Updating a pvalue means writing a new pvalue record in the current pvarena,
 \ and then updating the corresponding RAM cell with the same value.
-: pv.store ( x xt -- ) \ update pvalue identified by xt to value x
-    \ translate xt to the value RAM address
-    >body @ ( x addr )
+: pv.store ( x addr -- ) \ update pvalue identified by RAM addr to value x
     \ if pvarena.size is 0 do just the RAM update, skip the rest
     pvarena.size dup 0= if ! exit then
     \ check that there is room in the current arena, compact and swap arenas otherwise
@@ -75,7 +73,6 @@ Following forth code documents the implementation. It is transpiled into ITC bel
         drop \ unused arena1 ID
     then ;
 
-\ TODO: This should be called from warm after the normal value init runs.
 \ The pvalues must be initialized with their default values first (like any values),
 \ then this will replay all the pvalue records, ending up with the latest persisted state.
 : pv.init ( -- ) \ replay pvarena records, set pvp
@@ -222,12 +219,10 @@ END PV3
 
 # ----------------------------------------------------------------------
 
-COLON "pv.store", PV_STORE /* ( x xt -- ) update pvalue identified by xt to value x */
+COLON "pv.store", PV_STORE /* ( x addr -- ) update pvalue identified by RAM addr to value x */
 /*  Updating a pvalue means writing a new pvalue record in the current pvarena,
     and then updating the corresponding RAM cell with the same value.
     If current arena is full run pvarena.swap first. */
-    /* convert XT to RAM address */
-    .word XT_TO_BODY, XT_FETCH
     /* if pvarena.size is 0 do just the RAM update, skip the rest */
     .word XT_PVARENA_SIZE, XT_DUP, XT_ZEROEQUAL, XT_DOCONDBRANCH, 1f
         .word XT_STORE, XT_EXIT

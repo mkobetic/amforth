@@ -78,6 +78,7 @@ ocd:
 		-c "adapter driver cmsis-dap" \
 		-c "transport select swd" \
 		-f dev/R7FA4M1AB.cfg
+		# -c "init; ra4m1.cpu configure -event gdb-detach { resume }"
 
 # If you don't have/want python enabled GDB you can
 # * replace $(GDBPY) with $(GDB)
