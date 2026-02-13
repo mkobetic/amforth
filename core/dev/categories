@@ -20,11 +20,11 @@ DOUBLE:
 MEMORY:
     ! @ h! h@ c! c@ +! fill move
     2@ 2! char+ chars cells cell cell- cell+
-    align here allot aligned (aligned)
-    valign vhere vallot vp vp.max vp0
-    dalign dhere  dallot (dallot) dp dp0.ram dp.ram dp0.flash dp.flash
+    align here allot aligned
+     >ram >flash memmode
+    valign vhere vallot vp vp.max vp0 ram++ ram+ ram
+    dalign dhere dallot dp dp0.ram dp.ram dp0.flash dp.flash
     ealign ehere eallot ep 
-    ram++ ram+ ram >ram >flash memmode
     up! up@
 STRING:
     ." s" sub-string? number >number digit? toupper

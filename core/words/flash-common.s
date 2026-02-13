@@ -9,8 +9,6 @@ CONSTANT  "flash.cell"  , FLASH_CELL , flash_cell
 END FLASH_CELL
 CONSTANT  "flash.erased"  , FLASH_ERASED , flash_erased
 END FLASH_ERASED
-CONSTANT "dp0.flash"   , DP0_FLASH  , dp0.flash
-END DP0_FLASH
 CONSTANT "flash.start" , FLASH_START  , flash.start
 END FLASH_MAX
 CONSTANT "flash.low"    , FLASH_LOW   , flash.low

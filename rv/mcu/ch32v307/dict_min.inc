@@ -283,11 +283,9 @@ DO_EXECUTE:
 .include "sec-words/get-current.s"
 .include "sec-words/greater-zero.s"
 .include "sec-words/to-in.s"
-.include "sec-words/dp.s"
 .include "sec-words/udefer.s"
 .include "sec-words/wordlist.s"
 .include "sec-words/ramwordlist.s"
-
 
 
 # TW testing 

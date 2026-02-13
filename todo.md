@@ -38,9 +38,9 @@ List of know issues and tasks that need to be done (by area)
 
 # ARM
 
+* add readme.md
 * don't push{lr}/pop{pc} in leaf functions (just bx lr)
 * don't use ldm when not needed (poptos, popnos)
-* add readme.md
 * (exiti) likely needs work
 * document dev tool setup
 * better HW fault handling
@@ -57,6 +57,8 @@ List of know issues and tasks that need to be done (by area)
 
 ## LINUX
 
+* make dtests is failing
+
 
 # RISC-V
 
@@ -69,7 +71,6 @@ List of know issues and tasks that need to be done (by area)
 * a lot of code duplication between flash and eeprom
 * unify the build setup with the rest of MCUs (gcc vs as)
 * RAMALLOT reg_shadow differences between 307 ad QEM configuration
-* generalize eeprom support (eeprom.s)
 
 ## HIFIVE1
 
