@@ -48,10 +48,19 @@ OPENOCD ?= openocd
 # Alternatively the touch1200bps utility can achieve the same as well.
 #
 # Note: it seems only the Arduino version of bossac works with UNO R4 (https://github.com/arduino/BOSSA)
+# The touch1200bps often doesn't work, not sure why (check the -boot option maybe?)
+# Double pressing the reset button is reliable.
 ## Upload bin file to the device  
 upload: build/amforth.bin touch1200bps
 	touch1200bps/touch1200bps /dev/$(MODEM)
 	$(BOSSAC) --debug --port=$(MODEM) --write build/amforth.bin --reset
+
+## erase whole flash (doesn't seem to actually do that, hmm)
+erase:
+	$(BOSSAC) -h
+	# $(BOSSAC) --debug --port=$(MODEM) --erase
+
+
 
 # This builds the touch1200bps binary; requires a reasonably recent version of Golang installed.
 # This is used above for the upload target.
