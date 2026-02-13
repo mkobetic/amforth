@@ -506,6 +506,7 @@ class AMForth(object):
         self._serial_rtscts = rtscts
         self._serial_speed = speed
         self._serialconn = None
+        self._encoding = 'latin1'
         self._readline_initialized = False
         self._amforth_dp = None
         self._filedirs = {}
@@ -657,6 +658,8 @@ additional definitions (e.g. register names)
             help="Add Include directory")
         parser.add_argument("--uploaded-wl", "-U", action="store_true", default=False,
             help="Keep the list of uploaded filenames in the dictionary.")
+        parser.add_argument("--encoding", "-e", action="store", default="latin1",
+            help="Serial port encoding (default: latin1)")
 
         parser.add_argument("files", nargs="*", help="may be found via the environment variable AMFORTH_LIB")
         arg = parser.parse_args()
@@ -668,6 +671,7 @@ additional definitions (e.g. register names)
         self._log = arg.log
         self._update_uploaded = arg.uploaded_wl
         self.editor = arg.editor
+        self._encoding = arg.encoding
         if arg.Include:
             self._search_list.extend(arg.Include)
         behavior = self._config.current_behavior
@@ -1086,15 +1090,15 @@ additional definitions (e.g. register names)
             if self.debug:
                 sys.stderr.write(repr(c)[1:-1]+"->")
                 sys.stderr.flush()
-            self._serialconn.write(c.encode())
+            self._serialconn.write(c.encode(self._encoding))
             self._serialconn.flush()
             r = self._serialconn.read(1) # Read echo of character we just sent
-            r=r.decode()
+            r=r.decode(self._encoding)
             while r and (r != c or (c == '\t' and r != ' ')):
                 if self.debug:
                     sys.stderr.write(repr(r)[1:-1])
                     sys.stderr.flush()
-                r = self._serialconn.read(1).decode()
+                r = self._serialconn.read(1).decode(self._encoding)
             if not r:
                 raise AMForthException("Input character not echoed.")
             if self.debug:
@@ -1107,7 +1111,7 @@ additional definitions (e.g. register names)
         if self.debug:
             sys.stderr.write("|r(     )")
         response = ""
-        r = self._serialconn.read(1).decode()
+        r = self._serialconn.read(1).decode(self._encoding)
         while r != "":
             if self.debug:
                 sys.stderr.write(repr(r)[1:-1])
@@ -1120,7 +1124,7 @@ additional definitions (e.g. register names)
             elif self.amforth_error_cre.search(response) is not None:
                 response = response[:-3]  # Don't return prompt in response
                 break
-            r = self._serialconn.read(1).decode()
+            r = self._serialconn.read(1).decode(self._encoding)
         if not response:
             response = "Timed out waiting for ok response"
         if self.debug:
@@ -1402,4 +1406,3 @@ additional definitions (e.g. register names)
 
 if __name__ == "__main__":
     sys.exit(AMForth().main())
-
