@@ -91,7 +91,7 @@ COLON "init.dp.flash", INIT_DP_FLASH /* ( -- ) set dp.flash to the first erased 
     .word XT_DOBRANCH, 2f
 1: 
   /* otherwise check the end of the next page to see if it was erased */
-  .word XT_DUP, XT_FLASH_PAGE, XT_PLUS,  /* ( end-of-last-page end-of-next-page ) */
+  .word XT_DUP, XT_FLASH_PAGE, XT_PLUS  /* ( end-of-last-page end-of-next-page ) */
   .word XT_DUP, XT_FETCH, XT_FLASH_ERASED, XT_EQUAL, XT_DOCONDBRANCH, 1f
     /* if it was search from the end of the next page */
     .word XT_SWAP, XT_DROP, XT_DOBRANCH, 2f
