@@ -258,20 +258,16 @@ CODEWORD "std.erase" , STDDOTERASE # ( a-flash -- ) FLASH: Erase 4K page flash-a
 
 # ----------------------------------------------------------------------
 COLON "~(dallot)", TILDEDODALLOT 
-	.word XT_DP
-	.word XT_FLASH_PAGE
-	.word XT_MOD
-	.word XT_ZEROEQUAL
-	.word XT_DOCONDBRANCH,TILDEDODALLOT_0001 # if
-	.word XT_DP_CACHE
-	.word XT_ZEROEQUAL
-	.word XT_DOCONDBRANCH,TILDEDODALLOT_0002 # if
-	.word XT_DP
-	.word XT_STDDOTERASE
-	.word XT_DOBRANCH,TILDEDODALLOT_0003
+	/* Are we crossing over to the next flash page? (dp mod flash.page) + u >= flash.page ? */
+	.word XT_DUP, XT_DP, XT_FLASH_PAGE, XT_MOD, XT_PLUS, XT_FLASH_PAGE, XT_GREATEREQUAL
+	.word XT_DOCONDBRANCH,TILDEDODALLOT_0001 /* if */
+		/* Is the flash.cache empty? */
+		.word XT_DP_CACHE, XT_ZEROEQUAL
+		.word XT_DOCONDBRANCH,TILDEDODALLOT_0002 /* if */
+			.word XT_DUP, XT_DP, XT_PLUS, XT_STDDOTERASE /* erase the flash page at DP + u */
+	        .word XT_DOBRANCH,TILDEDODALLOT_0003
 TILDEDODALLOT_0002: # else
-	.word XT_DROP
-	.word XT_FINISH
+	.word XT_DROP, XT_FINISH /* flash.cache is dirty, exit. TODO: WHY? */
 TILDEDODALLOT_0003: # then
 TILDEDODALLOT_0001: # then
 	.word XT_TO_R

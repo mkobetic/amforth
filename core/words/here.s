@@ -53,15 +53,21 @@ END TO_RAM
     forth-wordlist dp0.flash < if exit then
     \ find start of the next flash page after forth-wordlist
     forth-wordlist flash.page / 1+ flash.page *
-    \ check the end of the page to see if was erased
-    dup flash.page + cell- dup @ flash.erased == if \ ( start-of-page end-of-page )
-      \ if it was search from the end of the page
-      swap drop
+    \ check the end of the previous page to see if it is erased
+    cell- dup @ flash.erased == if \ ( end-of-last-page )
+      \ if so start the backward search for cell from there
     else
-      \ if it wasn't, erase it and search from the end of previous page
-      \ this assumes that valid dictionary content cannot extend more than
-      \ flash page size past the forth-wordlist pointer
-      drop dup flash.erase
+      \ check the end of the next page to see if was erased
+      dup flash.page + dup @ flash.erased == if \ ( end-of-last-page end-of-next-page )
+        \ if it was search from the end of the page
+        swap drop
+      else
+        \ if it wasn't, erase it and search from the end of previous page
+        \ this assumes that valid dictionary content cannot extend more than
+        \ flash page size past the forth-wordlist pointer
+        drop cell+ dup flash.erase
+        to dp.flash exit
+      then
     then \ ( erased-cell-to-search-from )
     \ then search back for the first dirty cell
     begin dup @ flash.erased = while
@@ -77,17 +83,23 @@ COLON "init.dp.flash", INIT_DP_FLASH /* ( -- ) set dp.flash to the first erased 
   /* if forth-wordlist < dp0.flash then leave dp.flash set to dp0.flash */
   .word XT_FORTH_WORDLIST, XT_DP0_FLASH, XT_LESS, XT_DOCONDBRANCH, 1f, XT_EXIT
 1: 
-  /* find start of the next flash page after forth-wordlist and go to the end of it */
+  /* find start of the next flash page after forth-wordlist */
   .word XT_FORTH_WORDLIST, XT_FLASH_PAGE, XT_SLASH, XT_1PLUS, XT_FLASH_PAGE, XT_STAR
-  /* check the end of the page to see if was erased */
-  .word XT_DUP, XT_FLASH_PAGE, XT_PLUS, XT_CELLMINUS /* ( start-of-page end-of-page ) */
+  /* check the end of the previous page to see if it is erased */
+  .word XT_CELLMINUS, XT_DUP, XT_FETCH, XT_FLASH_ERASED, XT_EQUAL, XT_DOCONDBRANCH, 1f
+    /* if so start the backward search for cell from there */
+    .word XT_DOBRANCH, 2f
+1: 
+  /* otherwise check the end of the next page to see if it was erased */
+  .word XT_DUP, XT_FLASH_PAGE, XT_PLUS,  /* ( end-of-last-page end-of-next-page ) */
   .word XT_DUP, XT_FETCH, XT_FLASH_ERASED, XT_EQUAL, XT_DOCONDBRANCH, 1f
-    /* if it was search from the end of the page */
+    /* if it was search from the end of the next page */
     .word XT_SWAP, XT_DROP, XT_DOBRANCH, 2f
-1:  /* if it wasn't, erase it and search from the end of previous page
+1:  /* if it wasn't, erase the page and set dp.flash to the start of it.
       this assumes that valid dictionary content cannot extend more than
       flash page size past the forth-wordlist pointer */
-    .word XT_DROP, XT_DUP, XT_FLASH_ERASE
+    .word XT_DROP, XT_CELLPLUS, XT_DUP, XT_FLASH_ERASE
+    .word XT_DOTO, XT_DP_FLASH, XT_EXIT
 2: /* ( erased-cell-to-search-from ) */
   /* search back for the first dirty cell */
   .word XT_DUP, XT_FETCH, XT_FLASH_ERASED, XT_EQUAL, XT_DOCONDBRANCH, 3f

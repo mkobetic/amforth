@@ -3,7 +3,6 @@ List of know issues and tasks that need to be done (by area)
 
 # CORE
 
-* CH32: junk in flash can prevent reuse of dictionary pages
 * RA4: compiling across flash page boundary breaks compilation (dallot unfinished?)
 * rv not vs arm not (logical vs bitwise), also invert and not is the same thing
 * clean up placeholders in dict_mcu.s files
