@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-CODEWORD "naligned" , NALIGNED /* ( n a1 -- a2 ) a2 is n aligned a1 )  */
+CODEWORD "naligned" , NALIGNED /* ( n a1 -- a2 ) n = 2**u; a2 is a1 aligned (up) at n bytes */
 naligned:
     ldr     r1, [psp]       @ r1 = n (byte count from NOS)
     add     psp, psp, #4    @ pop stack (remove n)

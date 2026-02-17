@@ -22,6 +22,10 @@ COLON "warm", WARM /* ( -- ) high level part of the boot sequence, VM is running
   .word XT_QFIRST_BOOT, XT_DOCONDBRANCH, 1f
     .word XT_FIRST_BOOT_DONE
 1:
+  /* find the end of the used flash and set DP;
+    do it after first-boot-done so that the first-boot page is erased already */
+  .word XT_INIT_DP_FLASH
+
   .word XT_LBRACKET
   .word XT_TURNKEY    
   .word XT_QUIT       

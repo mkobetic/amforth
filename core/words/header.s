@@ -19,7 +19,5 @@ COLON "header", HEADER /* ( addr u wid -- ffa ) creates header (without CF/PF) f
     .word XT_EXIT
 
 PFA_HEADER1:
-    .word XT_DOLITERAL
-    .word -16
-    .word XT_THROW
+    .word XT_DOLITERAL, -16, XT_THROW
 END HEADER

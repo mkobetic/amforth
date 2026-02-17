@@ -41,3 +41,9 @@ T{ 0 0  s" G" 10 >NUMBER-BASED nip -> 0 0 1 }T
 T{ 0 0  s" G" MAX-BASE >NUMBER-BASED nip -> 10 0 0 }T
 T{ 0 0  s" Z" MAX-BASE >NUMBER-BASED nip -> 23 0 0 }T
 
+TESTING naligned
+
+T{ 8 0 naligned -> 0 }T
+T{ 8 1 naligned -> 8 }T
+T{ 8 6 naligned -> 8 }T
+T{ 8 8 naligned -> 8 }T

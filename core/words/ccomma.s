@@ -1,11 +1,11 @@
 
-DEFER "(c,)", LPARENCCOMMARPAREN, XT_NOP
-END LPARENCCOMMARPAREN
+DEFER "(c,)", DOCCOMMA, XT_NOP
+END DOCCOMMA
 
 COLON "c,", CCOMMA /* ( c -- ) append c to the dictionary */
     .word XT_MEMMODE
     .word XT_DOCONDBRANCH,CCOMMA_0001 /* if */
-    .word XT_LPARENCCOMMARPAREN
+    .word XT_DOCCOMMA
     .word XT_DOBRANCH,CCOMMA_0002
 CCOMMA_0001: # else
     .word XT_DP

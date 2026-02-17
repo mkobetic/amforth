@@ -76,9 +76,7 @@ COLON ">f", GTF
 	.word XT_RTEST
 	.word XT_ZEROEQUAL
 	.word XT_DOCONDBRANCH,GTF_0001 # if
-	.word XT_DOLITERAL
-	.word -50
-	.word XT_THROW
+	.word XT_DOLITERAL, -50, XT_THROW
 GTF_0001: # then
 	.word XT_EXIT
 # ----------------------------------------------------------------------

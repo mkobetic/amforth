@@ -109,7 +109,7 @@ build/%.o: %.s buildinfo
 	$(AS) $(ASFLAGS) $(INCLUDES) -o $@ $<
 
 # Sometimes make decides that amforth.elf is an intermediary file that should be deleted.
-.PRECIOUS: build/amforth.elf, build/amforth.dep
+.PRECIOUS: build/amforth.elf build/amforth.dep
 
 build/%.elf: build/%.o
 	$(LD) $(LDFLAGS) $< -o $@ 
