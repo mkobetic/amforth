@@ -3,6 +3,8 @@ List of know issues and tasks that need to be done (by area)
 
 # CORE
 
+* CH32: junk in flash can prevent reuse of dictionary pages
+* RA4: compiling across flash page boundary breaks compilation (dallot unfinished?)
 * rv not vs arm not (logical vs bitwise), also invert and not is the same thing
 * clean up placeholders in dict_mcu.s files
 * !i must not be permitted to write below dp0.flash (!i vs ~!i)
@@ -13,8 +15,7 @@ List of know issues and tasks that need to be done (by area)
 * clean/document amforth32.ld (assumptions, section purpose, etc)
 * add refcard legend
 * Makefile: build/amforth.dep setup forces second amforth.o compilation
-* compiling broken colon word into flash can make forth-wordlist word disappear
-* RA4: compiling across flash page boundary breaks compilation (dallot unfinished?)
+
 * add words to show memory stats
 
 * push WANT_USB_OPERATOR, TARGET_QEM out of core (into ch32)

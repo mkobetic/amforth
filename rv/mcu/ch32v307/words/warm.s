@@ -68,8 +68,8 @@ END WARM
 NONAME FLASH_INIT
 .ifdef TARGET_307
   .word XT_FLASHDOT307
-  .word XT_EEPROMDOTINIT                                                           
-  .word XT_EEPROMDOTWARM                                                           
+  # .word XT_EEPROMDOTINIT                                                           
+  # .word XT_EEPROMDOTWARM                                                           
   .word XT_STDDOTUNLOCK                                                            
 .endif
 
