@@ -172,14 +172,7 @@ COLON "~(dallot)", TILDEDODALLOT /* ( u -- allocate u bytes in the dictionary ) 
 	/* Are we crossing over to the next flash page? (dp mod flash.page) + u >= flash.page ? */
 	.word XT_DUP, XT_DP, XT_FLASH_PAGE, XT_MOD, XT_PLUS, XT_FLASH_PAGE, XT_GREATEREQUAL
 	.word XT_DOCONDBRANCH,TILDEDODALLOT_0001 /* if */
-		/* Is the flash.cache empty? */
-		.word XT_DP_CACHE, XT_ZEROEQUAL
-		.word XT_DOCONDBRANCH,TILDEDODALLOT_0002 /* if */
 			.word XT_DUP, XT_DP, XT_PLUS, XT_DOFLASH_ERASE /* erase the flash page at DP + u */
-			.word XT_DOBRANCH,TILDEDODALLOT_0003
-TILDEDODALLOT_0002: /* else */
-			.word XT_DROP, XT_FINISH /* flash.cache is dirty, exit. TODO: WHY? */
-TILDEDODALLOT_0003: /* then */
 TILDEDODALLOT_0001: /* then */
 	.word XT_TO_R, XT_R_FETCH /* copy u to R stack */
 	/* Is u + dp.cache < flash.cell ? */
