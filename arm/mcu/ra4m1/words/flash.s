@@ -169,38 +169,44 @@ END 2STOREI
 # ----------------------------------------------------------------------
 
 COLON "~(dallot)", TILDEDODALLOT /* ( u -- allocate u bytes in the dictionary ) */
-	/* Are we crossing over to the next flash page? (dp mod flash.page) + u >= flash.page ? */
-	.word XT_DUP, XT_DP, XT_FLASH_PAGE, XT_MOD, XT_PLUS, XT_FLASH_PAGE, XT_GREATEREQUAL
-	.word XT_DOCONDBRANCH,TILDEDODALLOT_0001 /* if */
-			.word XT_DUP, XT_DP, XT_PLUS, XT_DOFLASH_ERASE /* erase the flash page at DP + u */
-TILDEDODALLOT_0001: /* then */
+	/* Are we crossing over to the next flash page? dp mod flash.page == 0 ? */
+	.word XT_DP, XT_FLASH_PAGE, XT_MOD, XT_ZEROEQUAL
+	.word XT_DOCONDBRANCH, 1f /* if */
+		/* Is the flash.cache empty? */
+		.word XT_DP_CACHE, XT_ZEROEQUAL
+		.word XT_DOCONDBRANCH, 2f /* if */
+			/* if so, erase the flash page at DP */
+			.word XT_DP, XT_DOFLASH_ERASE
+			.word XT_DOBRANCH, 1f
+2:		/* else */
+			/* this should not happen, throw */
+			.word XT_DROP
+			.word XT_DOLITERAL, -0x40000000, XT_THROW
+1: /* then */
 	.word XT_TO_R, XT_R_FETCH /* copy u to R stack */
 	/* Is u + dp.cache < flash.cell ? */
 	.word XT_DP_CACHE, XT_PLUS, XT_FLASH_CELL, XT_LESS
-	.word XT_DOCONDBRANCH,TILDEDODALLOT_0004 /* if */
+	.word XT_DOCONDBRANCH, 2f /* if */
 		/* allocate u bytes in flash.cache */
 		.word XT_R_FETCH, XT_CALLOT
 		/* increment DP by u */
 		.word XT_R_FROM, XT_DP, XT_PLUS, XT_DOTO, XT_DP
-		.word XT_DOBRANCH,TILDEDODALLOT_0005
-TILDEDODALLOT_0004: /* else */
+		.word XT_FINISH
+2:	/* else */
 		/* is u + dp.cache == flash.cell ? */
 		.word XT_R_FETCH, XT_DP_CACHE, XT_PLUS, XT_FLASH_CELL, XT_EQUAL
-		.word XT_DOCONDBRANCH,TILDEDODALLOT_0006 /* if */
+		.word XT_DOCONDBRANCH, 3f /* if */
 			/* zero out dp.cache */
 			.word XT_ZERO, XT_DOTO, XT_DP_CACHE
 			.word XT_R_FROM, XT_DP, XT_PLUS, XT_DUP
 			/* ( dp+u dp+u ) */
 			.word XT_DOTO, XT_DP /* update dp */
 			.word XT_FLASH_WRITE /* flush the cache */
-			.word XT_DOBRANCH,TILDEDODALLOT_0007
-TILDEDODALLOT_0006: /* else */
-			/* u + dp.cache > flash.cell ? TODO: do nothing? */
+			.word XT_FINISH
+ 3: 	/* else */
+			/* u + dp.cache > flash.cell ? throw */
 			.word XT_R_FROM
 			.word XT_DROP
-			.word XT_FINISH
-TILDEDODALLOT_0007: /* then */
-TILDEDODALLOT_0005: /* then */
-	.word XT_EXIT
+			.word XT_DOLITERAL, -0x40000001, XT_THROW
 END TILDEDODALLOT
 
