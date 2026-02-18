@@ -1,72 +1,67 @@
 # SPDX-License-Identifier: GPL-3.0-only
-VALUE "top" , TOP , 0 
+VALUE "top" , TOP , 0
+END TOP
 
 COLON ">top" , TO_TOP
   .word XT_DOLITERAL, XT_TOP , XT_DOTO , XT_CURRENT
   .word XT_EXIT
+END TO_TOP
 
 COLON "top>" , FROM_TOP
   .word XT_DOLITERAL, XT_RAM_WORDLIST , XT_DOTO , XT_CURRENT
   .word XT_EXIT
+END FROM_TOP
 
-#DATA "cfg-order", CFG_ORDER
-#.word 3
-#.word XT_RAM_WORDLIST
-#.word XT_FORTH_WORDLIST
-#.word XT_ENVIRONMENT
 
-DEFER "cfg-order", CFG_ORDER, XT_ORDERDOTONLY
+DEFER "cfg-order", CFG_ORDER, XT_ORDERDOTONLY /* currently configured search order */
+END CFG_ORDER
 
-DATA "order.only", ORDERDOTONLY
+DATA "order.only", ORDERDOTONLY /* RAM dictionary mode search order */
 .word 3
 .word XT_RAM_WORDLIST
 .word XT_FORTH_WORDLIST
 .word XT_ENVIRONMENT
-
-#DATA "flash-order", FLASH_ORDER
-#.word 4
-#.word XT_TOP
-#.word XT_RAM_WORDLIST
-#.word XT_FORTH_WORDLIST
-#.word XT_ENVIRONMENT
-
-.if WANT_SEARCH_ORDER
+END ORDERDOTONLY
 
 # This is only words assembled at build time 
 
-DATA "order.core" , ORDERDOTCORE
+DATA "order.core" , ORDERDOTCORE /* core words only search order */
 .word 2
 .word XT_CORE_WORDLIST
 .word XT_ENVIRONMENT
+END ORDERDOTCORE
 
-DATA "order.forth" , ORDERDOTFORTH
+DATA "order.forth" , ORDERDOTFORTH /* FLASH dictionary mode search order */
 .word 2
 .word XT_FORTH_WORDLIST
 .word XT_ENVIRONMENT
+END ORDERDOTFORTH
 
-COLON "forth" , FORTH
+COLON "forth" , FORTH /* set search order to FLASH dictionary mode */
       .word XT_DOXLITERAL
       .word XT_ORDERDOTFORTH
       .word XT_DOTO
       .word XT_CFG_ORDER
       .word XT_EXIT
+END FORTH
 
-COLON "core" , CORE
+COLON "core" , CORE /* set search order to core words only mode */
       .word XT_DOXLITERAL
       .word XT_ORDERDOTCORE
       .word XT_DOTO
       .word XT_CFG_ORDER
       .word XT_EXIT
+END CORE
 
-COLON "only" , ONLY
+COLON "only" , ONLY /* set search order to RAM dictionary mode */
       .word XT_DOXLITERAL
       .word XT_ORDERDOTONLY
       .word XT_DOTO
       .word XT_CFG_ORDER
       .word XT_EXIT
+END ONLY
 
-
-CLOAKED_COLON "(order)" , LBRAORDERRBRA
+CLOAKED_COLON "(order)" , DOORDER
 
       .word XT_DUP
       .word XT_HEXDOT
@@ -74,12 +69,13 @@ CLOAKED_COLON "(order)" , LBRAORDERRBRA
       .word XT_TYPE
       .word XT_CR
       .word XT_FALSE
-      .word XT_EXIT 
+      .word XT_EXIT
+END DOORDER
 
-COLON "order" , ORDER
+COLON "order" , ORDER /* show currently configured search order */
 
       .word XT_DOXLITERAL
-      .word XT_LBRAORDERRBRA
+      .word XT_DOORDER
       .word XT_CFG_ORDER
       .word XT_MAPSTACK
       .word XT_DROP
@@ -92,7 +88,10 @@ COLON "order" , ORDER
       STRING " (new definitions) "
       .word XT_TYPE
       .word XT_CR 
-      .word XT_EXIT 
+      .word XT_EXIT
+END ORDER
+
+.if WANT_SEARCH_ORDER
 
 #======================================================================
 #======================================================================

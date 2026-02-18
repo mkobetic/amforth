@@ -23,6 +23,7 @@ List of know issues and tasks that need to be done (by area)
 * push WANT_USB_OPERATOR, TARGET_QEM out of core (into ch32)
 * core/aligned.s vs arm|rv/aligned.s
 * aligned.s and do-aligned.s are identical
+* ud* is broken, what about d*, ud/ ? (need double tests)
 * remove doxliteral.s in favor of doliteral.s
 * replace HIDEWORD with CODEWORD
 * what is the relationship between variable `rp` and `sp`, and register `sp` and `psp` ?
