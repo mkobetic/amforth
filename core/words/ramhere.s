@@ -7,22 +7,17 @@ END VPDOTMAX
 PVALUE    "vp"     , VP       , vp0 /* RAM pool pointer */
 END VP
 
-COLON "ram", RAMHERE /* ( -- a ) current value of ram pool pointer */
-      .word XT_VP
-      .word XT_EXIT      
-END RAMHERE
-
-COLON "ram+", RAMHEREPLUS /* ( -- a ) increment ram pool pointer by 1 byte */
-    .word XT_VP
-    .word XT_ONE
-    .word XT_VALLOT
-    .word XT_EXIT
-END RAMHEREPLUS
-
-COLON "ram++", RAMHEREPLUSPLUS /* ( -- a ) increment ram pool pointer by 1 cell */
-# ( -- a ) MEMORY:
-    .word XT_VP
-    .word XT_CELL
-    .word XT_VALLOT
-    .word XT_EXIT
+NONAME RAMHEREPLUSPLUS /* ( x -- ) allocate 1 cell in RAM, store x in it, compile the address into the dictionary */
+    .word XT_MEMMODE, XT_DOCONDBRANCH, 1f
+        /* we are in flash mode, allocate space in RAM pool */
+        .word XT_VP, XT_SWAP, XT_OVER, XT_STORE /* store x at VP */
+        .word XT_CELL, XT_VALLOT /* allocate the space for it (updates VP!) */
+        .word XT_COMMA /* compile original VP into the dictionary */
+        .word XT_FINISH
+    1:  /* else we're in RAM mode, allocate space in the dictionary space
+          this means allocate the RAM slot right after the address slot */
+        .word XT_DP, XT_CELLPLUS, XT_DUP, XT_COMMA /* store the RAM slot address in the dictionary */
+        .word XT_CELL, XT_DALLOT /* allocate space for the extra slot */
+        .word XT_STORE /* store x in the allocated space */
+        .word XT_EXIT
 END RAMHEREPLUSPLUS

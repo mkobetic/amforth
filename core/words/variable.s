@@ -17,8 +17,8 @@ COLON "variable", VARIABLE /* ( "<spaces>name" -- ) create variable definition f
       .word XT_REVEAL
       .word XT_COMPILE
       .word PFA_DOVARIABLE
+      .word XT_ZERO
       .word XT_RAMHEREPLUSPLUS
-      .word XT_COMMA
       .word XT_LBRACKET
       .word XT_FLASHDOTFLUSH
       .word XT_EXIT 
@@ -33,8 +33,8 @@ COLON "variable~" , CLOAKED_VARIABLE
       .word XT_REVEAL
       .word XT_COMPILE
       .word PFA_DOVARIABLE
+      .word XT_ZERO
       .word XT_RAMHEREPLUSPLUS
-      .word XT_COMMA
       .word XT_LBRACKET
       .word XT_FLASHDOTFLUSH
       .word XT_EXIT 

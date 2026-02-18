@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "here", HERE
-#  .word XT_VHERE
-  .word XT_DHERE
-  .word XT_EXIT
+COLON "here", HERE /* return address of next free space in RAM */
+    .word XT_MEMMODE, XT_DOCONDBRANCH, 1f
+        .word XT_VHERE, XT_FINISH
+1:  /* else we're in RAM mode */
+        .word XT_DHERE, XT_EXIT
 END HERE
 
 # another attempt
