@@ -1,0 +1,5 @@
+
+ENVIRONMENT "board", BOARD
+
+  STRING "QEMU-VIRT"
+.word XT_EXIT
