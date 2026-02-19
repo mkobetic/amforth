@@ -5,6 +5,7 @@
 #
 
 .include "words/flash-common.s"
+.include "words/flash.s"
 .include "words/warm.s"
 .include "words/first-boot.s"
 

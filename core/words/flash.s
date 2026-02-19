@@ -1,0 +1,24 @@
+# ----------------------------------------------------------------------
+NONAME TILDEDODALLOT 
+	.word XT_DP
+	.word XT_PLUS
+    .word XT_DOTO
+	.word XT_DP
+	.word XT_EXIT
+END TILDEDODALLOT
+# ----------------------------------------------------------------------
+NONAME TILDEDOCCOMMA 
+	.word XT_DP
+	.word XT_CSTORE
+	.word XT_ONE
+	.word XT_DALLOT
+	.word XT_EXIT
+END TILDEDOCCOMMA
+# ----------------------------------------------------------------------
+NONAME TILDEDOCOMMA 
+	.word XT_DP
+	.word XT_STORE
+	.word XT_CELL
+	.word XT_DALLOT
+	.word XT_EXIT
+END TILDEDOCOMMA

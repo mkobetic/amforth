@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-DEFER "(dallot)", DODALLOT, XT_NOP
+DEFER "(dallot)", DODALLOT, XT_TILDEDODALLOT
 END DODALLOT
 
 COLON "dallot", DALLOT /* ( u -- allocate u bytes in the dictionary ) */

@@ -1,5 +1,5 @@
 
-DEFER "(c,)", DOCCOMMA, XT_NOP
+DEFER "(c,)", DOCCOMMA, XT_TILDEDOCCOMMA
 END DOCCOMMA
 
 COLON "c,", CCOMMA /* ( c -- ) append c to the dictionary */

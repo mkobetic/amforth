@@ -1,4 +1,6 @@
 
+.include "core/words/flash.s"
+
 COLON "!i", STORE_FLASH
     .word XT_DOLITERAL, -20, XT_THROW, XT_EXIT
 

@@ -72,11 +72,6 @@ NONAME FLASH_INIT
   # .word XT_EEPROMDOTWARM                                                           
   .word XT_STDDOTUNLOCK                                                            
 .endif
-
-.ifdef TARGET_QEM
-  .word XT_FLASHDOTQEM
-.endif
-
   .word XT_EXIT
 END FLASH_INIT
 

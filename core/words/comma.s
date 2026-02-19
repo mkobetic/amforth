@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-DEFER "(,)", LPARENCOMMARPAREN , XT_NOP
+DEFER "(,)", LPARENCOMMARPAREN , XT_TILDEDOCOMMA
 END LPARENCOMMARPAREN
 
 COLON ",", COMMA /* ( x -- ) append x to the dictionary */
