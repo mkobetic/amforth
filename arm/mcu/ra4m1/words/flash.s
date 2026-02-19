@@ -30,7 +30,7 @@ COLON "flash.write" , FLASH_WRITE /* ( fa -- ) write flash.cache to flash at fa 
     .word XT_EXIT
 END FLASH_WRITE
 
-CODEALIAS "flash.erase", FLASH_ERASE, DOFLASH_ERASE /* ( addr -- ) erase flash page at addr */
+CODEALIAS "flash.erase", FLASH_ERASE, DOFLASH_ERASE /* ( addr -- ) erase FLASH page at addr */
 END FLASH_ERASE
 
 #======================================================================
@@ -96,27 +96,6 @@ NONAME STORE_I /* ( x addr -- ) write x at addr in flash */
 	.word XT_EXIT
 END STORE_I
 
-
-COLON "2!i", 2STOREI /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
-	/* don't allow writing below dp0.flash */
-	.word XT_DUP
-	.word XT_DP0_FLASH
-	.word XT_LESS
-	.word XT_DOCONDBRANCH, 1f /* # if */
-	/* replace with more suitable value */
-	.word XT_DOLITERAL, -10, XT_THROW
-1:	/* # then */
-	/* back up flash.cache */
-	.word XT_FLASH_CACHE, XT_FLASH_SHADOW, XT_FLASH_CELL, XT_MOVE
-	.word XT_MROT /* ( addr x1 x2 ) */
-	.word XT_FLASH_CACHE, XT_STORE
-	.word XT_FLASH_CACHE, XT_CELLPLUS, XT_STORE
-	.word XT_DOFLASH_WRITE
-	/* restore flash cache */
-	.word XT_FLASH_SHADOW, XT_FLASH_CACHE, XT_FLASH_CELL, XT_MOVE
-	.word XT_EXIT
-END 2STOREI
-
 # ----------------------------------------------------------------------
 
 NONAME DODALLOT /* ( u -- allocate u bytes in the dictionary ) */
@@ -161,3 +140,28 @@ NONAME DODALLOT /* ( u -- allocate u bytes in the dictionary ) */
 			.word XT_DOLITERAL, -0x40000001, XT_THROW
 END DODALLOT
 
+#======================================================================
+# PVFLASH primitives
+
+CODEALIAS "pvflash.erase", PVFLASH_ERASE, DOFLASH_ERASE /* ( addr -- ) erase PVFLASH page at addr */
+END PVFLASH_ERASE
+
+NONAME 2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
+	/* don't allow writing below dp0.flash */
+	.word XT_DUP
+	.word XT_DP0_FLASH
+	.word XT_LESS
+	.word XT_DOCONDBRANCH, 1f /* # if */
+	/* replace with more suitable value */
+	.word XT_DOLITERAL, -10, XT_THROW
+1:	/* # then */
+	/* back up flash.cache */
+	.word XT_FLASH_CACHE, XT_FLASH_SHADOW, XT_FLASH_CELL, XT_MOVE
+	.word XT_MROT /* ( addr x1 x2 ) */
+	.word XT_FLASH_CACHE, XT_STORE
+	.word XT_FLASH_CACHE, XT_CELLPLUS, XT_STORE
+	.word XT_DOFLASH_WRITE
+	/* restore flash cache */
+	.word XT_FLASH_SHADOW, XT_FLASH_CACHE, XT_FLASH_CELL, XT_MOVE
+	.word XT_EXIT
+END 2STORE_PVF

@@ -218,16 +218,16 @@ NONAME DODALLOT
 	.word XT_FLASH_PAGE
 	.word XT_MOD
 	.word XT_ZEROEQUAL
-	.word XT_DOCONDBRANCH,DODALLOT_0001 # if
+	.word XT_DOCONDBRANCH, DODALLOT_0001 # if
 	.word XT_DP_CACHE
 	.word XT_ZEROEQUAL
-	.word XT_DOCONDBRANCH,DODALLOT_0002 # if
+	.word XT_DOCONDBRANCH, DODALLOT_0002 # if
 	.word XT_DP
 	.word XT_STDDOTERASE
-	.word XT_DOLITERAL, -0x40000000, XT_THROW
+	.word XT_DOBRANCH, DODALLOT_0003
 DODALLOT_0002: # else
 	.word XT_DROP
-    .word XT_FINISH
+	.word XT_DOLITERAL, -0x40000000, XT_THROW
 DODALLOT_0003: # then
 DODALLOT_0001: # then
 	.word XT_TO_R
@@ -283,6 +283,18 @@ COLON "f.write", FDOTWRITE
     .word XT_EXIT
 END FDOTWRITE
 # ----------------------------------------------------------------------               
+
+#======================================================================
+# PVFLASH primitives
+
+CODEALIAS "pvflash.erase", PVFLASH_ERASE, STDDOTERASE /* ( addr -- ) erase flash page at addr */
+END PVFLASH_ERASE
+
+NONAME 2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
+  .word XT_TUCK, XT_STORE_I
+  .word XT_CELLPLUS, XT_STORE_I
+  .word XT_EXIT
+END 2STORE_PVF
 
 .endif
 

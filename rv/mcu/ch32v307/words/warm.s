@@ -41,10 +41,13 @@ COLON "warm", WARM /* ( -- ) high level part of the boot sequence, VM is running
   .word XT_INIT_RAM
 
   /* initialize flash system */
-  .word XT_FLASH_INIT
+.ifdef TARGET_307
+  # .word XT_EEPROMDOTINIT                                                           
+  # .word XT_EEPROMDOTWARM                                                           
+  .word XT_STDDOTUNLOCK                                                            
+.endif
 
   /* initialize pvalue system */
-  .word XT_PVFLASH_INIT
   .word XT_QFIRST_BOOT, XT_DOCONDBRANCH, 1f
     .word XT_PVARENA1, XT_DOTO, XT_PVARENA, XT_PV_RESET_HARD
     .word XT_DOBRANCH, 2f 
@@ -65,29 +68,3 @@ COLON "warm", WARM /* ( -- ) high level part of the boot sequence, VM is running
   .word XT_EXIT       
 END WARM
 
-NONAME FLASH_INIT
-.ifdef TARGET_307
-  # .word XT_EEPROMDOTINIT                                                           
-  # .word XT_EEPROMDOTWARM                                                           
-  .word XT_STDDOTUNLOCK                                                            
-.endif
-  .word XT_EXIT
-END FLASH_INIT
-
-NONAME PVFLASH_INIT
-.ifdef TARGET_307
-  /* ' 2!i is 2!pvf */
-  .word XT_DOLITERAL, XT_2STOREI, XT_DOLITERAL, XT_2STORE_PVF, XT_DEFER_STORE  
-  /* ' std.erase is pvflash.erase */
-  .word XT_DOLITERAL, XT_STDDOTERASE, XT_DOLITERAL, XT_PVFLASH_ERASE, XT_DEFER_STORE
-.endif
-  .word XT_EXIT
-END PVFLASH_INIT
-
-.ifdef TARGET_307
-NONAME 2STOREI /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
-  .word XT_TUCK, XT_STORE_I
-  .word XT_CELLPLUS, XT_STORE_I
-  .word XT_EXIT
-END 2STOREI
-.endif
