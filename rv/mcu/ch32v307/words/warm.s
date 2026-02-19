@@ -67,7 +67,6 @@ END WARM
 
 NONAME FLASH_INIT
 .ifdef TARGET_307
-  .word XT_FLASHDOT307
   # .word XT_EEPROMDOTINIT                                                           
   # .word XT_EEPROMDOTWARM                                                           
   .word XT_STDDOTUNLOCK                                                            
@@ -87,8 +86,8 @@ END PVFLASH_INIT
 
 .ifdef TARGET_307
 NONAME 2STOREI /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
-  .word XT_TUCK, XT_TILDEBANGI
-  .word XT_CELLPLUS, XT_TILDEBANGI
+  .word XT_TUCK, XT_STORE_I
+  .word XT_CELLPLUS, XT_STORE_I
   .word XT_EXIT
 END 2STOREI
 .endif

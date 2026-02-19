@@ -11,9 +11,6 @@ COLON "warm", WARM /* ( -- ) high level part of the boot sequence, VM is running
   /* initialize values and defers to their defaults */
   .word XT_INIT_RAM
 
-  /* initialize flash system */
-  .word XT_FLASH_INIT
-
   /* initialize pvalue system */
   .word XT_PVFLASH_INIT
   .word XT_QFIRST_BOOT, XT_DOCONDBRANCH, 1f
