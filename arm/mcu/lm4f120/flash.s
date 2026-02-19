@@ -1,8 +1,4 @@
 
-
-@ TODO: Need to implement the required words from the include
-.include "core/words/flash.s"
-
 @ Write and Erase Flash in LM4F120.
 
 .equ FLASH_FMA, 0x400FD000

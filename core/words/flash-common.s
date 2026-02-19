@@ -16,6 +16,17 @@ END FLASH_LOW
 CONSTANT "flash.max"    , FLASH_MAX  , flash.max
 END FLASH_MAX
 
+DEFER "flash.erase", FLASH_ERASE, XT_FAUXERASE /* ( addr -- ) erase flash page at addr */
+END FLASH_ERASE
+
+NONAME FAUXERASE /* ( addr -- ) erase (fake) flash page at addr */
+    .word XT_DUP, XT_FLASH_PAGE, XT_PLUS, XT_SWAP, XT_DODO
+1:	
+		.word XT_FLASH_ERASED, XT_I, XT_STORE
+	.word XT_DOLITERAL, 4, XT_DOPLUSLOOP, 1b
+	.word XT_EXIT
+END FAUXERASE
+
 .ifdef FLUSH_REQUIRED
 
 NONAME DOFLUSH 
