@@ -1,9 +1,6 @@
 
 .include "words/gpio.s"
-
 .include "words/usart.s"
-
-#.include "words/flash.s"
 .include "words/leds.s"
 .include "words/mtime.s"
 

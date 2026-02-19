@@ -1,7 +1,4 @@
 
-DEFER "(c,)", DOCCOMMA, XT_NOP
-END DOCCOMMA
-
 COLON "c,", CCOMMA /* ( c -- ) append c to the dictionary */
     .word XT_MEMMODE
     .word XT_DOCONDBRANCH,CCOMMA_0001 /* if */
