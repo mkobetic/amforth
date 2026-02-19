@@ -5,13 +5,10 @@
 .ifdef TARGET_QEM
     .print "INFO: using QEM MCU words"	
     .include "words/serial.qem"
-    .include "words/flash.qem"
-    .include "words/flash.307"
 .endif
 
 .ifdef TARGET_307
-    .print "INFO: using 307 MCU words"	
-    .include "words/flash.307"  
+    .print "INFO: using 307 MCU words"
     .include "words/usart.s"
     .include "words/gpio.s"
 .endif
