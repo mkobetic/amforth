@@ -30,8 +30,57 @@ COLON "flash.write" , FLASH_WRITE /* ( fa -- ) write flash.cache to flash at fa 
     .word XT_EXIT
 END FLASH_WRITE
 
-CODEALIAS "flash.erase", FLASH_ERASE, DOFLASH_ERASE /* ( addr -- ) erase FLASH page at addr */
-END FLASH_ERASE
+#======================================================================
+
+COLON "flash.init" , FLASH_INIT /* ( -- ) set defers for NFF */
+
+     /* ' ~(dallot) to (dallot) */     
+    .word XT_DOLITERAL
+    .word XT_TILDEDODALLOT
+    .word XT_DOLITERAL    
+    .word XT_DODALLOT
+    .word XT_CELLPLUS
+	.word XT_FETCH
+	.word XT_STORE
+
+     /* ' ~(c,) to (c,) */
+    .word XT_DOLITERAL
+    .word XT_TILDEDOCCOMMA
+    .word XT_DOLITERAL
+    .word XT_DOCCOMMA
+    .word XT_CELLPLUS
+	.word XT_FETCH
+	.word XT_STORE
+
+     /* ' ~(,) to (,) */
+    .word XT_DOLITERAL
+    .word XT_TILDEDOCOMMA
+    .word XT_DOLITERAL
+    .word XT_LPARENCOMMARPAREN
+    .word XT_CELLPLUS
+	.word XT_FETCH
+	.word XT_STORE
+
+     /* '~!i to !i */
+    .word XT_DOLITERAL
+    .word XT_TILDEBANGI 
+    .word XT_DOLITERAL
+    .word XT_STORE_I
+    .word XT_CELLPLUS
+	.word XT_FETCH
+	.word XT_STORE
+
+     /* ' (flash.erase) to flash.erase */
+    .word XT_DOLITERAL
+    .word XT_DOFLASH_ERASE 
+    .word XT_DOLITERAL
+    .word XT_FLASH_ERASE
+    .word XT_CELLPLUS
+	.word XT_FETCH
+	.word XT_STORE
+
+    .word XT_EXIT
+END FLASH_INIT
 
 #======================================================================
 # NFF defer targets ( the words that do the work ) 
@@ -44,7 +93,7 @@ COLON "callot" , CALLOT
      .word XT_EXIT
 END CALLOT
      
-NONAME DOCCOMMA 
+COLON "~(c,)", TILDEDOCCOMMA 
 	.word XT_FLASH_CACHE
 	.word XT_DP_CACHE
 	.word XT_PLUS
@@ -52,9 +101,9 @@ NONAME DOCCOMMA
     .word XT_ONE
     .word XT_DALLOT
 	.word XT_EXIT
-END DOCCOMMA
+END TILDEDOCCOMMA
 
-NONAME DOCOMMA 
+COLON "~(,)",  TILDEDOCOMMA 
 	.word XT_FLASH_CACHE
 	.word XT_DP_CACHE
 	.word XT_PLUS
@@ -62,17 +111,17 @@ NONAME DOCOMMA
 	.word XT_CELL
 	.word XT_DALLOT
 	.word XT_EXIT
-END DOCOMMA
+END TILDEDOCOMMA
 
-NONAME STORE_I /* ( x addr -- ) write x at addr in flash */
+COLON "~!i", TILDEBANGI /* ( x addr -- ) write x at addr in flash */
 	/* don't allow writing below dp0.flash */
 	.word XT_DUP
 	.word XT_DP0_FLASH
 	.word XT_LESS
-	.word XT_DOCONDBRANCH, 1f /* # if */
+	.word XT_DOCONDBRANCH,TILDEBANGI_0001 /* # if */
 	/* replace with more suitable value */
 	.word XT_DOLITERAL, -10, XT_THROW
-1:	/* # then */
+TILDEBANGI_0001: /* # then */
 	.word XT_FLASH_CACHE
 	.word XT_FLASH_SHADOW
 	.word XT_FLASH_CELL
@@ -94,11 +143,32 @@ NONAME STORE_I /* ( x addr -- ) write x at addr in flash */
 	.word XT_FLASH_CELL
 	.word XT_MOVE
 	.word XT_EXIT
-END STORE_I
+END TILDEBANGI
+
+
+COLON "2!i", 2STOREI /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
+	/* don't allow writing below dp0.flash */
+	.word XT_DUP
+	.word XT_DP0_FLASH
+	.word XT_LESS
+	.word XT_DOCONDBRANCH, 1f /* # if */
+	/* replace with more suitable value */
+	.word XT_DOLITERAL, -10, XT_THROW
+1:	/* # then */
+	/* back up flash.cache */
+	.word XT_FLASH_CACHE, XT_FLASH_SHADOW, XT_FLASH_CELL, XT_MOVE
+	.word XT_MROT /* ( addr x1 x2 ) */
+	.word XT_FLASH_CACHE, XT_STORE
+	.word XT_FLASH_CACHE, XT_CELLPLUS, XT_STORE
+	.word XT_DOFLASH_WRITE
+	/* restore flash cache */
+	.word XT_FLASH_SHADOW, XT_FLASH_CACHE, XT_FLASH_CELL, XT_MOVE
+	.word XT_EXIT
+END 2STOREI
 
 # ----------------------------------------------------------------------
 
-NONAME DODALLOT /* ( u -- allocate u bytes in the dictionary ) */
+COLON "~(dallot)", TILDEDODALLOT /* ( u -- allocate u bytes in the dictionary ) */
 	/* Are we crossing over to the next flash page? dp mod flash.page == 0 ? */
 	.word XT_DP, XT_FLASH_PAGE, XT_MOD, XT_ZEROEQUAL
 	.word XT_DOCONDBRANCH, 1f /* if */
@@ -138,30 +208,5 @@ NONAME DODALLOT /* ( u -- allocate u bytes in the dictionary ) */
 			.word XT_R_FROM
 			.word XT_DROP
 			.word XT_DOLITERAL, -0x40000001, XT_THROW
-END DODALLOT
+END TILDEDODALLOT
 
-#======================================================================
-# PVFLASH primitives
-
-CODEALIAS "pvflash.erase", PVFLASH_ERASE, DOFLASH_ERASE /* ( addr -- ) erase PVFLASH page at addr */
-END PVFLASH_ERASE
-
-NONAME 2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
-	/* don't allow writing below dp0.flash */
-	.word XT_DUP
-	.word XT_DP0_FLASH
-	.word XT_LESS
-	.word XT_DOCONDBRANCH, 1f /* # if */
-	/* replace with more suitable value */
-	.word XT_DOLITERAL, -10, XT_THROW
-1:	/* # then */
-	/* back up flash.cache */
-	.word XT_FLASH_CACHE, XT_FLASH_SHADOW, XT_FLASH_CELL, XT_MOVE
-	.word XT_MROT /* ( addr x1 x2 ) */
-	.word XT_FLASH_CACHE, XT_STORE
-	.word XT_FLASH_CACHE, XT_CELLPLUS, XT_STORE
-	.word XT_DOFLASH_WRITE
-	/* restore flash cache */
-	.word XT_FLASH_SHADOW, XT_FLASH_CACHE, XT_FLASH_CELL, XT_MOVE
-	.word XT_EXIT
-END 2STORE_PVF

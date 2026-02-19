@@ -3,8 +3,7 @@ List of know issues and tasks that need to be done (by area)
 
 # CORE
 
-* compiling bad word into flash hangs, e.g. : cat dog ; (dog unknown)
-* compiling : test ." Hello" type ; compiles type XT twice into the word
+* RA4: compiling across flash page boundary breaks compilation (dallot unfinished?)
 * rv not vs arm not (logical vs bitwise), also invert and not is the same thing
 * clean up placeholders in dict_mcu.s files
 * !i must not be permitted to write below dp0.flash (!i vs ~!i)
