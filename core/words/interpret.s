@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "interpret", INTERPRET
+COLON "interpret", INTERPRET /* ( i*x -- j*x ) interpret SOURCE word by word */
     .word XT_PARSENAME 
     .word XT_DUP
     .word XT_DOCONDBRANCH,PFA_INTERPRET2

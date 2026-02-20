@@ -48,7 +48,7 @@ COLON ".8hex", DOT8HEX /* ( u -- ) display u as 8 digit hex */
     .word XT_EXIT
 END DOT8HEX
      
-COLON "x." XDOT /* ( u -- ) display u without trailing space */
+COLON "x.", XDOT /* ( u -- ) display u without trailing space */
     .word XT_S2D,XT_SWAP,XT_OVER,XT_DABS
     .word XT_L_SHARP,XT_SHARP_S
     .word XT_ROT,XT_SIGN
@@ -56,7 +56,7 @@ COLON "x." XDOT /* ( u -- ) display u without trailing space */
     .word XT_EXIT
 END XDOT
 
-COLON "2x." 2XDOT /* ( u -- ) display u as 2 digit hex */
+COLON "2x.", 2XDOT /* ( u -- ) display u as 2 digit hex */
     .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX  
     .word XT_DOLITERAL, 0 
     .word XT_L_SHARP
@@ -66,7 +66,7 @@ COLON "2x." 2XDOT /* ( u -- ) display u as 2 digit hex */
     .word XT_EXIT
 END 2XDOT
 
-COLON "8x." 8XDOT /* ( u -- ) display u as 8 digit hex no space */
+COLON "8x.", 8XDOT /* ( u -- ) display u as 8 digit hex no space */
     .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX  
     .word XT_DOLITERAL, 0 
     .word XT_L_SHARP
@@ -79,7 +79,7 @@ COLON "8x." 8XDOT /* ( u -- ) display u as 8 digit hex no space */
     .word XT_EXIT
 END 8XDOT
 
-COLON "hex." HEXDOT /* ( u -- ) output u as unsigned 32 bit hex  */
+COLON "hex.", HEXDOT /* ( u -- ) output u as unsigned 32 bit hex  */
     .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX  
     .word XT_DOLITERAL, 0 
     .word XT_L_SHARP

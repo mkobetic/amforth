@@ -41,7 +41,8 @@
 # ;
 # 
 
-VARIABLE "forget.prior",FORGETDOTPRIOR
+VARIABLE "forget.prior", FORGETDOTPRIOR
+END FORGETDOTPRIOR
 # ----------------------------------------------------------------------
 COLON "(forget)", LPARENFORGETRPAREN 
 	.word XT_TO_R
@@ -110,9 +111,10 @@ LPARENFORGETRPAREN_0001: # else
 LPARENFORGETRPAREN_0004: # then
 	.word XT_RDROP
 	.word XT_EXIT
+END LPARENFORGETRPAREN
+
 # ----------------------------------------------------------------------
-COLON "forget", FORGET
-# ( -- "name" ) DICT: Remove a word from the RAM dictionary wordlist 
+COLON "forget", FORGET /* ( -- "name" ) DICT: Remove a word from the RAM dictionary wordlist */
 	.word XT_SHOWDOTHEADER
 	.word XT_PARSENAME
 	.word XT_DOLITERAL
@@ -121,6 +123,7 @@ COLON "forget", FORGET
 	.word XT_TRAVERSEWORDLIST
 	.word XT_2DROP
 	.word XT_EXIT
+END FORGET
 # ----------------------------------------------------------------------
 #=====================================================================
 #======================================================================

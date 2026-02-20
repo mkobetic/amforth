@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "cscan", CSCAN
+COLON "cscan", CSCAN /* ( addr1 n1 c -- addr1 n2 ) scan s1 for the first occurrence of c, char at n2 is first non-c character */
     .word XT_TO_R
     .word XT_OVER
 PFA_CSCAN1:
@@ -26,3 +26,4 @@ PFA_CSCAN2:
     .word XT_R_FROM
     .word XT_DROP
     .word XT_EXIT
+END CSCAN

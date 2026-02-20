@@ -3,7 +3,6 @@ List of know issues and tasks that need to be done (by area)
 
 # CORE
 
-* RA4: compiling across flash page boundary breaks compilation (dallot unfinished?)
 * rv not vs arm not (logical vs bitwise), also invert and not is the same thing
 * clean up placeholders in dict_mcu.s files
 * !i must not be permitted to write below dp0.flash (!i vs ~!i)
@@ -16,6 +15,7 @@ List of know issues and tasks that need to be done (by area)
 * Makefile: build/amforth.dep setup forces second amforth.o compilation
 
 * add words to show memory stats
+* extend the error prompt to list words on the R-stack to help identify where the throw comes from
 
 * push WANT_USB_OPERATOR, TARGET_QEM out of core (into ch32)
 * core/aligned.s vs arm|rv/aligned.s

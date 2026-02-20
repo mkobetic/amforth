@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-COLON "number", NUMBER
-
+COLON "number", NUMBER /* (addr len -- [n|d size] f) convert a string at addr to a number */
     .word XT_BASE
     .word XT_FETCH
     .word XT_TO_R
@@ -68,3 +67,4 @@ PFA_NUMBER5:
     .word XT_STORE
     .word XT_TRUE
     .word XT_EXIT
+END NUMBER

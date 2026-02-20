@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "cskip", CSKIP
+COLON "cskip", CSKIP /* ( addr1 n1 c -- addr2 n2 ) skips leading occurrences of c in s1, s2 starts at the 1st non-c character */
 
     .word XT_TO_R
 PFA_CSKIP1:
@@ -18,3 +18,5 @@ PFA_CSKIP2:
     .word XT_R_FROM
     .word XT_DROP          
     .word XT_EXIT
+
+END CSKIP

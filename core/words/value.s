@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 .ifnb
 
-COLON "value", VAL /* ( x "name" -- ) create value "name" with initial of x */
+COLON "value", VAL /* ( x "name" -- ) create value "name" with initial value of x */
     .word XT_FLAGDOTVALUE
     .word XT_DOTO
     .word XT_FLAGDOTHEADER
@@ -20,7 +20,7 @@ COLON "value", VAL /* ( x "name" -- ) create value "name" with initial of x */
     .word XT_EXIT
 END VAL
 
-COLON "value~", CLOAKED_VALUE /* ( x "name" -- ) create value "name" with initial of x */
+COLON "value~", CLOAKED_VALUE /* ( x "name" -- ) create value "name" with initial value of x */
     .word XT_FLAGDOTVALUE
     .word XT_FLAGDOTCLOAKED
     .word XT_OR

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "find-xt", FINDXT
+COLON "find-xt", FINDXT /* ( c-addr u -- 0 | xt -1 | xt 1 ) search for word s1, return xt if found */
 
     .word XT_DOLITERAL
     .word XT_FINDXTA
@@ -12,6 +12,7 @@ COLON "find-xt", FINDXT
       .word XT_ZERO
 PFA_FINDXT1:
     .word XT_EXIT
+END FINDXT
 
 NONAME FINDXTA
     .word XT_TO_R
@@ -27,4 +28,5 @@ NONAME FINDXTA
       .word XT_TRUE
 PFA_FINDXTA1:
     .word XT_EXIT
+END FINDXTA
 

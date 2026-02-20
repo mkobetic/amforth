@@ -20,8 +20,7 @@
 
 
 # ----------------------------------------------------------------------
-COLON "search", SEARCH
-# ( s1 s2 -- s3 f) STRING: find s1 in s2 leaving flag and tail s3 
+COLON "search", SEARCH /* ( c-a1 u1 c-a2 u2 -- c-a3 u3 f ) find string 1 in string 2 leaving flag and tail string 3 */
 SEARCH_0001: # begin
 	.word XT_DUP
 	.word XT_DOCONDBRANCH,SEARCH_0002 /* while */
@@ -43,13 +42,14 @@ SEARCH_0002: # then
 	.word XT_2DROP
 	.word XT_FALSE
 	.word XT_EXIT
+END SEARCH
 # ----------------------------------------------------------------------
-COLON "sub-string?", SUBMINUSSTRINGQ
-# ( s1 s2 -- f ) STRING: f is true if s1 found in s2
+COLON "sub-string?", SUBMINUSSTRINGQ /* ( c-a1 u1 c-a2 u2 -- f ) f is true if s1 found in s2 */
 	.word XT_SEARCH
 	.word XT_NIP
 	.word XT_NIP
 	.word XT_EXIT
+END SUBMINUSSTRINGQ
 # ----------------------------------------------------------------------
 #=====================================================================
 #======================================================================
