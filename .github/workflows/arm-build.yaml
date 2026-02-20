@@ -29,20 +29,26 @@ jobs:
       - name: Build RA4M1
         run: cd arm/mcu/ra4m1 && WANT_IGNORECASE=1 make all
 
+      - name: Build LM4120 (WANT_ITC)
+        run: cd arm/mcu/lm4f120 && WANT_ITC=1 make all
+
+      - name: Build LM4F120 (TARGET=LM4)
+        run: cd arm/mcu/lm4f120 && TARGET=LM4 make all
+
       - name: Cache and Install QEMU ARM
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: qemu-system-arm
           version: 1 # Change this to manually bust the cache
 
-      - name: Build LM4F120 (WANT_ITC)
-        run: cd arm/mcu/lm4f120 && WANT_IGNORECASE=1 WANT_ITC=1 make all
+      - name: Build QEMU virt (WANT_ITC)
+        run: cd arm/mcu/qemu && WANT_IGNORECASE=1 WANT_ITC=1 make all
 
-      - name: LM4F120 Core Tests (WANT_ITC)
-        run: cd arm/mcu/lm4f120 && TIMEOUT=5s make tests
+      - name: QEMU Core Tests (WANT_ITC)
+        run: cd arm/mcu/qemu && TIMEOUT=5s make tests
 
-      - name: Build LM4F120
-        run: cd arm/mcu/lm4f120 && WANT_IGNORECASE=1 make all
+      - name: Build QEMU virt
+        run: cd arm/mcu/qemu && WANT_IGNORECASE=1 make all
 
-      - name: LM4F120 Core Tests
-        run: cd arm/mcu/lm4f120 && TIMEOUT=5s make tests
+      - name: QEMU Core Tests
+        run: cd arm/mcu/qemu && TIMEOUT=5s make tests
