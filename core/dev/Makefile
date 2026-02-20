@@ -136,7 +136,7 @@ build/%.dep: %.s buildinfo
 build/%.toc: DEPS = $(shell cat $<)
 build/%.toc: TOC = $(abspath $@)
 build/%.toc: build/%.dep
-	@cd $(AMFORTH) && awk -f core/dev/toc.awk $(DEPS) >$(TOC)
+	cd $(AMFORTH) && awk -f core/dev/toc.awk $(DEPS) >$(TOC)
 	@echo 'VALUE "environment", ENVIRONMENT /* FFA of last word; standard environment search list */ @ core/macros.inc' >>$@
 	@echo 'VALUE "forth-wordlist", FORTH_WORDLIST /* FFA of last word; system default wordlist */ @ core/macros.inc' >>$@
 	@echo 'VALUE "$(ARCH)-wordlist", ARCH_WORDLIST /* FFA of last word; architecture specific words */ @ core/macros.inc' >>$@
