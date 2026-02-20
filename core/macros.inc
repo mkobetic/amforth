@@ -81,15 +81,16 @@ VE_\Label:
 7:  .ascii "\Name"
     # Realign
 8:  .p2align 2,0xaa
-    .global XT_\Label
-    .type XT_\Label, STT_FUNC
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:
 XT_\Label: .word \PFA
 PFA_\Label: 
 .endm
 
 # Use to terminate the function block of a word definition
 .macro END Label
-    .size XT_\Label, . - XT_\Label
+    .size _\Label, . - _\Label
 .endm
 
 .macro CODEWORD Name, Label
@@ -115,8 +116,9 @@ PFA_\Label:
 
 .macro HEADLESS Label
     .p2align 2,0x55
-    .global XT_\Label
-    .type XT_\Label, STT_FUNC
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:
 XT_\Label: .word PFA_\Label
 PFA_\Label: 
 .endm
@@ -131,8 +133,9 @@ PFA_\Label:
 
 .macro NONAME Label
     .p2align 2,0x55
-    .global XT_\Label
-    .type XT_\Label, STT_FUNC
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:
 XT_\Label: .word DOCOLON
 PFA_\Label: 
 .endm
@@ -331,8 +334,9 @@ VE_ENV_\Label:
 7:  .ascii "\Name"
     # Realign
 8:  .p2align 2,0xf0
-    .global XT_\Label
-    .type XT_\Label, STT_FUNC
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:        
 XT_ENV_\Label: .word DOCOLON
 PFA_ENV_\Label:
 .endm
@@ -356,8 +360,9 @@ VE_\Label:
 7:  .ascii "\Name"
     # Realign
 8:  .p2align 2,0xf0        
-    .global XT_\Label
-    .type XT_\Label, STT_FUNC
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:        
 XT_\Label: .word \PFA
 PFA_\Label: 
 .endm

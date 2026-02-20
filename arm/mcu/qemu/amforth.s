@@ -3,16 +3,16 @@
     QEMU -M virt emulates Cortex-A CPUs and starts in ARM mode (even for 32-bit CPUs)
     We need to add an entrypoint wrapper that will switch it to Thumb mode before entering PFA_COLD.
 */
-.section .text, "ax" /* Place wrapper in a dedicated section */
-.arm                      /* Switch to ARM mode for this part */
+.section .text, "ax"
+.arm  /* Switch to ARM mode for this part */
 .global _start
 _start:
-    ldr r0, =PFA_COLD + 1 /* Load address of Thumb code, set Thumb bit */
-    bx r0                 /* Branch and exchange to Thumb mode */
+    ldr r0, =PFA_COLD + 1
+    bx r0
 
 .syntax unified
 .cpu cortex-m4
-.thumb
+.thumb /* Switch to Thumb mode */
 
 .include "config.inc"
 .include "build-config.inc"
