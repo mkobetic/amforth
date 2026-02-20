@@ -124,19 +124,13 @@ build/%.lst: build/%.elf
 	$(OBJDUMP) --show-raw-insn --insn-width=4 --section-headers --file-headers --disassemble $< >$@
 
 # list all transitive dependencies of amforth.s (include tree traversal)
-# the file paths are adjusted to be relative to $(AMFORTH)
 build/%.dep: %.s buildinfo
-	@$(AS) $(INCLUDES) -MD $@.wrk -o /dev/null $<
-	@sed -e 's|^/dev/null:||; s/ \\//; s/^ //; s/ /\n/g' $@.wrk >$@
-	@mv $@ $@.wrk
-	@awk -f $(AMFORTH)/core/dev/dep.awk $@.wrk >$@
-	@rm $@.wrk
+	$(AS) $(INCLUDES) -MD $@ -o /dev/null $<
 
 # table of contents: headers and location of all words in files listed by amforth.dep
-build/%.toc: DEPS = $(shell cat $<)
-build/%.toc: TOC = $(abspath $@)
+# the file paths are adjusted to be relative to $(AMFORTH) 
 build/%.toc: build/%.dep
-	cd $(AMFORTH) && awk -f core/dev/toc.awk $(DEPS) >$(TOC)
+	@awk -f $(AMFORTH)/core/dev/toc.awk $(shell sed 's|/dev/null:||; s| \\||' $<) >$@
 	@echo 'VALUE "environment", ENVIRONMENT /* FFA of last word; standard environment search list */ @ core/macros.inc' >>$@
 	@echo 'VALUE "forth-wordlist", FORTH_WORDLIST /* FFA of last word; system default wordlist */ @ core/macros.inc' >>$@
 	@echo 'VALUE "$(ARCH)-wordlist", ARCH_WORDLIST /* FFA of last word; architecture specific words */ @ core/macros.inc' >>$@
