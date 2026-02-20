@@ -285,25 +285,25 @@ speed:
 	time $(AMSHELL) --no-error-on-output tester-amforth.frt
 
 #? --- QEM ---
-QEMU := $(QEMU_RV32) -M virt -display none -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF)
+QEMU := $(QEMU_RV32) -M virt -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF)
 
 ## Start AmForth under QEMU with operator uart connected to stdio
 stdio:
-	$(QEMU) -serial stdio
+	$(QEMU) -display none -serial stdio
 
 ## Start AmForth under QEMU with operator uart connected to a pty
 pty:
-	$(QEMU) -serial pty
+	$(QEMU) -nographic -serial pty
 
 # Add -S if you want QEMU to not start the quest.
 # WARNING: GDB TUI struggles to start properly when the target has not started (-S).
 ## Like pty but allows GDB to attach to it (-s).
 debug:
-	$(QEMU) -serial pty -s
+	$(QEMU) -nographic -serial pty -s
 
 ## Start AmForth under QEMU with operator uart connected to a socket
 sock:
-	$(QEMU) -serial tcp:localhost:4321,server,nowait  # need to terminate
+	$(QEMU) -nographic -serial tcp:localhost:4321,server,nowait  # need to terminate
 
 ## Start sock shell  
 sksh:

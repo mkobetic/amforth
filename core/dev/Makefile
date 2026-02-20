@@ -201,7 +201,7 @@ tests:
 	  cat $(AMFORTH)/tests/core2.fr; \
 	  cat $(AMFORTH)/tests/pvalue.fr; \
 	  echo '.s" TESTS FINISHED"' ; \
-	} | timeout -s TERM $(TIMEOUT) $(QEMU) -serial stdio | \
+	} | timeout -s TERM $(TIMEOUT) $(QEMU) -display none -serial stdio | \
 	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
 

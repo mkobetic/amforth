@@ -26,18 +26,18 @@ upload: build/amforth.elf
 
 # QEMU's lm3s6965evb machine is not the LM4F120H5QR (m3 vs m4), but seems to be close enough.
 # https://www.qemu.org/docs/master/system/arm/stellaris.html
-QEMU=qemu-system-arm -M lm3s6965evb -display none -bios none -kernel build/amforth.elf
+QEMU=qemu-system-arm -M lm3s6965evb -bios none -kernel build/amforth.elf
 
 ## Start AmForth under QEMU with operator uart connected to a pty
 stdio:
-	$(QEMU) -serial stdio
+	$(QEMU) -display none -serial stdio
 
 # Use this when you want more powerful terminal emulator than the very basic stdio.
 # The pty device is printed after start, connect to it with a terminal emulator,
 # e.g.: tio --map=ODELBS /dev/ttys019	// ODELBS fixes backspace behavior
 ## Start AmForth under QEMU with operator uart connected to a pty
 pty:
-	$(QEMU) -serial pty
+	$(QEMU) -nographic -serial pty
 #	Following was an attempt to predefine the device filename
 #	Unsuccessful so far: Failed to create PTY symlink: Operation not permitted
 #	$(QEMU) -chardev pty,path=/dev/stellaris,id=stellaris -serial chardev:stellaris
@@ -46,7 +46,7 @@ pty:
 # WARNING: GDB TUI struggles to start properly when the target has not started (-S).
 ## Like pty but allows GDB to attach to it (-s).
 debug:
-	$(QEMU) -serial pty -s
+	$(QEMU) -nographic -serial pty -s
 
 ## Connect GDB to running amforth (must be running with -s, see debug)
 gdb:

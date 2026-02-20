@@ -43,8 +43,8 @@ upload:
 
 # QEMU's SiFive E31 core machine should be close enough (according to AI).
 # But doesn't really work.
-QEMU=qemu-system-riscv32 -M sifive_e -display none -bios none -kernel build/amforth.elf
+QEMU=qemu-system-riscv32 -M sifive_e -bios none -kernel build/amforth.elf
 
 ## Start AmForth under QEMU with operator uart connected to stdio
 stdio:
-	$(QEMU) -serial stdio
+	$(QEMU) -display none -serial stdio
