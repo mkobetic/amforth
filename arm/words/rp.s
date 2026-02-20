@@ -14,5 +14,5 @@ END RP_FETCH
   NEXT
 END RP_STORE
 
-USER "rp", RP, USER_RP /* ( -- addr ) address of return stack pointer */
+USER "rp", RP, USER_RP /* ( -- addr ) storage address of return stack pointer */
 END RP

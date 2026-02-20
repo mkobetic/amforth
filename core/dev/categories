@@ -42,7 +42,7 @@ WORDLIST:
     get-current  wlscope search-wordlist current show-wordlist traverse-wordlist
     set-current previous set-order get-order order only w1  order.table  (order) core forth order.forth order.core order.only cfg-order top> >top top
 COMPILER:
-    : ; ;i :~ ( \# \  recurse postpone immediate state
+    : ; ;i :~ ( \# \ recurse postpone immediate state
     create (create) does> (dodoes) char [ ] ['] [compile] [char] 
     compile xliteral literal 2literal sliteral
     Udefer! Udefer@ defer! defer@ defer~ defer

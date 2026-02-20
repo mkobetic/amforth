@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "create", CREATE /* ( "<spaces>name" -- ) create dictionary definition for name */
+COLON "create", CREATE /* (C: "name" -- )( -- a-addr ) create dictionary header for name (DATA) */
 /*
  Skip leading space delimiters. Parse name delimited by a space. Create a definition for name with the execution semantics defined below.
  If the data-space pointer is not aligned, reserve enough data space to align it. The new data-space pointer defines name's data field.

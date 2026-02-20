@@ -15,8 +15,8 @@ END SP_FETCH
   NEXT
 END SP_STORE
 
-USER "sp", SP, USER_SP /* ( -- addr ) address of data stack pointer */
+USER "sp", SP, USER_SP /* ( -- addr ) storage address of data stack pointer */
 END SP
 
-USER "sp0", SP0, USER_SP0 /* ( -- addr ) initial address of data stack pointer */
+USER "sp0", SP0, USER_SP0 /* ( -- addr ) storage address of initial data stack pointer */
 END SP0

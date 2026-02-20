@@ -3,6 +3,7 @@ List of know issues and tasks that need to be done (by area)
 
 # CORE
 
+* add name to NONAME and HEADLESS macros to support the transpiler
 * rv not vs arm not (logical vs bitwise), also invert and not is the same thing
 * clean up placeholders in dict_mcu.s files
 * !i must not be permitted to write below dp0.flash (!i vs ~!i)

@@ -12,17 +12,18 @@ AMFORTH ?= $(shell git rev-parse --show-toplevel)
 # Included after various configuration bits are defined (importantly MCU_LD)
 include $(AMFORTH)/arm/dev/Makefile
 
-QEMU := qemu-system-arm -M virt -cpu cortex-a15 -display none -kernel build/amforth.elf
-## Start AmForth under QEMU with operator uart connected to a pty
+QEMU := qemu-system-arm -M virt -cpu cortex-a15 -m 1M -kernel build/amforth.elf
+# -nographic is incompatible with -serial stdio as the monitor takes over the serial device
+## Start AmForth under QEMU with operator uart connected to stdio
 stdio:
-	$(QEMU) -serial stdio
+	$(QEMU) -display none -serial stdio
 
 # Use this when you want more powerful terminal emulator than the very basic stdio.
 # The pty device is printed after start, connect to it with a terminal emulator,
 # e.g.: tio --map=ODELBS /dev/ttys019	// ODELBS fixes backspace behavior
 ## Start AmForth under QEMU with operator uart connected to a pty
 pty:
-	$(QEMU) -serial pty
+	$(QEMU) -nographic -serial pty
 #	Following was an attempt to predefine the device filename
 #	Unsuccessful so far: Failed to create PTY symlink: Operation not permitted
 #	$(QEMU) -chardev pty,path=/dev/stellaris,id=stellaris -serial chardev:stellaris
@@ -31,7 +32,7 @@ pty:
 # WARNING: GDB TUI struggles to start properly when the target has not started (-S).
 ## Like pty but allows GDB to attach to it (-s).
 debug:
-	$(QEMU) -serial pty -s
+	$(QEMU) -nographic -serial pty -s
 
 ## Connect GDB to running amforth (must be running with -s, see debug)
 gdb:

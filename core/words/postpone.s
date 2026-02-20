@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-IMMED "postpone", POSTPONE
+IMMED "postpone", POSTPONE /* (C: "name" -- ) append the compilation semantics of "name" to the dictionary */
     .word XT_PARSENAME
     .word XT_FORTHRECOGNIZER
     .word XT_RECOGNIZE
@@ -15,3 +15,4 @@ IMMED "postpone", POSTPONE
     .word XT_FETCH
     .word XT_COMMA
     .word XT_EXIT
+END POSTPONE

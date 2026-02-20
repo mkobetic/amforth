@@ -67,7 +67,7 @@ COLON ":", COLON /* ( "name" -- ) create a colon word entry in the dictionary */
     .word XT_EXIT
 END COLON
 
-COLON ":~", CLOAKED_COLON 
+COLON ":~", CLOAKED_COLON /* ( "name" -- ) create a cloaked colon word entry in the dictionary */
     .word XT_FLAGDOTCOLON
     .word XT_FLAGDOTPRIVATE
     .word XT_OR
