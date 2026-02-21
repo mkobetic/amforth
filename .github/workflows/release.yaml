@@ -1,0 +1,39 @@
+
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      # These should match arm/dev/Makefile
+      CROSS: arm-none-eabi-
+      TC_VER: 15.2.rel1
+      TC_DIR: ${{ github.workspace }}/toolchain/arm-none-eabi-15.2.rel1
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Toolchain Installation
+        id: cache-toolchain
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.TC_DIR }}
+          key: ${{ runner.os }}-${{ env.CROSS }}-${{ env.TC_VER }}
+
+      - name: Install ARM GNU Toolchain
+        if: steps.cache-toolchain.outputs.cache-hit != 'true'
+        run: cd arm/dev && make toolchain
+
+      - name: Build QEMU virt
+        run: cd arm/mcu/qemu && VERSION=${{github.ref_name}} make dist
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        id: create_release
+        with:
+          artifacts: "dist/*.tgz"
+          omitBody: true
