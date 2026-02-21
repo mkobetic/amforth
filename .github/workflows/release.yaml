@@ -13,10 +13,9 @@ jobs:
       # These should match arm/dev/Makefile
       CROSS: arm-none-eabi-
       TC_VER: 15.2.rel1
-      TC_DIR: ${{ github.workspace }}/toolchain/arm-none-eabi-15.2.rel1
     steps:
+      - run: echo "TC_DIR=${{ github.workspace }}/toolchain/${CROSS}${TC_VER}" >> $GITHUB_ENV
       - uses: actions/checkout@v4
-
       - name: Cache Toolchain Installation
         id: cache-toolchain
         uses: actions/cache@v4
