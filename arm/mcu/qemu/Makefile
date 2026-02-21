@@ -40,3 +40,9 @@ gdb:
 		-ex 'target remote :1234' \
  		-ex "directory ../../dev" \
 		-ex "source tui-full.gdb"
+
+## Make distribution tarball for the target (expects VERSION)
+dist: all
+	mkdir -p $(AMFORTH)/dist
+	cp readme.md $(AMFORTH)/LICENSE.txt build/
+	cd build && tar -zcf $(AMFORTH)/dist/amforth32-$(VERSION)-arm-qemu-virt.tgz *

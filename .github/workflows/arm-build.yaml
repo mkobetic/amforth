@@ -1,15 +1,17 @@
 name: ARM
-on: [push]
-
+on:
+  push:
+    branches: [ '**' ]
+    tags-ignore: [ '**' ]
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
       # These should match arm/dev/Makefile
       TC_VER: 15.2.rel1
-      TC_DIR: ${{ github.workspace }}/toolchain/arm-none-eabi-15.2.rel1
       CROSS: arm-none-eabi-
     steps:
+      - run: echo "TC_DIR=${{ github.workspace }}/toolchain/${CROSS}${TC_VER}" >> $GITHUB_ENV
       - uses: actions/checkout@v4
 
       - name: Cache Toolchain Installation

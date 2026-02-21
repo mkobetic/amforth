@@ -1,15 +1,17 @@
 name: RISC-V
-on: [push]
-
+on:
+  push:
+    branches: [ '**' ]
+    tags-ignore: [ '**' ]
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
       # These should match rv/dev/Makefile
       TC_VER: 15.2.0-1
-      TC_DIR: ${{ github.workspace }}/toolchain/riscv-none-elf-15.2.0-1
       CROSS: riscv-none-elf-
     steps:
+      - run: echo "TC_DIR=${{ github.workspace }}/toolchain/${CROSS}${TC_VER}" >> $GITHUB_ENV
       - uses: actions/checkout@v4
 
       - name: Cache Toolchain Installation
