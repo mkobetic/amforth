@@ -5,18 +5,14 @@ CODEWORD "cold", COLD /* ( i*x -- )(R: j*y -- ) assembler part of startup sequen
 
    MCUs may override this to inject additional initialization at specific points.
 */
-
    ldr r0, =RAM_upper_returnstack
    mov sp, r0
    ldr psp, =RAM_upper_datastack
 
 /* Copy RAM functions from Flash to RAM */
-
-
    ldr r0, =RAM_lower_res    
    ldr r1, =FSH_lower_res    
    ldr r2, =RAM_upper_res    
-
 
 copy_ramfunc:
    cmp r0, r2
@@ -26,9 +22,7 @@ copy_ramfunc:
    b copy_ramfunc
     
 done_copy:
-
    ldr FORTHW, =XT_WARM
-   
    b DO_EXECUTE
 
 END COLD

@@ -68,6 +68,13 @@ END FORTH_WORDLIST
 .equ Flag_colon   ,   Flag_visible | 4 
 .equ Flag_constant,   Flag_visible | 8 
 
+/*
+  Note that ideally we would use the XT_\Label symbol as the function symbol, however, thanks to the ARM interworking garbage,
+  the assembler will helpfully set the Thumb bit on all the XT_ symbols if we do, assuming they will be eventually jumped to.
+  This completely breaks all the ITC code, because all the XT addresses will be off by one and the CPU will likely fault
+  quite quickly on unaligned loads.
+  So unfortunately we have add another set of symbols for the functions because of ARM, thus the _\Label symbols.
+*/
 .macro HEADER Flags, Name, Label, PFA
     .p2align 2,0x55
 VE_\Label:
@@ -276,11 +283,11 @@ PFA_\Label:
    .section amramlo,"aw",%nobits
    .balign 4
    # Capture current location counter
-   .set \Label\()_ram, .           
+   .set _\Label\()_ram, .           
    .space 4
    .section amforth
    # Write the captured address into flash
-   .word \Label\()_ram             
+   .word _\Label\()_ram             
    .word \XT
    .word XT_FETCH
    .word XT_STORE
@@ -296,13 +303,11 @@ PFA_\Label:
 .endm
 
 .macro CONSTANT Name, Label, NUM
-#    HEADER Flag_visible, "\Name", \Label, PFA_DOVARIABLE
     HEADER Flag_constant, "\Name", \Label, PFA_DOVARIABLE
     .word \NUM
 .endm
 
 .macro CLOAKED_CONSTANT Name, Label, NUM
-#    HEADER Flag_visible, "\Name", \Label, PFA_DOVARIABLE
     HEADER Flag_constant|Flag_cloaked, "\Name", \Label, PFA_DOVARIABLE
     .word \NUM
 .endm
