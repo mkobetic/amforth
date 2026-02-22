@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-only
 .global DO_EXECUTE
 
+.global _INTERPRETER
+.type _INTERPRETER, STT_FUNC
+_INTERPRETER:
 DOCOLON: 
         push s2   # IP
         mv s2,s1  # W->IP
@@ -15,3 +18,4 @@ DO_EXECUTE:
 #        lw   s10, 0(s1) # @W, address of some executable code
 #        addi s1,s1,4 # INC W, points now to PFA
 #        jalr zero,s10,0 # jump to code
+.size _INTERPRETER, . - _INTERPRETER

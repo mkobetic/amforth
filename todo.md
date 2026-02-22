@@ -3,7 +3,10 @@ List of know issues and tasks that need to be done (by area)
 
 # CORE
 
+* remove eeprom stuff?
 * add name to NONAME and HEADLESS macros to support the transpiler
+* do we need to CON macro?
+* xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
 * rv not vs arm not (logical vs bitwise), also invert and not is the same thing
 * clean up placeholders in dict_mcu.s files
 * !i must not be permitted to write below dp0.flash (!i vs ~!i)
@@ -18,12 +21,13 @@ List of know issues and tasks that need to be done (by area)
 * add words to show memory stats
 * extend the error prompt to list words on the R-stack to help identify where the throw comes from
 * use XT symbols as function symbols (they are the same addresses)
+* add BUILD_CONFIG to the greeting
 
 * push WANT_USB_OPERATOR, TARGET_QEM out of core (into ch32)
 * core/aligned.s vs arm|rv/aligned.s
 * aligned.s and do-aligned.s are identical
 * remove doxliteral.s in favor of doliteral.s
-* remove HIDEWORD in favor of HEADLESS
+* replace HIDEWORD with CODEWORD
 * what is the relationship between variable `rp` and `sp`, and register `sp` and `psp` ?
 * clean up all harcoded cell size values, replace with cellsize symbol (including alignment directives)
 * add long word description to the html refcard as title attribute, so that it shows on hover
