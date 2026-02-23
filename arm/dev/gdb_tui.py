@@ -17,7 +17,7 @@ class GdbCommandWindow:
     def get_contents(self):
         try:
             return gdb.execute(self.gdb_command, to_string=True)
-        except gdb.error as exc: 
+        except Exception as exc: 
             return str(exc)
 
     def render(self): 
@@ -35,7 +35,7 @@ class GdbCommandWindow:
 
 def value(val):
     # If val is in the flash code range, treat it as address
-    if FlashStart <= val and val < FlashEnd:
+    if is_code_address(val):
         return address(val)
     dec = val.format_string(format="d")
     hex = val.format_string(format="x")
@@ -72,31 +72,53 @@ class ForthRegisterWindow:
             return f"{name}:\t\t"
 
     def value_register(self, frame, name, fName = None):
-        reg = frame.read_register(name)
-        return f"{self.prefix(name, fName)}{value(reg)}"
+        try:
+            reg = frame.read_register(name)
+            return f"{self.prefix(name, fName)}{value(reg)}"
+        except Exception:
+            return f"{self.prefix(name, fName)}<unavailable>"
 
     def addres_register(self, frame, name, fName = None):
-        reg = frame.read_register(name)
-        addr = reg.format_string(format="a")
-        return f"{self.prefix(name, fName)}{addr}"
+        try:
+            reg = frame.read_register(name)
+            addr = reg.format_string(format="a")
+            return f"{self.prefix(name, fName)}{addr}"
+        except Exception:
+            return f"{self.prefix(name, fName)}<unavailable>"
 
     def status_register(self, frame, name):
-        reg = frame.read_register(name)
-        hex = reg.format_string(format="x")
-        msb = reg.bytes[3]
-        flags = 'N' if msb & 0x80 else '.'
-        flags += 'Z' if msb & 0x40 else '.'
-        flags += 'C' if msb & 0x20 else '.'
-        flags += 'V' if msb & 0x10 else '.'
-        flags += 'Q' if msb & 0x08 else '.'
-        return f"{self.prefix(name)}{flags}... {hex}"
+        try:
+            reg = frame.read_register(name)
+            hex = reg.format_string(format="x")
+            msb = reg.bytes[3]
+            flags = 'N' if msb & 0x80 else '.'
+            flags += 'Z' if msb & 0x40 else '.'
+            flags += 'C' if msb & 0x20 else '.'
+            flags += 'V' if msb & 0x10 else '.'
+            flags += 'Q' if msb & 0x08 else '.'
+            return f"{self.prefix(name)}{flags}... {hex}"
+        except Exception:
+            return f"{self.prefix(name)}<unavailable>"
+
+    def find_psr_name(self, register_list):
+        # Prioritize common names
+        for name in ["xPSR", "xpsr", "cpsr"]:
+            if name in register_list:
+                return name
+        # Generic fallback
+        for name in register_list:
+            if "psr" in name.lower():
+                return name
+        return None
 
     def get_contents(self):
+        if not gdb.selected_thread():
+            return "No thread selected."
         frame = gdb.selected_frame()
         if frame is None:
             return "no frame selected"
         architecture = gdb.selected_inferior().architecture()
-        registers = map(lambda reg: reg.name, architecture.registers())
+        registers = [reg.name for reg in architecture.registers()]
         lines = [
             self.value_register(frame, "r0"),
             self.value_register(frame, "r1"),
@@ -114,9 +136,14 @@ class ForthRegisterWindow:
             self.addres_register(frame, "sp", "RSP"),
             self.addres_register(frame, "lr"),
             self.addres_register(frame, "pc"),
-            # xPSR on Cortex-M3 is named xpsr
-            self.status_register(frame, "xPSR" if ("xPSR" in registers) else "xpsr"),
         ]
+        
+        psr_name = self.find_psr_name(registers)
+        if psr_name:
+            lines.append(self.status_register(frame, psr_name))
+        else:
+            lines.append(self.prefix("PSR") + "<not found>")
+
         return "\n".join(lines)
 
     def render(self): 
@@ -124,7 +151,7 @@ class ForthRegisterWindow:
             return
         try:
             contents = self.get_contents()
-        except gdb.error as exc: 
+        except Exception as exc: 
             contents = str(exc)
         self._tui_window.write(contents, True)
 
@@ -137,6 +164,8 @@ class ForthParameterStack:
         gdb.events.before_prompt.connect(self.render)
 
     def get_contents(self):
+        if not gdb.selected_thread():
+            return "No thread selected."
         frame = gdb.selected_frame()
         if frame is None:
             return "no frame selected"
@@ -144,12 +173,22 @@ class ForthParameterStack:
         # TODO: need to detect when stack is empty
         lines = [ f"r6/TOS:\t\t{value(tos)}" ]
         psp = frame.read_register("r7")
+
+        if not (RAM_lower_datastack <= int(psp) <= RAM_upper_datastack):
+            return (f"PSP 0x{int(psp):x} out of range.\n"
+                    f"Expected [0x{RAM_lower_datastack:x}, 0x{RAM_upper_datastack:x})")
+
+        if psp == RAM_upper_datastack:
+            return f"Empty"
+    
         # cast psp from int to int* so that we can dereference it
         psp = psp.cast(psp.type.pointer())
-        while psp < RAM_upper_datastack:
+        count = 0
+        while psp < RAM_upper_datastack and count < 16:
             addr = psp.format_string(format="x")
             lines.append(f"{addr}:\t{value(psp.dereference())}")
             psp += 1
+            count += 1
         return "\n".join(lines)
 
     def render(self): 
@@ -157,7 +196,7 @@ class ForthParameterStack:
             return
         try:
             contents = self.get_contents()
-        except gdb.error as exc: 
+        except Exception as exc: 
             contents = str(exc)
         self._tui_window.write(contents, True)
 
@@ -170,6 +209,8 @@ class ForthReturnStack:
         gdb.events.before_prompt.connect(self.render)
 
     def get_contents(self):
+        if not gdb.selected_thread():
+            return "No thread selected."
         frame = gdb.selected_frame()
         if frame is None:
             return "no frame selected"
@@ -178,12 +219,19 @@ class ForthReturnStack:
         ip = frame.read_register("r9") # FORTHIP
         lines.append(f"r9/FORTHIP:\t{address(ip)}")
         rsp = frame.read_register("sp")
+
+        if not (RAM_lower_returnstack <= int(rsp) <= RAM_upper_returnstack):
+            return (f"SP 0x{int(rsp):x} out of range.\n"
+                    f"Expected [0x{RAM_lower_returnstack:x}, 0x{RAM_upper_returnstack:x})")
+
         # cast rsp from int to int* so that we can dereference it
         rsp = rsp.cast(rsp.type.pointer())
-        while rsp < RAM_upper_returnstack:
+        count = 0
+        while rsp < RAM_upper_returnstack and count < 16:
             addr = rsp.format_string(format="x")
             lines.append(f"{addr}:\t{gdb.format_address(int(rsp.dereference()))}")
             rsp += 1
+            count += 1
         return "\n".join(lines)
 
     def render(self): 
@@ -191,7 +239,7 @@ class ForthReturnStack:
             return
         try:
             contents = self.get_contents()
-        except gdb.error as exc: 
+        except Exception as exc: 
             contents = str(exc)
         self._tui_window.write(contents, True)
 

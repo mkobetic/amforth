@@ -15,8 +15,13 @@ def get_sym_val(name, default):
     except gdb.error:
         return default
 
-FlashStart = get_sym_val("flash.low", 0x00000000)
-FlashEnd = get_sym_val("FlashEnd", 0x00040000)
+def is_code_address(addr):
+    return (CodeFlashEnd == 0 or CodeFlashStart <= addr < CodeFlashEnd) or (CodeRamEnd == 0 or CodeRamStart <= addr < CodeRamEnd)
+
+CodeFlashStart = get_sym_val("flash.low", 0)
+CodeFlashEnd = get_sym_val("flash.max", 0)
+CodeRamStart = get_sym_val("dp0.ram", 0)
+CodeRamEnd = get_sym_val("dp.ram.max", 0)
 RAM_lower_datastack = get_sym_val("RAM_lower_datastack", 0x20000000)
 RAM_upper_datastack = get_sym_val("RAM_upper_datastack", 0x20000080)
 RAM_lower_returnstack = get_sym_val("RAM_lower_returnstack", 0x20000080)

@@ -2,7 +2,6 @@ import gdb
 from gdb_shared import *
 from gdb.unwinder import Unwinder, FrameId
 
-
 class ForthUnwinder(Unwinder):
     """Unwinder for Forth return stack.
     
@@ -20,42 +19,46 @@ class ForthUnwinder(Unwinder):
     def __call__(self, pending_frame):
         try:
             sp = pending_frame.read_register("sp")
-            pc = pending_frame.read_register("pc")
             
-            # Stop if we hit bottom of the stack
-            if not (RAM_lower_returnstack <= int(sp) < RAM_upper_returnstack):
-                return None
+            while True:
+                # Stop if we hit bottom of the stack
+                if not (RAM_lower_returnstack <= int(sp) < RAM_upper_returnstack):
+                    self.first_frame_done = False
+                    return None
 
-            if self.first_frame_done:
-                sp_ptr = sp.cast(gdb.lookup_type("unsigned int").pointer())
-                ret_addr = sp_ptr.dereference()
-            else:
-                # Adjust SP for first frame (FORTHIP effectively extends RSP by one slot)
-                sp = gdb.Value(int(sp) - 4).cast(sp.type)
-                ret_addr = pending_frame.read_register("r9")
-                self.first_frame_done = True
+                if self.first_frame_done:
+                    sp_ptr = sp.cast(gdb.lookup_type("unsigned int").pointer())
+                    ret_addr = sp_ptr.dereference()
+                else:
+                    # Adjust SP for first frame (FORTHIP effectively extends RSP by one slot)
+                    sp = gdb.Value(int(sp) - 4).cast(sp.type)
+                    ret_addr = pending_frame.read_register("r9")
+                    self.first_frame_done = True
 
-            # Validate the return address
-            ret_addr_int = int(ret_addr)
-            if not (FlashStart <= ret_addr_int < FlashEnd):
-                return None
+                # If ret_addr doesn't look like a valid code address, skip that stack entry
+                # because it's likely a value stashed in the return stack.
+                if is_code_address(ret_addr):
+                    break
+                print(f"skipping non code: #{pending_frame.location()}: {ret_addr}")
+                sp = gdb.Value(int(sp) + 4).cast(sp.type)
 
-            # Create frame ID: use SP (as identity) and ret_addr (as code address)
-            frame_id = FrameId(int(sp), ret_addr_int)
+            # Create frame ID for next frame: use SP (as identity) and ret_addr (as code address)
+            frame_id = FrameId(sp, ret_addr)
             unwind_info = pending_frame.create_unwind_info(frame_id)
             
             # Next frame's SP is current SP + 4 (pop one return address)
-            new_sp = gdb.Value(int(sp) + 4).cast(sp.type)
-            
-            # Next frame's PC is the return address we just popped
-            unwind_info.add_saved_register("pc", ret_addr)
-            unwind_info.add_saved_register("sp", new_sp)
-            
+            sp = gdb.Value(int(sp) + 4).cast(sp.type)
+            # Next frame's PC is the return address we just popped - 4
+            # because we're executing the XT before the return address.
+            pc = gdb.Value(int(ret_addr) - 4).cast(ret_addr.type)
+            unwind_info.add_saved_register("pc", pc)
+            unwind_info.add_saved_register("sp", sp)            
             return unwind_info
-        except Exception as e:
-            print(f"[ForthUnwinder] Exception: {e}")
+
+        except Exception as e: 
             import traceback
             traceback.print_exc()
+            self.first_frame_done = False
             return None
 
 # Register the unwinder
