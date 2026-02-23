@@ -38,8 +38,12 @@ NM ?= $(TC_DIR)/bin/$(CROSS)nm
 SIZE ?= $(TC_DIR)/bin/$(CROSS)size
 
 # Debugging tools
-GDB ?= $(TC_DIR)/bin/$(CROSS)gdb
-GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py3
+GDB ?= $(TC_DIR)/bin/$(CROSS)gdb -ex "directory $(AMFORTH)/core/dev" -ex "directory ../../dev"
+ifneq (,$(filter arm-%, $(CROSS)))
+GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py -ex "directory $(AMFORTH)/core/dev" -ex "directory ../../dev"
+else
+GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py3 -ex "directory $(AMFORTH)/core/dev" -ex "directory ../../dev"
+endif
 
 #? --- Common ---
 

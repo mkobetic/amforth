@@ -311,9 +311,15 @@ sksh:
 
 #? --- Debugging ---
 ## Start GDB 
-gdb:
-	$(BIN_STUB)-gdb --ex 'target extended-remote :3333' $(BUILD_DIR)/$(TARGET_ELF)
+#gdb:
+#	$(BIN_STUB)-gdb --ex 'target extended-remote :3333' $(BUILD_DIR)/$(TARGET_ELF)
 
-## Start OpenOCD 
+## Connect GDB to amforth running on QEMU (must be running with -s, see debug)
+gdb:
+	$(GDBPY) build/amforth.elf --quiet \
+		-ex 'target remote :1234' \
+		-ex "source tui-full.gdb"
+
+## Start OpenOCD
 ocd:
 	$(OPENOCD) -f $(OPENCFG)

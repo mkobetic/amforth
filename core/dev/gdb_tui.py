@@ -3,6 +3,7 @@
  
 import gdb
 from gdb_shared import *
+from gdb_arch import *
 
 # GdbCommandWindow can be used to define a TUI window
 # that invokes a GDB command to produce its contents.
@@ -33,25 +34,8 @@ class GdbCommandWindow:
 #     title = "Return Stack"
 #     gdb_command = ".r"
 
-def value(val):
-    # If val is in the flash code range, treat it as address
-    if is_code_address(val):
-        return address(val)
-    dec = val.format_string(format="d")
-    hex = val.format_string(format="x")
-    if 0 <= val and val <= 0xFFFF:
-        # include binary format if val is sufficiently small
-        bin = val.format_string(format="t")
-        if val <= 0x100:
-            char = val.format_string(format="c")
-            return f"{char} {hex} {bin}"
-        else:
-            return f"{dec} {hex} {bin}"
-    else: 
-        return f"{dec} {hex}"
 
-def address(val):
-    return val.format_string(format="a")
+
 
 # ForthRegisterWindow is a custom register view
 # showing registers based on what they are used for in AmForth.
@@ -62,89 +46,14 @@ class ForthRegisterWindow:
         tui_window.title = "Forth Registers"
         gdb.events.before_prompt.connect(self.render)
 
-    def prefix(self, name, fName = None):
-        if fName:
-            if len(fName) > 3:
-                return f"{name}/{fName}:\t"
-            else:
-                return f"{name}/{fName}:\t\t"
-        else:
-            return f"{name}:\t\t"
-
-    def value_register(self, frame, name, fName = None):
-        try:
-            reg = frame.read_register(name)
-            return f"{self.prefix(name, fName)}{value(reg)}"
-        except Exception:
-            return f"{self.prefix(name, fName)}<unavailable>"
-
-    def addres_register(self, frame, name, fName = None):
-        try:
-            reg = frame.read_register(name)
-            addr = reg.format_string(format="a")
-            return f"{self.prefix(name, fName)}{addr}"
-        except Exception:
-            return f"{self.prefix(name, fName)}<unavailable>"
-
-    def status_register(self, frame, name):
-        try:
-            reg = frame.read_register(name)
-            hex = reg.format_string(format="x")
-            msb = reg.bytes[3]
-            flags = 'N' if msb & 0x80 else '.'
-            flags += 'Z' if msb & 0x40 else '.'
-            flags += 'C' if msb & 0x20 else '.'
-            flags += 'V' if msb & 0x10 else '.'
-            flags += 'Q' if msb & 0x08 else '.'
-            return f"{self.prefix(name)}{flags}... {hex}"
-        except Exception:
-            return f"{self.prefix(name)}<unavailable>"
-
-    def find_psr_name(self, register_list):
-        # Prioritize common names
-        for name in ["xPSR", "xpsr", "cpsr"]:
-            if name in register_list:
-                return name
-        # Generic fallback
-        for name in register_list:
-            if "psr" in name.lower():
-                return name
-        return None
-
     def get_contents(self):
         if not gdb.selected_thread():
             return "No thread selected."
         frame = gdb.selected_frame()
         if frame is None:
             return "no frame selected"
-        architecture = gdb.selected_inferior().architecture()
-        registers = [reg.name for reg in architecture.registers()]
-        lines = [
-            self.value_register(frame, "r0"),
-            self.value_register(frame, "r1"),
-            self.value_register(frame, "r2"),
-            self.value_register(frame, "r3"),
-            self.value_register(frame, "r4"),
-            self.value_register(frame, "r5"),
-            self.value_register(frame, "r6", "TOS"),
-            self.addres_register(frame, "r7", "PSP"),
-            self.addres_register(frame, "r8", "FORTHW"),
-            self.addres_register(frame, "r9", "FORTHIP"),
-            self.addres_register(frame, "r10", "UP"),
-            self.value_register(frame, "r11", "RLINDEX"),
-            self.value_register(frame, "r12", "RLLIMIT"),
-            self.addres_register(frame, "sp", "RSP"),
-            self.addres_register(frame, "lr"),
-            self.addres_register(frame, "pc"),
-        ]
-        
-        psr_name = self.find_psr_name(registers)
-        if psr_name:
-            lines.append(self.status_register(frame, psr_name))
-        else:
-            lines.append(self.prefix("PSR") + "<not found>")
 
-        return "\n".join(lines)
+        return "\n".join(register_lines(frame))
 
     def render(self): 
         if not self._tui_window.is_valid(): 
@@ -169,14 +78,14 @@ class ForthParameterStack:
         frame = gdb.selected_frame()
         if frame is None:
             return "no frame selected"
-        tos = frame.read_register("r6")
+        tos = frame.read_register(TOS)
         # TODO: need to detect when stack is empty
-        lines = [ f"r6/TOS:\t\t{value(tos)}" ]
-        psp = frame.read_register("r7")
+        lines = [ f"{TOS}/TOS:\t\t{value(tos)}" ]
+        psp = frame.read_register(PSP).cast(gdb.lookup_type("unsigned int").pointer())
 
-        if not (RAM_lower_datastack <= int(psp) <= RAM_upper_datastack):
-            return (f"PSP 0x{int(psp):x} out of range.\n"
-                    f"Expected [0x{RAM_lower_datastack:x}, 0x{RAM_upper_datastack:x})")
+        if not (RAM_lower_datastack <= psp <= RAM_upper_datastack):
+            return (f"PSP 0x{psp} out of range.\n"
+                    f"Expected [0x{RAM_lower_datastack}, 0x{RAM_upper_datastack})")
 
         if psp == RAM_upper_datastack:
             return f"Empty"
@@ -214,15 +123,15 @@ class ForthReturnStack:
         frame = gdb.selected_frame()
         if frame is None:
             return "no frame selected"
-        w = frame.read_register("r8") # FORTHW
-        lines = [ f"r8/FORTHW:\t{address(w)}" ]
-        ip = frame.read_register("r9") # FORTHIP
-        lines.append(f"r9/FORTHIP:\t{address(ip)}")
-        rsp = frame.read_register("sp")
+        w = frame.read_register(WD) # FORTHW
+        lines = [ f"{WD}/FORTHW:\t{address(w)}" ]
+        ip = frame.read_register(IP) # FORTHIP
+        lines.append(f"{IP}/FORTHIP:\t{address(ip)}")
+        rsp = frame.read_register(RSP).cast(gdb.lookup_type("unsigned int").pointer())
 
-        if not (RAM_lower_returnstack <= int(rsp) <= RAM_upper_returnstack):
-            return (f"SP 0x{int(rsp):x} out of range.\n"
-                    f"Expected [0x{RAM_lower_returnstack:x}, 0x{RAM_upper_returnstack:x})")
+        if not (RAM_lower_returnstack <= rsp <= RAM_upper_returnstack):
+            return (f"SP 0x{rsp} out of range.\n"
+                    f"Expected [0x{RAM_lower_returnstack}, 0x{RAM_upper_returnstack})")
 
         # cast rsp from int to int* so that we can dereference it
         rsp = rsp.cast(rsp.type.pointer())

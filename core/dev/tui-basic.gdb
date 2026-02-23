@@ -1,4 +1,4 @@
-# Basic TUI for Forth debugging
+# Basic TUI for Forth debugging that doesn't use the Python API.
 # load with `source tui-basic.gdb`
 
 source amforth.gdb
@@ -10,3 +10,5 @@ tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 
 # Enable the forth layout and set focus on the command window
 layout forth
 focus cmd
+# disable mouse events so that we can copy/paste from the GDB window (prevents using mouse for scrolling)
+set tui mouse-events off

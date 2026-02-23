@@ -85,9 +85,8 @@ ocd:
 # * replace tui-full.gdb with tui-basic.gdb
 ## Start gdb and connect to OpenOCD
 gdb:
-	$(GDBPY) -tui build/amforth.elf --quiet \
+	$(GDBPY) build/amforth.elf --quiet \
 		-ex "target extended-remote localhost:50000" \
-		-ex "directory ../../dev" \
 		-ex "source tui-full.gdb"
 
 # More debugging references
