@@ -7,7 +7,6 @@
     .include "words/serial.qem"
     .include "words/flash.qem"
     .include "words/flash.307"
-    .include "words/eeprom.s"    
 .endif
 
 .ifdef TARGET_307
@@ -15,7 +14,6 @@
     .include "words/flash.307"  
     .include "words/usart.s"
     .include "words/gpio.s"
-    .include "words/eeprom.s"    
 .endif
 
 .include "words/led.s"

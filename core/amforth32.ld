@@ -121,20 +121,7 @@ SECTIONS
 
 	} >FLASH AT>FLASH
 
-	/*
-		This section is used for CH32 eeprom support.
-		See rv/mcu/ch32v307/words/eeprom.s 
-	*/
-	eeprom :
-	{
-		. = ALIGN(256) ;
-		PROVIDE( eeprom = . );
-		FILL(0xDEADBEEF);
-		. = . + 256 - 1 ;  
-		BYTE(0);
-
-	} >FLASH AT>FLASH
-
+    
 	amramres :
 	{
 		. = ALIGN(4) ;
@@ -148,15 +135,14 @@ SECTIONS
 	PROVIDE(FSH_lower_res = LOADADDR(amramres)) ;
 	PROVIDE(FSH_upper_res = LOADADDR(amramres) + SIZEOF(amramres)) ;
 
-	ASSERT(ADDR(eeprom) + SIZEOF(eeprom) <= FSH_lower_res ,"*ERROR* amramres and eeprom overlap")
-
 	/*
 		userdict represents the free space used for new words created in at runtime in flash (and therefore persistent).
 		It generally occupies the rest of the FLASH memory region.
 	*/
 	userdict :
 	{
-		. = ALIGN(flash_page) ;
+		. = ALIGN(flash_page) ; 
+        /* . = ALIGN(MAX(flash_cell,cellsize)) ;  ->page_end zero filled - not erasesd? */
 		PROVIDE( dp0.flash = . );
 		PROVIDE( flash.high = . );
 		PROVIDE( flash.max = ORIGIN(FLASH) + LENGTH(FLASH));
