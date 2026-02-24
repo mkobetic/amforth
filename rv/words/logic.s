@@ -26,7 +26,7 @@ END OR
 #  xori s3, s3, -1
 #  NEXT
 
-COLON "not" , NOT /* ( f -- ~f ) LOGIC: if f true ~f false (logical not) */
+COLON "not" , NOT /* ( f1 -- f2 )  f = ~f (logical not) */
       .word XT_ZEROEQUAL
       .word XT_EXIT 
 END NOT
