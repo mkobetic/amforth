@@ -178,6 +178,6 @@ These tests run automatically on every commit pushed to github.
 QEMU is best installed with the OS package manager (homebrew on Mac)
 * requires qemu-system-arm for ARM MCUs
 * requires qemu-system-risc32 for RISC-V MCUs
-* The Makefile `test` target requires timeout command to force QEMU to terminate,
+* The Makefile `tests` target requires timeout command to force QEMU to terminate,
   it is native on linux, install coreutils on Mac to get it
 * It uses `awk` script to parse out the test results

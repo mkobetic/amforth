@@ -36,9 +36,8 @@ debug:
 
 ## Connect GDB to running amforth (must be running with -s, see debug)
 gdb:
-	$(CROSS)gdb-py build/amforth.elf --quiet \
+	$(GDBPY) build/amforth.elf --quiet \
 		-ex 'target remote :1234' \
- 		-ex "directory ../../dev" \
 		-ex "source tui-full.gdb"
 
 ## Make distribution tarball for the target (expects VERSION)
