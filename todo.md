@@ -7,7 +7,6 @@ List of know issues and tasks that need to be done (by area)
 * do we need to CON macro?
 * xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
 * runtime defined values and defers are not the same as the compile time defined ones (getters, setters, default values)
-* clean up placeholders in dict_mcu.s files
 * !i must not be permitted to write below dp0.flash (!i vs ~!i)
 * review/simplify word flags
 * sort out issues with `to` word (to.s/alto.s)
