@@ -12,7 +12,7 @@ COLON "defer", DEFER
     .word XT_COMPILE
     .word PFA_DODEFER
     .word XT_ZERO
-    .word XT_RAMHEREPLUSPLUS
+    .word XT_RAMCOMMA
     .word XT_LBRACKET
     .word XT_FLASHDOTFLUSH
     .word XT_EXIT
@@ -29,7 +29,7 @@ COLON "defer~", CLOAKED_DEFER
     .word XT_COMPILE
     .word PFA_DODEFER
     .word XT_ZERO
-    .word XT_RAMHEREPLUSPLUS
+    .word XT_RAMCOMMA
     .word XT_LBRACKET
     .word XT_FLASHDOTFLUSH
     .word XT_EXIT

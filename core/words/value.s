@@ -9,7 +9,7 @@ COLON "value", VAL /* ( x "name" -- ) create value "name" with initial value of 
     .word XT_REVEAL
     .word XT_COMPILE
     .word PFA_DOVALUE
-    .word XT_RAMHEREPLUSPLUS
+    .word XT_RAMCOMMA
     # added 
     .word XT_LBRACKET
     .word XT_TOFLUSH
@@ -27,7 +27,7 @@ COLON "value~", CLOAKED_VALUE /* ( x "name" -- ) create value "name" with initia
     .word XT_REVEAL
     .word XT_COMPILE
     .word PFA_DOVALUE
-    .word XT_RAMHEREPLUSPLUS
+    .word XT_RAMCOMMA
     # added 
     .word XT_LBRACKET
     .word XT_TOFLUSH
@@ -48,7 +48,7 @@ COLON "value", VAL /* ( x "name" -- ) create value "name" with initial of x */
     .word XT_REVEAL
     .word XT_COMPILE
     .word PFA_DOVALUE
-    .word XT_RAMHEREPLUSPLUS
+    .word XT_RAMCOMMA
     # added 
     .word XT_LBRACKET
     .word XT_FLASHDOTFLUSH
@@ -66,7 +66,7 @@ COLON "value~", CLOAKED_VALUE /* ( x "name" -- ) create cloaked value "name" wit
     .word XT_REVEAL
     .word XT_COMPILE
     .word PFA_DOVALUE
-    .word XT_RAMHEREPLUSPLUS
+    .word XT_RAMCOMMA
     # added 
     .word XT_LBRACKET
     .word XT_FLASHDOTFLUSH
