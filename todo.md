@@ -3,10 +3,10 @@ List of know issues and tasks that need to be done (by area)
 
 # CORE
 
-* remove eeprom stuff?
 * add name to NONAME and HEADLESS macros to support the transpiler
 * do we need to CON macro?
 * xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
+* runtime defined values and defers are not the same as the compile time defined ones (getters, setters, default values)
 * clean up placeholders in dict_mcu.s files
 * !i must not be permitted to write below dp0.flash (!i vs ~!i)
 * review/simplify word flags
@@ -23,6 +23,7 @@ List of know issues and tasks that need to be done (by area)
 * push WANT_USB_OPERATOR, TARGET_QEM out of core (into ch32)
 * core/aligned.s vs arm|rv/aligned.s
 * aligned.s and do-aligned.s are identical
+* ud* is broken, what about d*, ud/ ? (need double tests)
 * remove doxliteral.s in favor of doliteral.s
 * replace HIDEWORD with CODEWORD
 * what is the relationship between variable `rp` and `sp`, and register `sp` and `psp` ?
