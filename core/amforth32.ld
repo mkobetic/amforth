@@ -121,7 +121,11 @@ SECTIONS
 
 	} >FLASH AT>FLASH
 
-    
+	/*
+		RAM resident code, i.e. code that must run from RAM.
+		COLD is responsible for copying the code to RAM at boot.
+		Example is code flash writing code for RA4.
+	*/
 	amramres :
 	{
 		. = ALIGN(4) ;
@@ -136,8 +140,8 @@ SECTIONS
 	PROVIDE(FSH_upper_res = LOADADDR(amramres) + SIZEOF(amramres)) ;
 
 	/*
-		userdict represents the free space used for new words created in at runtime in flash (and therefore persistent).
-		It generally occupies the rest of the FLASH memory region.
+		userdict represents the free space used for new words created at runtime in flash (and therefore persistent).
+		It generally occupies the rest of the FLASH memory region. (Tracked by dp.flash)
 	*/
 	userdict :
 	{
@@ -223,6 +227,9 @@ SECTIONS
 
 	/* AmForth RAM sections */
 
+	/* The RAM side of amramres section is first */
+
+	/* amramlo contains RAM allocations of all the pre-compiled words */
     amramlo :
     {
         . = ALIGN(256) ;
@@ -233,7 +240,13 @@ SECTIONS
 
     } >RAM
 
-	ASSERT(RAM_upper_res <= RAM_lower_fi ,"*ERROR* amramres and amramlo overlap") 
+	ASSERT(RAM_upper_res <= RAM_lower_fi ,"*ERROR* amramres and amramlo overlap")
+
+	/* 
+		amramhi contains:
+		* RAM pool, where runtime defined flash words allocate RAM (vp)
+		* ram-dictionary where RAM defined words are compiled (dp.ram)
+	*/
     amramhi :
     {
         . = ALIGN(4) ;
@@ -255,7 +268,7 @@ SECTIONS
 
 	/* C stack section */
     slack = cellsize ;
-    .stack ORIGIN(RAM) + LENGTH(RAM) - __stack_size  - eeprom_size - slack :
+    .stack ORIGIN(RAM) + LENGTH(RAM) - __stack_size - slack :
     {
         PROVIDE( _heap_end = . );    
         . = ALIGN(4);
@@ -264,22 +277,6 @@ SECTIONS
         PROVIDE( _eusrstack = .);
     } >RAM
 	PROVIDE( dp.ram.max = ADDR(.stack) - slack );
-
-
-	/*
-		This section is used for CH32 eeprom support.
-		See rv/mcu/ch32v307/words/eeprom.s 
-	*/
-    eeprom_size = 256 ;
-    .eeprom ORIGIN(RAM) + LENGTH(RAM) - eeprom_size :
-    {
-        . = ALIGN(4);
-        PROVIDE( eeprom_buf = . );
-
-        . = . + eeprom_size;
-    } >RAM 
-
-	ASSERT(_eusrstack == ORIGIN(RAM) + LENGTH(RAM) - eeprom_size - slack, "Stack and EEPROM overlap!")
 
 	/* End of RAM sections */
 

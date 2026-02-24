@@ -1,24 +1,23 @@
 List of know issues and tasks that need to be done (by area)
-
+Also look for TODO: in source files
 
 # CORE
 
 * add name to NONAME and HEADLESS macros to support the transpiler
 * do we need to CON macro?
 * xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
-* runtime defined values and defers are not the same as the compile time defined ones (getters, setters, default values)
 * !i must not be permitted to write below dp0.flash (!i vs ~!i)
 * review/simplify word flags
-* sort out issues with `to` word (to.s/alto.s)
-* add END macro and make all words proper function blocks (debug_info)
-* clean/document amforth32.ld (assumptions, section purpose, etc)
-* add refcard legend
 * Makefile: build/amforth.dep setup forces second amforth.o compilation
 
 * add words to show memory stats
 * extend the error prompt to list words on the R-stack to help identify where the throw comes from
+* add selected options to build-info (e.g. WANT_IGNORECASE)
 * add BUILD_CONFIG to the greeting
 
+* add END macro and make all words proper function blocks (debug_info)
+* sort out issues with `to` word (to.s/alto.s)
+* runtime defined values and defers are not the same as the compile time defined ones (getters, setters, default values)
 * push WANT_USB_OPERATOR, TARGET_QEM out of core (into ch32)
 * core/aligned.s vs arm|rv/aligned.s
 * aligned.s and do-aligned.s are identical
@@ -27,27 +26,18 @@ List of know issues and tasks that need to be done (by area)
 * replace HIDEWORD with CODEWORD
 * what is the relationship between variable `rp` and `sp`, and register `sp` and `psp` ?
 * clean up all harcoded cell size values, replace with cellsize symbol (including alignment directives)
-* add long word description to the html refcard as title attribute, so that it shows on hover
 
-* add selected options to build-info (e.g. WANT_IGNORECASE)
-* make target for listing unused words/ files (see build/amforth.dep)
-* standardized Makefile targets across all MCUs 
-* extract OS and personal details from Makefiles (.env files?)
 * automated compiled artifact releases
+* add refcard legend
+* make target for listing unused words/ files (see build/amforth.dep)
 * proper, and extractable comments for all words
-* automated ref-card generation
-* figure out what to do about docs
-* document conventions and standard practices
-* document dev tool setup
-
+* add long word description to the html refcard as title attribute, so that it shows on hover
 
 # ARM
 
-* add readme.md
 * don't push{lr}/pop{pc} in leaf functions (just bx lr)
 * don't use ldm when not needed (poptos, popnos)
 * (exiti) likely needs work
-* document dev tool setup
 * better HW fault handling
 
 ## LM4F120
@@ -58,22 +48,18 @@ List of know issues and tasks that need to be done (by area)
 ## RA4M1
 
 * make sure FLASH_IMAGE_START is handled correctly
-* flash dictionary updates
 
 ## LINUX
 
 * make dtests is failing
 
-
 # RISC-V
 
-* add readme.md
-* generalize GDB extensions to support RISC-V
+* CI caching of qemu installation (or maybe try docker instead?)
 
 ## CH32V307
 
 * flash.qem vs flash.307 vs flash.s
-* a lot of code duplication between flash and eeprom
 * unify the build setup with the rest of MCUs (gcc vs as)
 * RAMALLOT reg_shadow differences between 307 ad QEM configuration
 
@@ -93,6 +79,9 @@ List of know issues and tasks that need to be done (by area)
 
 * how to use AmForth32 as is
 * overall architecture (core/readme.md?)
+* arch specific docs (e.g. register allocation)
 * describe the development setup
 * how to add a new MCU
 * how to add a new ARCH
+* document conventions and standard practices
+* document dev tool setup
