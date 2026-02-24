@@ -55,3 +55,9 @@ RAMALLOT refill_buf, refill_buf_size, 4
 .equ EWLCHG,   -51	/* compilation word list changed */
 .equ ECSOVR,   -52	/* control-flow stack overflow */
 .equ EESOVR,   -53	/* exception stack overflow */
+
+
+# AmForth32 Exceptions
+.equ EFCACHE,  -256 /* flash.cache is misaligned */
+.equ EFCELLA,  -257 /* attempt to allot outside flash.cell */
+

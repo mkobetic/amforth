@@ -181,7 +181,7 @@ COLON "~(dallot)", TILDEDODALLOT /* ( u -- allocate u bytes in the dictionary ) 
 2:		/* else */
 			/* this should not happen, throw */
 			.word XT_DROP
-			.word XT_DOLITERAL, -0x40000000, XT_THROW
+			.word XT_DOLITERAL, EFCACHE, XT_THROW
 1: /* then */
 	.word XT_TO_R, XT_R_FETCH /* copy u to R stack */
 	/* Is u + dp.cache < flash.cell ? */
@@ -207,6 +207,6 @@ COLON "~(dallot)", TILDEDODALLOT /* ( u -- allocate u bytes in the dictionary ) 
 			/* u + dp.cache > flash.cell ? throw */
 			.word XT_R_FROM
 			.word XT_DROP
-			.word XT_DOLITERAL, -0x40000001, XT_THROW
+			.word XT_DOLITERAL, EFCELLA, XT_THROW
 END TILDEDODALLOT
 

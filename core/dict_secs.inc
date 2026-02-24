@@ -233,7 +233,6 @@
 .include "words/table.s"
 .endif
 
-.include "words/empty.s"
 .include "words/barbar.s"
 #.include "words/does.s"
 #.include "words/code.s"
@@ -254,15 +253,12 @@
 
 .include "words/dallot.s"
 .include "words/vallot.s"
-.include "words/eallot.s"
 
 .include "words/dhere.s"
 .include "words/vhere.s"
-.include "words/ehere.s"
 
 .include "words/dalign.s"
 .include "words/valign.s"
-.include "words/ealign.s"
 
 .include "words/evaluate.s"
 .include "words/break.s"
