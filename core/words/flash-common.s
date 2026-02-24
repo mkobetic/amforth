@@ -35,12 +35,12 @@ END FLASH_ERASE
 
 .ifdef FLUSH_REQUIRED
 
-NONAME DOFLUSH 
+NONAME "(flush)", DOFLUSH 
 	.word XT_MEMMODE
-	.word XT_DOCONDBRANCH,FLASHDOTFLUSH_0001 /* if */
+	.word XT_DOCONDBRANCH, 1f /* if */
     .word XT_DP_CACHE
 #   .word XT_DUP , XT_HEXDOT , XT_CR 
-    .word XT_DOCONDBRANCH,FLASHDOTFLUSH_0001 /* if */
+    .word XT_DOCONDBRANCH, 1f /* if */
 	.word XT_FLASH_CACHE
 	.word XT_DP_CACHE
 	.word XT_PLUS
@@ -53,7 +53,7 @@ NONAME DOFLUSH
 	.word XT_FILL
 	.word XT_R_FROM
 	.word XT_DALLOT
-FLASHDOTFLUSH_0001: /* then */
+1: /* then */
 	.word XT_EXIT
 END DOFLUSH
 
@@ -67,7 +67,7 @@ COLON "flush", FLUSH /* ( -- ) force flush (write) of flash.cache */
 END FLUSH
 
 #COLON "flash.flush", FLASHDOTFLUSH /* ( -- ) force flush (write) of flash.cache */
-NONAME FLASHDOTFLUSH                /* ( -- ) force flush (write) of flash.cache */
+NONAME "flash.flush", FLASHDOTFLUSH                /* ( -- ) force flush (write) of flash.cache */
 .ifdef FLUSH_REQUIRED
     .word XT_DOFLUSH 
 .endif

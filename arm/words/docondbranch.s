@@ -1,4 +1,4 @@
-HEADLESS DOCONDBRANCH
+HEADLESS "(?branch)", DOCONDBRANCH
     mov r0, tos
     loadtos
     cmp r0, #0

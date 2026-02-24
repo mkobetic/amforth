@@ -121,7 +121,7 @@ PFA_\Label:
     HEADER Flag_visible, "\Name", \Label, PFA_\Label
 .endm
 
-.macro HEADLESS Label
+.macro HEADLESS Name, Label
     .p2align 2,0x55
     .global _\Label
     .type _\Label, STT_FUNC
@@ -138,7 +138,7 @@ PFA_\Label:
     HEADER Flag_colon | Flag_cloaked, "\Name", \Label, DOCOLON
 .endm
 
-.macro NONAME Label
+.macro NONAME Name, Label
     .p2align 2,0x55
     .global _\Label
     .type _\Label, STT_FUNC

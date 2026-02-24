@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-#HEADLESS DODO
-HIDEWORD "(DODO)" , DODO
+HEADLESS "(do)" , DODO
   # save loop sys
     addi s5, s5, -8
     sw s7, 4(s5)

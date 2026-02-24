@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-NONAME SHOWWORDS /* ( xt -- ) show words of wordlist identified by the wordlist XT */
+NONAME "show.words", SHOWWORDS /* ( xt -- ) show words of wordlist identified by the wordlist XT */
     /* emit wordlist name */
     .word XT_DUP, XT_XT2STRING, XT_TYPE, XT_DOLITERAL, ':', XT_EMIT, XT_SPACE
     .word XT_EXECUTE, XT_SHOWWORDLIST, XT_CR /* list words */

@@ -3,7 +3,9 @@
 DATA "rectype-null", RECTYPE_NULL
     .word XT_FAIL  
     .word XT_FAIL  
-    .word XT_FAIL  
+    .word XT_FAIL
+END RECTYPE_NULL
 
-NONAME FAIL
+NONAME "fail", FAIL
     .word XT_DOLITERAL, -13, XT_THROW
+END FAIL

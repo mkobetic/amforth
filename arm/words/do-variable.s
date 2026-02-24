@@ -1,5 +1,5 @@
 
-HEADLESS DOVARIABLE
+HEADLESS "(variable)", DOVARIABLE
   savetos
   ldr tos, [FORTHW]
   NEXT

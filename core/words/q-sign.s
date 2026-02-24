@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-NONAME QSIGN
+NONAME "?sign", QSIGN
 
     .word XT_OVER 
     .word XT_CFETCH
@@ -9,9 +9,10 @@ NONAME QSIGN
     .word XT_EQUAL  
     .word XT_DUP
     .word XT_TO_R
-    .word XT_DOCONDBRANCH, PFA_NUMBERSIGN_DONE
-    .word XT_DOLITERAL, 1
-    .word XT_SLASHSTRING
-PFA_NUMBERSIGN_DONE:
+    .word XT_DOCONDBRANCH, 1f
+        .word XT_DOLITERAL, 1
+        .word XT_SLASHSTRING
+1:
     .word XT_R_FROM
     .word XT_EXIT
+END QSIGN

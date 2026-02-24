@@ -38,7 +38,7 @@ END TILDEFLASH_ERASE
 
 /* following words are PVFLASH primitives that are overridden by real MCUs */
 
-NONAME TILDE2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
+NONAME "~2!pvf", TILDE2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
 	.word XT_2STORE, XT_EXIT
 END TILDE2STORE_PVF
 

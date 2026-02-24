@@ -31,7 +31,7 @@ END TO
 #       .word XT_COMMA
 #       .word XT_EXIT
 
-NONAME DOTO /* ( x -- ) update value identified by xt in the cell following XT_DOTO to x, skip that cell in execution */
+NONAME "(to)", DOTO /* ( x -- ) update value identified by xt in the cell following XT_DOTO to x, skip that cell in execution */
     .word XT_R_FROM /* address of the next word in the calling word */
     .word XT_DUP
     .word XT_CELLPLUS
@@ -41,7 +41,7 @@ NONAME DOTO /* ( x -- ) update value identified by xt in the cell following XT_D
     .word XT_EXIT
 END DOTO
 
-NONAME DOTO1 /* ( x xt ) update value identified by xt to x */
+NONAME "(to1)", DOTO1 /* ( x xt ) update value identified by xt to x */
     .word XT_CELLPLUS /* ( x xt ) */
     .word XT_DUP, XT_FETCH, XT_SWAP /* ( x ram-address pfa ) */
     .word XT_CELLPLUS
@@ -68,7 +68,7 @@ IMMED "pp", PP
     .word XT_EXIT
 END PP
 
-COLON "(to)" , DOPP
+COLON "(pp)", DOPP
     .word XT_R_FROM
     .word XT_DUP
     .word XT_CELLPLUS
@@ -78,7 +78,7 @@ COLON "(to)" , DOPP
     .word XT_EXIT
 END DOPP
 
-NONAME DOPP1
+NONAME "(pp1)", DOPP1
     .word XT_FETCH
     .word XT_STORE
     .word XT_EXIT

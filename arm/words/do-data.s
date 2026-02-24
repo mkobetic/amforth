@@ -1,5 +1,5 @@
 
-HEADLESS DODATA
+HEADLESS "(data)", DODATA
   savetos
   mov tos, FORTHW
   NEXT

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-NONAME GRESOLVE
+NONAME "gresolve", GRESOLVE
     .word XT_MEMMODE , XT_DOCONDBRANCH , GRESOLVE0
 
     .word XT_QSTACK
@@ -16,4 +16,5 @@ GRESOLVE0:
     .word XT_SWAP
     .word XT_STORE
     .word XT_EXIT
+END GRESOLVE
 
