@@ -146,7 +146,7 @@ END TILDEDODALLOT
 CODEALIAS "~pvflash.erase", TILDEPVFLASH_ERASE, DOFLASH_ERASE /* ( addr -- ) erase PVFLASH page at addr */
 END TILDEPVFLASH_ERASE
 
-NONAME TILDE2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
+NONAME "~2!pvf", TILDE2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
 	/* don't allow writing below dp0.flash */
 	.word XT_DUP
 	.word XT_DP0_FLASH

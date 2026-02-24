@@ -3,30 +3,33 @@
 COLON "rec-find", REC_FIND
     .word XT_FINDXT
     .word XT_DUP
-    .word XT_ZEROEQUAL, XT_DOCONDBRANCH, PFA_REC_WORD_FOUND
+    .word XT_ZEROEQUAL, XT_DOCONDBRANCH, 1f
         .word XT_DROP
-	.word XT_RECTYPE_NULL
-	.word XT_EXIT
-PFA_REC_WORD_FOUND:
+        .word XT_RECTYPE_NULL
+        .word XT_EXIT
+1:
     .word XT_RECTYPE_XT
-
     .word XT_EXIT
+END REC_FIND
 
 DATA "rectype-xt", RECTYPE_XT
     .word XT_R_WORD_INTERPRET
     .word XT_R_WORD_COMPILE
     .word XT_2LITERAL
+END RECTYPE_XT
 
-NONAME R_WORD_INTERPRET
+NONAME "rword.interpret", R_WORD_INTERPRET
     .word XT_DROP 
     .word XT_EXECUTE
     .word XT_EXIT
+END R_WORD_INTERPRET
 
-NONAME R_WORD_COMPILE
+NONAME "rword.compile", R_WORD_COMPILE
     .word XT_ZEROLESS
-    .word XT_DOCONDBRANCH,PFA_R_WORD_COMPILE1
-	.word XT_COMMA
+    .word XT_DOCONDBRANCH,1f
+	    .word XT_COMMA
         .word XT_EXIT
-PFA_R_WORD_COMPILE1:
-        .word XT_EXECUTE
+1:
+    .word XT_EXECUTE
     .word XT_EXIT
+END R_WORD_COMPILE

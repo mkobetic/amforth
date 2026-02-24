@@ -290,7 +290,7 @@ END FDOTWRITE
 CODEALIAS "~pvflash.erase", TILDEPVFLASH_ERASE, STDDOTERASE /* ( addr -- ) erase flash page at addr */
 END TILDEPVFLASH_ERASE
 
-NONAME TILDE2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
+NONAME "~2!pvf", TILDE2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
   .word XT_TUCK, XT_STORE_I
   .word XT_CELLPLUS, XT_STORE_I
   .word XT_EXIT

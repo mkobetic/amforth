@@ -1,4 +1,4 @@
-HEADLESS DOUSER
+HEADLESS "(user)", DOUSER
   savetos
   ldr tos, [FORTHW]
   add tos, up

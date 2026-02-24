@@ -7,7 +7,7 @@ COLON "parse-name", PARSENAME /* ( "<spaces>name" -- c-addr u ) parse whitespace
     .word XT_EXIT
 END PARSENAME
 
-NONAME SKIPSCANCHAR
+NONAME "skipscanchar", SKIPSCANCHAR
     .word XT_TO_R
     .word XT_SOURCE 
     .word XT_TO_IN 

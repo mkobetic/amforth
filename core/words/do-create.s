@@ -6,7 +6,7 @@ COLON "(create)", DOCREATE /* (C: "name" -- ) parse name, write header, set newe
     .word XT_EXIT
 END DOCREATE
 
-NONAME DOCREATE_IN
+NONAME "(create.in)", DOCREATE_IN
     .word XT_DUP,XT_NEWEST,XT_CELLPLUS,XT_STORE
     .word XT_HEADER,XT_NEWEST,XT_STORE         
     .word XT_EXIT

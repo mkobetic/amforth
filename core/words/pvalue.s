@@ -377,7 +377,7 @@ END PVARENA_ERASE
 
 # ----------------------------------------------------------------------
 
-NONAME PV_WRITE /* ( awp ffa - awp++ f ) write pvalue record at awp, advance awp */
+NONAME "pv.write", PV_WRITE /* ( awp ffa - awp++ f ) write pvalue record at awp, advance awp */
 /*  Used to prepare dormant arena for arena swap */
 	.word XT_SWAP, XT_DUP, XT_ROT /* ( awp awp ffa ) */
 	.word XT_TO_BODY, XT_FETCH, XT_DUP, XT_FETCH, XT_SWAP, XT_ROT
@@ -424,7 +424,7 @@ COLON "pvarena.swap", PVARENA_SWAP /* ( -- ) write fresh pvalues into the dorman
 	.word XT_EXIT
 END PVARENA_SWAP
 
-NONAME PV_DO1 /* ( xt ffa -- xt f ) helper for pv.do */
+NONAME "pv.do1", PV_DO1 /* ( xt ffa -- xt f ) helper for pv.do */
 /*  :noname ( xt ffa -- xt f ) \ helper for pv.do
     dup @ flag.pvalue and if
         \ need to stow the xt away while executing it

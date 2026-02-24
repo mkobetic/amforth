@@ -8,7 +8,7 @@ COLON "show-wordlist", SHOWWORDLIST /* ( wid -- ) list words in wordlist wid */
     .word XT_EXIT
 END SHOWWORDLIST
 
-NONAME SHOWWORD
+NONAME "show.word", SHOWWORD
     .word XT_FFA2STRING
     .word XT_TYPE
     .word XT_SPACE

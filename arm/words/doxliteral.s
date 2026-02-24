@@ -1,4 +1,4 @@
-HEADLESS DOXLITERAL            
+HEADLESS "(xliteral)", DOXLITERAL            
     savetos
     ldr tos, [FORTHIP]
     adds FORTHIP, #4
