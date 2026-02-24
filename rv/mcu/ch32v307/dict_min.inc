@@ -7,7 +7,6 @@
 # maximize cache usage
 #
 
-.include "mcu-words/flash.s"
 .include "pri-words/exit.s"
 .include "pri-words/exiti.s"
 

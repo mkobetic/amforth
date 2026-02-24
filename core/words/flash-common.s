@@ -16,16 +16,22 @@ END FLASH_LOW
 CONSTANT "flash.max"    , FLASH_MAX  , flash.max
 END FLASH_MAX
 
-DEFER "flash.erase", FLASH_ERASE, XT_FAUXERASE /* ( addr -- ) erase flash page at addr */
-END FLASH_ERASE
+/* flash primitives */
 
-NONAME FAUXERASE /* ( addr -- ) erase (fake) flash page at addr */
-    .word XT_DUP, XT_FLASH_PAGE, XT_PLUS, XT_SWAP, XT_DODO
-1:	
-		.word XT_FLASH_ERASED, XT_I, XT_STORE
-	.word XT_DOLITERAL, 4, XT_DOPLUSLOOP, 1b
-	.word XT_EXIT
-END FAUXERASE
+DEFER "(dallot)", DODALLOT, XT_TILDEDODALLOT /* ( u -- ) allocate u bytes in the dictionary */
+END DODALLOT
+
+DEFER "(,)", DOCOMMA, XT_TILDEDOCOMMA /* ( x -- ) append x to the dictionary */
+END DOCOMMA
+
+DEFER "(c,)", DOCCOMMA, XT_TILDEDOCCOMMA /* ( c -- ) append c to the dictionary */
+END DOCCOMMA
+
+DEFER "!i", STORE_I , XT_TILDESTORE_I
+END STORE_I
+
+DEFER "flash.erase", FLASH_ERASE, XT_TILDEFLASH_ERASE /* ( addr -- ) erase flash page at addr */
+END FLASH_ERASE
 
 .ifdef FLUSH_REQUIRED
 

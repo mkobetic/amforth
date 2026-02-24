@@ -183,22 +183,13 @@ END PVFLASH_SIZE
 CONSTANT "pvflash.start", PVFLASH_START, pvflash.start /* start address of PV flash */
 END PVFLASH_START
 
+/* following deferred words are PVFLASH primitives that need to be implemented by the MCU */
 
-/* following deferred words are data flash primitives that need to be implemented by the MCU */
-
-DEFER "2!pvf", 2STORE_PVF, XT_2STORE /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
+DEFER "2!pvf", 2STORE_PVF, XT_TILDE2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
 END 2STORE_PVF
 
-DEFER "pvflash.erase", PVFLASH_ERASE, XT_PVFAUXERASE /* ( addr -- ) erase PV flash page at addr */
+DEFER "pvflash.erase", PVFLASH_ERASE, XT_TILDEPVFLASH_ERASE /* ( addr -- ) erase PV flash page at addr */
 END PVFLASH_ERASE
-
-NONAME PVFAUXERASE /* ( addr -- ) erase PV flash page at addr */
-    .word XT_DUP, XT_PVFLASH_PAGE, XT_PLUS, XT_SWAP, XT_DODO
-1:	
-		.word XT_PVFLASH_ERASED, XT_I, XT_STORE
-	.word XT_DOLITERAL, 4, XT_DOPLUSLOOP, 1b
-	.word XT_EXIT
-END PVFAUXERASE
 
 /* pvalue runtime values, must be initialized by pv.init */
 
