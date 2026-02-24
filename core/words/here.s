@@ -80,11 +80,15 @@ COLON "init.dp.flash", INIT_DP_FLASH /* ( -- ) set dp.flash to the first erased 
   /* Here we are assuming that flash page size is relatively large, at least several hundred bytes
     and that the last word in the dictionary is a lot shorter than that and therefore forth-wordlist
     is a reasonable approximation of the end of the dictionary. */
-  /* if forth-wordlist < dp0.flash then leave dp.flash set to dp0.flash */
-  .word XT_FORTH_WORDLIST, XT_DP0_FLASH, XT_LESS, XT_DOCONDBRANCH, 1f, XT_EXIT
-1: 
-  /* find start of the next flash page after forth-wordlist */
-  .word XT_FORTH_WORDLIST, XT_FLASH_PAGE, XT_SLASH, XT_1PLUS, XT_FLASH_PAGE, XT_STAR
+  /* if forth-wordlist < dp0.flash then use dp0.flash as starting point for the search */
+  .word XT_FORTH_WORDLIST, XT_DP0_FLASH, XT_LESS, XT_DOCONDBRANCH, 1f
+    .word XT_DP0_FLASH, XT_DOBRANCH, 2f
+1: /* else */
+    .word XT_FORTH_WORDLIST
+2: /* then */
+  /* ( start-address ) */
+  /* find start of the next flash page after start-address */
+  .word XT_FLASH_PAGE, XT_SLASH, XT_1PLUS, XT_FLASH_PAGE, XT_STAR
   /* check the end of the previous page to see if it is erased */
   .word XT_CELLMINUS, XT_DUP, XT_FETCH, XT_FLASH_ERASED, XT_EQUAL, XT_DOCONDBRANCH, 1f
     /* if so start the backward search for cell from there */
