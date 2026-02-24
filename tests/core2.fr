@@ -47,3 +47,17 @@ T{ 8 0 naligned -> 0 }T
 T{ 8 1 naligned -> 8 }T
 T{ 8 6 naligned -> 8 }T
 T{ 8 8 naligned -> 8 }T
+
+TESTING invert, not
+
+T{ 0 invert -> -1 }T
+T{ 1 invert -> -2 }T
+T{ -1 invert -> 0 }T
+T{ -2 invert -> 1 }T
+
+T{ 0 not -> -1 }T
+T{ 1 not -> 0 }T
+T{ -1 not -> 0 }T
+
+TESTING 2rot
+T{ 1 2 3 4 5 6 2rot -> 3 4 5 6 1 2 }T

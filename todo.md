@@ -9,7 +9,6 @@ List of know issues and tasks that need to be done (by area)
 * xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
 * clean up placeholders in dict_mcu.s files
 * !i must not be permitted to write below dp0.flash (!i vs ~!i)
-* ARM: 2rot and rot is the same thing (see RV)
 * review/simplify word flags
 * sort out issues with `to` word (to.s/alto.s)
 * add END macro and make all words proper function blocks (debug_info)
