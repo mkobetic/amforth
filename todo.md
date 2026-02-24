@@ -18,7 +18,6 @@ List of know issues and tasks that need to be done (by area)
 
 * add words to show memory stats
 * extend the error prompt to list words on the R-stack to help identify where the throw comes from
-* use XT symbols as function symbols (they are the same addresses)
 * add BUILD_CONFIG to the greeting
 
 * push WANT_USB_OPERATOR, TARGET_QEM out of core (into ch32)
