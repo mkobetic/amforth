@@ -35,6 +35,12 @@
 .equ WANT_USB_OPERATOR , NO   # if YES - USB prompt if NO serial prompt
 .equ WANT_USB          , NO   # if YES - USB code included 
 
+.if WANT_USB_OPERATOR
+.ifdef TARGET_QEM
+.error "Cannot use WANT_USB_OPERATOR with QEM target"
+.endif
+.endif
+
 # if WANT_ASM_BUILD is YES the FLOAT option will be ignored
 
 .equ WANT_FLOAT        , NO
@@ -90,4 +96,3 @@
     .equ WANT_CASE    , YES
     .equ WANT_MATCH   , YES
 .endif
-

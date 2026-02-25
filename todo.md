@@ -8,7 +8,6 @@ Also look for TODO: in source files
 * xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
 * review/simplify word flags
 * Makefile: build/amforth.dep setup forces second amforth.o compilation
-* push WANT_USB_OPERATOR, TARGET_QEM out of core (into ch32)
 
 * add words to show memory stats
 * extend the error prompt to list words on the R-stack to help identify where the throw comes from
