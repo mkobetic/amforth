@@ -7,7 +7,6 @@ Also look for TODO: in source files
 * do we need the CON macro?
 * xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
 * review/simplify word flags
-* Makefile: build/amforth.dep setup forces second amforth.o compilation
 
 * add words to show memory stats
 * extend the error prompt to list words on the R-stack to help identify where the throw comes from

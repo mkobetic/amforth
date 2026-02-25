@@ -140,8 +140,6 @@ LIB_OBJS  := $(filter $(BUILD_DIR)/$(LIB_WCH)/%,$(OBJS)) \
 USER_OBJS := $(filter-out $(BUILD_DIR)/$(LIB_WCH)/% \
                           $(BUILD_DIR)/$(LIB_USER)/%,$(OBJS))
 
-INCLUDES := -I . $(INCLUDES)
-
 # Compiler flags 
 FLAGS := -msmall-data-limit=8 -mno-save-restore -Os -Wunused -Wuninitialized -g
 ifeq ($(strip $(TARGET)),203)
@@ -159,7 +157,7 @@ ifdef WANT_IGNORECASE
 DEFINES += -Wa,--defsym,WANT_IGNORECASE=1
 endif
 
-ASFLAGS  := $(FLAGS) -x assembler-with-cpp  $(INCLUDES) -MMD -MP $(DEFINES) 
+ITCFLAGS  := $(FLAGS) -x assembler-with-cpp  $(INCLUDES) -MMD -MP $(DEFINES) 
 CPPFLAGS := $(FLAGS) $(INCLUDES) -MMD -MP $(DEFINES)
 
 # LDFLAGS += -nostartfiles -t --gc-sections
@@ -214,7 +212,7 @@ endif
 
 # assembly
 $(BUILD_DIR)/%.S.o: %.S buildinfo
-	$(CC) $(ASFLAGS) -c $< -o $@
+	$(CC) $(ITCFLAGS) -c $< -o $@
 
 # c source
 $(BUILD_DIR)/%.c.o: %.c buildinfo
@@ -232,21 +230,21 @@ upload:
 	$(WLINK) flash $(BUILD_DIR)/$(TARGET_HEX)
 
 
-## Show build configuration
-config:
-	@echo "Configuration:"
-	@echo "  WANT_203 = $(WANT_203)"
-	@echo "  LIB_WCH = $(LIB_WCH)"
-	@echo "  LIB_USER = $(LIB_USER)"
-	@echo "  ASMONLY = $(ASMONLY)"
-	@echo ""
-	@echo "USER_OBJS (always linked):"
-	@echo "$(USER_OBJS)" | tr ' ' '\n'
-	@echo ""
-	@echo "LIB_OBJS (selectively linked):"
-	@echo "$(LIB_OBJS)" | tr ' ' '\n'
-	@echo "INC (selectively linked):"
-	@echo "$(INCLUDES)" | tr ' ' '\n'
+# Show build configuration
+# config:
+# 	@echo "Configuration:"
+# 	@echo "  WANT_203 = $(WANT_203)"
+# 	@echo "  LIB_WCH = $(LIB_WCH)"
+# 	@echo "  LIB_USER = $(LIB_USER)"
+# 	@echo "  ASMONLY = $(ASMONLY)"
+# 	@echo ""
+# 	@echo "USER_OBJS (always linked):"
+# 	@echo "$(USER_OBJS)" | tr ' ' '\n'
+# 	@echo ""
+# 	@echo "LIB_OBJS (selectively linked):"
+# 	@echo "$(LIB_OBJS)" | tr ' ' '\n'
+# 	@echo "INC (selectively linked):"
+# 	@echo "$(INCLUDES)" | tr ' ' '\n'
 
 ## Show MCU configuration
 mcu_config:

@@ -83,12 +83,15 @@ help:
 	@echo ''
 
 ## Build all files
-all: build/amforth.bin build/amforth.hex build/amforth.lst build/amforth.sal build/amforth.sym build/amforth.toc build/amforth.txt build/amforth.html
+all: config build/amforth.bin build/amforth.hex build/amforth.lst build/amforth.sal build/amforth.sym build/amforth.toc build/amforth.txt build/amforth.html
 	@echo INFO: Built $(TARGET) $(REVISION) using $(TC_DIR)
+	@$(SIZE) build/amforth.elf
+
 
 buildinfo: words/build-info.tmpl
-	cat words/build-info.tmpl | sed "s/%d/ `date -Iseconds`/" | sed "s/%r/${REVISION}/" > words/build-info.s
-	mkdir -p build
+	@echo "REBUILD $@"
+	@cat words/build-info.tmpl | sed "s/%d/ `date -Iseconds`/" | sed "s/%r/${REVISION}/" > words/build-info.s
+	@mkdir -p build
 
 # Basic assembly flags and defining TARGET_XXX symbol.
 # String value symbols cannot be defined through command line, so TARGET=XXX wouldn't work.
@@ -105,32 +108,38 @@ LDFLAGS += -L $(AMFORTH)/core -T $(MCU_LD) -Map build/amforth.map
 # For simple imports, e.g. config.inc or words/xx.s, the more specific directory wins.
 # AMFORTH root allows include files to import more general include files with the same name.
 ifdef WANT_ITC
-INCLUDES := -I $(AMFORTH)/core -I../.. -I $(AMFORTH)
+INCLUDES := -I $(AMFORTH)/core -I ../.. -I $(AMFORTH)
 else
-INCLUDES := -I../.. -I $(AMFORTH)/core -I $(AMFORTH)
+INCLUDES := -I ../.. -I $(AMFORTH)/core -I $(AMFORTH)
 endif
 build/%.o: %.s buildinfo
+	@echo "REBUILD $@"
 	$(AS) $(ASFLAGS) $(INCLUDES) -o $@ $<
 
 # Sometimes make decides that amforth.elf is an intermediary file that should be deleted.
 .PRECIOUS: build/amforth.elf build/amforth.dep
 
 build/%.elf: build/%.o
+	@echo "REBUILD $@"
 	$(LD) $(LDFLAGS) $< -o $@ 
 
 build/%.hex: build/%.elf
-	$(OBJCOPY) -O ihex $< $@
+	@echo "REBUILD $@"
+	@$(OBJCOPY) -O ihex $< $@
 
 build/%.bin: build/%.elf
-	$(OBJCOPY) -O binary $< $@
+	@echo "REBUILD $@"
+	@$(OBJCOPY) -O binary $< $@
 
 build/%.lst: build/%.elf
-	$(OBJDUMP) --show-raw-insn --insn-width=4 --section-headers --file-headers --disassemble $< >$@
+	@echo "REBUILD $@"
+	@$(OBJDUMP) --show-raw-insn --insn-width=4 --section-headers --file-headers --disassemble $< >$@
 
 # list all transitive dependencies of amforth.s (include tree traversal)
 # the file paths are adjusted to be relative to $(AMFORTH)
-build/%.dep: %.s buildinfo
-	@$(AS) $(INCLUDES) -MD $@.wrk -o /dev/null $<
+build/%.dep: build/%.o
+	@echo "REBUILD $@"
+	@$(AS) $(INCLUDES) -MD $@.wrk -o /dev/null amforth.s
 	@sed -e 's|^/dev/null:||; s/ \\//; s/^ //; s/ /\n/g' $@.wrk >$@
 	@mv $@ $@.wrk
 	@ # AMFORTH env var somehow isn't visible to awk on CI without explicitly including it here
@@ -141,6 +150,7 @@ build/%.dep: %.s buildinfo
 build/%.toc: DEPS = $(shell cat $<)
 build/%.toc: TOC = $(abspath $@)
 build/%.toc: build/%.dep
+	@echo "REBUILD $@"
 	@cd $(AMFORTH) && awk -f core/dev/toc.awk $(DEPS) >$(TOC)
 	@echo 'VALUE "environment", ENVIRONMENT /* FFA of last word; standard environment search list */ @ core/macros.inc' >>$@
 	@echo 'VALUE "forth-wordlist", FORTH_WORDLIST /* FFA of last word; system default wordlist */ @ core/macros.inc' >>$@
@@ -148,10 +158,12 @@ build/%.toc: build/%.dep
 	@echo 'CONSTANT "core-wordlist", CORE_WORDLIST /* FFA of last word; core words compiled at build time */ @ core/macros.inc' >>$@
 
 build/%.txt: build/%.toc
-	$(AMFORTH)/tools/refcard.py >$@
+	@echo "REBUILD $@"
+	@$(AMFORTH)/tools/refcard.py >$@
 
 build/%.html: build/%.toc
-	$(AMFORTH)/tools/refcard.py --html >$@
+	@echo "REBUILD $@"
+	@$(AMFORTH)/tools/refcard.py --html >$@
 
 
 SORT_SYMS_BY_ADDRESS := grep -E '^[0-9a-f]{8} .*' | \
@@ -160,11 +172,13 @@ SORT_SYMS_BY_ADDRESS := grep -E '^[0-9a-f]{8} .*' | \
 
 # symbol and line info
 build/%.sal: build/%.elf
-	$(NM) --line-numbers $< | $(SORT_SYMS_BY_ADDRESS) >$@
+	@echo "REBUILD $@"
+	@$(NM) --line-numbers $< | $(SORT_SYMS_BY_ADDRESS) >$@
 
 # full symbol dump
 build/%.sym: build/%.elf
-	$(OBJDUMP) --syms $< | $(SORT_SYMS_BY_ADDRESS) >$@
+	@echo "REBUILD $@"
+	@$(OBJDUMP) --syms $< | $(SORT_SYMS_BY_ADDRESS) >$@
 
 ## Delete the build artifacts
 clean:
