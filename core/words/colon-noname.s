@@ -6,6 +6,7 @@ COLON ":noname", COLONNONAME /* ( -- ) start an unnamed colon word */
     .word XT_LATEST
     .word XT_STORE
 
+# TODO: Is this still an issue?
 # this is related to the flash issue
 # when XT_COMPILE is over a page boundary 
 .ifnb ORIGINAL

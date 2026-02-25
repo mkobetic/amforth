@@ -287,3 +287,16 @@ symbols:
 ## Dump contents of the debug info sections
 debug_info:
 	$(READELF) --debug-dump build/amforth.elf
+
+## List word files that were not used in the last build (based on the .dep file)
+unused: FILTERS = -v -e '\.inc$$' -e '\.tmpl$$' -e '/amforth\.s$$'
+unused:
+	# files will also show up as unused when there is both native and ITC version
+	@echo $(AMFORTH)/core/*.s $(AMFORTH)/core/words/* ../../words/* ../../*.s words/* | \
+	sed -e 's/ /\n/g' | \
+	AMFORTH=$(AMFORTH) awk -f $(AMFORTH)/core/dev/dep.awk | \
+	egrep $(FILTERS) | sort >build/word-files
+	@egrep $(FILTERS) build/amforth.dep | sort | \
+	diff -U0 build/word-files - | \
+	egrep -v -e '^(@@|\+\+\+|---) '
+	@rm build/word-files
