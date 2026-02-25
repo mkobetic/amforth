@@ -68,7 +68,7 @@ erase:
 touch1200bps: touch1200bps/*
 	cd ./touch1200bps && go build
 
-.PHONY: clean upload touch1200bps ocd gdb
+.PHONY: upload touch1200bps ocd gdb
 
 # You can connect to the OpenOCD telnet port with: nc localhost 50002
 # You can also send commands to OpenOCD through GDB's 'monitor' command

@@ -13,7 +13,6 @@ Also look for TODO: in source files
 * add words to show memory stats
 * extend the error prompt to list words on the R-stack to help identify where the throw comes from
 * add selected options to build-info (e.g. WANT_IGNORECASE)
-* add BUILD_CONFIG to the greeting
 
 * all words should use the END macro to be proper function blocks (debug_info)
 * sort out issues with `to` word (to.s/alto.s)

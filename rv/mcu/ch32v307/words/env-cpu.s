@@ -1,12 +1,14 @@
 # SPDX-License-Identifier: GPL-3.0-only
 .ifdef BUILD_203
-    ENVIRONMENT "cpu", CPU
-       STRING "RV32IMAC"
-      .word XT_EXIT
+ENVIRONMENT "cpu", CPU /* ( -- addr u ) string with cpu identifier */
+    STRING "RV32IMAC"
+    .word XT_EXIT
+END CPU
 .else
-    ENVIRONMENT "cpu", CPU
-       STRING "RV32IMAFC"
-       .word XT_EXIT
+ENVIRONMENT "cpu", CPU /* ( -- addr u ) string with cpu identifier */
+    STRING "RV32IMAFC"
+    .word XT_EXIT
+END CPU
 .endif
 
 ENVIRONMENT "build-type", BUILD_TYPE
@@ -16,3 +18,4 @@ ENVIRONMENT "build-type", BUILD_TYPE
        STRING "C+ASM"
 .endif       
       .word XT_EXIT
+END BUILD_TYPE

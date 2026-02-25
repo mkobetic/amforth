@@ -223,7 +223,7 @@ $(BUILD_DIR)/%.cpp.o: %.cpp buildinfo
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 
-.PHONY: clean info shell speed save uu 
+.PHONY: info shell speed save uu 
 
 ## Upload hex file to the device  
 upload:
