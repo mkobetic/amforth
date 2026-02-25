@@ -24,7 +24,6 @@ Also look for TODO: in source files
 
 * automated compiled artifact releases
 * add refcard legend
-* make target for listing unused words/ files (see build/amforth.dep)
 * proper, and extractable comments for all words
 * add long word description to the html refcard as title attribute, so that it shows on hover
 

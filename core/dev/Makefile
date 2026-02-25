@@ -39,6 +39,7 @@ SIZE ?= $(TC_DIR)/bin/$(CROSS)size
 
 # Debugging tools
 GDB ?= $(TC_DIR)/bin/$(CROSS)gdb -ex "directory $(AMFORTH)/core/dev" -ex "directory ../../dev"
+# For some reason the Python enabled GDB is called -py3 for riscv and -py for arm :/
 ifneq (,$(filter arm-%, $(CROSS)))
 GDBPY ?= $(TC_DIR)/bin/$(CROSS)gdb-py -ex "directory $(AMFORTH)/core/dev" -ex "directory ../../dev"
 else
@@ -139,7 +140,7 @@ build/%.lst: build/%.elf
 # the file paths are adjusted to be relative to $(AMFORTH)
 build/%.dep: build/%.o
 	@echo "REBUILD $@"
-	@$(AS) $(INCLUDES) -MD $@.wrk -o /dev/null amforth.s
+	@$(AS) $(ASFLAGS) $(INCLUDES) -MD $@.wrk -o /dev/null amforth.s
 	@sed -e 's|^/dev/null:||; s/ \\//; s/^ //; s/ /\n/g' $@.wrk >$@
 	@mv $@ $@.wrk
 	@ # AMFORTH env var somehow isn't visible to awk on CI without explicitly including it here
