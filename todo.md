@@ -3,9 +3,9 @@ Also look for TODO: in source files
 
 # CORE
 
-* do we need to CON macro?
+* replace PFA_ labels that aren't PFAs with transient labels 1f, 2b...
+* do we need the CON macro?
 * xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
-* !i must not be permitted to write below dp0.flash (!i vs ~!i)
 * review/simplify word flags
 * Makefile: build/amforth.dep setup forces second amforth.o compilation
 * push WANT_USB_OPERATOR, TARGET_QEM out of core (into ch32)
@@ -22,7 +22,6 @@ Also look for TODO: in source files
 * aligned.s and do-aligned.s are identical
 * ud* is broken, what about d*, ud/ ? (need double tests)
 * remove doxliteral.s in favor of doliteral.s
-* what is the relationship between variable `rp` and `sp`, and register `sp` and `psp` ?
 * clean up all harcoded cell size values, replace with cellsize symbol (including alignment directives)
 
 * automated compiled artifact releases
@@ -30,6 +29,7 @@ Also look for TODO: in source files
 * make target for listing unused words/ files (see build/amforth.dep)
 * proper, and extractable comments for all words
 * add long word description to the html refcard as title attribute, so that it shows on hover
+
 
 # ARM
 
@@ -50,6 +50,7 @@ Also look for TODO: in source files
 ## LINUX
 
 * make dtests is failing
+
 
 # RISC-V
 

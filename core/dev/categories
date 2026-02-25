@@ -22,9 +22,8 @@ MEMORY:
     2@ 2! char+ chars cells cell cell- cell+
     align here allot aligned
      >ram >flash memmode
-    valign vhere vallot vp vp.max vp0 ram++ ram+ ram
+    valign vhere vallot vp vp.max vp0
     dalign dhere dallot dp dp0.ram dp.ram dp0.flash dp.flash
-    ealign ehere eallot ep 
     up! up@
 STRING:
     ." s" sub-string? number >number digit? toupper
@@ -39,18 +38,19 @@ DICTIONARY:
     flag.private flag.cloaked flag.table flag.init flag.defer flag.value flag.pvalue flag.immed flag.con flag.colon flag.dvar flag.var flag.code flag.private? flag.header
 WORDLIST:
     wordlist forth-wordlist ram-wordlist core-wordlist environment rv-wordlist arm-wordlist
-    get-current  wlscope search-wordlist current show-wordlist traverse-wordlist
-    set-current previous set-order get-order order only w1  order.table  (order) core forth order.forth order.core order.only cfg-order top> >top top
+    current get-current set-current wlscope search-wordlist show-wordlist traverse-wordlist
+    order cfg-order only core forth order.forth order.core order.only 
+    previous set-order get-order w1  order.table  top> >top top
 COMPILER:
     : ; ;i :~ ( \# \ recurse postpone immediate state
-    create (create) does> (dodoes) char [ ] ['] [compile] [char] 
+    create does> char [ ] ['] [compile] [char] 
     compile xliteral literal 2literal sliteral
     Udefer! Udefer@ defer! defer@ defer~ defer
-    evaluate (evaluate) evaluate.source evaluate.str evaluate.strlen
+    evaluate evaluate.source evaluate.str evaluate.strlen
 FLOW:
-    ?abort abort" abort trap.base trap! throw catch handler exit (exit) (exiti)  
+    ?abort abort" abort trap.base trap! throw catch handler exit
     repeat again else if while until then begin ahead
-    +loop  loop  endloop do ?do (qdocheck) j i unloop leave >l l> lp lp0 
+    +loop  loop  endloop do ?do j i unloop leave >l l> lp lp0 
 IO:
     serial-emit? serial-emit serial-key? serial-key emit? serial-emit-pause emit key? serial-key-pause key
     tib #tib >in source-tib source accept refill-tib refill ?crlf bs
@@ -63,17 +63,18 @@ SYSTEM:
     cold warm init-ram turnkey appl-turnkey quit pause
     first-boot.done ?first-boot first-boot.marker first-boot.start
     ms us ver rev-info build-info
-    pv.do pv.init vaddr pv.store pvp pv.reset-hard
-    pvflash.start pvflash.size pvflash.page pvflash.cell pvflash.erased pvflash.erase
-    pvarena.size pvarena.init pvarena.swap pvarena.erase pvarena pvarena.dormant pvarena1 pvarena2
+    set-base bases .ready .ok .input .error first-run
 TOOLS:
     debug || dump ?ascii vdump break
 FLASH:
     flash.cell flash.page flash.erased flash.start flash.low flash.max flash.erase flush naligned
+    pv.do pv.init vaddr pv.store pvp pv.reset-hard
+    pvflash.start pvflash.size pvflash.page pvflash.cell pvflash.erased pvflash.erase
+    pvarena.size pvarena.init pvarena.swap pvarena.erase pvarena pvarena.dormant pvarena1 pvarena2
 OTHER:
     false true -1 4 2 1 0
-    pp  -private +private public? public private 
-    (forget) forget.prior 
-    m4fix mtog mclr mset
+    map-stack
+    -private +private public? public private 
     -cloak +cloak cloak?
-    map-stack set-base bases .ready .ok .input .error first-run
+    forget.prior 
+    m4fix mtog mclr mset
