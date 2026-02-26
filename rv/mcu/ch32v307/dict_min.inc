@@ -319,9 +319,6 @@ DO_EXECUTE:
 # MFD include "mcu-words/flash.s" as in dict_prims
 .include "mcu-words/led.s"
 
-
-.include "mcu-words/env-board.s"
-.include "mcu-words/build-info.s"
 .include "mcu-words/applturnkey.s"
 
 .include "mcu-words/type0.s" # not sure 
