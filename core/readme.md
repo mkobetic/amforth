@@ -46,16 +46,18 @@ The lower part of `amramhi`, the RAM pool, is used for RAM allocated for words t
 
 The higher part of `amramhi` is used for the RAM dictionary, i.e. words compiled into RAM at runtime. The end of the used part of this section is tracked by `dp.ram`. The words of the RAM dictionary are tracked by the `ram-wordlist`.
 
-## Dictionary word layout
+## Dictionary layout
 
 The 32-bit word header layout is somewhat different from the 8-bit word layout. The header field order is different.
+The header and all its fields are always cellsize aligned.
+
 In AmForth the execution token (XT) is the CFA.
 
 | Field | Size   | Description
 | ----- | ------ | ----------------------------------
 | LFA   | .word  | link field: points to FFA of prior word
 | FFA   | .word  | flag field: word flags
-| NFA   | .bytes | name field: length prefixed string containing the name of the word
+| NFA   | .bytes | name field: length prefixed string containing the name of the word padded to cell alignment
 | CFA   | .word  | code field: points to executable code implementing the word
 |       |        | for code-words (CFA) = PFA
 | PFA   | .bytes | parameter field: word parameters compiled into the word definition
@@ -68,7 +70,7 @@ Words that are compiled into the AmForth binary have corresponding address symbo
 * CFA - XT_ symbol
 * PFA - PFA_ symbol
 
-## Wordlists and Search Order
+## Wordlists and search order
 
 A wordlist maintains a pointer to the latest word added to it, specifically it points to the last word's FFA. The full list of the words can be traversed by following the chain of LFA pointers in the words. The predefined wordlists are
 * `environment` - a predefined wordlist containing words describing the AmForth system itself (a standard Forth wordlist)
@@ -86,7 +88,7 @@ A search order is a list of wordlists to be searched for an existing word. Searc
 These orders can be assigned to `cfg-order` with words `core`, `forth` and `only`. `order.forth` is used when in FLASH mode, and `order.only` is used when in RAM mode. Changing the order is important to avoid compiling FLASH words with references to RAM words, which would yield corrupted FLASH words after restart.
 
 
-# AmForth directory layout
+# Directory layout
 
 The picture below shows the relevant bit of directory structure [^2] with the words/ directories stripped out.
 
@@ -228,8 +230,48 @@ Finally the Linux based targets (e.g. `arm/mcu/linux`) can run on `qemu-user` on
 
 ### Debugging
 
-* GDB
-* OpenOCD
+To debug AmForth you will need GDB, especially for debugging CODEWORDs, i.e. words implemented in native assembler, or in situations where AmForth is generally not responsive (e.g. boot time and initialization issues). GDB is less convenient for debugging COLON words, i.e. words implemented in ITC assembler or Forth. This is because ITC is not directly executed, the CPU never jumps into the PFA area of a word, so you cannot just put a breakpoint there. In these situation a more elaborate techniques may be needed, e.g. putting a conditional breakpoint into the inner interpreter loop (see `interpreter.s`) and interrogating the W or IP register in the condition.
+
+Another difficulty with using GDB for AmForth is that AmForth runtime is a completely alien environment for GDB. Its tools don't understand the AmForth stacks, it cannot reconstruct the backtrace correctly, etc. This is why AmForth development tooling provides GDB extensions to help deal with these issues. The Makefiles normally provide `make gdb` command that starts the maximally extended GDB connected to the current target (more on that below). The extensions are implemented equally for both CPU architectures.
+
+To debug AmForth GDB must connect to it through a "GDB server" process. This is somewhat different between [emulated](#qemu-targets) and [physical](#physical-targets) targets as discussed below.
+
+There are other AmForth or general Forth debugging techniques that can be useful in some circumstances. See [AmForth Programming and Debugging](https://amforth.sourceforge.net/TG/recipes/Programming.html) for a list of such techniques.
+
+#### GDB
+
+GDB is normally part of the GNU toolchain. There are two variants of GDB and two fundamental ways of extending it.
+
+Basic GDB allows adding custom commands implemented in terms of pre-existing GDB commands. AmForth dev tooling uses `.gdb` files for extending basic GDB this way. The main extension file is `amforth.gdb` and is specific to each CPU architecture, so there is `arm/dev/amforth.gdb` and `rv/dev/amforth.gdb`. The shared commands are in `core/dev/amforth-core.gdb` and are included automatically in the former files. These extensions provide commands to dump the parameter (`.s`) or return (`.r`) stack, commands to inspect dictionary words (`.lfa`, `.ffa`, `.nfa`, `.cfa`, ...), and debugging helpers for setting breakpoints etc. See the file comments for more details.
+
+Another category of extensions is the GDB TUI (text UI). It allows creating a more informative interface layout that shows more information at a glance. The layout is composed of predefined "windows". File `core/dev/tui-basic.gdb` provides such layout using the basic predefined windows. It includes a view of all  CPU registers, view of the disassembled code being executed, and the original source of that code (when possible, see [Code source](#code-source) below).
+
+#### GDBPY
+
+A separate GDB executable (usually with a `py` suffix) extends the basic GDB with a Python API that allows much more extensive customization. This one may take a bit of fiddling to get going because it relies on Python3 being installed on the host OS as a shared library. It is fussy about specific version being available, etc. You may need to pay close attention to the error messages to resolve these issues if it fails to start.
+
+It is however worth it, if you can get it going, because the extensions are much more powerful when using GDBPY. In general you get a much more capable TUI with an additional window for the AmForth parameter stack and return stack (so you don't need the .s/.r commands anymore). Moreover a custom ForthUnwinder allows GDB to properly reconstruct the AmForth backtrace, so the core GDB `bt` command becomes actually usable. These extensions are brought in by the `core/dev/tui-full.gdb` file. This is what is used by the `make gdb` command by default. If you cannot get GDBPY to work correctly then change it to use the `tui-basic.gdb` and basic GDB instead.
+
+#### Code source
+
+Both TUI versions employ a source window that tries to map the executed instructions to the original source code that produced it. For this `amforth.elf` must be compiled with debug information, which it is by default (assembler -g option). However the GNU assembler only produces debug info for actual assembler code. This means that you will see correct source when debugging a CODEWORD, but a completely incorrect source when stepping through a COLON word.
+
+The only way to correct this situation is to instrument the build process to generate detailed debug information for all files in some other way. This has not been done (yet), partly because it cannot be done only partially. As soon as the assembler sees any explicit debug information in the sources it is compiling, it stops automatically generating any debug info at all. So we either have to explicitly instrument everything, or nothing at all; therefore it's the latter at the moment.
+
+Moreover all the pre-compiled AmForth words are marked as proper function blocks for debug_info purposes. This however proved to be insufficient to resolve the source mapping issues.
+
+#### QEMU targets
+
+Emulated targets can rely on QEMU's built in GDB server for GDB connection. All that's needed is starting QEMU with the `-s` option. The `make debug` command does exactly that. The GDB server runs with the default TCP port 1234. This is where `make gdb` will try to connect to for these targets.
+
+If you need to debug AmForth's early boot sequence, it is often useful to add the `-S` option that will instruct QEMU to start AmForth in a halted state, this way it will wait for GDB to connect and you will have full control over what happens next.
+
+#### Physical targets
+
+Physical targets require an external GDB server that is capable of relaying GDB commands to the MCU through MCU's debugging instrumentation. This is what `OpenOCD` does. As you can imagine this is a fairly complex and highly MCU specific setup. Consequently MCUs often require a customized version of OpenOCD, often provided by the MCU vendor. This makes it difficult to provide universal instructions on how to install OpenOCD, you will need to find instructions specific to the MCU you are interested in. The MCU readme may have additional information on this. Sometimes it may be easiest to install a development environment recommended for the board in question (e.g. Arduino IDE) and find the OpenOCD installation there. You should be able to easily hook the AmForth make commands to that installation through the `OPENOCD` make variable.
+
+Once you have OpenOCD installed, `make ocd` command is set up to start and connect OpenOCD to the specific MCU target. When you have OpenOCD running, the `make gdb` command will start and connect GDB to it. You will commonly need separate terminal windows to control all these components. That includes another terminal to run `amforth-shell.py` in to interact with AmForth itself.
+
 
 ### Uploaders, other MCU specific tools
 
@@ -249,7 +291,7 @@ the test suite on the `arm/mcu/qemu` target, following steps would be used.
 
 The command analyses the output of the test run and summarizes the test results. An `awk` script is used to parse the test output. Awk is usually preinstalled on the host OS, if not use the OS package manager to install it.
 
-Any test failures will be emitted in the output showing the test that failed and the incorrect output it produced. The command emits a final test summary showing the number of tests passed and failed and whether the whole suite completed. Summary of a successful test run can looks something like this
+Any test failures will be emitted in the output showing the test that failed and the incorrect output it produced. The command emits a final test summary showing the number of tests passed and failed and whether the whole suite completed. Summary of a successful test run looks something like this
 ```
 qemu-system-arm: terminating on signal 15 from pid 17281 (<unknown process>)
 FINISHED: Y, PASS: 635, FAIL: 0
