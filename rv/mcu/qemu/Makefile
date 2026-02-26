@@ -137,7 +137,7 @@ ifdef WANT_IGNORECASE
 DEFINES += -Wa,--defsym,WANT_IGNORECASE=1
 endif
 
-ASFLAGS  := $(FLAGS) -x assembler-with-cpp  $(INCLUDES) -MMD -MP $(DEFINES) 
+ITCFLAGS  := $(FLAGS) -x assembler-with-cpp  $(INCLUDES) -MMD -MP $(DEFINES) 
 CPPFLAGS := $(FLAGS) $(INCLUDES) -MMD -MP $(DEFINES)
 
 # LDFLAGS += -nostartfiles -t --gc-sections
@@ -192,7 +192,7 @@ endif
 
 # assembly
 $(BUILD_DIR)/%.S.o: %.S buildinfo
-	$(CC) $(ASFLAGS) -c $< -o $@
+	$(CC) $(ITCFLAGS) -c $< -o $@
 
 # c source
 $(BUILD_DIR)/%.c.o: %.c buildinfo

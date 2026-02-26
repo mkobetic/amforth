@@ -5,8 +5,6 @@
     .include "words/serial.qem"
 .endif
 
-.include "words/env-board.s"
-.include "words/build-info.s"
 .include "words/applturnkey.s"
 
 .include "words/type0.s" # not sure 
