@@ -10,7 +10,7 @@ COLON "appl-turnkey", APPLTURNKEY
   @ Emit the AmForth greeting
   .word XT_DOT_VER
   .word XT_SPACE,XT_ENV_BOARD,XT_TYPE, XT_CR
-  .word XT_BUILD_INFO,XT_TYPE, XT_SPACE, XT_REV_INFO, XT_TYPE
+  .word XT_ENV_DOT_BUILD
 
   @ Turn on the onboard LED to indicate that we successfully got here
   @ If the bootloader is in control the LED is softly pulsing.

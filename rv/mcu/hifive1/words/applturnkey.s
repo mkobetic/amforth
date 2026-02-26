@@ -7,8 +7,6 @@ COLON "hifive-turnkey", APPLTURNKEY
 
   .word XT_DOT_VER, XT_SPACE
   .word XT_ENV_BOARD,XT_TYPE, XT_CR
-
-  .word XT_BUILD_INFO,XT_TYPE
-  .word XT_SPACE, XT_REV_INFO, XT_TYPE
+  .word XT_ENV_DOT_BUILD
 
 .word XT_EXIT

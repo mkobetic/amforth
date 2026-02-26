@@ -61,9 +61,9 @@ OUTPUT:
     sign #> #s # <# hold hld
 SYSTEM:
     cold warm init-ram turnkey appl-turnkey quit pause
-    first-boot.done ?first-boot first-boot.marker first-boot.start
-    ms us ver rev-info build-info
+    ms us .ver build.rev build.time build.config
     set-base bases .ready .ok .input .error first-run
+    first-boot.done ?first-boot first-boot.marker first-boot.start
 TOOLS:
     debug || dump ?ascii vdump break
 FLASH:

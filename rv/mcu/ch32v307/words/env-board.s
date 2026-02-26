@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-ENVIRONMENT "board", BOARD
+ENVIRONMENT "board", BOARD /* ( -- addr u ) string with board identifier */
 
 .ifdef BUILD_203
     STRING "WCH CH32V203"
@@ -18,5 +18,6 @@ ENVIRONMENT "board", BOARD
     STRING "QEMU"
 .endif
 
-.word XT_EXIT
+    .word XT_EXIT
+END BOARD
 

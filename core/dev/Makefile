@@ -89,9 +89,9 @@ all: config build/amforth.bin build/amforth.hex build/amforth.lst build/amforth.
 	@$(SIZE) build/amforth.elf
 
 
-buildinfo: words/build-info.tmpl
+buildinfo:
 	@echo "REBUILD $@"
-	@cat words/build-info.tmpl | sed "s/%d/ `date -Iseconds`/" | sed "s/%r/${REVISION}/" > words/build-info.s
+	@cat $(AMFORTH)/core/build-info.tmpl | sed "s/%d/`date -Iseconds`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 	@mkdir -p build
 
 # Basic assembly flags and defining TARGET_XXX symbol.
@@ -184,6 +184,8 @@ build/%.sym: build/%.elf
 ## Delete the build artifacts
 clean:
 	rm -f build/* words/build-info.s
+
+.PHONY: buildinfo clean config shell tests
 
 ## Show build configuration
 config:

@@ -1,5 +1,5 @@
 
-ENVIRONMENT "board", BOARD
-
+ENVIRONMENT "board", BOARD /* ( -- addr u ) string with board identifier */
   STRING "QEMU-VIRT"
-.word XT_EXIT
+  .word XT_EXIT
+END BOARD
