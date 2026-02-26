@@ -1,6 +1,6 @@
 # AmForth 32-bit
 
-This is the shared basis of all 32-bit versions of AmForth.
+This directory contains the shared basis of all 32-bit versions of AmForth.
 
 AmForth is assembled by combining the words in `core/words/` with ARM/RISC-V architecture specific words (`rv/words/`, `arm/words/`)
 and with architecture compatible MCU specific words, e.g.
@@ -10,9 +10,7 @@ and with architecture compatible MCU specific words, e.g.
 Specific word files are selected by `dict_*.inc` files. The main file that pulls everything together is MCU specific `amforth.s` file,
 e.g. `arm/mcu/ra4m1/amforth.s`.
 
-The build process is driven by Makefile targets in `core/dev/Makefile`. Use `make help` or just `make` to see the list
-of available targets with brief descriptions. Architecture or MCU specific Makefiles add targets that are specific to that level.
-
+The build process is driven by Makefile targets in `core/dev/Makefile`. Use `make help` or just `make` (executed in an MCU directory) to see the list of available targets with brief descriptions. Architecture or MCU specific `Makefiles` add targets that are specific to that level. Comments in the `Makefiles` provide further details. 
 
 # Architecture
 
@@ -24,9 +22,9 @@ This arrangement ensures that the basic structure of the memory layout is the sa
 
 ### FLASH region
 
-This is persistent, executable memory region that contains primarily the predefined AmForth words. The end of the used part of this region is tracked by the `dp.flash` pointer. User defined words can be compiled into FLASH when the compilation mode is set to FLASH using the `>flash` word. Words compiled into FLASH are tracked by the `forth-wordlist`.
+This is persistent, executable memory region that contains primarily the predefined AmForth words. The end of the used part of this region is tracked by `dp.flash`. User defined words can be compiled into FLASH when the compilation mode is set to FLASH using the `>flash` word. Words compiled into FLASH are tracked by the `forth-wordlist`.
 
-For some, usually emulated, MCU targets, the FLASH region can be allocated in volatile RAM memory. However in these cases runtime updates in FLASH will not persist through resets and restarts of the system.
+For some, usually emulated, MCU targets, the FLASH region can be allocated in transient RAM memory. However in these cases runtime updates in FLASH will not persist through resets and restarts of the system.
 
 ### PVFLASH region
 
@@ -44,9 +42,9 @@ Section `amramlo` is used for RAM allocated by the predefined AmForth words. Thi
 
 Section `amramhi` is used for RAM allocated at runtime.
 
-The lower part of `amramhi`, the RAM pool, is used for RAM allocated for words that are compiled into FLASH at runtime (variables, values, defers, etc). The end of the used part of this section is tracked by the `vp` pointer.
+The lower part of `amramhi`, the RAM pool, is used for RAM allocated for words that are compiled into FLASH at runtime (variables, values, defers, etc). The end of the used part of this section is tracked by `vp`.
 
-The higher part of `amramhi` is used for the RAM dictionary, i.e. the words compiled into RAM at runtime. The end of the used part of this section is tracked by the `dp.ram` pointer. The words of the RAM dictionary are tracked by the `ram-wordlist`.
+The higher part of `amramhi` is used for the RAM dictionary, i.e. words compiled into RAM at runtime. The end of the used part of this section is tracked by `dp.ram`. The words of the RAM dictionary are tracked by the `ram-wordlist`.
 
 ## Dictionary word layout
 
@@ -80,7 +78,7 @@ A wordlist maintains a pointer to the latest word added to it, specifically it p
 
 A `wid`, referenced by stack signatures of some words, is the XT of a wordlist word, e.g. `forth-wordlist`. The `current` value contains the `wid` of the wordlist that new words are compiled into. When switching between FLASH and RAM mode `current` will be set to the corresponding wordlist.
 
-A search order is a list of wordlists to be searched for an existing word. Search order is primarily used to look for known words when new word definitions are compiled. Current search order that is used for these lookups is referenced by the `cfg-order` deferred word. There are several pre-defined search orders
+A search order is a list of wordlists to be searched for an existing word. Search order is primarily used to look for known words when new word definitions are compiled. Current search order that is used for these lookups is dictated by `cfg-order`. There are several pre-defined search orders
 * `order.core`  - `core-wordlist`, `environment`
 * `order.forth` - `forth-wordlist`, `environment`
 * `order.only`  - `ram-wordlist`, `forth-wordlist`, `environment`
@@ -90,7 +88,7 @@ These orders can be assigned to `cfg-order` with words `core`, `forth` and `only
 
 # AmForth directory layout
 
-The picture below shows the relevant bit of directory structure with the words/ directories stripped out.
+The picture below shows the relevant bit of directory structure [^2] with the words/ directories stripped out.
 
 ```
 core                = core AmForth files; shared by all architectures and MCUs
@@ -178,22 +176,55 @@ This is because the assembler processes source code before the linker, so it can
 
 # Development
 
+The development setup revolves around the MCU directories. This is where the make commands are to be executed. `make all` will produce a number of build artifacts in the `build/` subdirectory (excluded from git), including the hex, bin and elf files containing AmForth compiled for a given target. `make` or `make help` shows the available targets for a given MCU. To build a different target than the default one, run `make all` with `TARGET` environment variable set accordingly, e.g. `TARGET=XXX make all`.
+
+To allow for personalized development settings, the `Makefiles` optionally include `.env` file (excluded from git) if it is present in the MCU directory. Note that the `.env` file is interpreted as a Makefile, therefore it must follow Makefile syntax. It is useful to override default settings or provide required settings that don't change much to avoid having to provide them on the command line on each invocation. An `.env` file could look as follows:
+```
+# MODEM is required by `make shell` and directs amforth-shell.py to connect to the specified TTY
+MODEM ?= /dev/cu.usbmodemXXX
+# If you want to override the toolchain to use for Amforth build, TC_DIR and CROSS are variables that control that
+TC_DIR = $(AMFORTH)/toolchain/riscv-none-elf-15.2.0-1
+CROSS = riscv-none-elf-
+# amforth-shell.py uses the EDITOR variable when it attempts to open an external editor
+export EDITOR=code
+```
+The Makefiles set most variables with `?=`, therefore most can be overridden by the `.env` file. Read the Makefile comments for more details.
+
+The Makefiles provide `AMFORTH` variable as convenient way to point to the directory where the AmForth repository was cloned.
+
 ## Tools
 
 ### Toolchain
 
-* TC_DIR
-* Local toolchain `make toolchain`
-* Arduino IDE toolchain
+The toolchain is generally the standard GNU assembler/linker/debugger suite tailored for given embedded architecture. For ARM it is the `arm-none-eabi` variant, and for RISC-V it is the `riscv-none-elf` variant. The toolchain can be installed in many different ways. Variables `TC_DIR` and `CROSS` allow connecting the AmForth build system to a pre-installed toolchain.
 
-### Running
+For example if you are using Arduino IDE for some development on a given board, you can point `TC_DIR` at the location where Arduino IDE installed this toolchain. The `CROSS` variable defines the common prefix that the toolchain binaries use, e.g. `arm-none-eabi-` when the assembler binary is named `arm-none-eabi-as`.
 
-* amforth-shell.py
+Command `make toolchain` is a convenient way to install the right toolchain in the AmForth directory itself. This keeps the host system unaffected. The toolchain will be installed in `$(AMFORTH)/toolchain/` directory. Multiple local toolchains can be installed, e.g. both the ARM and the RISCV toolchain can be installed at the same time and the make commands will use the right one depending on which MCU directory they are executed in. The default build system setup expects this configuration of the toolchain. This configuration is also used by the CI for testing and release building.
 
-Use `make shell` tu run it (first set MODEM to point at the serial device)
+### Running AmForth
 
-Requires Python3 and pyserial package. If `pip3 install pyserial` gives you `error: externally-managed-environment`, and 
-you don't want heed its warnings and deal with Python virtual environments, then `pip3 install --user --break-system-packages pyserial` should be a relatively safe resolution.
+#### Physical boards
+
+To run AmForth on a physical board, the usual sequence is straightforward
+* `make all` - to build the bin or hex file
+* `make upload` - to upload the file to the board (this requires board specific upload tool)
+* `make shell` - to connect `amforth-shell.py` to the board (`MODEM` variable needs to point at the board's PTY device)
+
+You can use any terminal emulator to connect to AmForth, but it is highly recommended to use `amforth-shell.py` because it provides a number of AmForth
+specific highly useful conveniences that will be lacking with other emulators.
+
+`amforth-shell.py` requires Python3 and the `pyserial` package. Python3 is often pre-installed by the host OS, if it isn't follow the recommended installation approach for your OS. The `pyserial` package usually needs to be installed with `pip3 install pyserial` command. If this gives you `error: externally-managed-environment`, and you don't want to heed its warnings and deal with Python virtual environments, then `pip3 install --user --break-system-packages pyserial` should be a relatively safe work-around.
+
+#### QEMU
+
+AmForth provides a number of emulated build targets. With these you do not upload AmForth binary file, instead you execute the `amforth.elf` file with the corresponding variant of the QEMU emulator. Use the recommended installation path for your OS to install QEMU. For ARM you will need `qemu-system-arm`, for RISC-V you will need `qemu-system-riscv32`.
+
+There are several ways to run AmForth under QEMU, the `Makefiles` usually provide following options.
+* `make stdio` - starts AmForth connected directly to the stdio of the terminal running the command; you don't need a terminal emulator in this case, but you only get very basic interaction capabilities
+* `make pty` - starts AmForth connected to a PTY device (very much like when it's running on a physical board); the terminal stdio is connected to the QEMU monitor allowing control of the emulation process; QEMU will output the name of the PTY device on startup, set the `MODEM` variable to that and start `amforth-shell.py` with `make shell`
+
+Finally the Linux based targets (e.g. `arm/mcu/linux`) can run on `qemu-user` on Linux or in Docker on other operating systems.
 
 ### Debugging
 
@@ -204,15 +235,26 @@ you don't want heed its warnings and deal with Python virtual environments, then
 
 ## Testing
 
-## Emulation Tests
+Testing on physical boards is currently a manual process. There isn't any automation available for that at this time.
 
-Large amount of core functionality can be tested with QEMU emulation.
-Linux based targets can run on qemu-user on Linux or in Docker on MacOS.
-These tests run automatically on every commit pushed to github.
+However AmForth does have a suite of tests that can run on emulated targets fairly easily. This test suite is based on the standard Forth testing framework and includes the standard Forth test suite as well. The test suite files are in `$(AMFORTH)/tests` directory. 
 
-QEMU is best installed with the OS package manager (homebrew on Mac)
-* requires qemu-system-arm for ARM MCUs
-* requires qemu-system-risc32 for RISC-V MCUs
-* The Makefile `tests` target requires the `timeout` command to force QEMU to terminate,
-  it is native on linux, install coreutils on Mac to get it
-* It uses `awk` script to parse out the test results
+To run the test suite, the target has to be built with `WANT_IGNORECASE` option set. This is because the standard test suite
+is written in all-caps and AmForth words are all in lowercase. This option allows words to match regardless of the case.
+
+The `make tests` command runs the full test suite assuming a QEMU target compiled with `WANT_IGNORECASE`. For example, to run
+the test suite on the `arm/mcu/qemu` target, following steps would be used.
+* `WANT_IGNORECASE=1 make all`
+* `make tests`
+
+The command analyses the output of the test run and summarizes the test results. An `awk` script is used to parse the test output. Awk is usually preinstalled on the host OS, if not use the OS package manager to install it.
+
+Any test failures will be emitted in the output showing the test that failed and the incorrect output it produced. The command emits a final test summary showing the number of tests passed and failed and whether the whole suite completed. Summary of a successful test run can looks something like this
+```
+qemu-system-arm: terminating on signal 15 from pid 17281 (<unknown process>)
+FINISHED: Y, PASS: 635, FAIL: 0
+```
+
+The termination warning is there because the test command must kill the QEMU process at the end, otherwise it would not quit. The test command gives the QEMU process predefined amount of time (e.g. 5 seconds) to run through the test suite and then kills it. It detects from the test output whether the whole test suite ran in that time or not. The `timeout` command is used to control the QEMU process. This command is native on Linux, on other OSes install `coreutils` to get it.
+
+AmForth CI runs this test suite on every new commit pushed to GitHub. It runs it twice, once in normal build configuration and once with `WANT_ITC` build configuration. When `WANT_ITC` option is set the build prefers the core/words ITC version of words over the native assembler version if both exist (normally it is the other way around). This makes sure both versions are exposed to the test suite in the CI tests.
