@@ -1,0 +1,14 @@
+
+.option norvc               # no opportunistic use of compressed ... 
+.option norelax             # instructions or other such optimisations 
+
+#la gp, __global_pointer$
+
+.global PFA_COLD
+
+.section .init
+	la gp, __global_pointer$
+	la sp, _eusrstack 
+
+    j PFA_COLD
+

@@ -34,8 +34,8 @@ jobs:
       - name: Build CH32 for 307
         run: cd rv/mcu/ch32v307 && TARGET=307 WANT_IGNORECASE=1 make all
 
-      - name: Build CH32 for QEMU
-        run: cd rv/mcu/ch32v307 && TARGET=QEM WANT_IGNORECASE=1 make all
+      - name: Build CH32 for 307 (WANT_ITC)
+        run: cd rv/mcu/ch32v307 && TARGET=307 WANT_ITC=1 make all
 
       # It seems we need to update the index otherwise the qemu install fails
       - name: apt-get update
@@ -60,11 +60,14 @@ jobs:
       - name: Install QEMU RISC-V 32
         run: sudo apt-get install qemu-system-riscv32
 
-      - name: CH32V307 Core Tests
-        run: cd rv/mcu/ch32v307 && QEMU_RV32=qemu-system-riscv32 TIMEOUT=5s make tests
+      - name: Build QEMU virt
+        run: cd rv/mcu/qemu && WANT_IGNORECASE=1 make all
 
-      - name: Build CH32 for QEMU (WANT_ITC)
-        run: cd rv/mcu/ch32v307 && TARGET=QEM WANT_IGNORECASE=1 WANT_ITC=1 make all
+      - name: QEMU virt Core Tests
+        run: cd rv/mcu/qemu && TIMEOUT=5s make tests
 
-      - name: CH32V307 Core Tests
-        run: cd rv/mcu/ch32v307 && QEMU_RV32=qemu-system-riscv32 TIMEOUT=5s make tests
+      - name: Build QEMU virt (WANT_ITC)
+        run: cd rv/mcu/qemu && WANT_IGNORECASE=1 WANT_ITC=1 make all
+
+      - name: QEMU virt Core Tests
+        run: cd rv/mcu/qemu && TIMEOUT=5s make tests

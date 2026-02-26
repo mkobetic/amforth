@@ -61,6 +61,8 @@ AQUA   := $(shell tput -Txterm setaf 6)
 WHITE  := $(shell tput -Txterm setaf 7)
 RESET  := $(shell tput -Txterm sgr0)
 
+TARGET_MAX_CHAR_NUM=12
+
 ## Show help
 help:
 	@echo ''
