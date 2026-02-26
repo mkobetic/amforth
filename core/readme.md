@@ -2,36 +2,51 @@
 
 This is the shared basis of all 32-bit versions of AmForth.
 
-Words in core/words are combined with ARM/RISC-V architecture specific words (rv/words, arm/words, ...)
+AmForth is assembled by combining the words in `core/words/` with ARM/RISC-V architecture specific words (`rv/words/`, `arm/words/`)
 and with architecture compatible MCU specific words, e.g.
-* core/words/ + rv/words + rv/mcu/hifive1/words (HiFive board), or
-* core/words/ + arm/words + arm/mcu/lm4f120/words (Stellaris Launchpad board)
+* core/words/ + rv/words/ + rv/mcu/hifive1/words/ (HiFive board), or
+* core/words/ + arm/words/ + arm/mcu/lm4f120/words/ (Stellaris Launchpad board)
+
+Specific word files are selected by `dict_*.inc` files. The main file that pulls everything together is MCU specific `amforth.s` file,
+e.g. `arm/mcu/ra4m1/amforth.s`.
+
+The build process is driven by Makefile targets in `core/dev/Makefile`. Use `make help` or just `make` to see the list
+of available targets with brief descriptions. Architecture or MCU specific Makefiles add targets that are specific to that level.
 
 
 # Architecture
 
 ## Memory layout
 
-### Code Flash Memory / ROM
+The overall memory layout is defined by the main `core/amforth32.ld` linker file that defines the memory sections (see comments in the file for more details on specific sections). It is included by MCU specific linker files that define the physical memory regions that the sections are allocated in, for example `arm/mcu/ra4m1/unor4.ld`. If there are multiple build targets for a given MCU, there will be a dedicated linker file for each target (see `make help` for the list of targets for a given MCU).
 
-This is persistent, executable memory that contains primarily the predefined AmForth words. The end of the used part of this memory is tracked by the `dp.flash` pointer. User defined words can be copied from RAM into the code flash memory with the word `save`. This will allow the word to survive a hardware reset.
+This arrangement ensures that the basic structure of the memory layout is the same everywhere and provides firm foundation for the large number of shared core words.
 
-### RAM
+### FLASH region
 
-This non-peristent, executable memory used for multiple purposes. It is divided into 2 sections `amramlo` and `amramhi`.
+This is persistent, executable memory region that contains primarily the predefined AmForth words. The end of the used part of this region is tracked by the `dp.flash` pointer. User defined words can be compiled into FLASH when the compilation mode is set to FLASH using the `>flash` word. Words compiled into FLASH are tracked by the `forth-wordlist`.
 
-`amramlo` is used to support runtime needs of AmForth, it houses things like the parameter and return stacks, user block, system buffers etc.
+For some, usually emulated, MCU targets, the FLASH region can be allocated in volatile RAM memory. However in these cases runtime updates in FLASH will not persist through resets and restarts of the system.
 
-`amramhi` is again divided into 2 sections.
+### PVFLASH region
 
-`amramhi` lower part is used for variable values and other application uses. The end of the used part of this section is tracked with `vp` pointer.
+This is persistent data memory region used to store update records for persistent values, `pvalues`. Sufficient amount of PVFLASH is required for the `>flash` mode to work correctly. Without it AmForth is unable to remember new words compiled into FLASH across resets/restarts of the system.
 
-`amramhi` higher part stores definitions of user defined words. The end of the used part of this section is tracked with `dp.ram` pointer.
+PVFLASH region can be allocated in regular code flash memory, usually at the end of it, to allow the runtime FLASH dictionary to grow up to it. For more information on `pvalues` see the comments in `core/words/pvalue.s`.
 
-### Data Flash Memory / EEPROM
+### RAM region
 
-This is persistent, non-executable memory. It used to persist AmForth values and other application uses. Design yet to be finalized.
+This is non-peristent, executable memory used for multiple purposes. It is divided into multiple sections, sometimes subdivided into parts with different purposes.
 
+New words can also be compiled into the RAM dictionary when the mode is set to RAM using the `>ram` word. Such words will not persist, but this mode is very useful for development of new words, when many iterations of the same words need to be compiled and tested. This would use up space in the persistent FLASH memory relatively quickly, space that can only be reclaimed by erasing the FLASH and re-uploading AmForth from scratch.
+
+Section `amramlo` is used for RAM allocated by the predefined AmForth words. This includes parameter and return stacks, user block, system buffers etc.
+
+Section `amramhi` is used for RAM allocated at runtime.
+
+The lower part of `amramhi`, the RAM pool, is used for RAM allocated for words that are compiled into FLASH at runtime (variables, values, defers, etc). The end of the used part of this section is tracked by the `vp` pointer.
+
+The higher part of `amramhi` is used for the RAM dictionary, i.e. the words compiled into RAM at runtime. The end of the used part of this section is tracked by the `dp.ram` pointer. The words of the RAM dictionary are tracked by the `ram-wordlist`.
 
 ## Dictionary word layout
 
@@ -55,9 +70,21 @@ Words that are compiled into the AmForth binary have corresponding symbols defin
 * CFA - XT_ symbol
 * PFA - PFA_ sybmol
 
-## Wordlists and Search Order
+## Wordlists and Search Orders
 
-To be continued
+A wordlist maintains a pointer to the latest word added to it, specifically it points to the last word's FFA. The full list of the words can be traversed by following the chain of LFA pointers in the words. The predefined wordlists are
+* `environment` - a predefined wordlist containing words describing the AmForth system itself (a standard Forth wordlist)
+* `core-wordlist` - contains the pre-compiled core words
+* `forth-wordlist` - contains words compiled to FLASH at runtime, it also includes the `core-wordlist`
+* `ram-wordlist` - contains words compiled to RAM at runtime, this wordlist is always empty when the system starts up
+
+A `wid`, referenced by stack signatures of some words, is the XT of a wordlist word, e.g. `forth-wordlist`. The `current` value contains the `wid` of the wordlist that new words are compiled into. When switching between FLASH and RAM mode `current` will be set to the corresponding wordlist.
+
+A search order is a list of wordlists to be searched for an existing word. Search orders are primarily used to look for known words when new word definitions are compiled. The search order that is used for these lookups is held by the `cfg-order` deferred word. There are several pre-defined search orders
+* `order.core`  - `core-wordlist`, `environment`
+* `order.forth` - `forth-wordlist`, `environment`
+* `order.core`  - `ram-wordlist`, `forth-wordlist`, `environment`
+These orders can be assigned to `cfg-order` with words `core`, `forth` and `only`. `order.forth` is used when in FLASH mode, and `order.only` is used when in RAM mode. Changing the order is important to avoid compiling FLASH words with references to RAM words, which would yield corrupt FLASH words after restart.
 
 
 # AmForth directory layout
@@ -132,7 +159,7 @@ amforth32.ld   = the main linker file; defines the basic AmForth 32-bit memory l
 
 # Linker files
 
-The assembly of AmForth is controlled by linker files. The core linker file `amforth32.ld` defines the memory layout described above. The MCU linker files include this file to ensure the basic structure of the memory layout is the same everywhere. This provides firm foundation for the large number of shared core words.
+The assembly of AmForth is controlled by linker files. The core linker file `amforth32.ld` defines the memory layout described above. The MCU linker files primarily define the specific memory regions of the corresponding target/board and include `amforth32.ld` to allocate the required memory sections.
 
 ## Using Linker Symbols
 
@@ -178,6 +205,6 @@ These tests run automatically on every commit pushed to github.
 QEMU is best installed with the OS package manager (homebrew on Mac)
 * requires qemu-system-arm for ARM MCUs
 * requires qemu-system-risc32 for RISC-V MCUs
-* The Makefile `tests` target requires timeout command to force QEMU to terminate,
+* The Makefile `tests` target requires the `timeout` command to force QEMU to terminate,
   it is native on linux, install coreutils on Mac to get it
 * It uses `awk` script to parse out the test results

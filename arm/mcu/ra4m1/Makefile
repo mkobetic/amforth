@@ -16,7 +16,7 @@
 TARGET ?= UNOR4
 TARGETS = UNOR4
 ifeq ($(strip $(TARGET)), UNOR4)
-MCU_LD ?= ra4m1.ld
+MCU_LD ?= unor4.ld
 else
 $(error Unknown TARGET '$(TARGET)')
 endif
