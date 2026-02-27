@@ -23,15 +23,27 @@ import html
 import argparse
 
 def read_build_info():
-    pattern = re.compile(r'^\s*STRING\s*"(.*)"')
-    bits = []
-    for fn in ['words/env-cpu.s', 'words/env-board.s', 'words/build-info.s']:
-        with open(fn, 'r') as f:
-            for line in f:
+    pattern = re.compile(r'.*> 7:\.ascii "(.*)"\n')
+    bits = {}
+    #for fn in ['words/env-cpu.s', 'words/env-board.s', 'words/build-info.s']:
+    with open('build/amforth.lst-as', 'r') as f:
+        key = None
+        for line in f:
+            if key:
                 match = pattern.match(line)
                 if match:
-                    bits.append(match.group(1))
-    return bits
+                    bits[key] = match.group(1)
+                    key = None
+                continue
+            if line.endswith("PFA_ENV_CPU:\n"):
+                key = 'cpu'
+            elif line.endswith("PFA_ENV_BOARD:\n"):
+                key = 'board'
+            elif line.endswith("PFA_ENV_BUILD_TIME:\n"):
+                key = 'time'
+            elif line.endswith("PFA_ENV_BUILD_REV:\n"):
+                key = 'rev'
+    return f"{bits['cpu']} / {bits['board']} {bits['rev']} {bits['time']}"
 
 def parse_categories(filepath):
     """
@@ -187,7 +199,7 @@ def generate_refcard(categories_file, toc_file):
 def generate_html_refcard(categories_file, toc_file):
     categories = parse_categories(categories_file)
     words_db = parse_toc(toc_file, categories)
-    build_info = " ".join(read_build_info())
+    build_info = read_build_info()
     
     if not categories or not words_db:
         return

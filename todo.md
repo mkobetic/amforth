@@ -56,7 +56,6 @@ Also look for TODO: in source files
 
 ## CH32V307
 
-* flash.qem vs flash.307 vs flash.s
 * unify the build setup with the rest of MCUs (gcc vs as)
 * RAMALLOT reg_shadow differences between 307 ad QEM configuration
 
@@ -67,7 +66,6 @@ Also look for TODO: in source files
 
 # TOOLS
 
-* document/instrument Python setup for the tools
 * make sure all tools work
 * amshell: translate exception number to mnemonic
 
@@ -77,8 +75,6 @@ Also look for TODO: in source files
 * how to use AmForth32 as is
 * overall architecture (core/readme.md?)
 * arch specific docs (e.g. register allocation)
-* describe the development setup
 * how to add a new MCU
 * how to add a new ARCH
 * document conventions and standard practices
-* document dev tool setup
