@@ -125,17 +125,17 @@ BUILD_DIR := build
 # Source directories based on build type
 ifeq ($(strip $(ASMONLY)),YES)
 SRC_DIRS := .
-SRCS = $(shell echo *.s)
+SRCS = $(wildcard *.s)
 else
 SRC_DIRS := $(LIB_WCH) $(LIB_USER) .
 SRCS = $(shell find $(SRC_DIRS) -type d -name Startup -prune -name "*.cpp" -or -name "*.c" -or -name "*.S")
 endif
 
 
-#$(info SRCS: $(SRCS))
+$(info SRCS: $(SRCS))
 OBJS = $(SRCS:%=$(BUILD_DIR)/%.o)
 #DEPS = $(OBJS:.o=.d)
-#$(info OBJS: $(OBJS))
+$(info OBJS: $(OBJS))
 
 LIB_OBJS  := $(filter $(BUILD_DIR)/$(LIB_WCH)/%,$(OBJS)) \
              $(filter $(BUILD_DIR)/$(LIB_USER)/%,$(OBJS)) 
