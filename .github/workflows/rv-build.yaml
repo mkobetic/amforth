@@ -32,7 +32,11 @@ jobs:
         run: cd rv/mcu/hifive1 && WANT_ITC=1 make all
 
       - name: Build CH32 for 307
-        run: cd rv/mcu/ch32v307 && TARGET=307 WANT_IGNORECASE=1 make all
+        run: |
+          cd rv/mcu/ch32v307
+          pwd
+          ls *
+          TARGET=307 WANT_IGNORECASE=1 make all
 
       - name: Build CH32 for 307 (WANT_ITC)
         run: cd rv/mcu/ch32v307 && TARGET=307 WANT_ITC=1 make all

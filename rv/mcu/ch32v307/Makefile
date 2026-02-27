@@ -130,18 +130,22 @@ else
 SRC_DIRS := $(LIB_WCH) $(LIB_USER) .
 SRCS := $(shell find $(SRC_DIRS) -type d -name Startup -prune -name "*.cpp" -or -name "*.c" -or -name "*.S")
 endif
-
-
+$(info SRC_DIRS: $(SRC_DIRS))
 $(info SRCS: $(SRCS))
+
+
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 #DEPS = $(OBJS:.o=.d)
 $(info OBJS: $(OBJS))
 
 LIB_OBJS  := $(filter $(BUILD_DIR)/$(LIB_WCH)/%,$(OBJS)) \
              $(filter $(BUILD_DIR)/$(LIB_USER)/%,$(OBJS)) 
+$(info LIB_OBJS: $(LIB_OBJS))
 
 USER_OBJS := $(filter-out $(BUILD_DIR)/$(LIB_WCH)/% \
                           $(BUILD_DIR)/$(LIB_USER)/%,$(OBJS))
+$(info USER_OBJS: $(USER_OBJS))
+
 
 # Compiler flags 
 FLAGS := -msmall-data-limit=8 -mno-save-restore -Os -Wunused -Wuninitialized -g
