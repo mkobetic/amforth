@@ -183,13 +183,6 @@ CPPFLAGS := $(FLAGS) $(INCLUDES) -MMD -MP $(DEFINES)
 all: clean $(BUILD_DIR)/$(TARGET_ELF)
 	@echo INFO: Built $(TARGET) $(REVISION) using $(TOOLCHAIN)
 
-
-buildinfo:
-	@echo FILES: *
-	@echo "REBUILD $@"
-	@cat $(AMFORTH)/core/build-info.tmpl | sed "s/%d/`date -Iseconds`/" | sed "s/%r/${REVISION}/" > words/build-info.s
-	@mkdir -p build
-
 # Create static library from:
 # - lib_wch or lib_203 (vendor peripheral drivers)
 # - lib_wch_user or lib_203_user (optional user C code)
