@@ -125,14 +125,17 @@ BUILD_DIR := build
 # Source directories based on build type
 ifeq ($(strip $(ASMONLY)),YES)
 SRC_DIRS := .
-SRCS = $(shell find $(SRC_DIRS) -name "*.S" | sed 's|^./||')
+SRCS = $(shell echo *.s)
 else
 SRC_DIRS := $(LIB_WCH) $(LIB_USER) .
 SRCS = $(shell find $(SRC_DIRS) -type d -name Startup -prune -name "*.cpp" -or -name "*.c" -or -name "*.S")
 endif
 
+
+#$(info SRCS: $(SRCS))
 OBJS = $(SRCS:%=$(BUILD_DIR)/%.o)
 #DEPS = $(OBJS:.o=.d)
+#$(info OBJS: $(OBJS))
 
 LIB_OBJS  := $(filter $(BUILD_DIR)/$(LIB_WCH)/%,$(OBJS)) \
              $(filter $(BUILD_DIR)/$(LIB_USER)/%,$(OBJS)) 
@@ -167,7 +170,7 @@ CPPFLAGS := $(FLAGS) $(INCLUDES) -MMD -MP $(DEFINES)
 
 # For some reason make decides at the end of the build that amforth.s is an intermediate file and deletes it.
 # You will see a spurious `rm amforth.s` at the end of the build.
-# Interestingly, even though our file is named amforth.S, it gets deleted on MacOS anyway,
+# Interestingly, even though our file is named amforth.s, it gets deleted on MacOS anyway,
 # because MacOS filesystem is case-insensitive (unfortunately).
 # .PRECIOUS overrides make's inferred cleanup attempt.
 .PRECIOUS: amforth.s
@@ -211,7 +214,7 @@ endif
 	$(OBJDUMP) -t $(BUILD_DIR)/$(TARGET_ELF) | sort > $(BUILD_DIR)/symtab
 
 # assembly
-$(BUILD_DIR)/%.S.o: %.S buildinfo
+$(BUILD_DIR)/%.s.o: %.s buildinfo
 	$(CC) $(ITCFLAGS) -c $< -o $@
 
 # c source
