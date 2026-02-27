@@ -24,19 +24,13 @@ WANT_FORNEXT:=$(shell perl -n -e ' if(/.equ\s+WANT_FORNEXT\s*,\s+(YES|NO)/){prin
 # Include personal environment settings.
 # Following variables should be set:
 # * MODEM - the serial device used to connect to the board, e.g /dev/cu.usbmodem...
-# * WLINK - command to execute the WLINK flash uploader
 # * QEMU_RV32 - command to execute qemu-system-riscv32
-# * OPENOCD - command to execute OpenOCD
-# * OPENCFG - path to OpenOCD configuration file for CH32V307
 # Including after config so that personal settings can reflect the config.
 -include .env
 
 QEMU_RV32 ?= qemu-system-riscv32 
-WLINK ?= $(HOME)/.cargo/bin/wlink
-MINICOM ?= minicom
 
 SOCKSHELL=$(AMFORTH)/tools/socket-shell.py --port $(MODEM) --speed 115200 $1
-UU=$(AMFORTH)/tools/uu
 
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
@@ -78,13 +72,9 @@ else
 TOOLCHAIN=Local-Toolchain
 endif
 
-# Set library directories based on chip variant
-CHIPSET=
-
 # Default target to build
 TARGET = QEM
-TARGETS = 307, QEM
-
+TARGETS = QEM
 CHIPSET=QEM
 MCU_LD := ./qemu.ld
 
@@ -118,15 +108,9 @@ LIB_OBJS  := $(filter $(BUILD_DIR)/$(LIB_WCH)/%,$(OBJS)) \
 USER_OBJS := $(filter-out $(BUILD_DIR)/$(LIB_WCH)/% \
                           $(BUILD_DIR)/$(LIB_USER)/%,$(OBJS))
 
-INCLUDES := -I . $(INCLUDES)
-
 # Compiler flags 
 FLAGS := -msmall-data-limit=8 -mno-save-restore -Os -Wunused -Wuninitialized -g
-ifeq ($(strip $(TARGET)),203)
-FLAGS += -march=rv32imac -mabi=ilp32 
-else
 FLAGS += -march=rv32imafc -mabi=ilp32f
-endif
 # Needed for the INCLUDE amforth32.ld to work in linked files (-L must preceed the -T !!!)
 FLAGS += -L $(AMFORTH)/core
 
@@ -205,10 +189,6 @@ $(BUILD_DIR)/%.cpp.o: %.cpp buildinfo
 
 .PHONY: clean info shell speed save uu 
 
-## Upload hex file to the device  
-upload:
-	$(WLINK) flash $(BUILD_DIR)/$(TARGET_HEX)
-
 ## mcu config
 mcu_config:
 	@echo 'Compiler, assembler and library:'
@@ -226,24 +206,6 @@ mcu_config:
 	@printf "  ${YELLOW}WANT_MATCH${RESET}\t\t${WANT_MATCH}\n"
 	@printf "  ${YELLOW}WANT_TABLE${RESET}\t\t${WANT_TABLE}\n"
 	@printf "  ${YELLOW}WANT_FORNEXT${RESET}\t\t${WANT_FORNEXT}\n"
-
-## Connect via USB 
-uu:
-	$(UU) 
-
-## Connect via minicom 
-min:
-	$(RM) minicom.cap
-	$(MINICOM) -D $(MODEM) --color=on -C minicom.cap
-
-w:
-	$(AMSHELL) --no-error-on-output -i ./w.f
-
-float:
-	$(AMSHELL) --no-error-on-output -i ./float.f
-
-speed:
-	time $(AMSHELL) --no-error-on-output tester-amforth.frt
 
 #? --- QEM ---
 QEMU := $(QEMU_RV32) -M virt -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF)
@@ -281,6 +243,3 @@ gdb:
 		-ex 'target remote :1234' \
 		-ex "source tui-full.gdb"
 
-## Start OpenOCD
-ocd:
-	$(OPENOCD) -f $(OPENCFG)
