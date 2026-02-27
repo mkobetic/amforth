@@ -14,6 +14,8 @@ The build process is driven by Makefile commands in `core/dev/Makefile`. Use `ma
 
 # Architecture
 
+Most of the original AmForth [Architecture](https://amforth.sourceforge.net/TG/Architecture.html) and [Compiler](https://amforth.sourceforge.net/TG/Compiler.html) documentation applies to AmForth32 as well. This document primarily elaborates on what is different in AmForth32.
+
 ## Memory layout
 
 The overall memory layout is defined by the main `core/amforth32.ld` linker file that defines the memory sections (see comments in the file for more details on specific sections). It is included by MCU specific linker files defining the physical memory regions that the sections are allocated in, for example `arm/mcu/ra4m1/unor4.ld`. If there are multiple build targets for a given MCU, there will be a dedicated linker file for each target (see `make help` for the list of recognized targets for a given MCU).

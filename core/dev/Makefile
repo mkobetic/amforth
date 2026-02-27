@@ -140,7 +140,7 @@ build/%.lst: build/%.elf
 
 # list all transitive dependencies of amforth.s (include tree traversal)
 # the file paths are adjusted to be relative to $(AMFORTH)
-build/%.dep: build/%.o
+build/%.dep: buildinfo
 	@echo "REBUILD $@"
 	@$(AS) $(ASFLAGS) $(INCLUDES) -MD $@.wrk -o /dev/null amforth.s
 	@sed -e 's|^/dev/null:||; s/ \\//; s/^ //; s/ /\n/g' $@.wrk >$@

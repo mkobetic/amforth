@@ -12,10 +12,13 @@ Also look for TODO: in source files
 
 * add words to show memory stats
 * extend the error prompt to list words on the R-stack to help identify where the throw comes from
-* add selected options to build-info (e.g. WANT_IGNORECASE)
-
 * all words should use the END macro to be proper function blocks (debug_info)
+
 * sort out issues with `to` word (to.s/alto.s)
+* `does>` only works in RAM dictionary, need `<builds`
+* don't waste 2 registers for do loop index and limit (especially on ARM)
+* does the `UP` pointer need to be a register?
+* `LEAVE` stack is only used at compile time? Make it usable as a second parameter stack maybe?
 * runtime defined values and defers are not the same as the compile time defined ones (getters, setters, default values)
 * core/aligned.s vs arm|rv/aligned.s
 * aligned.s and do-aligned.s are identical
@@ -33,7 +36,7 @@ Also look for TODO: in source files
 
 * don't push{lr}/pop{pc} in leaf functions (just bx lr)
 * don't use ldm when not needed (poptos, popnos)
-* (exiti) likely needs work
+* `(exiti)` needs work
 * better HW fault handling
 
 ## LM4F120
@@ -68,6 +71,8 @@ Also look for TODO: in source files
 
 * make sure all tools work
 * amshell: translate exception number to mnemonic
+* socket-shell.py duplicates most of amforth-shell.py
+* keep am4up.c ?
 
 
 # DOCS
