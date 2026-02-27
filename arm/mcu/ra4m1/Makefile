@@ -92,9 +92,16 @@ gdb:
 # More debugging references
 # https://undo.io/resources/guide-to-symbols-debug-info/
 
+## Make distribution tarball for the target (expects VERSION)
+dist: all
+	mkdir -p $(AMFORTH)/dist
+	cp readme.md $(AMFORTH)/LICENSE.txt build/
+	cd build && tar -zcf $(AMFORTH)/dist/amforth32-$(VERSION)-arm-ra4m1-unor4.tgz *
+
+
 GOBUILD = cd ./touch1200bps && go build -o dist/ .
 TAR = cd touch1200bps/dist && tar zcf
-# Build touch1200bps release artifacts
+## Build touch1200bps release artifacts
 dist1200bps:
 	export GOOS=darwin GOARCH=arm64; $(GOBUILD)
 	$(TAR) touch1200bps-osx-arm64.tgz touch1200bps

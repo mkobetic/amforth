@@ -4,6 +4,7 @@ Also look for TODO: in source files
 # CORE
 
 * review the default sizing of memory regions and sections (especially for the physical targets)
+* automated compiled artifact releases
 
 * replace PFA_ labels that aren't PFAs with transient labels 1f, 2b...
 * do we need the CON macro?
@@ -13,6 +14,9 @@ Also look for TODO: in source files
 * add words to show memory stats
 * extend the error prompt to list words on the R-stack to help identify where the throw comes from
 * all words should use the END macro to be proper function blocks (debug_info)
+* proper, and extractable comments for all words
+* add long word description to the html refcard as title attribute, so that it shows on hover
+* add refcard legend
 
 * sort out issues with `to` word (to.s/alto.s)
 * `does>` only works in RAM dictionary, need `<builds`
@@ -25,11 +29,6 @@ Also look for TODO: in source files
 * ud* is broken, what about d*, ud/ ? (need double tests)
 * remove doxliteral.s in favor of doliteral.s
 * clean up all harcoded cell size values, replace with cellsize symbol (including alignment directives)
-
-* automated compiled artifact releases
-* add refcard legend
-* proper, and extractable comments for all words
-* add long word description to the html refcard as title attribute, so that it shows on hover
 
 
 # ARM

@@ -30,6 +30,9 @@ jobs:
       - name: Build QEMU virt
         run: cd arm/mcu/qemu && VERSION=${{github.ref_name}} make dist
 
+      - name: Build RA4M1/UNOR4
+        run: cd arm/mcu/ra4m1 && VERSION=${{github.ref_name}} make dist
+
       - name: Create release
         uses: ncipollo/release-action@v1
         id: create_release
