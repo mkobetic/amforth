@@ -1,4 +1,6 @@
-# Arduino UNO R4 Wifi
+# AmForth for Arduino UNO R4 Wifi
+
+AmForth is published under the GNU Public License v3 (GPL).
 
 ## MCU
 

@@ -1,3 +1,7 @@
+# AmForth for ARM Linux
+
+AmForth is published under the GNU Public License v3 (GPL).
+
 Short Notice for the bravest
 
 Required packages (Ubuntu 18.04 LTS standard repo)

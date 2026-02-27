@@ -1,5 +1,7 @@
 # AmForth for RISC-V QEMU -M virt
 
+AmForth is published under the GNU Public License v3 (GPL).
+
 The virt board is a platform which does not correspond to any real
 hardware; it is designed for use in virtual machines.  
 

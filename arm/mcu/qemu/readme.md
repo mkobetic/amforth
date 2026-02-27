@@ -1,5 +1,7 @@
 # AmForth for ARM QEMU -M virt
 
+AmForth is published under the GNU Public License v3 (GPL).
+
 The `virt` machine of `qemu-system-arm` is a generic Cortex-A system with large RAM capacity
 and choice of Cortex-A cores. This AmForth build targets the 32-bit `cortex-a15`.
 

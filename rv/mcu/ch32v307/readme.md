@@ -1,4 +1,6 @@
-# CH32V307
+# AmForth for CH32V307
+
+AmForth is published under the GNU Public License v3 (GPL).
 
 CH32V307VCT6 is a development board based on WCH CH32V307 RISC-V microcontroller with an Ethernet port, an USB Type-C port, and eight UART interfaces accessible through headers.
 

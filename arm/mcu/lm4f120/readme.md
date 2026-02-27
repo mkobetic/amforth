@@ -1,6 +1,6 @@
-# TI Stellaris LM4f120 LaunchPad
+# AmForth for TI Stellaris LM4F120 LaunchPad
 
-
+AmForth is published under the GNU Public License v3 (GPL).
 
 # MCU
 
