@@ -75,8 +75,9 @@ endif
 # Default target to build
 TARGET = QEM
 TARGETS = QEM
-CHIPSET=QEM
+CHIPSET = QEM
 MCU_LD := ./qemu.ld
+DIST_TARGET ?= rv-qemu-virt
 
 # Included after various configuration bits are defined (importantly MCU_LD and TARGET)
 include $(AMFORTH)/rv/dev/Makefile
@@ -242,4 +243,3 @@ gdb:
 	$(GDBPY) build/amforth.elf --quiet \
 		-ex 'target remote :1234' \
 		-ex "source tui-full.gdb"
-
