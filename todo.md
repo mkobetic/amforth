@@ -4,6 +4,7 @@ Also look for TODO: in source files
 # CORE
 
 * review the default sizing of memory regions and sections (especially for the physical targets)
+* update AmForth version
 * automated compiled artifact releases
 
 * replace PFA_ labels that aren't PFAs with transient labels 1f, 2b...

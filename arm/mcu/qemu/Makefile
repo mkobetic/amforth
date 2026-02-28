@@ -1,10 +1,11 @@
 
 TARGET ?= QEM
 TARGETS = QEM
-MCU_LD ?= qemu.ld
 ifneq ($(strip $(TARGET)), QEM)
 $(error Unknown TARGET '$(TARGET)')
 endif
+DIST_TARGET ?= arm-qemu-virt
+MCU_LD ?= qemu.ld
 
 LANG=C
 AMFORTH ?= $(shell git rev-parse --show-toplevel)
@@ -39,9 +40,3 @@ gdb:
 	$(GDBPY) build/amforth.elf --quiet \
 		-ex 'target remote :1234' \
 		-ex "source tui-full.gdb"
-
-## Make distribution tarball for the target (expects VERSION)
-dist: all
-	mkdir -p $(AMFORTH)/dist
-	cp readme.md $(AMFORTH)/LICENSE.txt build/
-	cd build && tar -zcf $(AMFORTH)/dist/amforth32-$(VERSION)-arm-qemu-virt.tgz *
