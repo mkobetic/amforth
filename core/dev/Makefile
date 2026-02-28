@@ -189,6 +189,12 @@ clean:
 
 .PHONY: buildinfo clean config shell tests
 
+## Make distribution tarball for the target (expects VERSION and DIST_TARGET)
+dist: all
+	mkdir -p $(AMFORTH)/dist
+	cp readme.md $(AMFORTH)/LICENSE.txt $(AMFORHT)/tools/amforth-shell.py build/
+	cd build && tar -zcf $(AMFORTH)/dist/amforth32-$(VERSION)-$(DIST_TARGET).tgz *
+
 ## Show build configuration
 config:
 	@echo ""

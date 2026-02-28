@@ -17,6 +17,7 @@ TARGET ?= UNOR4
 TARGETS = UNOR4
 ifeq ($(strip $(TARGET)), UNOR4)
 MCU_LD ?= unor4.ld
+DIST_TARGET ?= arm-ra4m1-unor4
 else
 $(error Unknown TARGET '$(TARGET)')
 endif
@@ -91,12 +92,6 @@ gdb:
 
 # More debugging references
 # https://undo.io/resources/guide-to-symbols-debug-info/
-
-## Make distribution tarball for the target (expects VERSION)
-dist: all
-	mkdir -p $(AMFORTH)/dist
-	cp readme.md $(AMFORTH)/LICENSE.txt build/
-	cd build && tar -zcf $(AMFORTH)/dist/amforth32-$(VERSION)-arm-ra4m1-unor4.tgz *
 
 
 GOBUILD = cd ./touch1200bps && go build -o dist/ .
