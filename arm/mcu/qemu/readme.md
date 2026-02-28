@@ -23,7 +23,9 @@ The `stdio` interface is very basic and uncomfortable to use for anything but a 
 it is better to run the serial interface connected to a PTY. You will need a terminal emulator to
 interact with AmForth through this serial setup. It is highly recommended to use `amforth-shell.py`
 as the terminal emulator as it provides a lot of AmForth specific usability features.
-See tools/amforth-shell.py documentation for more details on how to use it.
+
+`amforth-shell.py` requires Python3 and the `pyserial` package. Python3 is often pre-installed by the host OS. If it isn't follow the recommended installation approach for your OS. The `pyserial` package usually needs to be installed with `pip3 install pyserial` command. If this gives you `error: externally-managed-environment`, and you don't want to heed its warnings and deal with Python virtual environments, then `pip3 install --user --break-system-packages pyserial` should be a relatively safe work-around.
+See `amforth-shell.py` comments for more details on how to use it.
 
 The command to run AmForth connected to PTY is
 ```
@@ -83,6 +85,8 @@ Note that the only tools needed for this process are AmForth running on the targ
 * amforth.lst - assembler listing from the linker
 * amforth.lst-as - assembler listing from the assembler
 * amforth.sal - symbol and source line listing (debug info)
+
+* amforth-shell.py - terminal emulator for AmForth
 
 
 # References
