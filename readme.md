@@ -25,7 +25,7 @@ For details check out the READMEs in the respective directories.
 
 * [Renesas RA4M1 / Arduino UNO R4](https://github.com/mkobetic/amforth/tree/main/arm/mcu/ra4m1)
 * [TI LM4F120 / Stellaris Launchpad (+QEMU emulation)](https://github.com/mkobetic/amforth/tree/main/arm/mcu/lm4f120)
-* [Generic ARM-32 / Generic Linux, Raspberry PI (+Docker emulation)](https://github.com/mkobetic/amforth/tree/main/arm/mcu/linux)
+* [Generic ARM-32 / Linux, Raspberry PI (+Docker emulation)](https://github.com/mkobetic/amforth/tree/main/arm/mcu/linux)
 * [Generic ARM-32 / QEMU -M virt](https://github.com/mkobetic/amforth/tree/main/arm/mcu/qemu)
 
 The original README follows.
