@@ -18,6 +18,8 @@ For details check out the READMEs in the respective directories.
 
 * [WCH CH32V307 / dev board (+QEMU emulation)](https://github.com/mkobetic/amforth/tree/main/rv/mcu/ch32v307)
 * [SiFive FE310 / Hifive1](https://github.com/mkobetic/amforth/tree/main/rv/mcu/hifive1)
+* [Generic RISCV-32 / QEMU -M virt](https://github.com/mkobetic/amforth/tree/main/rv/mcu/qemu)
+
 
 ### ARM 32
 
