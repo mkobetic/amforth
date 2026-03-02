@@ -59,6 +59,7 @@
 .include "words/d-dot-r.s"
 .include "words/d-dot.s"
 .include "words/u-dot.s"
+.include "words/u-dot-r.s"
 .include "words/ud-dot.s"
 .include "words/ud-dot-r.s"
 

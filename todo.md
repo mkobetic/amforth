@@ -1,4 +1,4 @@
-List of know issues and tasks that need to be done (by area)
+List of known issues and tasks that need to be done (by area)
 Also look for TODO: in source files
 
 # CORE

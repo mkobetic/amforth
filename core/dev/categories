@@ -23,7 +23,7 @@ MEMORY:
     align here allot aligned
      >ram >flash memmode
     valign vhere vallot vp vp.max vp0
-    dalign dhere dallot dp dp0.ram dp.ram dp0.flash dp.flash
+    dalign dhere dallot dp dp0.ram dp.ram dp.ram.max dp0.flash dp.flash
     up! up@
 STRING:
     ." s" sub-string? number >number digit? toupper
@@ -55,7 +55,8 @@ IO:
     serial-emit? serial-emit serial-key? serial-key emit? serial-emit-pause emit key? serial-key-pause key
     tib #tib >in source-tib source accept refill-tib refill ?crlf bs
 OUTPUT:
-    . .k .s ud.r ud. u. d. d. d.r r.. r. hex. 8x. 2x. x. .8hex
+    . u. u.r d. d.r ud. ud.r
+    r. r.. hex. 8x. 2x. x. .8hex
     spaces space bl cr base
     itype type pad binary hex decimal 
     sign #> #s # <# hold hld
@@ -65,7 +66,7 @@ SYSTEM:
     set-base bases .ready .ok .input .error first-run
     first-boot.done ?first-boot first-boot.marker first-boot.start
 TOOLS:
-    debug || dump ?ascii vdump break
+    .s .k debug || dump ?ascii vdump break
 FLASH:
     flash.cell flash.page flash.erased flash.start flash.low flash.max flash.erase flush naligned
     pv.do pv.init vaddr pv.store pvp pv.reset-hard

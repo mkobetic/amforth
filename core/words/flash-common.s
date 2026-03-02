@@ -3,17 +3,17 @@
 	Expected to be supported by all MCUs.
 */
 
-CONSTANT  "flash.page"  , FLASH_PAGE , flash_page
+CONSTANT  "flash.page"  , FLASH_PAGE , flash_page /* size of the flash erase page (bytes) */
 END FLASH_PAGE
-CONSTANT  "flash.cell"  , FLASH_CELL , flash_cell
+CONSTANT  "flash.cell"  , FLASH_CELL , flash_cell /* size of the flash write cell (bytes) */
 END FLASH_CELL
-CONSTANT  "flash.erased"  , FLASH_ERASED , flash_erased
+CONSTANT  "flash.erased"  , FLASH_ERASED , flash_erased /* value of an erased flash cell (4 bytes) */
 END FLASH_ERASED
-CONSTANT "flash.start" , FLASH_START  , flash.start
+CONSTANT "flash.start" , FLASH_START  , flash.start /* start of the FLASH memory region */
 END FLASH_MAX
-CONSTANT "flash.low"    , FLASH_LOW   , flash.low
+CONSTANT "flash.low"    , FLASH_LOW   , flash.low /* start of the core dictionary in FLASH */
 END FLASH_LOW
-CONSTANT "flash.max"    , FLASH_MAX  , flash.max
+CONSTANT "flash.max"    , FLASH_MAX  , flash.max /* end of the FLASH memory region */
 END FLASH_MAX
 
 /* flash primitives */
@@ -27,7 +27,7 @@ END DOCOMMA
 DEFER "(c,)", DOCCOMMA, XT_TILDEDOCCOMMA /* ( c -- ) append c to the dictionary */
 END DOCCOMMA
 
-DEFER "!i", STORE_I , XT_TILDESTORE_I
+DEFER "!i", STORE_I , XT_TILDESTORE_I /* ( x addr -- ) write x at addr in flash */
 END STORE_I
 
 DEFER "flash.erase", FLASH_ERASE, XT_TILDEFLASH_ERASE /* ( addr -- ) erase flash page at addr */
@@ -66,8 +66,7 @@ COLON "flush", FLUSH /* ( -- ) force flush (write) of flash.cache */
     .word XT_EXIT
 END FLUSH
 
-#COLON "flash.flush", FLASHDOTFLUSH /* ( -- ) force flush (write) of flash.cache */
-NONAME "flash.flush", FLASHDOTFLUSH                /* ( -- ) force flush (write) of flash.cache */
+NONAME "flash.flush", FLASHDOTFLUSH /* ( -- ) force flush (write) of flash.cache */
 .ifdef FLUSH_REQUIRED
     .word XT_DOFLUSH 
 .endif
