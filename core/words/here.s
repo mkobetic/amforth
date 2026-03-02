@@ -7,12 +7,12 @@ COLON "here", HERE /* return address of next free space in RAM */
         .word XT_DHERE, XT_EXIT
 END HERE
 
-# another attempt
-
-CONSTANT "dp0.ram" , DP0DOTRAM , dp0.ram /* initial RAM dictionary pointer */
+CONSTANT "dp0.ram" , DP0DOTRAM , dp0.ram /* start of RAM dictionary */
 END DP0DOTRAM
 VALUE "dp.ram"   , DP_RAM   , dp0.ram /* RAM dictionary pointer */
 END DP_RAM
+CONSTANT "dp.ram.max" , DP_RAM_MAX , dp.ram.max /* end of RAM dictionary */
+END DP_RAM_MAX
 
 CONSTANT "dp0.flash"   , DP0_FLASH  , dp0.flash /* initial flash dictionary pointer */
 END DP0_FLASH

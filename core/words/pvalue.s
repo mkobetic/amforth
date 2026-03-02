@@ -199,15 +199,6 @@ END PVP
 VALUE "pvarena", PVARENA, 0 /* ( -- addr ) start address of the active arena */
 END PVARENA
 
-/* test pvalues */
-PVALUE "pv1", PV1, 42
-END PV1
-PVALUE "pv2", PV2, 42
-END PV2
-PVALUE "pv3", PV3, 42
-END PV3
-
-
 # ----------------------------------------------------------------------
 
 COLON "pv.store", PV_STORE /* ( x addr -- ) update pvalue identified by RAM addr to value x */
