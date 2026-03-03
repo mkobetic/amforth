@@ -70,8 +70,7 @@ COLON "~!i", TILDESTORE_I /* ( x addr -- ) write x at addr in flash */
 	.word XT_DP0_FLASH
 	.word XT_LESS
 	.word XT_DOCONDBRANCH, 1f /* # if */
-	/* replace with more suitable value */
-	.word XT_DOLITERAL, -10, XT_THROW
+	.word XT_DOLITERAL, EFWADDR, XT_THROW
 1:	/* # then */
 	.word XT_FLASH_CACHE
 	.word XT_FLASH_SHADOW
@@ -149,8 +148,7 @@ END TILDEPVFLASH_ERASE
 NONAME "~2!pvf", TILDE2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
 	/* don't allow writing below pvflash.start */
 	.word XT_DUP, XT_PVFLASH_START, XT_LESS, XT_DOCONDBRANCH, 1f /* # if */
-		/* replace with more suitable value */
-		.word XT_DOLITERAL, -10, XT_THROW
+		.word XT_DOLITERAL, EFWADDR, XT_THROW
 1:	/* then */
 	/* back up flash.cache */
 	.word XT_FLASH_CACHE, XT_FLASH_SHADOW, XT_FLASH_CELL, XT_MOVE
