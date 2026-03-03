@@ -27,8 +27,7 @@ END TILDEDOCOMMA
 COLON "~!i", TILDESTORE_I
 	/* don't allow writing below dp0.flash */
 	.word XT_DUP, XT_DP0_FLASH, XT_LESS, XT_DOCONDBRANCH, 1f
-		/* replace with more suitable value */
-		.word XT_DOLITERAL, -10, XT_THROW
+		.word XT_DOLITERAL, EFWADDR, XT_THROW
 1:	/* then */
 	.word XT_STORE, XT_EXIT
 END TILDESTORE_I
@@ -46,8 +45,7 @@ END TILDEFLASH_ERASE
 NONAME "~2!pvf", TILDE2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
 	/* don't allow writing below pvflash.start */
 	.word XT_DUP, XT_PVFLASH_START, XT_LESS, XT_DOCONDBRANCH, 1f
-		/* replace with more suitable value */
-		.word XT_DOLITERAL, -10, XT_THROW
+		.word XT_DOLITERAL, EFWADDR, XT_THROW
 1:	/* then */
 	.word XT_2STORE, XT_EXIT
 END TILDE2STORE_PVF

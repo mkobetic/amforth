@@ -60,4 +60,5 @@ RAMALLOT refill_buf, refill_buf_size, 4
 # AmForth32 Exceptions
 .equ EFCACHE,  -256 /* flash.cache is misaligned */
 .equ EFCELLA,  -257 /* attempt to allot outside flash.cell */
+.equ EFWADDR,  -258 /* attempt to write below flash limit */
 

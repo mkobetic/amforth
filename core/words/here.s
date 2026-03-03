@@ -88,14 +88,16 @@ COLON "init.dp.flash", INIT_DP_FLASH /* ( -- ) set dp.flash to the first erased 
 2: /* then */
   /* ( start-address ) */
   /* find start of the next flash page after start-address */
-  .word XT_FLASH_PAGE, XT_SLASH, XT_1PLUS, XT_FLASH_PAGE, XT_STAR
+  .word XT_DUP, XT_FLASH_PAGE, XT_SLASH, XT_1PLUS, XT_FLASH_PAGE, XT_STAR
+  /* ( start-address next-page-address ) */
   /* check the end of the previous page to see if it is erased */
   .word XT_CELLMINUS, XT_DUP, XT_FETCH, XT_FLASH_ERASED, XT_EQUAL, XT_DOCONDBRANCH, 1f
     /* if so start the backward search for cell from there */
     .word XT_DOBRANCH, 2f
 1: 
   /* otherwise check the end of the next page to see if it was erased */
-  .word XT_DUP, XT_FLASH_PAGE, XT_PLUS  /* ( end-of-last-page end-of-next-page ) */
+  .word XT_DUP, XT_FLASH_PAGE, XT_PLUS
+  /* ( start-address end-of-last-page end-of-next-page ) */
   .word XT_DUP, XT_FETCH, XT_FLASH_ERASED, XT_EQUAL, XT_DOCONDBRANCH, 1f
     /* if it was search from the end of the next page */
     .word XT_SWAP, XT_DROP, XT_DOBRANCH, 2f
@@ -103,13 +105,16 @@ COLON "init.dp.flash", INIT_DP_FLASH /* ( -- ) set dp.flash to the first erased 
       this assumes that valid dictionary content cannot extend more than
       flash page size past the forth-wordlist pointer */
     .word XT_DROP, XT_CELLPLUS, XT_DUP, XT_FLASH_ERASE
-    .word XT_DOTO, XT_DP_FLASH, XT_EXIT
-2: /* ( erased-cell-to-search-from ) */
+    .word XT_DOTO, XT_DP_FLASH, XT_DROP, XT_EXIT
+2: /* ( start-address erased-cell-to-search-from ) */
   /* search back for the first dirty cell */
   .word XT_DUP, XT_FETCH, XT_FLASH_ERASED, XT_EQUAL, XT_DOCONDBRANCH, 3f
-    .word XT_CELLMINUS, XT_DOBRANCH, 2b
+    /* make sure we don't go below start-address */
+    .word XT_CELLMINUS
+    .word XT_2DUP, XT_LESSEQUAL, XT_DOCONDBRANCH, 3f
+      .word XT_DOBRANCH, 2b
 3: /* set dp.flash to the erased flash cell after it */
   .word XT_CELLPLUS, XT_FLASH_CELL, XT_SWAP, XT_NALIGNED
   .word XT_DOTO, XT_DP_FLASH
-  .word XT_EXIT
+  .word XT_DROP, XT_EXIT
 END INIT_DP_FLASH
