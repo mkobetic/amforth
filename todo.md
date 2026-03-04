@@ -17,7 +17,6 @@ Also look for TODO: in source files
 * all words should use the END macro to be proper function blocks (debug_info)
 * proper, and extractable comments for all words
 * add long word description to the html refcard as title attribute, so that it shows on hover
-* add refcard legend
 
 * sort out issues with `to` word (to.s/alto.s)
 * `does>` only works in RAM dictionary, need `<builds`
