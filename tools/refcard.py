@@ -45,6 +45,62 @@ def read_build_info():
                 key = 'rev'
     return f"{bits['cpu']} / {bits['board']} {bits['rev']} {bits['time']}"
 
+def parse_legend_md(filepath):
+    """
+    Parses the legend.md file and extracts markdown tables.
+    Returns a dictionary: { section_name: [(col1, col2), ...] }
+    """
+    legend = {}
+    current_section = None
+    current_table = []
+    in_table = False
+    
+    with open(filepath, 'r') as f:
+        for line in f:
+            line = line.rstrip()
+            
+            # Check for section heading
+            if line.startswith('# '):
+                # Save previous table if any
+                if current_section and current_table:
+                    legend[current_section] = current_table
+                current_section = line[2:]  # Remove '# '
+                current_table = []
+                in_table = False
+                continue
+            
+            # Skip empty lines
+            if not line.strip():
+                continue
+            
+            # Check for markdown table separator
+            if in_table or (line.startswith('---') or '-' in line and '|' in line):
+                if '|' in line and ('-' in line or in_table):
+                    # This is either a separator or a data row
+                    if '-' in line and '---' in line:
+                        # This is a separator, skip it
+                        in_table = True
+                        continue
+                    
+                    # This is a data row, parse it
+                    in_table = True
+                    cols = [col.strip() for col in line.split('|')]
+                    # Remove empty strings from start/end (before first | and after last |)
+                    cols = [col for col in cols if col]
+                    if len(cols) >= 2:
+                        current_table.append(tuple(cols))
+                    continue
+            
+            # If we encounter non-table content, reset
+            if in_table and line.strip() and '|' not in line:
+                in_table = False
+        
+        # Save the last table
+        if current_section and current_table:
+            legend[current_section] = current_table
+    
+    return legend
+
 def parse_categories(filepath):
     """
     Parses the categories file.
@@ -201,6 +257,11 @@ def generate_html_refcard(categories_file, toc_file):
     words_db = parse_toc(toc_file, categories)
     build_info = read_build_info()
     
+    # Parse legend
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    legend_file = os.path.join(script_dir, "../core/dev/legend.md")
+    legend = parse_legend_md(legend_file)
+    
     if not categories or not words_db:
         return
 
@@ -209,7 +270,6 @@ def generate_html_refcard(categories_file, toc_file):
     print("<head>")
     print("<title>AmForth32 Reference Card</title>")
     print("<style>")
-    script_dir = os.path.dirname(os.path.abspath(__file__))
     css_path = os.path.join(script_dir, 'refcard.css')
     with open(css_path, 'r') as f:
         print(f.read())
@@ -224,6 +284,7 @@ def generate_html_refcard(categories_file, toc_file):
     for cat_name, _ in categories:
         anchor = html.escape(cat_name)
         links.append(f'<a href="#{anchor}">{anchor}</a>')
+    links.append(f'<a href="#Legend">LEGEND</a>')
     print(" | ".join(links))
     print("</p>")
 
@@ -249,6 +310,31 @@ def generate_html_refcard(categories_file, toc_file):
                 name = html.escape(word)
                 print(f"<tr><td>{name}</td></tr>")
         print("</table>")
+
+    # Add Legend section from parsed legend data
+    print('<h2 id="Legend">LEGEND</h2>')
+    
+    for section_name, table_rows in legend.items():
+        print(f'<h3>{html.escape(section_name)}</h3>')
+        print('<table>')
+        if table_rows:
+            # Print header with column names based on first row
+            headers = [''] * len(table_rows[0])
+            # For now, we'll infer headers from the markdown
+            # First, check the section name to determine headers
+            if 'Parameter' in section_name:
+                headers = ['symbol', 'meaning']
+            elif 'Stack' in section_name:
+                headers = ['notation', 'stack']
+            elif 'Other' in section_name or 'terminology' in section_name:
+                headers = ['term', 'meaning']
+            else:
+                headers = [f'Column {i+1}' for i in range(len(table_rows[0]))]
+            
+            print('<tr>' + ''.join(f'<th>{html.escape(h)}</th>' for h in headers) + '</tr>')
+            for row in table_rows:
+                print('<tr>' + ''.join(f'<td>{html.escape(col)}</td>' for col in row) + '</tr>')
+        print('</table>')
 
     print("</body>")
     print("</html>")
