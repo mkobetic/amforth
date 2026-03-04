@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-NONAME "lresolve", LRESOLVE
+NONAME "<resolve", LRESOLVE /* ( addr -- ) compile addr as a target of backward jump */
     .word XT_QSTACK
     .word XT_COMMA
     .word XT_EXIT

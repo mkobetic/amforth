@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-NONAME "gresolve", GRESOLVE
+NONAME ">resolve", GRESOLVE /* ( addr -- ) resolve forward jump at addr to dp */
     .word XT_MEMMODE , XT_DOCONDBRANCH , GRESOLVE0
 
     .word XT_QSTACK

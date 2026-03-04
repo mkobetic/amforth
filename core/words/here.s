@@ -49,16 +49,17 @@ END TO_RAM
 
 /*
 : init.dp.flash ( -- ) \ set dp.flash to the first erased cell after end of flash dictionary
-    \if forth-wordlist < dp0.flash then leave dp.flash set to dp0.flash
-    forth-wordlist dp0.flash < if exit then
+    \if forth-wordlist < dp0.flash then use dp0.flash as start-address
+    forth-wordlist dp0.flash < if dp0.flash else forth-wordlist then
     \ find start of the next flash page after forth-wordlist
-    forth-wordlist flash.page / 1+ flash.page *
+    dup flash.page / 1+ flash.page *
+    \ ( start-address next-page-address )
     \ check the end of the previous page to see if it is erased
-    cell- dup @ flash.erased == if \ ( end-of-last-page )
+    cell- dup @ flash.erased == if \ ( start-address end-of-last-page )
       \ if so start the backward search for cell from there
     else
       \ check the end of the next page to see if was erased
-      dup flash.page + dup @ flash.erased == if \ ( end-of-last-page end-of-next-page )
+      dup flash.page + dup @ flash.erased == if \ ( start-address end-of-last-page end-of-next-page )
         \ if it was search from the end of the page
         swap drop
       else
@@ -66,12 +67,17 @@ END TO_RAM
         \ this assumes that valid dictionary content cannot extend more than
         \ flash page size past the forth-wordlist pointer
         drop cell+ dup flash.erase
-        to dp.flash exit
+        to dp.flash drop exit
       then
-    then \ ( erased-cell-to-search-from )
+    then \ ( start-address erased-cell-to-search-from )
     \ then search back for the first dirty cell
-    begin dup @ flash.erased = while
-        cell- repeat
+    \ make sure we don't run past start-address
+    begin
+      dup @ flash.erased = while
+        cell-
+        2dup <= while
+    repeat \ second while target
+    then \ first while target
     \ set dp.flash to the erased flash cell after it
     cell+ flash.cell swap naligned to dp.flash
 ;

@@ -49,8 +49,8 @@ COMPILER:
     evaluate evaluate.source evaluate.str evaluate.strlen
 FLOW:
     ?abort abort" abort trap.base trap! throw catch handler exit
-    repeat again else if while until then begin ahead
-    +loop  loop  endloop do ?do j i unloop leave >l l> lp lp0 
+    ahead if else then begin until again while repeat 
+    do ?do i j unloop leave loop +loop endloop >l l> lp lp0 
 IO:
     serial-emit? serial-emit serial-key? serial-key emit? serial-emit-pause emit key? serial-key-pause key
     tib #tib >in source-tib source accept refill-tib refill ?crlf bs

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-NONAME "lmark", LMARK
+NONAME "<mark", LMARK /* ( -- addr ) remember dp as address of a backward jump */
     .word XT_DP
     .word XT_EXIT
 END LMARK
