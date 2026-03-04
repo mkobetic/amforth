@@ -28,7 +28,7 @@ MEMORY:
 STRING:
     ." s" sub-string? number >number digit? toupper
     /string parse parse-name cskip cscan
-    search bounds compare count
+    search sift bounds compare count
     cfg-recognizer forth-recognizer split rectype-split rec-split rec-num rectype-dnum rectype-num rectype-xt rec-find rectype-null recognize
 DICTIONARY:
     ' c, , h, (c,) (,) s, chkdalign reveal newest latest 
@@ -62,14 +62,14 @@ OUTPUT:
     sign #> #s # <# hold hld
 SYSTEM:
     cold warm init-ram turnkey appl-turnkey quit pause
-    ms us .ver build.rev build.time build.config
+    ms us .ver .build build.rev build.time build.config cpu board version name /user
     set-base bases .ready .ok .input .error first-run
     first-boot.done ?first-boot first-boot.marker first-boot.start
 TOOLS:
     .s .k debug || dump ?ascii vdump break
 FLASH:
-    flash.cell flash.page flash.erased flash.start flash.low flash.max flash.erase flush naligned
-    pv.do pv.init vaddr pv.store pvp pv.reset-hard
+    flash.cell flash.page flash.erased flash.start flash.low flash.max flash.erase flush naligned !i
+    pv.do pv.init vaddr pv.store pvp pv.reset-hard 2!pvf
     pvflash.start pvflash.size pvflash.page pvflash.cell pvflash.erased pvflash.erase
     pvarena.size pvarena.init pvarena.swap pvarena.erase pvarena pvarena.dormant pvarena1 pvarena2
 OTHER:

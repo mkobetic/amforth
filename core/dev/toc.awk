@@ -2,6 +2,10 @@
 # spit out the headers of all the words encountered.
 # Along the way attach the file:line location to each.
 
+# skip macros.inc files
+FILENAME == "core/macros.inc" { nextfile }
+FILENAME == "arm/macros.inc" { nextfile }
+FILENAME == "rv/macros.inc" { nextfile }
 # match($0, /COLON[[:space:]]+".*",/) { print substr($0, RSTART + 7, RLENGTH - 9) }
 /CODEWORD[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 /CODEALIAS[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
@@ -20,7 +24,7 @@
 /CONSTANT[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 /CON[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 /DATA[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
-/ENVINRONMENT[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
+/ENVIRONMENT[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 # RISC-V
 /CSR[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 # ARM

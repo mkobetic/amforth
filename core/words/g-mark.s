@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON ">mark", GMARK /* ( -- addr ) allocate and store address of forward jump */
+NONAME ">mark", GMARK /* ( -- addr ) allocate and store address of forward jump */
 .ifdef RA_FLASH
 	.word XT_MEMMODE
 	.word XT_DOCONDBRANCH,GMARK_0001 /* if */
