@@ -61,3 +61,29 @@ T{ -1 not -> 0 }T
 
 TESTING 2rot
 T{ 1 2 3 4 5 6 2rot -> 3 4 5 6 1 2 }T
+
+TESTING search
+
+T{ : s1 S" abcdefghijklmnopqrstuvwxyz"   ; -> }T
+T{ : s2 S" abc"   ; -> }T
+T{ : s3 S" jklmn" ; -> }T
+T{ : s4 S" z"     ; -> }T
+T{ : s5 S" mnoq"  ; -> }T
+T{ : s6 S" 12345" ; -> }T
+T{ : s7 S" "      ; -> }T
+T{ : s8 S" xyz"      ; -> }T
+
+T{ s1 s2 SEARCH -> s1 <TRUE>  }T
+T{ s1 s3 SEARCH -> s1  9 /STRING <TRUE>  }T
+T{ s1 s4 SEARCH -> s1 #25 /STRING <TRUE>  }T
+T{ s1 s5 SEARCH -> s1 <FALSE> }T
+T{ s1 s6 SEARCH -> s1 <FALSE> }T
+T{ s1 s7 SEARCH -> s1 <TRUE>  }T
+T{ s1 2 - s8 SEARCH -> s1 2 - <FALSE>  }T
+
+TESTING sift
+
+T{ s2 s1 SIFT -> s1 <TRUE>  }T
+T{ s6 s1 SIFT -> s6 <FALSE> }T
+T{ s3 s1 SIFT -> s1 9 /STRING <TRUE> }T
+
