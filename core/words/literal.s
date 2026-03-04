@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-IMMED "literal", LITERAL /* ( x -- ) append x as a literal to the dictionary */
+IMMED "literal", LITERAL /* (C: x -- ) compile code that will append x as a literal to the dictionary */
         .word XT_COMPILE
         .word XT_DOLITERAL
         .word XT_COMMA

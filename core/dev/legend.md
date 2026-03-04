@@ -14,7 +14,7 @@ ca ca1 ca2  | character aligned address
 fa fa1 fa2  | cell aligned address in FLASH
 xt xt1 xt2  | execution token (XT)
 c c1 c2 c3  | character (byte)
-s s1 s2 s3  | character (byte)
+s s1 s2 s3  | string = address length pair
 i*x j*x     | some unknown number of cells
 "name"      | name consumed from input buffer
 "ccc"       | string consumed from input buffer

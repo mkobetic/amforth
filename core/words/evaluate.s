@@ -1,24 +1,20 @@
 # SPDX-License-Identifier: GPL-3.0-only
-/*
-WORD:  evaluate
-STACK: ( a u -- )
-MOTIF: 
-CATEG: compiler
-STDID: core/EVALUATE
-SHORT: interpret a Forth string of length u starting at address a 
-*/
 
-VARIABLE "evaluate.strlen",EVALUATEDOTSTRLEN
-VARIABLE "evaluate.str",EVALUATEDOTSTR
+VARIABLE "evaluate.strlen", EVALUATEDOTSTRLEN
+END EVALUATEDOTSTRLEN
+
+VARIABLE "evaluate.str", EVALUATEDOTSTR
+END EVALUATEDOTSTR
 # ----------------------------------------------------------------------
-COLON "evaluate.source"  , SOURCEMINUSSTRING 
+COLON "evaluate.source", EVALUATEDOTSOURCE 
     .word XT_EVALUATEDOTSTR
     .word XT_FETCH
     .word XT_EVALUATEDOTSTRLEN
     .word XT_FETCH
     .word XT_EXIT
+END EVALUATEDOTSOURCE
 # ----------------------------------------------------------------------
-COLON "(evaluate)" LPARENEVALUATERPAREN 
+COLON "(evaluate)", LPARENEVALUATERPAREN 
     .word XT_DOLITERAL
     .word XT_SOURCE
     .word XT_DEFER_FETCH
@@ -34,7 +30,7 @@ COLON "(evaluate)" LPARENEVALUATERPAREN
     .word XT_EVALUATEDOTSTR
     .word XT_STORE
     .word XT_DOLITERAL
-    .word XT_SOURCEMINUSSTRING
+    .word XT_EVALUATEDOTSOURCE
     .word XT_DOTO
     .word XT_SOURCE
     .word XT_DOLITERAL
@@ -48,8 +44,9 @@ COLON "(evaluate)" LPARENEVALUATERPAREN
     .word XT_SOURCE
     .word XT_THROW
     .word XT_EXIT
+END LPARENEVALUATERPAREN
 # ----------------------------------------------------------------------
-IMMED "evaluate", EVALUATE 
+IMMED "evaluate", EVALUATE /* ( a u -- ) interpret a Forth string of length u starting at address a  */
     .word XT_STATE
     .word XT_FETCH
     .word XT_DOCONDBRANCH,EVALUATE_0001 /* if */
@@ -60,3 +57,4 @@ EVALUATE_0001: /* else */
     .word XT_LPARENEVALUATERPAREN
 EVALUATE_0002: /* then */
     .word XT_EXIT
+END EVALUATE
