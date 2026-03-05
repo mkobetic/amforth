@@ -4,7 +4,7 @@ T{ 1 2 3 -rot -> 3 1 2 }T
 T{ 1 2 3 -rot rot -> 1 2 3 }T
 
 TESTING >NUMBER (alternative and additional tests)
-
+hex
 \                           LSB MSB U       U=0 converted U!=0 error
 T{ 0 0 s" 0"   >NUMBER nip -> 0   0 0 }T    \
 T{ 0 0 s" 1"   >NUMBER nip -> 1   0 0 }T    \
@@ -32,6 +32,7 @@ T{ 0 0 s" FFFFFFFFFFFFFFF" >NUMBER nip -> FFFFFFFF FFFFFFF  0 }T
 T{ 0 0 s" FFFFFFFFFFFFFFFF" >NUMBER nip -> FFFFFFFF FFFFFFFF  0 }T
 
 : >NUMBER-BASED BASE @ >R BASE ! >NUMBER R> BASE ! ;
+24 CONSTANT MAX-BASE			\ BASE 2 .. 36
 
 T{ 0 0  s" 2" 10 >NUMBER-BASED nip -> 2 0 0 }T
 T{ 0 0  s" 2"  2 >NUMBER-BASED nip -> 0 0 1 }T
@@ -73,17 +74,27 @@ T{ : s6 S" 12345" ; -> }T
 T{ : s7 S" "      ; -> }T
 T{ : s8 S" xyz"      ; -> }T
 
-T{ s1 s2 SEARCH -> s1 <TRUE>  }T
-T{ s1 s3 SEARCH -> s1  9 /STRING <TRUE>  }T
-T{ s1 s4 SEARCH -> s1 #25 /STRING <TRUE>  }T
-T{ s1 s5 SEARCH -> s1 <FALSE> }T
-T{ s1 s6 SEARCH -> s1 <FALSE> }T
-T{ s1 s7 SEARCH -> s1 <TRUE>  }T
-T{ s1 2 - s8 SEARCH -> s1 2 - <FALSE>  }T
+T{ s1 s2 SEARCH -> s1 TRUE  }T
+T{ s1 s3 SEARCH -> s1  9 /STRING TRUE  }T
+T{ s1 s4 SEARCH -> s1 #25 /STRING TRUE  }T
+T{ s1 s5 SEARCH -> s1 FALSE }T
+T{ s1 s6 SEARCH -> s1 FALSE }T
+T{ s1 s7 SEARCH -> s1 TRUE  }T
+T{ s1 2 - s8 SEARCH -> s1 2 - FALSE  }T
 
 TESTING sift
 
-T{ s2 s1 SIFT -> s1 <TRUE>  }T
-T{ s6 s1 SIFT -> s6 <FALSE> }T
-T{ s3 s1 SIFT -> s1 9 /STRING <TRUE> }T
+T{ s2 s1 SIFT -> s1 TRUE  }T
+T{ s6 s1 SIFT -> s6 FALSE }T
+T{ s3 s1 SIFT -> s1 9 /STRING TRUE }T
 
+TESTING compare, cscan, cskip
+
+T{ s" one" s" one" compare -> false }T
+T{ s" one" s" two" compare -> true }T
+
+T{ s" one" bl cskip s" one" compare -> false }T
+T{ s"    one" bl cskip s" one" compare -> false }T
+
+T{ s" one two" bl cscan s" one" compare -> false }T
+T{ s"  one" bl cscan nip 0= -> true }T

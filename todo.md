@@ -18,10 +18,9 @@ Also look for TODO: in source files
 * add long word description to the html refcard as title attribute, so that it shows on hover
 
 * sort out issues with `to` word (to.s/alto.s)
-* `does>` only works in RAM dictionary, need `<builds`
 * don't waste 2 registers for do loop index and limit (especially on ARM)
-* does the `UP` pointer need to be a register?
 * `LEAVE` stack is only used at compile time? Make it usable as a second parameter stack maybe?
+* header flags don't each need their own bit in FFA
 * runtime defined values and defers are not the same as the compile time defined ones (getters, setters, default values)
 * core/aligned.s vs arm|rv/aligned.s
 * aligned.s and do-aligned.s are identical

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-CODEWORD "unloop", UNLOOP /* (R: loop-sys -- ) remove loop-sys, exit the loop and continue execution after it */
+CODEWORD "unloop", UNLOOP /* (R: loop-sys -- ) remove loop-sys; required if you want exit the word rather then leave the loop */
     # restore loop-sys
     lw s8, 0(s5)
     lw s7, 4(s5)

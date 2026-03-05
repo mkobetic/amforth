@@ -159,8 +159,6 @@ PFA_\Label:
 .macro USER Name, Label, UOffset
    HEADER Flag_variable, "\Name", \Label, PFA_DOUSER
    .word \UOffset
-   # for symbol listing
-   .equ USER_\Label,\UOffset 
 .endm
 
 .macro VALUE Name, Label, Default

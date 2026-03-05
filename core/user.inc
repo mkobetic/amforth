@@ -9,4 +9,5 @@
 .equ USER_HANDLER, 5*cellsize
 .equ USER_BASE, 6*cellsize
 
-.equ USER_UDT, 7*cellsize
+.equ USER_DEBUG_BREAK, 7*cellsize
+.equ USER_DEBUG_NEXT, 8*cellsize

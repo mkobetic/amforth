@@ -66,7 +66,7 @@ SYSTEM:
     set-base bases .ready .ok .input .error first-run
     first-boot.done ?first-boot first-boot.marker first-boot.start
 TOOLS:
-    .s .k debug || dump ?ascii vdump break
+    .s .k debug || dump ?ascii vdump break debug+ debug-
 FLASH:
     flash.cell flash.page flash.erased flash.start flash.low flash.max flash.erase flush naligned !i
     pv.do pv.init vaddr pv.store pvp pv.reset-hard 2!pvf

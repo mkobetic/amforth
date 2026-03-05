@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "digit?", DIGITQ /* ( c -- (number|) flag ) tries to convert a character to a number, set flag accordingly */
+COLON "digit?", DIGITQ /* ( c -- [ number | ] flag ) tries to convert a character to a number, set flag accordingly */
     .word XT_TOUPPER
     .word XT_DUP,XT_DOLITERAL,57,XT_GREATER,XT_DOLITERAL,256
     .word XT_AND,XT_PLUS,XT_DUP,XT_DOLITERAL,320,XT_GREATER

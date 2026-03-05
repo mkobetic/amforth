@@ -209,15 +209,12 @@
 
 .include "words/dump.s"
 .include "words/testing.s"
+.include "words/debugger.s"
 
-
-
+.include "words/dicthelp.s"
 .if WANT_SEE 
 .include "words/dis-asm.s"
 .include "words/see.s"
-.include "words/dicthelp.s"
-.else
-.include "words/dicthelp.s"
 .endif
 
 .if WANT_MATCH
@@ -269,7 +266,6 @@
 .include "words/valign.s"
 
 .include "words/evaluate.s"
-.include "words/break.s"
 
 .include "words/chkdalign.s"
 .include "words/vdump.s"

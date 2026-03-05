@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "cscan", CSCAN /* ( addr1 n1 c -- addr1 n2 ) scan s1 for the first occurrence of c, char at n2 is first non-c character */
+COLON "cscan", CSCAN /* ( ca1 u1 c -- ca1 u2 ) s2 is the longest prefix of s1 without c */
     .word XT_TO_R
     .word XT_OVER
 PFA_CSCAN1:
