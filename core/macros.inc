@@ -24,11 +24,11 @@ VALUE "\ARCH-wordlist", ARCH_WORDLIST, 97b
 END ARCH_WORDLIST
 VALUE "environment", ENVIRONMENT, 98b
 END ENVIRONMENT
-.set core_wordlist , 99b
 CONSTANT "core-wordlist", CORE_WORDLIST, core_wordlist
 END CORE_WORDLIST
 # forth-wordlist needs to be the last of the compiled words
 PVALUE "forth-wordlist", FORTH_WORDLIST, 99b
+.set core_wordlist , 99b
 END FORTH_WORDLIST
 .endm
 
