@@ -267,3 +267,5 @@
 .include "words/chkdalign.s"
 .include "words/vdump.s"
 .include "words/qnop.s"
+
+.include "words/empty.s"
