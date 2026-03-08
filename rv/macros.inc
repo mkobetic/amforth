@@ -77,6 +77,39 @@
   addi s4, s4, 8
 .endm
 
+.macro CODEWORD Name, Label
+    HEADER Flag_visible, "\Name", \Label, PFA_\Label
+.endm
+
+.macro CLOAKED_CODEWORD Name, Label
+    HEADER Flag_visible | Flag_cloaked, "\Name", \Label, PFA_\Label
+.endm
+
+.macro HEADLESS Name, Label
+    .p2align 2,0x55
+    .word 0x03
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:
+XT_\Label: .word PFA_\Label
+PFA_\Label: 
+.endm
+
+# HIDEWORD is a CODEWORD with Flag_invisible
+# suspect I have made this visible again as
+# whatever I was trying did not work and I
+# did not want to go an edit all the files
+# again to replace HIDEWORD with CODEWORD 
+.macro HIDEWORD Name, Label
+    HEADER Flag_visible, "\Name", \Label, PFA_\Label
+.endm
+
+.macro STARTDICT
+  STARTDICTNOPFA
+PFA_NOP:
+        NEXT 
+.endm
+
 .macro ENDDICT
   ENDDICT_ARCH riscv
 .endm

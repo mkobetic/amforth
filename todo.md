@@ -36,6 +36,7 @@ Also look for TODO: in source files
 * don't use ldm when not needed (poptos, popnos)
 * `(exiti)` needs work
 * better HW fault handling
+* can we use LR as top of return stack?
 
 ## LM4F120
 
@@ -58,6 +59,7 @@ Also look for TODO: in source files
 ## CH32V307
 
 * RAMALLOT reg_shadow differences between 307 ad QEM configuration
+* update or remove dict_min.inc
 
 ## HIFIVE1
 

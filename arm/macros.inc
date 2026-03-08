@@ -59,6 +59,34 @@ rlooplimit .req r12
   b DO_EXECUTE          /* execute via ITC VM    */
 .endm
 
+/* We need to set the thumb bit on the PFA_ symbol of code words (headfull and headless),
+  so that the inner interpreter can bx to it without tripping over ARM interworking
+*/
+
+.macro CODEWORD Name, Label
+    HEADERNOPFA Flag_visible, "\Name", \Label, PFA_\Label
+.thumb_func
+PFA_\Label: 
+.endm
+
+.macro HEADLESS Name, Label
+    .p2align 2,0x55
+    .word 0x03
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:
+XT_\Label: .word PFA_\Label
+.thumb_func
+PFA_\Label: 
+.endm
+
+.macro STARTDICT
+  STARTDICTNOPFA
+.thumb_func
+PFA_NOP:
+        NEXT 
+.endm
+
 .macro ENDDICT
   ENDDICT_ARCH arm
 .endm

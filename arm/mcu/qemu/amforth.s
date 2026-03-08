@@ -7,7 +7,7 @@
 .arm  /* Switch to ARM mode for this part */
 .global _start
 _start:
-    ldr r0, =PFA_COLD + 1
+    ldr r0, =PFA_COLD
     bx r0
 
 .syntax unified

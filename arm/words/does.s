@@ -34,7 +34,6 @@ Child's CFA must point to machine code that will
   .word XT_COMMA
   .word XT_DOLITERAL
   .word PFA_XDODOES
-  .word XT_1PLUS    @ MUST set the Thumb bit on the jump address!
   .word XT_COMMA      
   .word XT_EXIT
 END DOES
@@ -53,6 +52,7 @@ COLON "(does)", DODOES /* (R: addr -- ) addr of the synthetic jump after (does),
 */
 
    .word XT_R_FROM @ get the synthetic jump address from return stack
+   .word XT_1PLUS  @ set the thumb bit on the jump address
    .word XT_NEWEST @ get the child word's CFA
    .word XT_FETCH
    .word XT_FFA2CFA
