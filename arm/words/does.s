@@ -51,20 +51,25 @@ COLON "(does)", DODOES /* (R: addr -- ) addr of the synthetic jump after (does),
   to return when (does) finishes. Instead we want to return to the word that called the parent word,
   i.e the next address on the return stack.
 */
-  .word XT_MEMMODE , XT_DOCONDBRANCH , 1f
-  @ compiling to flash not supported yet
-  .word XT_DOLITERAL, EUNSUP, XT_THROW
 
-1: @ compiling to ram
-  .word XT_R_FROM @ get the synthetic jump address from return stack
-  .word XT_NEWEST @ get the child word's CFA
-  .word XT_FETCH
-  .word XT_FFA2CFA
-  .word XT_STORE @ store the jump address in child's CFA
-  .word XT_EXIT
+   .word XT_R_FROM @ get the synthetic jump address from return stack
+   .word XT_NEWEST @ get the child word's CFA
+   .word XT_FETCH
+   .word XT_FFA2CFA
+
+   .word XT_MEMMODE , XT_DOCONDBRANCH, 1f
+   .word XT_FLASHDOTFLUSH
+.if RA_FLASH == YES
+   .word XT_RASTORE_I
+.else   
+   .word XT_STORE_I   @ store the jump address in child's CFA
+.endif   
+   .word XT_DOBRANCH , 2f
+1: .word XT_STORE     @ store the jump address in child's CFA
+2: .word XT_EXIT
 END DODOES
 
-HEADLESS "(xdoes)", XDODOES /* ( -- u) prepares interpreter state for execution of the DOES> wordlist, u is child's PFA */
+CODEWORD "(xdoes)", XDODOES /* ( -- u) prepares interpreter state for execution of the DOES> wordlist, u is child's PFA */
   /* W register has child's PFA, push it to TOS */ 
   pushtos FORTHW
   /* IP points to the next word after child's call site,

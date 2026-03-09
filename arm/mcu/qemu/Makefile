@@ -1,4 +1,4 @@
-
+-include .env
 TARGET ?= QEM
 TARGETS = QEM
 ifneq ($(strip $(TARGET)), QEM)

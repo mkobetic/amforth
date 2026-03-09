@@ -65,18 +65,20 @@ COLON "(does)", DODOES /* (R: addr -- ) addr of the synthetic jump after (does),
   to return when (does) finishes. Instead we want to return to the word that called the parent word,
   i.e the next address on the return stack.
 */
-        .word XT_MEMMODE , XT_DOCONDBRANCH , DODOES0
-         # compiling to flash not supported yet
-        .word XT_DOLITERAL, EUNSUP, XT_THROW
 
-
-DODOES0: # compiling to ram
         .word XT_R_FROM # get the synthetic jump address from return stack
         .word XT_NEWEST # get the child word's CFA
         .word XT_FETCH        
         .word XT_FFA2CFA
-        .word XT_STORE # store the jump address in child's CFA
-        .word XT_EXIT
+        
+        .word XT_MEMMODE , XT_DOCONDBRANCH, 1f
+        .word XT_FLASHDOTFLUSH
+        .word XT_STORE_I 
+        .word XT_DOBRANCH , 2f 
+1:      .word XT_STORE # store the jump address in child's CFA
+
+2:      .word XT_EXIT
+
 END DODOES
 
 HEADLESS "(xdoes)", XDODOES /* ( -- u) prepares interpreter state for execution of the DOES> wordlist, u is child's PFA */

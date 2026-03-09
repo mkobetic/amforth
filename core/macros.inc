@@ -59,6 +59,7 @@ END FORTH_WORDLIST
 .equ Flag_init,       0x0080
 .equ Flag_table,      0x0100
 .equ Flag_pvalue,     0x0200
+.equ Flag_child,      0x0400
 
 # Ramallot means that RAM is reserved and initialised by catchflashpointers for this definition on startup
 .equ Flag_ramallot,   Flag_visible | 0x0100 
@@ -123,6 +124,7 @@ PFA_\Label:
 
 .macro HEADLESS Name, Label
     .p2align 2,0x55
+    .word 0x03
     .global _\Label
     .type _\Label, STT_FUNC
 _\Label:
@@ -140,6 +142,7 @@ PFA_\Label:
 
 .macro NONAME Name, Label
     .p2align 2,0x55
+    .word 0x03
     .global _\Label
     .type _\Label, STT_FUNC
 _\Label:

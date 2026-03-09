@@ -32,7 +32,8 @@ SCOMMA_0001: /* (for ?do IF required) */
 	.word XT_QDOCHECK, XT_DOCONDBRANCH,SCOMMA_0003 /* ?do */
 	.word XT_DODO
 SCOMMA_0004: /* do */
-	.word XT_MINUSONE
+    .word XT_DOLITERAL
+	.word 0xAA
 	.word XT_CCOMMA
 	.word XT_DOLOOP,SCOMMA_0004 /* loop */
 SCOMMA_0003: /* (for ?do IF required) */
