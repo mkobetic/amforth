@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 # start of flash dictionary. The 0 is the stop marker.
-.macro STARTDICT
+.macro STARTDICTNOPFA
   # .text should aready be in section amforth
   .p2align 2,0x55
 VE_NOP: .word 0
@@ -14,8 +14,6 @@ VE_NOP: .word 0
 7:      .ascii "nop"
 8:      .p2align 2,0xAA
 XT_NOP: .word PFA_NOP
-PFA_NOP:
-        NEXT 
 .endm
 
 # save the beginning of the wordlists
@@ -76,7 +74,7 @@ END FORTH_WORDLIST
   quite quickly on unaligned loads.
   So unfortunately we have add another set of symbols for the functions because of ARM, thus the _\Label symbols.
 */
-.macro HEADER Flags, Name, Label, PFA
+.macro HEADERNOPFA Flags, Name, Label, PFA
     .p2align 2,0x55
 VE_\Label:
     .word 99b /* LFA: Link to FFA of previous word */
@@ -93,6 +91,10 @@ VE_\Label:
     .type _\Label, STT_FUNC
 _\Label:
 XT_\Label: .word \PFA
+.endm
+
+.macro HEADER Flags, Name, Label, PFA
+    HEADERNOPFA \Flags, "\Name", \Label, \PFA
 PFA_\Label: 
 .endm
 
@@ -101,35 +103,8 @@ PFA_\Label:
     .size _\Label, . - _\Label
 .endm
 
-.macro CODEWORD Name, Label
-    HEADER Flag_visible, "\Name", \Label, PFA_\Label
-.endm
-
-.macro CLOAKED_CODEWORD Name, Label
-    HEADER Flag_visible | Flag_cloaked, "\Name", \Label, PFA_\Label
-.endm
-
 .macro CODEALIAS Name, Label, Target
     HEADER Flag_visible, "\Name", \Label, PFA_\Target
-.endm
-
-# HIDEWORD is a CODEWORD with Flag_invisible
-# suspect I have made this visible again as
-# whatever I was trying did not work and I
-# did not want to go an edit all the files
-# again to replace HIDEWORD with CODEWORD 
-.macro HIDEWORD Name, Label
-    HEADER Flag_visible, "\Name", \Label, PFA_\Label
-.endm
-
-.macro HEADLESS Name, Label
-    .p2align 2,0x55
-    .word 0x03
-    .global _\Label
-    .type _\Label, STT_FUNC
-_\Label:
-XT_\Label: .word PFA_\Label
-PFA_\Label: 
 .endm
 
 .macro COLON Name, Label
