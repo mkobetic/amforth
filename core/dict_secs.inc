@@ -92,16 +92,23 @@
 .include "words/immediate-q.s"
 .include "words/order.s"
 .include "words/find-xt.s"
-.include "words/xt2nfa.s"
-.include "words/xt2ffa.s"
-.include "words/nfa2lfa.s"
-.include "words/nfa2cfa.s"
+
+# dictionary start
+#.include "words/xt2nfa.s"
+#.include "words/xt2ffa.s"
+#.include "words/nfa2lfa.s"
+#.include "words/nfa2cfa.s"
+#.include "words/name2string.s"
+#.include "words/name2flags.s"
+#.include "words/xt2string.s"
+#.include "words/dictopt.s"
+.include "words/dictopt-newb.s"
+# dictionary end
+
 .include "words/traverse-wordlist.s"
 .include "words/show-wordlist.s"
 .include "words/current.s"
 .include "words/search-wordlist.s"
-.include "words/name2string.s"
-.include "words/name2flags.s"
 
 .include "words/mplus.s"
 .include "words/ud-star.s"
@@ -205,9 +212,13 @@
 .include "words/dump.s"
 .include "words/testing.s"
 
+
+
 .if WANT_SEE 
 .include "words/dis-asm.s"
 .include "words/see.s"
+.include "words/dicthelp.s"
+.else
 .include "words/dicthelp.s"
 .endif
 
@@ -243,8 +254,6 @@
 .include "words/is.s"
 .include "words/alto.s"
 #.include "words/to.s"
-.include "words/xt2string.s"
-.include "words/dictopt.s"
 
 
 .include "words/mlc.s"
@@ -269,3 +278,4 @@
 .include "words/qnop.s"
 
 .include "words/empty.s"
+.include "words/builds.s"

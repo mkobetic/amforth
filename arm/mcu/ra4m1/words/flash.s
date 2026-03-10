@@ -95,6 +95,37 @@ COLON "~!i", TILDESTORE_I /* ( x addr -- ) write x at addr in flash */
 	.word XT_EXIT
 END TILDESTORE_I
 
+COLON "ra!i", RASTORE_I /* ( x addr -- ) write x at addr in flash */
+	/* don't allow writing below dp0.flash */
+	.word XT_DUP
+	.word XT_DP0_FLASH
+	.word XT_LESS
+	.word XT_DOCONDBRANCH, 1f /* # if */
+	.word XT_DOLITERAL, EFWADDR, XT_THROW
+1:	/* # then */
+	.word XT_FLASH_CACHE
+	.word XT_FLASH_SHADOW
+	.word XT_FLASH_CELL
+	.word XT_MOVE
+	.word XT_TO_R
+    .word XT_ZERO
+	.word XT_FLASH_CACHE
+	.word XT_STORE
+	.word XT_FLASH_CACHE
+	.word XT_CELLPLUS
+	.word XT_STORE
+	.word XT_R_FROM
+	.word XT_FLASH_CELL
+	.word XT_PLUS
+	.word XT_FLASH_WRITE
+	.word XT_FLASH_SHADOW
+	.word XT_FLASH_CACHE
+	.word XT_FLASH_CELL
+	.word XT_MOVE
+	.word XT_EXIT
+END RASTORE_I
+
+
 # ----------------------------------------------------------------------
 
 COLON "~(dallot)", TILDEDODALLOT /* ( u -- allocate u bytes in the dictionary ) */

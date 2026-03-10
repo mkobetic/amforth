@@ -1,10 +1,11 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
-CONSTANT "XT.COLON"    , CON_COLON, DOCOLON
-CONSTANT "XT.VARIABLE" , CON_VARIABLE, PFA_DOVARIABLE
-CONSTANT "XT.EXIT"     , CON_EXIT  , XT_EXIT
+
+#CONSTANT "XT.COLON"    , CON_COLON, DOCOLON
+#CONSTANT "XT.VARIABLE" , CON_VARIABLE, PFA_DOVARIABLE
+#CONSTANT "XT.EXIT"     , CON_EXIT  , XT_EXIT
 CONSTANT "PFA.DEFER"   , CON_DEFER , PFA_DODEFER
-CONSTANT "PFA.VALUE"   , CON_VALUE , PFA_DOVALUE
-CONSTANT "XT.DOCONDBRANCH" , CON_DOCONDBRANCH, XT_DOCONDBRANCH            
+#CONSTANT "PFA.VALUE"   , CON_VALUE , PFA_DOVALUE
+#CONSTANT "XT.DOCONDBRANCH" , CON_DOCONDBRANCH, XT_DOCONDBRANCH            
 CONSTANT "XT.DONEXT" , CON_DONEXT, DO_NEXT
 CONSTANT "XT.EXECUTE" , CON_EXECUTE, DO_EXECUTE
 
@@ -13,28 +14,35 @@ CONSTANT "PFA.DOUSER" , CON_DOUSER, PFA_DOUSER
 
 /* FIX THIS */
 
-COLON "literal?" , LITERALQ /* ( a -- f ) DICT: f is true if a contains XT of DOLITERAL  */
+COLON "compile?" , COMPILEQ /* ( a -- f ) f is true if a contains XT of COMPILE  */
+      .word XT_FETCH
+      .word XT_DOLITERAL
+      .word XT_COMPILE
+      .word XT_EQUAL
+      .word XT_EXIT
+
+COLON "literal?" , LITERALQ /* ( a -- f ) f is true if a contains XT of DOLITERAL  */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word XT_DOLITERAL
       .word XT_EQUAL
       .word XT_EXIT
 
-COLON "xliteral?" , XLITERALQ /* ( a -- f ) DICT: f is true if a contains XT of DOXLITERAL  */
+COLON "xliteral?" , XLITERALQ /* ( a -- f ) f is true if a contains XT of DOXLITERAL  */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word XT_DOXLITERAL
       .word XT_EQUAL
       .word XT_EXIT
 
-COLON "sliteral?" , SLITERALQ /* ( a -- f ) DICT: f is true if a contains XT of DOSLITERAL  */
+COLON "sliteral?" , SLITERALQ /* ( a -- f ) f is true if a contains XT of DOSLITERAL  */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word XT_DOSLITERAL
       .word XT_EQUAL
       .word XT_EXIT
 
-COLON "loop?" , LOOPQ /* ( a -- f ) DICT: f is true if [a] is XT of DOLOOP | DOPLUSLOOP  */
+COLON "loop?" , LOOPQ /* ( a -- f ) f is true if [a] is XT of DOLOOP | DOPLUSLOOP  */
       .word XT_FETCH
       .word XT_DUP
       .word XT_DOLITERAL
@@ -47,28 +55,19 @@ COLON "loop?" , LOOPQ /* ( a -- f ) DICT: f is true if [a] is XT of DOLOOP | DOP
       .word XT_OR 
       .word XT_EXIT
 
-COLON "condbranch?", CONDBRANCHQ /* # ( a -- f ) DICT: f is true if a contains XT of DOCONDBRANCH */
+COLON "condbranch?", CONDBRANCHQ /* ( a -- f ) f is true if a contains XT of DOCONDBRANCH */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word XT_DOCONDBRANCH
       .word XT_EQUAL
       .word XT_EXIT
 
-COLON "branch?", BRANCHQ /* # ( a -- f ) DICT: f is true if a contains XT of DOBRANCH */
+COLON "branch?", BRANCHQ /* ( a -- f ) f is true if a contains XT of DOBRANCH */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word XT_DOBRANCH
       .word XT_EQUAL
       .word XT_EXIT
-
-/* MFD if below works  */
-/* COLON "anybranch?", ANYBRANCHQ # # ( a -- f ) DICT: f is true if a contains XT of any branch */
-/* .word XT_DUP */
-/* .word XT_CONDBRANCHQ */
-/* .word XT_SWAP */
-/* .word XT_BRANCHQ */
-/* .word XT_OR  */
-/* .word XT_EXIT */
 
 COLON "anybranch?", ANYBRANCHQ /* # ( a -- f ) DICT: f is true if a contains XT of any branch */
       .word XT_DUP
@@ -81,22 +80,14 @@ COLON "anybranch?", ANYBRANCHQ /* # ( a -- f ) DICT: f is true if a contains XT 
       .word XT_OR 
       .word XT_EXIT
 
-/* MFD COLON "colon?" , COLONQ */
-/* .word XT_FETCH */
-/* .word XT_CON_COLON */
-/* .word XT_EQUAL */
-/* .word XT_EXIT */
-
-/* colon? ( a -- f )             */
-COLON "colon?" , COLONQ /* ( a -- f ) DICT: f is true if a contains XT of DOCOLON  */
+COLON "colon?" , COLONQ /* ( a -- f ) f is true if a contains XT of DOCOLON  */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word DOCOLON
       .word XT_EQUAL
       .word XT_EXIT
 
-/* codeword? ( xt -- f ) */
-COLON "codeword?" , CODEWORDQ /* ( a -- f ) DICT: f is true if a contains XT of CODEWORD */
+COLON "codeword?" , CODEWORDQ /* ( a -- f ) f is true if a contains XT of CODEWORD */
       .word XT_DUP
       .word XT_FETCH
       .word XT_SWAP
@@ -104,15 +95,7 @@ COLON "codeword?" , CODEWORDQ /* ( a -- f ) DICT: f is true if a contains XT of 
       .word XT_EQUAL
       .word XT_EXIT
       
-
-/* exit? ( addr-in-pfa-body -- f ) */
-/* COLON "exit?" , EXITQ */
-/* .word XT_FETCH */
-/* .word XT_CON_EXIT */
-/* .word XT_EQUAL */
-/* .word XT_EXIT */
-
-COLON "exit?" , EXITQ  /* ( a -- f ) DICT: f is true if [a] is XT of EXIT | EXITI */
+COLON "exit?" , EXITQ  /* ( a -- f ) f is true if [a] is XT of EXIT | EXITI */
       .word XT_FETCH
       .word XT_DUP
       .word XT_DOLITERAL
@@ -125,34 +108,14 @@ COLON "exit?" , EXITQ  /* ( a -- f ) DICT: f is true if [a] is XT of EXIT | EXIT
       .word XT_OR 
       .word XT_EXIT
 
-/* Original MFD  */
-/* condbranch? ( addr-in-pfa-body -- f ) */
-/* COLON "condbranch?" , CONDBRANCHQ */
-/* .word XT_FETCH */
-/* .word XT_CON_DOCONDBRANCH */
-/* .word XT_EQUAL */
-/* .word XT_EXIT */
-
-/* MFD COLON "variable?" , VARIABLEQ */
-/* .word XT_FETCH */
-/* .word XT_CON_VARIABLE */
-/* .word XT_EQUAL */
-/* .word XT_EXIT */
-
-COLON "variable?" , VARIABLEQ /* ( a -- f ) DICT: f is true if [a] is XT for a variable */
+COLON "variable?" , VARIABLEQ /* ( a -- f ) f is true if [a] is XT for a variable */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word PFA_DOVARIABLE
       .word XT_EQUAL
       .word XT_EXIT
 
-/* MFD COLON "value?" , VALUEQ */
-/* .word XT_FETCH */
-/* .word XT_CON_VALUE */
-/* .word XT_EQUAL */
-/* .word XT_EXIT */
-
-COLON "value?" , VALUEQ /* ( a -- f ) DICT: f is true if [a] is XT for a value */
+COLON "value?" , VALUEQ /* ( a -- f ) f is true if [a] is XT for a value */
       .word XT_FETCH
       .word XT_DOLITERAL
       .word PFA_DOVALUE

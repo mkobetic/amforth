@@ -47,8 +47,8 @@
 
 # what Forth word groups do you want included in the core 
 
-.equ WANT_CASE         , NO
-.equ WANT_MATCH        , NO
+.equ WANT_CASE         , YES
+.equ WANT_MATCH        , YES
 .equ WANT_FORNEXT      , NO
 
 .equ WANT_SEE          , NO
