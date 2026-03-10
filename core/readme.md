@@ -185,6 +185,18 @@ Primarily it means that they cannot be used as immediate values in assembler cod
 
 This is because the assembler processes source code before the linker, so it can't resolve symbols defined only in the linker script when used as immediates. Immediates must be known at assembly time, while linker symbols are resolved later during linking. Using linker symbol improperly fails with confusing error `"Unknown symbol"`. The issue might be that the symbol exists but is used improperly (in a way that would require embedding it into the instruction opcode, as opposed to an instruction "argument" that the linker can handle).
 
+# Code conventions
+
+Every pre-compiled word should have a comment on the same line as the word definition macro containing the stack signature and short description. This line is used to generate the reference card. Example:
+```
+CODEWORD "rdepth", RDEPTH /* ( -- n ) n is current dept of the return stack */
+```
+The comment must use the `/* .. */` format to be compatible with both ARM and RV assembler. A longer description optionally follows this header line, again enclosed in `/* .. */`.
+
+The word definition must end with the `END` macro (it allows emitting proper function blocks for words). The `END` macro requires the same symbol argument that was used to start the word definition.
+
+`NONAME` and `HEADLESS` macro invocations must include a name argument. The name is not included in the word definition but it is used when transpiling Forth code to ITC. `NONAME` and `HEADLESS` words are excluded from the reference card, but should still have the standard comment line.
+
 
 # Development
 

@@ -12,7 +12,6 @@ Also look for TODO: in source files
 * xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
 * review/simplify word flags
 
-* add words to show memory stats
 * extend the error prompt to list words on the R-stack to help identify where the throw comes from
 * all words should use the END macro to be proper function blocks (debug_info)
 * proper, and extractable comments for all words
@@ -58,7 +57,6 @@ Also look for TODO: in source files
 
 ## CH32V307
 
-* unify the build setup with the rest of MCUs (gcc vs as)
 * RAMALLOT reg_shadow differences between 307 ad QEM configuration
 
 ## HIFIVE1
@@ -69,6 +67,7 @@ Also look for TODO: in source files
 # TOOLS
 
 * make sure all tools work
+* make sure the `words` change didn't break amshell's autocomplete
 * amshell: translate exception number to mnemonic
 * socket-shell.py duplicates most of amforth-shell.py
 * keep am4up.c ?
