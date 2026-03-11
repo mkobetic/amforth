@@ -64,7 +64,7 @@ rlooplimit .req r12
 */
 
 .macro CODEWORD Name, Label
-    HEADERNOPFA Flag_visible, "\Name", \Label, PFA_\Label
+    HEADERNOPFA Flag_none, "\Name", \Label, PFA_\Label
 .thumb_func
 PFA_\Label: 
 .endm
@@ -97,11 +97,11 @@ PFA_NOP:
 @ ================================
 
 .macro ARM_COLON Name, Label
-    ARCH_HEADER Flag_visible, "\Name", \Label, DOCOLON
+    ARCH_HEADER Flag_none, "\Name", \Label, DOCOLON
 .endm
 
 .macro ARM_CONSTANT Name, Label, NUM
-    ARCH_HEADER Flag_visible, "\Name", \Label, PFA_DOVARIABLE
+    ARCH_HEADER Flag_none, "\Name", \Label, PFA_DOVARIABLE
     .word \NUM
 .endm
 

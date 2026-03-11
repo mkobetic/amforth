@@ -13,7 +13,7 @@ CODEWORD "qqq" , QQQ
          jal qqq
          NEXT
 
-CLOAKED_CODEWORD "(f.)" , LPARENFDOTRPAREN
+HEADLESS "(f.)" , LPARENFDOTRPAREN
          fmv.w.x fa0, s3 
          jal print_float
          loadtos

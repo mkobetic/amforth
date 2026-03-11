@@ -193,7 +193,6 @@
 .include "words/ramwordlist.s"
 .include "words/flag.s"
 .include "words/search.s"
-.include "words/cloak.s"
 #.include "words/freeze.s"
 
 
@@ -206,7 +205,6 @@
 .include "words/traps.s"
 .include "words/forget.s"
 .include "words/memmode.s"
-.include "words/private.s"
 .include "words/find.s"
 
 .include "words/dump.s"

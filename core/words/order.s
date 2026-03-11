@@ -61,7 +61,7 @@ COLON "only" , ONLY /* set search order to RAM dictionary mode */
       .word XT_EXIT
 END ONLY
 
-CLOAKED_COLON "(order)" , DOORDER
+NONAME "(order)" , DOORDER
 
       .word XT_DUP
       .word XT_HEXDOT

@@ -78,11 +78,7 @@
 .endm
 
 .macro CODEWORD Name, Label
-    HEADER Flag_visible, "\Name", \Label, PFA_\Label
-.endm
-
-.macro CLOAKED_CODEWORD Name, Label
-    HEADER Flag_visible | Flag_cloaked, "\Name", \Label, PFA_\Label
+    HEADER Flag_none, "\Name", \Label, PFA_\Label
 .endm
 
 .macro HEADLESS Name, Label
@@ -93,15 +89,6 @@
 _\Label:
 XT_\Label: .word PFA_\Label
 PFA_\Label: 
-.endm
-
-# HIDEWORD is a CODEWORD with Flag_invisible
-# suspect I have made this visible again as
-# whatever I was trying did not work and I
-# did not want to go an edit all the files
-# again to replace HIDEWORD with CODEWORD 
-.macro HIDEWORD Name, Label
-    HEADER Flag_visible, "\Name", \Label, PFA_\Label
 .endm
 
 .macro STARTDICT
@@ -119,7 +106,7 @@ PFA_NOP:
 # =====================
 
 .macro CSR NUM, Name
-  ARCH_HEADER Flag_visible, "\Name", CSR_\Name, PFA_CSR_\Name
+  ARCH_HEADER Flag_none, "\Name", CSR_\Name, PFA_CSR_\Name
     savetos
     csrr s3, \NUM
   NEXT

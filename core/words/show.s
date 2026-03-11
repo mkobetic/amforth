@@ -22,11 +22,6 @@
 # ;
 # 
 # :~ show.what ( ffa -- )
-# \    dup @ 0< cloak? and if \ don't show cloaked words
-#     dup @ 0< public? and if \ don't show cloaked words
-#         drop true exit     \ if cloak? is true
-#     then
-# 
 #     >r
 #     2dup
 #     r@ cell + nfa>string sub-string? if
@@ -86,7 +81,7 @@
 # 
 
 # ----------------------------------------------------------------------
-CLOAKED_COLON "show.xt?", SHOWDOTXTQ 
+NONAME "show.xt?", SHOWDOTXTQ 
 	.word XT_FETCH
 	.word XT_DOLITERAL
 	.word 0xfff
@@ -202,17 +197,7 @@ SHOWDOTXTQ_0002: # then
 	.word XT_EXIT
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
-CLOAKED_COLON "show.what", SHOWDOTWHAT 
-	.word XT_DUP
-	.word XT_FETCH
-	.word XT_ZEROLESS
-	.word XT_PUBLICQ
-	.word XT_AND
-	.word XT_DOCONDBRANCH,SHOWDOTWHAT_0001 /* if */
-	.word XT_DROP
-	.word XT_TRUE
-	.word XT_FINISH
-SHOWDOTWHAT_0001: # then
+NONAME "show.what", SHOWDOTWHAT
 	.word XT_TO_R
 	.word XT_2DUP
 	.word XT_R_FETCH
@@ -260,7 +245,7 @@ SHOWDOTWHAT_0002: # then
 	.word XT_EXIT
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
-CLOAKED_COLON "show.header", SHOWDOTHEADER 
+NONAME "show.header", SHOWDOTHEADER 
 	STRING "LFA..... (LFA)... FFA..... (FFA)... NFA..... XT...... (XT).... "
 	.word XT_TYPE
 	.word XT_CR
