@@ -32,20 +32,20 @@ STRING:
     cfg-recognizer forth-recognizer split rectype-split rec-split rec-num rectype-dnum rectype-num rectype-xt rec-find rectype-null recognize
 DICTIONARY:
     ' c, , h, (c,) (,) s, chkdalign reveal newest latest 
-    value value~ to (to) is variable variable~ constant constant~ :noname header
+    value to (to) is variable constant :noname header
     find find-xt forget words  interpret execute
     nfa>string nfa>xt lfa>ffa ffa>nfa xt>string >body name>flags ffa>string ffa2cfa ffa>lfa xt>ffa xt>nfa
-    flag.private flag.cloaked flag.table flag.init flag.defer flag.value flag.pvalue flag.immed flag.con flag.colon flag.dvar flag.var flag.code flag.private? flag.header
+    flag.table flag.init flag.defer flag.value flag.pvalue flag.immed flag.con flag.colon flag.dvar flag.var flag.code flag.header
 WORDLIST:
     wordlist forth-wordlist ram-wordlist core-wordlist environment rv-wordlist arm-wordlist
     current get-current set-current wlscope search-wordlist show-wordlist traverse-wordlist
     order cfg-order only core forth order.forth order.core order.only 
     previous set-order get-order w1  order.table  top> >top top
 COMPILER:
-    : ; ;i :~ ( \# \ recurse postpone immediate state
+    : ; ;i ( \# \ recurse postpone immediate state
     create does> char [ ] ['] [compile] [char] 
     compile xliteral literal 2literal sliteral
-    Udefer! Udefer@ defer! defer@ defer~ defer
+    Udefer! Udefer@ defer! defer@ defer
     evaluate evaluate.source evaluate.str evaluate.strlen
 FLOW:
     ?abort abort" abort trap.base trap! throw catch handler exit
@@ -75,7 +75,5 @@ FLASH:
 OTHER:
     false true -1 4 2 1 0
     map-stack
-    -private +private public? public private 
-    -cloak +cloak cloak?
     forget.prior 
     m4fix mtog mclr mset

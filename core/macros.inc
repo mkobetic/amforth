@@ -48,9 +48,12 @@ END FORTH_WORDLIST
     .section amforth    /* switch back to flash section */
 .endm
 
-.equ Flag_cloaked,    0x80000000
-.equ Flag_visible,    0x00000000
+.equ Flag_none,    0x00000000
 
+.equ Flag_variable,   0x0001           
+.equ Flag_2variable,  0x0002
+.equ Flag_colon,      0x0004 
+.equ Flag_constant,   0x0008 
 .equ Flag_immediate,  0x0010
 .equ Flag_value,      0x0020
 .equ Flag_defer,      0x0040
@@ -58,14 +61,6 @@ END FORTH_WORDLIST
 .equ Flag_table,      0x0100
 .equ Flag_pvalue,     0x0200
 .equ Flag_child,      0x0400
-
-# Ramallot means that RAM is reserved and initialised by catchflashpointers for this definition on startup
-.equ Flag_ramallot,   Flag_visible | 0x0100 
-# How many 32 bit locations shall be reserved ?     
-.equ Flag_variable,   Flag_ramallot| 1           
-.equ Flag_2variable,  Flag_ramallot| 2
-.equ Flag_colon   ,   Flag_visible | 4 
-.equ Flag_constant,   Flag_visible | 8 
 
 /*
   Note that ideally we would use the XT_\Label symbol as the function symbol, however, thanks to the ARM interworking garbage,
@@ -104,15 +99,11 @@ PFA_\Label:
 .endm
 
 .macro CODEALIAS Name, Label, Target
-    HEADER Flag_visible, "\Name", \Label, PFA_\Target
+    HEADER Flag_none, "\Name", \Label, PFA_\Target
 .endm
 
 .macro COLON Name, Label
     HEADER Flag_colon, "\Name", \Label, DOCOLON
-.endm
-
-.macro CLOAKED_COLON Name, Label
-    HEADER Flag_colon | Flag_cloaked, "\Name", \Label, DOCOLON
 .endm
 
 .macro NONAME Name, Label
@@ -126,11 +117,11 @@ PFA_\Label:
 .endm
 
 .macro IMMED Name, Label
-    HEADER Flag_visible|Flag_immediate, \Name, \Label, DOCOLON
+    HEADER Flag_immediate, \Name, \Label, DOCOLON
 .endm
 
 .macro VARIABLE Name, Label
-    HEADER Flag_visible|Flag_variable, "\Name", \Label, PFA_DOVARIABLE
+    HEADER Flag_variable, "\Name", \Label, PFA_DOVARIABLE
     .section amramlo,"aw",%nobits
     .balign 4
      # Capture current location counter
@@ -141,20 +132,8 @@ PFA_\Label:
     .word \Label\()_ram             
 .endm
 
-.macro CLOAKED_VARIABLE Name, Label
-   HEADER Flag_visible|Flag_variable|Flag_cloaked, "\Name", \Label, PFA_DOVARIABLE
-    .section amramlo,"aw",%nobits
-    .balign 4
-    # Capture current location counter
-    .set \Label\()_ram, .           
-    .space 4
-    .section amforth
-    # Write the captured address into flash
-    .word \Label\()_ram             
-.endm
-
 .macro DVARIABLE Name, Label
-   HEADER Flag_visible|Flag_variable, "\Name", \Label, PFA_DOVARIABLE
+   HEADER Flag_variable, "\Name", \Label, PFA_DOVARIABLE
     .section amramlo,"aw",%nobits
     .balign 4
     # Capture current location counter
@@ -166,7 +145,7 @@ PFA_\Label:
 .endm
 
 .macro NVARIABLE Name, Label, N
-  HEADER Flag_visible|Flag_variable, "\Name", \Label, PFA_DOVARIABLE
+  HEADER Flag_variable, "\Name", \Label, PFA_DOVARIABLE
     .section amramlo,"aw",%nobits
     .balign 4
     # Capture current location counter
@@ -177,27 +156,15 @@ PFA_\Label:
     .word \Label\()_ram            
 .endm
 
-.macro CLOAKED_DVARIABLE Name, Label
-   HEADER Flag_visible|Flag_variable|Flag_cloaked, "\Name", \Label, PFA_DOVARIABLE
-    .section amramlo,"aw",%nobits
-    .balign 4
-    # Capture current location counter
-    .set \Label\()_ram, .           
-    .space 8
-    .section amforth
-    # Write the captured address into flash
-    .word \Label\()_ram             
-.endm
-
 .macro USER Name, Label, UOffset
-   HEADER Flag_visible|Flag_variable, "\Name", \Label, PFA_DOUSER
+   HEADER Flag_variable, "\Name", \Label, PFA_DOUSER
    .word \UOffset
    # for symbol listing
    .equ USER_\Label,\UOffset 
 .endm
 
 .macro VALUE Name, Label, Default
-    HEADER Flag_visible|Flag_value|Flag_init, "\Name", \Label, PFA_DOVALUE
+    HEADER Flag_value|Flag_init, "\Name", \Label, PFA_DOVALUE
    .section amramlo,"aw",%nobits
    .balign 4
     # Capture current location counter
@@ -212,7 +179,7 @@ PFA_\Label:
 .endm
 
 .macro PVALUE Name, Label, Default
-    HEADER Flag_visible|Flag_pvalue|Flag_init, "\Name", \Label, PFA_DOVALUE
+    HEADER Flag_pvalue|Flag_init, "\Name", \Label, PFA_DOVALUE
    .section amramlo,"aw",%nobits
    .balign 4
     # Capture current location counter
@@ -226,38 +193,8 @@ PFA_\Label:
    .word XT_PV_STORE
 .endm
 
-.macro CLOAKED_VALUE Name, Label, Default
-    HEADER Flag_visible|Flag_value|Flag_init|Flag_cloaked, "\Name", \Label, PFA_DOVALUE
-   .section amramlo,"aw",%nobits
-   .balign 4
-   # Capture current location counter
-   .set \Label\()_ram, .           
-   .space 4
-   .section amforth
-   # Write the captured address into flash
-   .word \Label\()_ram             
-   .word \Default
-   .word XT_FETCH
-   .word XT_STORE
-.endm
-
 .macro DEFER Name, Label, XT
-    HEADER Flag_visible|Flag_defer|Flag_init, "\Name", \Label, PFA_DODEFER
-   .section amramlo,"aw",%nobits
-   .balign 4
-   # Capture current location counter
-   .set _\Label\()_ram, .           
-   .space 4
-   .section amforth
-   # Write the captured address into flash
-   .word _\Label\()_ram             
-   .word \XT
-   .word XT_FETCH
-   .word XT_STORE
-.endm
-
-.macro CLOAKED_DEFER Name, Label, XT
-    HEADER Flag_visible|Flag_defer|Flag_init|Flag_cloaked, "\Name", \Label, PFA_DODEFER
+    HEADER Flag_defer|Flag_init, "\Name", \Label, PFA_DODEFER
    .section amramlo,"aw",%nobits
    .balign 4
    # Capture current location counter
@@ -273,7 +210,7 @@ PFA_\Label:
 
 # see user.inc for valid labels
 .macro UDEFER Name, Label, XT
-    HEADER Flag_visible|Flag_defer|Flag_init, "\Name", \Label, PFA_DODEFER
+    HEADER Flag_defer|Flag_init, "\Name", \Label, PFA_DODEFER
    .word USER_\Label 
    .word \XT
    .word XT_UDEFER_FETCH
@@ -285,17 +222,8 @@ PFA_\Label:
     .word \NUM
 .endm
 
-.macro CLOAKED_CONSTANT Name, Label, NUM
-    HEADER Flag_constant|Flag_cloaked, "\Name", \Label, PFA_DOVARIABLE
-    .word \NUM
-.endm
-
-.macro CON Name, NUM
-    CONSTANT "\Name" , "\Name" , \NUM
-.endm
-
 .macro DATA Name, Label
-    HEADER Flag_visible, "\Name", \Label, PFA_DODATA
+    HEADER Flag_none, "\Name", \Label, PFA_DODATA
 .endm
 
 
@@ -309,7 +237,7 @@ VE_ENV_\Label:
     # LFA: Insert Link
     .word 98b          
 98: # FFA: Flag field
-    .word Flag_visible
+    .word Flag_none
     # NFA: Name field
     # Calculate length of name field
     .byte 8f - 7f     

@@ -18,6 +18,18 @@ define .ffa
   set var $flags = *(unsigned int *)$addr
   printf "FFA 0x%08x: 0x%08x ", $addr, $flags
   # Decode flags
+  if $flags & 0x0001
+    printf "RAVar, "
+  end
+  if $flags & 0x0002
+    printf "RA2Var, "
+  end
+  if $flags & 0x0004
+    printf "Colon, "
+  end
+  if $flags & 0x0008
+    printf "Const, "
+  end
   if $flags & 0x0010
     printf "Imm, "
   end
@@ -31,13 +43,13 @@ define .ffa
     printf "Ini, "
   end
   if $flags & 0x0100
-    # Flag_ramallot
-    if $flags & 0x0001
-      printf "RAVar, "
-    end
-    if $flags & 0x0002
-      printf "RA2Var, "
-    end
+    printf "Table, "
+  end
+  if $flags & 0x0100
+    printf "PVal, "
+  end
+  if $flags & 0x0100
+    printf "Child, "
   end
   printf "\n"
   set $addr = $addr + 4

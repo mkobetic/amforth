@@ -35,7 +35,6 @@
 #.include "words/temp6.s"
 .include "words/usb.s"
 #.include "words/debug.s"
-#.include "words/frag.s"
 
 .if WANT_FLOAT
     .include "words/float.s"

@@ -8,10 +8,6 @@ COLON "header", HEADER /* ( addr u wid -- ffa ) creates header (without CF/PF) f
     .word XT_EXECUTE /* executing wid returns ffa of the last word */
     .word XT_COMMA
     .word XT_DP,XT_TO_R
-# original
-#    .word XT_DOLITERAL
-#    .word Flag_visible
-# new
     .word XT_FLAGDOTHEADER
     .word XT_COMMA
     .word XT_SCOMMA

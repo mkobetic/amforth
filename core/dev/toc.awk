@@ -10,7 +10,6 @@ FILENAME == "rv/macros.inc" { nextfile }
 /CODEWORD[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 /CODEALIAS[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 /HEADLESS[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
-/HIDEWORD[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 /COLON[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 /NONAME[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 /IMMED[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
