@@ -1,37 +1,60 @@
 #======================================================================
 #======================================================================
-# transpiling dictopt-newb.f on 2026/03/07 14:01:31
+# transpiling dictopt-newb.f on 2026/03/13 12:16:55
 # \ SPDX-License-Identifier: GPL-3.0-only
 # 
-# : xt>nfa \# ( xt -- nfa ) Given XT find NFA
+# : xt>nfa \# ( xt -- nfa | 0 )  Given XT find NFA , 0 if not found, [NFA]==3 if NONAME|HEADLESS
 # 
-#  \# .if RA_FLASH == YES
-#     \ move to lower address a where [-a] <> 0
-#     begin cell- dup @ 0<> until cell+
-# \# .endif
+#     \ move cell by cell towards lower address until first byte of current
+#     \ cell + address of cell is equal to the xt (which is an address)
+#     \ first subtract padding bytes from XT
 # 
-#     >r r@
+#     { .if RA_FLASH == YES }
+#     \ skip zero cells between XT and potential NFA leaving xt
+#     \ one cell above the first non-zero cell found
 #     begin
-#         cell- dup               \ a a        --
-#         c@ cell / 1+ cell *     \ a n        --
-#         over +                  \ a a'       --
-#         r@                      \ a a' a''   --
-#         =                       \ a f        --
-#         \ a poor check
-#         over r@ swap - cr #64 > if 2drop rdrop 0 exit then
-#     until
-#     rdrop
+#         dup symbol XT_NOP < if
+#             drop 0 exit
+#         else
+#             cell- dup
+#         then
+#     @ 0<> until cell+
+#     { .endif }
+# 
+#     dup 1- begin dup c@ $AA = while 1- repeat ( xt xt1 )
+# 
+#     swap cell- #64 0 do ( xt1 a ) \ don't go more than 256 bytes back
+# 
+#         \ don't go below NFA of NOP
+#         dup symbol XT_NOP cell- < if 2drop 0 unloop exit then
+# 
+#         dup c@ ( xt1 a n )
+#         over + 2 pick ( xt1 a xt2 xt1 )
+#         = if ( xt1 a )
+#             nip unloop exit
+#         then
+#         cell-
+#     loop ( xt1 a )
+#     2drop 0
 # ;
 # 
+# 
 # : nfa>xt \# ( nfa -- xt ) Given NFA find XT
-#     \ dup c@ cell / 1+ cells + \ a --
 #     count + aligned
 # 
-# \# .if RA_FLASH == YES
+# { .if RA_FLASH == YES }
 #     \ move to higher address a where [a] <> 0
 #     begin dup cell+ swap @ 0<> until cell-
-# \# .endif
+# { .endif }
 # 
+# ;
+# 
+# : ?nfa \# ( nfa -- nfa ) nfa when nfa!=0 and [nfa]!=3
+#     ?dup if
+#         dup @ 3 = if drop symbol ENFANN throw then
+#     else
+#         symbol ENFAZ throw
+#     then
 # ;
 # 
 # : ffa2cfa \# ( ffa -- xt ) Given FFA find XT
@@ -40,10 +63,6 @@
 # 
 # : nfa>string \# ( nfa -- c-addr u ) Given NFA leave c-addr u string
 #     count
-# ;
-# 
-# : xt>string \# ( xt -- c-addr u ) Given XT leave c-addr u string
-#     xt>nfa nfa>string
 # ;
 # 
 # : lfa>ffa \# ( lfa -- ffa ) Given LFA find FFA
@@ -59,7 +78,7 @@
 # ;
 # 
 # : xt>ffa \# ( xt -- ffa ) Given XT find FFA
-#     xt>nfa cell-
+#     xt>nfa ?nfa cell-
 # ;
 # 
 # : ffa>string \# ( ffa -- caddr u ) Given FFA leave c-addr u string
@@ -67,51 +86,79 @@
 # ;
 # 
 # : xt>lfa \# ( xt -- lfa ) Given XT find LFA
-#     xt>nfa cell- cell-
+#     xt>nfa ?nfa cell- cell-
 # ;
 # 
 
 # ----------------------------------------------------------------------
-COLON "xt>nfa", XT2NFA /* ( xt -- nfa ) Given XT find NFA  */
-.if RA_FLASH == YES 
+COLON "xt>nfa", XT2NFA /* ( xt -- nfa | 0 )  Given XT find NFA , 0 if not found, [NFA]==3 if NONAME|HEADLESS  */
+.if RA_FLASH == YES
 XT2NFA_0001: /* begin */
+	.word XT_DUP
+	.word XT_DOLITERAL
+	.word XT_NOP
+	.word XT_LESS
+	.word XT_DOCONDBRANCH,XT2NFA_0002 /* if */
+	.word XT_DROP
+	.word XT_ZERO
+	.word XT_FINISH
+	.word XT_DOBRANCH,XT2NFA_0003
+XT2NFA_0002: /* else */
 	.word XT_CELLMINUS
 	.word XT_DUP
+XT2NFA_0003: /* then */
 	.word XT_FETCH
 	.word XT_NOTZEROEQUAL
 	.word XT_DOCONDBRANCH,XT2NFA_0001 /* until */
 	.word XT_CELLPLUS
- .endif      
-	.word XT_TO_R
-	.word XT_R_FETCH
-XT2NFA_0002: /* begin */
-	.word XT_CELLMINUS
+.endif
+	.word XT_DUP
+	.word XT_1MINUS
+XT2NFA_0004: /* begin */
 	.word XT_DUP
 	.word XT_CFETCH
-	.word XT_CELL
-	.word XT_SLASH
-	.word XT_1PLUS
-	.word XT_CELL
-	.word XT_STAR
-	.word XT_OVER
-	.word XT_PLUS
-	.word XT_R_FETCH
+	.word XT_DOLITERAL
+	.word 0xaa
 	.word XT_EQUAL
-	.word XT_OVER
-	.word XT_R_FETCH
+	.word XT_DOCONDBRANCH,XT2NFA_0005 /* while */
+	.word XT_1MINUS
+	.word XT_DOBRANCH,XT2NFA_0004 /* repeat */
+XT2NFA_0005:
 	.word XT_SWAP
-	.word XT_MINUS
+	.word XT_CELLMINUS
 	.word XT_DOLITERAL
 	.word 64
-	.word XT_GREATER
-	.word XT_DOCONDBRANCH,XT2NFA_0003 /* if */
-	.word XT_2DROP
-	.word XT_RDROP
 	.word XT_ZERO
+	.word XT_DODO
+XT2NFA_0007: /* do */
+	.word XT_DUP
+	.word XT_DOLITERAL
+	.word XT_NOP
+	.word XT_CELLMINUS
+	.word XT_LESS
+	.word XT_DOCONDBRANCH,XT2NFA_0008 /* if */
+	.word XT_2DROP
+	.word XT_ZERO
+	.word XT_UNLOOP
 	.word XT_FINISH
-XT2NFA_0003: /* then */
-	.word XT_DOCONDBRANCH,XT2NFA_0002 /* until */
-	.word XT_RDROP
+XT2NFA_0008: /* then */
+	.word XT_DUP
+	.word XT_CFETCH
+	.word XT_OVER
+	.word XT_PLUS
+	.word XT_TWO
+	.word XT_PICK
+	.word XT_EQUAL
+	.word XT_DOCONDBRANCH,XT2NFA_0009 /* if */
+	.word XT_NIP
+	.word XT_UNLOOP
+	.word XT_FINISH
+XT2NFA_0009: /* then */
+	.word XT_CELLMINUS
+	.word XT_DOLOOP,XT2NFA_0007 /* loop */
+XT2NFA_0006: /* (for ?do IF required) */
+	.word XT_2DROP
+	.word XT_ZERO
 	.word XT_EXIT
 END XT2NFA
 # ----------------------------------------------------------------------
@@ -119,8 +166,6 @@ COLON "nfa>xt", NFA2XT /* ( nfa -- xt ) Given NFA find XT */
 	.word XT_COUNT
 	.word XT_PLUS
 	.word XT_ALIGNED
-    .word XT_DUP
-    .word XT_DROP
 .if RA_FLASH == YES
 NFA2XT_0001: /* begin */
 	.word XT_DUP
@@ -130,9 +175,32 @@ NFA2XT_0001: /* begin */
 	.word XT_NOTZEROEQUAL
 	.word XT_DOCONDBRANCH,NFA2XT_0001 /* until */
 	.word XT_CELLMINUS
-.endif 
+.endif
 	.word XT_EXIT
 END NFA2XT
+# ----------------------------------------------------------------------
+COLON "?nfa", QNFA /* ( nfa -- nfa ) nfa when nfa!=0 and [nfa]!=3 */
+	.word XT_QDUP
+	.word XT_DOCONDBRANCH,QNFA_0001 /* if */
+	.word XT_DUP
+	.word XT_FETCH
+	.word XT_DOLITERAL
+	.word 3
+	.word XT_EQUAL
+	.word XT_DOCONDBRANCH,QNFA_0002 /* if */
+	.word XT_DROP
+	.word XT_DOLITERAL
+	.word ENFANN
+	.word XT_THROW
+QNFA_0002: /* then */
+	.word XT_DOBRANCH,QNFA_0003
+QNFA_0001: /* else */
+	.word XT_DOLITERAL
+	.word ENFAZ
+	.word XT_THROW
+QNFA_0003: /* then */
+	.word XT_EXIT
+END QNFA
 # ----------------------------------------------------------------------
 COLON "ffa2cfa", FFA2CFA /* ( ffa -- xt ) Given FFA find XT */
 	.word XT_CELLPLUS
@@ -144,12 +212,6 @@ COLON "nfa>string", NFA2STRING /* ( nfa -- c-addr u ) Given NFA leave c-addr u s
 	.word XT_COUNT
 	.word XT_EXIT
 END NFA2STRING
-# ----------------------------------------------------------------------
-COLON "xt>string", XT2STRING /* ( xt -- c-addr u ) Given XT leave c-addr u string */
-	.word XT_XT2NFA
-	.word XT_NFA2STRING
-	.word XT_EXIT
-END XT2STRING
 # ----------------------------------------------------------------------
 COLON "lfa>ffa", LFA2FFA /* ( lfa -- ffa ) Given LFA find FFA */
 	.word XT_CELLPLUS
@@ -168,6 +230,7 @@ END FFA2NFA
 # ----------------------------------------------------------------------
 COLON "xt>ffa", XT2FFA /* ( xt -- ffa ) Given XT find FFA */
 	.word XT_XT2NFA
+	.word XT_QNFA
 	.word XT_CELLMINUS
 	.word XT_EXIT
 END XT2FFA
@@ -183,6 +246,7 @@ END FFA2STRING
 # ----------------------------------------------------------------------
 COLON "xt>lfa", XT2LFA /* ( xt -- lfa ) Given XT find LFA */
 	.word XT_XT2NFA
+	.word XT_QNFA
 	.word XT_CELLMINUS
 	.word XT_CELLMINUS
 	.word XT_EXIT
