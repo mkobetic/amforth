@@ -100,8 +100,8 @@
 #.include "words/nfa2cfa.s"
 #.include "words/name2string.s"
 #.include "words/name2flags.s"
-#.include "words/xt2string.s"
 #.include "words/dictopt.s"
+.include "words/xt2string.s"
 .include "words/dictopt-newb.s"
 # dictionary end
 
