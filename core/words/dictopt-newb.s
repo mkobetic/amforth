@@ -1,6 +1,6 @@
 #======================================================================
 #======================================================================
-# transpiling dictopt-newb.f on 2026/03/13 12:16:55
+# transpiling dictopt-newb.f on 2026/03/13 19:41:17
 # \ SPDX-License-Identifier: GPL-3.0-only
 # 
 # : xt>nfa \# ( xt -- nfa | 0 )  Given XT find NFA , 0 if not found, [NFA]==3 if NONAME|HEADLESS
@@ -13,7 +13,7 @@
 #     \ skip zero cells between XT and potential NFA leaving xt
 #     \ one cell above the first non-zero cell found
 #     begin
-#         dup symbol XT_NOP < if
+#         dup symbol XT_NOP u< if
 #             drop 0 exit
 #         else
 #             cell- dup
@@ -26,7 +26,7 @@
 #     swap cell- #64 0 do ( xt1 a ) \ don't go more than 256 bytes back
 # 
 #         \ don't go below NFA of NOP
-#         dup symbol XT_NOP cell- < if 2drop 0 unloop exit then
+#         dup symbol XT_NOP cell- u< if 2drop 0 unloop exit then
 # 
 #         dup c@ ( xt1 a n )
 #         over + 2 pick ( xt1 a xt2 xt1 )
@@ -97,7 +97,7 @@ XT2NFA_0001: /* begin */
 	.word XT_DUP
 	.word XT_DOLITERAL
 	.word XT_NOP
-	.word XT_LESS
+	.word XT_ULESS
 	.word XT_DOCONDBRANCH,XT2NFA_0002 /* if */
 	.word XT_DROP
 	.word XT_ZERO
@@ -135,7 +135,7 @@ XT2NFA_0007: /* do */
 	.word XT_DOLITERAL
 	.word XT_NOP
 	.word XT_CELLMINUS
-	.word XT_LESS
+	.word XT_ULESS
 	.word XT_DOCONDBRANCH,XT2NFA_0008 /* if */
 	.word XT_2DROP
 	.word XT_ZERO

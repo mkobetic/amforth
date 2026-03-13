@@ -1,6 +1,6 @@
 #======================================================================
 #======================================================================
-# transpiling xt2string.f on 2026/03/13 12:16:20
+# transpiling xt2string.f on 2026/03/13 19:41:45
 # \ # SPDX-License-Identifier: GPL-3.0-only
 # 
 # : xt>string \# ( xt c-addr u ) leave string associated with name of xt
@@ -15,6 +15,9 @@
 # found or "nn|hl" if not
 # */
 # }
+#     dup flash.low dp.ram.max within invert if
+#         drop s" " exit
+#     then
 # 
 #     >r r@ xt>nfa 0= if s" " rdrop exit then
 # 
@@ -58,15 +61,25 @@ HEADLESS word was found, this is compile-time optionally checked against
 a select list of NONAME and HEADLESS words and their name returned if
 found or "nn|hl" if not
 */
+	.word XT_DUP
+	.word XT_FLASH_LOW
+	.word XT_DP_RAM_MAX
+	.word XT_WITHIN
+	.word XT_INVERT
+	.word XT_DOCONDBRANCH,XT2STRING_0001 /* if */
+	.word XT_DROP
+	STRING ""
+	.word XT_FINISH
+XT2STRING_0001: /* then */
 	.word XT_TO_R
 	.word XT_R_FETCH
 	.word XT_XT2NFA
 	.word XT_ZEROEQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_0001 /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_0002 /* if */
 	STRING ""
 	.word XT_RDROP
 	.word XT_FINISH
-XT2STRING_0001: /* then */
+XT2STRING_0002: /* then */
 	.word XT_R_FETCH
 	.word XT_XT2NFA
 	.word XT_DUP
@@ -74,22 +87,22 @@ XT2STRING_0001: /* then */
 	.word XT_DOLITERAL
 	.word 3
 	.word XT_NOTEQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_0002 /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_0003 /* if */
 	.word XT_DUP
 	.word XT_COUNT
 	.word XT_FINDXT
-	.word XT_DOCONDBRANCH,XT2STRING_0003 /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_0004 /* if */
 	.word XT_DROP
 	.word XT_COUNT
-	.word XT_DOBRANCH,XT2STRING_0004
-XT2STRING_0003: /* else */
+	.word XT_DOBRANCH,XT2STRING_0005
+XT2STRING_0004: /* else */
 	.word XT_DROP
 	STRING ""
 	.word XT_RDROP
 	.word XT_FINISH
-XT2STRING_0004: /* then */
-	.word XT_DOBRANCH,XT2STRING_0005
-XT2STRING_0002: /* else */
+XT2STRING_0005: /* then */
+	.word XT_DOBRANCH,XT2STRING_0006
+XT2STRING_0003: /* else */
 	.word XT_DROP
 .ifnb YES
 	.word XT_R_FETCH
@@ -97,140 +110,140 @@ XT2STRING_0002: /* else */
 	.word XT_DOBRANCH
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_0006 /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_0007 /* if */
 	.word XT_DROP
 	STRING "(branch)"
-	.word XT_DOBRANCH,XT2STRING_0007
-XT2STRING_0006: /* else */
+	.word XT_DOBRANCH,XT2STRING_0008
+XT2STRING_0007: /* else */
 	.word XT_DOLITERAL
 	.word XT_DOCONDBRANCH
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_0008 /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_0009 /* if */
 	.word XT_DROP
 	STRING "(?branch)"
-	.word XT_DOBRANCH,XT2STRING_0009
-XT2STRING_0008: /* else */
+	.word XT_DOBRANCH,XT2STRING_000A
+XT2STRING_0009: /* else */
 	.word XT_DOLITERAL
 	.word XT_LMARK
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_000A /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_000B /* if */
 	.word XT_DROP
 	STRING "<mark"
-	.word XT_DOBRANCH,XT2STRING_000B
-XT2STRING_000A: /* else */
+	.word XT_DOBRANCH,XT2STRING_000C
+XT2STRING_000B: /* else */
 	.word XT_DOLITERAL
 	.word XT_GMARK
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_000C /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_000D /* if */
 	.word XT_DROP
 	STRING "mark>"
-	.word XT_DOBRANCH,XT2STRING_000D
-XT2STRING_000C: /* else */
+	.word XT_DOBRANCH,XT2STRING_000E
+XT2STRING_000D: /* else */
 	.word XT_DOLITERAL
 	.word XT_LRESOLVE
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_000E /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_000F /* if */
 	.word XT_DROP
 	STRING "<resolve"
-	.word XT_DOBRANCH,XT2STRING_000F
-XT2STRING_000E: /* else */
+	.word XT_DOBRANCH,XT2STRING_0010
+XT2STRING_000F: /* else */
 	.word XT_DOLITERAL
 	.word XT_GRESOLVE
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_0010 /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_0011 /* if */
 	.word XT_DROP
 	STRING "resolve>"
-	.word XT_DOBRANCH,XT2STRING_0011
-XT2STRING_0010: /* else */
+	.word XT_DOBRANCH,XT2STRING_0012
+XT2STRING_0011: /* else */
 	.word XT_DOLITERAL
 	.word XT_DOTO
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_0012 /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_0013 /* if */
 	.word XT_DROP
 	STRING "(to)"
-	.word XT_DOBRANCH,XT2STRING_0013
-XT2STRING_0012: /* else */
+	.word XT_DOBRANCH,XT2STRING_0014
+XT2STRING_0013: /* else */
 	.word XT_DOLITERAL
 	.word XT_FLASHDOTFLUSH
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_0014 /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_0015 /* if */
 	.word XT_DROP
 	STRING "flash.flush"
-	.word XT_DOBRANCH,XT2STRING_0015
-XT2STRING_0014: /* else */
+	.word XT_DOBRANCH,XT2STRING_0016
+XT2STRING_0015: /* else */
 	.word XT_DOLITERAL
 	.word XT_DOLITERAL
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_0016 /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_0017 /* if */
 	.word XT_DROP
 	STRING "(literal)"
-	.word XT_DOBRANCH,XT2STRING_0017
-XT2STRING_0016: /* else */
+	.word XT_DOBRANCH,XT2STRING_0018
+XT2STRING_0017: /* else */
 	.word XT_DOLITERAL
 	.word XT_DOXLITERAL
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_0018 /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_0019 /* if */
 	.word XT_DROP
 	STRING "(xliteral)"
-	.word XT_DOBRANCH,XT2STRING_0019
-XT2STRING_0018: /* else */
+	.word XT_DOBRANCH,XT2STRING_001A
+XT2STRING_0019: /* else */
 	.word XT_DOLITERAL
 	.word XT_DODO
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_001A /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_001B /* if */
 	.word XT_DROP
 	STRING "(do)"
-	.word XT_DOBRANCH,XT2STRING_001B
-XT2STRING_001A: /* else */
+	.word XT_DOBRANCH,XT2STRING_001C
+XT2STRING_001B: /* else */
 	.word XT_DOLITERAL
 	.word XT_DOLOOP
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_001C /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_001D /* if */
 	.word XT_DROP
 	STRING "(loop)"
-	.word XT_DOBRANCH,XT2STRING_001D
-XT2STRING_001C: /* else */
+	.word XT_DOBRANCH,XT2STRING_001E
+XT2STRING_001D: /* else */
 	.word XT_DOLITERAL
 	.word XT_DOPLUSLOOP
 	.word XT_OVER
 	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,XT2STRING_001E /* if */
+	.word XT_DOCONDBRANCH,XT2STRING_001F /* if */
 	.word XT_DROP
 	STRING "(+loop)"
-	.word XT_DOBRANCH,XT2STRING_001F
-XT2STRING_001E: /* else */
+	.word XT_DOBRANCH,XT2STRING_0020
+XT2STRING_001F: /* else */
 	.word XT_DROP
 	STRING "nn|hl"
 	.word XT_FALSE
 	.word XT_DROP
-XT2STRING_001F: /* then */
-XT2STRING_001D: /* then */
-XT2STRING_001B: /* then */
-XT2STRING_0019: /* then */
-XT2STRING_0017: /* then */
-XT2STRING_0015: /* then */
-XT2STRING_0013: /* then */
-XT2STRING_0011: /* then */
-XT2STRING_000F: /* then */
-XT2STRING_000D: /* then */
-XT2STRING_000B: /* then */
-XT2STRING_0009: /* then */
-XT2STRING_0007: /* then */
+XT2STRING_0020: /* then */
+XT2STRING_001E: /* then */
+XT2STRING_001C: /* then */
+XT2STRING_001A: /* then */
+XT2STRING_0018: /* then */
+XT2STRING_0016: /* then */
+XT2STRING_0014: /* then */
+XT2STRING_0012: /* then */
+XT2STRING_0010: /* then */
+XT2STRING_000E: /* then */
+XT2STRING_000C: /* then */
+XT2STRING_000A: /* then */
+XT2STRING_0008: /* then */
 .else
 	STRING "nn|hl"
 .endif
-XT2STRING_0005: /* then */
+XT2STRING_0006: /* then */
 	.word XT_RDROP
 	.word XT_EXIT
 END XT2STRING
