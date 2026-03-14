@@ -6,10 +6,6 @@ ENVIRONMENT "cpu", CPU /* ( -- addr u ) string with cpu identifier */
 END CPU
 
 ENVIRONMENT "build-type", BUILD_TYPE
-.if WANT_ASM_BUILD
        STRING "ASM"
-.else  
-       STRING "C+ASM"
-.endif       
       .word XT_EXIT
 END BUILD_TYPE
