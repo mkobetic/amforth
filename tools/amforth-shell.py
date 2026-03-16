@@ -1120,22 +1120,42 @@ additional definitions (e.g. register names)
         if self.debug:
             sys.stderr.write("\n")
 
-    _debugger_line_re = re.compile(r"DBG\{(.*)\|(.*)\}DBG")
+    _debugger_itc_re = re.compile(r"\|D ([0-9A-F]{8}) ([0-9A-F]{8})(?:\s+(\S+))?(\s+<<\(IP\)<<)?\s*")
     def read_response_interactive(self):
         """ Enhanced read_response() for interactive session.
         """
         response = self.read_response()
-        # handle debugger info lines, present them in more readable way
-        match = self._debugger_line_re.search(response)
-        if match:
-            ps = match.group(1).strip().split()
-            rs = match.group(2).strip().split()
-            rs = self._translate_addresses(rs)
-            response = (response[:match.start()] + response[match.end():]).strip()
-            if len(response) > 0:
-                response += "\n"
-            response = "PS("+ps[0]+"): "+" ".join(ps[1:11])+(" ... \n" if len(ps) > 11 else "\n")
-            response += "RS("+repr(len(rs))+"): "+" ".join(rs[:10])+(" ..." if len(rs) > 10 else "")
+        # handle debugger info lines
+        if response.startswith("|D "):
+            lines = response.splitlines()
+            response = []
+            for line in lines:
+                if line.startswith("|D PS: "):
+                    ps = line[7:].strip().split()
+                    response.append("PS("+ps[0]+"): "+" ".join(ps[1:11])+(" ... " if len(ps) > 11 else ""))
+                    continue
+                if line.startswith("|D RS: "):
+                    rs = line[7:].strip().split()
+                    rs = self._translate_addresses(rs)
+                    response.append("RS("+repr(len(rs))+"): "+" ".join(rs[:10])+(" ..." if len(rs) > 10 else ""))
+                    continue
+                match = self._debugger_itc_re.match(line)
+                if match:
+                    addr = match.group(1)
+                    xt = match.group(2)
+                    word = match.group(3)
+                    pointer = match.group(4)
+                    if not word:
+                        word = self._translate_address(xt)
+                    line = f"{addr} {xt}"
+                    if word:
+                        line += f" {word}"
+                    if pointer:
+                        line += pointer
+                    response.append(line)
+                    continue
+                response.append(line)
+            response = "\n".join(response)
         return response
 
     def read_response(self):
@@ -1205,51 +1225,53 @@ additional definitions (e.g. register names)
 
         self.progress_callback("Information", None, f"loaded {len(self._xt_addresses)} XT, {len(self._ram_area_addrs)} RAM, {len(self._var_addrs)} VAR symbols")
 
-    _address_re = re.compile(r"([0-9A-F]+)(\+[0-9]+)?")
     def _translate_addresses(self, addrs):
         """ Translate numeric return stack addresses using the loaded symbols (if possible)
         """
         out = []
         for a in addrs:
-            match = self._address_re.match(a)
-            if match:
-                addr = match.group(1)
-                suffix = match.group(2)
-                val = int(addr,16)
-                # check XT symbol match
-                i = bisect.bisect(self._xt_addresses, val)
-                if 0 < i < len(self._xt_addresses):
-                    diff = val - self._xt_addresses[i-1]
-                    if diff == 0:
-                        name = self._xt_symbols[i-1]
-                        out.append(name+suffix)
-                        continue
-                # check RAM area match
-                i = bisect.bisect(self._ram_area_addrs, val)
-                if 0 < i < len(self._ram_area_addrs):
-                    name = self._ram_area_symbols[i-1]
-                    # show stack area addresses as negative offsets from upper bound
-                    if name.endswith("stack"):
-                        name = self._ram_area_symbols[i]
-                        diff = val - self._ram_area_addrs[i]
-                    else:
-                        diff = val - self._ram_area_addrs[i-1]
-                    if diff == 0:
-                        out.append(name)
-                    else:
-                        suffix = repr(diff) if diff < 0 else "+"+repr(diff)
-                        out.append(name+suffix)
-                    continue
-                # Check variable/value/defer RAM address match
-                i = bisect.bisect(self._var_addrs, val)
-                if 0 < i < len(self._var_addrs):
-                    diff = val - self._var_addrs[i-1]
-                    if diff == 0:
-                        name = self._var_symbols[i-1]
-                        out.append(name+suffix)
-                        continue
-            out.append(a)
+            ta = self._translate_address(a)
+            out.append(ta if ta else a)
         return out
+
+    _address_re = re.compile(r"([0-9A-F]+)(\+[0-9]+)?")
+    def _translate_address(self, addr):
+        match = self._address_re.match(addr)
+        if not match:
+            return None
+        addr = match.group(1)
+        suffix = match.group(2)
+        val = int(addr,16)
+        # check XT symbol match
+        i = bisect.bisect(self._xt_addresses, val)
+        if 0 < i < len(self._xt_addresses):
+            diff = val - self._xt_addresses[i-1]
+            if diff == 0:
+                name = self._xt_symbols[i-1]
+                return (name+suffix)
+        # check RAM area match
+        i = bisect.bisect(self._ram_area_addrs, val)
+        if 0 < i < len(self._ram_area_addrs):
+            name = self._ram_area_symbols[i-1]
+            # show stack area addresses as negative offsets from upper bound
+            if name.endswith("stack"):
+                name = self._ram_area_symbols[i]
+                diff = val - self._ram_area_addrs[i]
+            else:
+                diff = val - self._ram_area_addrs[i-1]
+            if diff == 0:
+                return name
+            else:
+                suffix = repr(diff) if diff < 0 else "+"+repr(diff)
+                return name+suffix
+        # Check variable/value/defer RAM address match
+        i = bisect.bisect(self._var_addrs, val)
+        if 0 < i < len(self._var_addrs):
+            diff = val - self._var_addrs[i-1]
+            if diff == 0:
+                name = self._var_symbols[i-1]
+                return name+suffix
+        return None
 
     def print_progress(self, type, lineno, info):
         if not lineno:

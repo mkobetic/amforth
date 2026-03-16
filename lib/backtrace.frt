@@ -62,10 +62,20 @@
     drop
 ;
 
-
 : .rs ( u -- ) \ print return stack (top first) skipping top u cells, use raw IP addresses
     rdepth over - dup 0 <= if 2drop exit then ( u depth )
     swap cells rp@ + swap 0 ?do dup @ . cell+ loop
+    drop
+;
+
+: .itc ( u1 u2 -- ) \ dump u1 XTs starting from current IP u2 cells down the return stack 
+    rdepth over - 0 <= if 2drop drop exit then
+    cells rp@ + @ ( u1 ip ) \ get the IP
+    swap 0 ?do ( ip )
+        ." |D " dup 8x. space dup @ dup 8x. space xt>string type
+        i 0= if ."    <<(IP)<<" then
+        cr cell+
+    loop
     drop
 ;
 
@@ -90,7 +100,9 @@
         then
     then
     \ emit stack state
-    ." DBG{ " .s ." | " 1 .bt ." }DBG ok" cr
+    ." |D PS: " .s cr
+    ." |D RS: " 1 .bt cr
+    5 1 .itc .ok .ready
     begin
         \ receive input from user
         debug_buf dup refill-buf-size accept cr \ ( s )
@@ -107,7 +119,7 @@
         2dup s" r" compare not if 2drop
             rdepth 1- 2 lshift debug.rdepth or debug.next ! (exitd) then
         \ ( s ) otherwise evaluate the expression and repeat
-        (evaluate) ." ok" cr
+        (evaluate) .ok .ready
     again
 ;d
 
