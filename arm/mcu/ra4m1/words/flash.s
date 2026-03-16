@@ -95,6 +95,12 @@ COLON "~!i", TILDESTORE_I /* ( x addr -- ) write x at addr in flash */
 	.word XT_EXIT
 END TILDESTORE_I
 
+COLON "~c!i", TILDECSTORE_I
+    .word XT_DOLITERAL
+    .word EUNSUP
+    .word XT_THROW
+END TILDECSTORE_I
+
 COLON "ra!i", RASTORE_I /* ( x addr -- ) write x at addr in flash */
 	/* don't allow writing below dp0.flash */
 	.word XT_DUP

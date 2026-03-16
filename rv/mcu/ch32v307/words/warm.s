@@ -40,14 +40,14 @@ COLON "warm", WARM /* ( -- ) high level part of the boot sequence, VM is running
   /* initialize values and defers to their defaults */
   .word XT_INIT_RAM
 
-.ifdef TARGET_307
-  /* initialize flash system */
-  .word XT_STDDOTUNLOCK                                                            
+
+  /* unlock flash system */
+  .word XT_FLASHDOTUNLOCK                                                            
 
 .if WANT_USB_OPERATOR
   .word XT_INIT_USB_OPERATOR
 .endif
-.endif
+
 
   /* initialize pvalue system */
   .word XT_QFIRST_BOOT, XT_DOCONDBRANCH, 1f

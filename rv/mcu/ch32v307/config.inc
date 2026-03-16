@@ -2,50 +2,20 @@
 
 .include "core/config.inc"
 
-.ifdef TARGET_QEM
-.equ flash_page, 4*1024
-.equ flash_cell, 2
-.equ flash_erased, 0x00000000 /* a word in erased flash */
-.equ flash_mask, flash_page - 1
-.equ flash_veil, 0xFFFFFFFF - flash_mask
-
-.else /* TARGET_307 */
-
 .equ flash_page, 4*1024
 .equ flash_cell, 2
 .equ flash_erased, 0xE339E339 /* a word in erased flash */
-
-.endif
 
 /* fast flash mode
 .equ flash_page, 256
 .equ flash_cell, 256
 */
 
-# the big choices - but only half of it. The Makefile must have
-# the equivalent defines set too. No easy way to do it from here.
-
-# Choose NO if you want to include C code in the lib_???_user dir 
-.equ WANT_ASM_BUILD    , YES
-
 .equ WANT_NESTED_ISR   , NO
 
-# if WANT_ASM_BUILD is YES the USB options will be ignored 
-
-.equ WANT_USB_OPERATOR , NO   # if YES - USB prompt if NO serial prompt
-.equ WANT_USB          , NO   # if YES - USB code included 
-
-.if WANT_USB_OPERATOR
-.ifdef TARGET_QEM
-.error "Cannot use WANT_USB_OPERATOR with QEM target"
-.endif
-.endif
-
-# if WANT_ASM_BUILD is YES the FLOAT option will be ignored
-
-.equ WANT_FLOAT        , NO
-
 # what Forth word groups do you want included in the core 
+
+.equ WANT_SEARCH_ORDER , YES
 
 .equ WANT_CASE         , YES
 .equ WANT_MATCH        , YES
@@ -65,12 +35,19 @@
 .equ WANT_CODE         , NO
 .equ WANT_TABLE        , NO
 
-.equ WANT_SEARCH_ORDER , YES 
+# ----------------------------------------------------------------------
+# Do NOT change these options. Not currently available. 
+
+.equ WANT_USB_OPERATOR , NO   # if YES - USB prompt if NO serial prompt
+.equ WANT_USB          , NO   # if YES - USB code included 
+.equ WANT_FLOAT        , NO
 
 # ----------------------------------------------------------------------
 # generate some pure GAS abolute expressions as a consequence of above 
 
 # -- GAS .if can only handle absolute expressions and I don't want CPP
+
+.equ WANT_ASM_BUILD , YES
 
 .if WANT_ASM_BUILD
     .equ WANT_C_BUILD      , NO
@@ -96,3 +73,4 @@
     .equ WANT_CASE    , YES
     .equ WANT_MATCH   , YES
 .endif
+

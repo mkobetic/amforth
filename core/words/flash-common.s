@@ -30,6 +30,10 @@ END DOCCOMMA
 DEFER "!i", STORE_I , XT_TILDESTORE_I /* ( x addr -- ) write x at addr in flash */
 END STORE_I
 
+DEFER "c!i" CSTORE_I , XT_TILDECSTORE_I /* ( c addr -- ) write c at addr in flash */
+END CSTORE_I
+
+
 DEFER "flash.erase", FLASH_ERASE, XT_TILDEFLASH_ERASE /* ( addr -- ) erase flash page at addr */
 END FLASH_ERASE
 
@@ -67,6 +71,7 @@ COLON "flush", FLUSH /* ( -- ) force flush (write) of flash.cache */
 END FLUSH
 
 NONAME "flash.flush", FLASHDOTFLUSH /* ( -- ) force flush (write) of flash.cache */
+    .word XT_DALIGN
 .ifdef FLUSH_REQUIRED
     .word XT_DOFLUSH 
 .endif

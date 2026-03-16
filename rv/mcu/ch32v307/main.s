@@ -15,13 +15,9 @@ main:                       # executed from startup.inc
     #jal myclock
     # jal init
 
-    .ifdef TARGET_QEM
-        # no clock
-    .else        
-        jal HSE96               # asm xtal + pll setup 
-    .endif                  
+    jal HSE96               # asm xtal + pll setup 
 
-    .ifdef BUILD_203
+    .ifdef TARGET_203
       # jal usb_init
     .endif
 

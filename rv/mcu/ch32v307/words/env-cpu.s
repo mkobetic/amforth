@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-.ifdef BUILD_203
+.ifdef TARGET_203
 ENVIRONMENT "cpu", CPU /* ( -- addr u ) string with cpu identifier */
     STRING "RV32IMAC"
     .word XT_EXIT

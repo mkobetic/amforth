@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-.ifdef BUILD_203 
+.ifdef TARGET_203 
 
 COLON "led.init", LEDDOTINIT 
 	.word XT_PORTB
