@@ -10,8 +10,9 @@ RAMALLOT returnstack, returnstack_size, 4
 RAMALLOT leavestack, leavestack_size, 4
 RAMALLOT userarea, userarea_size, 4
 RAMALLOT refill_buf, refill_buf_size, 4
+.if WANT_DEBUGGER == YES
 RAMALLOT debug_buf, refill_buf_size, 4
-
+.endif
 # EXCEPTION CODES
 
 # Standard Exceptions

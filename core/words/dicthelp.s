@@ -69,7 +69,7 @@ COLON "branch?", BRANCHQ /* ( a -- f ) f is true if a contains XT of DOBRANCH */
       .word XT_EQUAL
       .word XT_EXIT
 
-COLON "anybranch?", ANYBRANCHQ /* # ( a -- f ) DICT: f is true if a contains XT of any branch */
+COLON "anybranch?", ANYBRANCHQ /* ( a -- f ) f is true if a contains XT of any branch */
       .word XT_DUP
       .word XT_CONDBRANCHQ
       .word XT_OVER

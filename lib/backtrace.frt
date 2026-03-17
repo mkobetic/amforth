@@ -7,16 +7,10 @@
     then
 ;
 
-\ ' ?ip @ constant docolon
-
-: ?xt \# ( a -- f ) is a likely an XT
-    @ docolon =
-;
-
 : ip2xt \# ( a -- xt u true | a false ) convert IP to the XT of its containing word, u = a - xt (in cells)
     dup ?ip not if false exit then \# leave a as is if not an IP address
     #100 0 do ( a ) \# don't go more than 100 cells back
-        dup ?xt if ( xt )
+        dup colon? if ( xt )
             i true
             unloop exit
         then ( a )

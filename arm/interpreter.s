@@ -7,12 +7,14 @@ DOCOLON:
         mov FORTHIP, FORTHW
 .thumb_func
 DO_NEXT:
+.if WANT_DEBUGGER == YES
         /* if debug hook is set interrupt the DO_NEXT cycle */
         cbz DEBUG, DO_NEXT1
         ldr FORTHW, [up, USER_DEBUG_BREAK] /* load debugger into FORTHW */
         mov DEBUG, #0 /* clear DEBUG */
         b DO_EXECUTE
 DO_NEXT1:
+.endif
         ldr FORTHW, [FORTHIP], #4
 .thumb_func
 DO_EXECUTE:
@@ -20,6 +22,7 @@ DO_EXECUTE:
         bx r0
 .size _INTERPRETER, . - _INTERPRETER
 
+.if WANT_DEBUGGER == YES
 CODEWORD "(exitd)", EXITD /* ( -- ) exit from a debugger word */
         /* restore DEBUG hook */
         ldr DEBUG, [up, USER_DEBUG_NEXT]
@@ -47,3 +50,4 @@ CODEWORD "debug_buf", DEBUG_BUF /* ( -- addr ) debugger input buffer address */
   ldr tos, =RAM_lower_debug_buf
   NEXT
 END DEBUG_BUF
+.endif

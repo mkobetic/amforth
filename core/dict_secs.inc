@@ -209,8 +209,12 @@
 
 .include "words/dump.s"
 .include "words/testing.s"
+
+.if WANT_DEBUGGER == YES
 .include "words/debugger.s"
 .include "words/debugger2.s"
+.include "words/barbar.s"
+.endif
 
 .include "words/dicthelp.s"
 .if WANT_SEE 
@@ -242,7 +246,6 @@
 .include "words/table.s"
 .endif
 
-.include "words/barbar.s"
 #.include "words/does.s"
 #.include "words/code.s"
 

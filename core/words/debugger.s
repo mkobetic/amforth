@@ -13,7 +13,7 @@
 # \ ' ?ip @ constant docolon
 # 
 # : ?xt \# ( a -- f ) is a likely an XT
-#     @ docolon =
+#     colon?
 # ;
 # 
 # : ip2xt \# ( a -- xt u true | a false ) convert IP to the XT of its containing word, u = a - xt (in cells)
@@ -165,13 +165,6 @@ QIP_0004: /* then */
 	.word XT_EXIT
 END QIP
 # ----------------------------------------------------------------------
-COLON "?xt", QXT /* ( a -- f ) is a likely an XT */
-	.word XT_FETCH
-	.word XT_DOCOLON
-	.word XT_EQUAL
-	.word XT_EXIT
-END QXT
-# ----------------------------------------------------------------------
 COLON "ip2xt", IP2XT /* ( a -- xt u true | a false ) convert IP to the XT of its containing word, u = a - xt (in cells) */
 	.word XT_DUP
 	.word XT_QIP
@@ -188,7 +181,7 @@ IP2XT_0001: /* then */
 IP2XT_0003: /* do */
 /* don't go more than 100 cells back */
 	.word XT_DUP
-	.word XT_QXT
+	.word XT_COLONQ
 	.word XT_DOCONDBRANCH,IP2XT_0004 /* if */
 	.word XT_I
 	.word XT_TRUE
@@ -240,7 +233,7 @@ IP2NAME_0006: /* then */
 	.word XT_EXIT
 END IP2NAME
 # ----------------------------------------------------------------------
-COLON "dbg.d.", DBGDOTDDOT /* ( n -- ) print n in base 10 */
+NONAME "dbg.d.", DBGDOTDDOT /* ( n -- ) print n in base 10 */
 	.word XT_BASE
 	.word XT_FETCH
 	.word XT_SWAP
@@ -254,7 +247,7 @@ COLON "dbg.d.", DBGDOTDDOT /* ( n -- ) print n in base 10 */
 	.word XT_EXIT
 END DBGDOTDDOT
 # ----------------------------------------------------------------------
-COLON "dbg.uh.", DBGDOTUHDOT /* ( u -- ) print u in base 16 */
+NONAME "dbg.uh.", DBGDOTUHDOT /* ( u -- ) print u in base 16 */
 	.word XT_BASE
 	.word XT_FETCH
 	.word XT_SWAP
@@ -394,14 +387,20 @@ DOTITC_0002: /* (for ?do IF required) */
 	.word XT_EXIT
 END DOTITC
 # ----------------------------------------------------------------------
-CONSTANT "debug.step",DEBUGDOTSTEP,1
+
+/*
+ debug.next[1:0] denotes the next debug action, 0 means no action
+ debug.next[31:2] is action specific argument value
+ debug actions:
+*/
+CONSTANT "debug.step",DEBUGDOTSTEP,1 /* single step, no argument */
 END DEBUGDOTSTEP
-/* single step, no argument */
-CONSTANT "debug.rdepth",DEBUGDOTRDEPTH,2
+
+CONSTANT "debug.rdepth",DEBUGDOTRDEPTH,2 /* step until rdepth, argument is desired rdepth */
 END DEBUGDOTRDEPTH
-/* step until rdepth, argument is desired rdepth */
+
 # ----------------------------------------------------------------------
-COLON "debugger", DEBUGGER /* ( -- ) implements debug actions */
+NONAME "debugger", DEBUGGER /* ( -- ) implements debug actions */
 	.word XT_DEBUG_NEXT
 	.word XT_FETCH
 	.word XT_TWO
@@ -505,7 +504,7 @@ DEBUGGER_0007: /* then */
 	.word XT_PROMPTOK
 	.word XT_PROMPTREADY
 	.word XT_DOBRANCH,DEBUGGER_0003 /* again */
-	.word XT_SEMICOLOND
+	.word XT_EXITD
 # ----------------------------------------------------------------------
 COLON "debug+", DEBUGPLUS /* ( -- ) enable debugger, break will interrupt execution */
 	.word XT_DOXLITERAL

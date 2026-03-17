@@ -33,27 +33,31 @@ STRING:
 DICTIONARY:
     ' c, , h, (c,) (,) s, chkdalign reveal newest latest 
     value to (to) is variable constant :noname header
-    find find-xt forget words  interpret execute
-    nfa>string nfa>xt lfa>ffa ffa>nfa xt>string >body name>flags ffa>string ffa2cfa ffa>lfa xt>ffa xt>nfa
-    flag.table flag.init flag.defer flag.value flag.pvalue flag.immed flag.con flag.colon flag.dvar flag.var flag.code flag.header
+    find find-xt forget words execute
+    nfa>string nfa>xt lfa>ffa ffa>nfa xt>string >body ffa>string ffa2cfa ffa>lfa xt>ffa xt>nfa xt>lfa
+    ?ip ?nfa anybranch? branch? colon? codeword? compile? condbranch? exit? literal? loop? sliteral? value? variable? xliteral?
+    ip2name ip2xt
+    flag.table flag.init flag.defer flag.value flag.pvalue flag.immed flag.con flag.colon flag.dvar flag.var flag.code flag.child flag.header
 WORDLIST:
+    empty.flash empty.ram
     wordlist forth-wordlist ram-wordlist core-wordlist environment rv-wordlist arm-wordlist
     current get-current set-current wlscope search-wordlist show-wordlist traverse-wordlist
     order cfg-order only core forth order.forth order.core order.only 
     previous set-order get-order w1  order.table  top> >top top
 COMPILER:
     : ; ;i ( \# \ recurse postpone immediate state
-    create does> char [ ] ['] [compile] [char] 
+    create <builds builds> does> char [ ] ['] [compile] [char] 
     compile xliteral literal 2literal sliteral
     Udefer! Udefer@ defer! defer@ defer
-    evaluate evaluate.source evaluate.str evaluate.strlen
+    evaluate
 FLOW:
     ?abort abort" abort trap.base trap! throw catch handler exit
     ahead if else then begin until again while repeat 
-    do ?do i j unloop leave loop +loop endloop >l l> lp lp0 
+    do ?do i j unloop leave loop +loop endloop >l l> lp lp0
+    match act end endmatch case of endof endcase
 IO:
     serial-emit? serial-emit serial-key? serial-key emit? serial-emit-pause emit key? serial-key-pause key
-    tib #tib >in source-tib source accept refill-tib refill ?crlf bs
+    tib #tib >in source-tib source accept refill-tib refill refill-buf-size ?crlf bs
 OUTPUT:
     . u. u.r d. d.r ud. ud.r
     r. r.. hex. 8x. 2x. x. .8hex
@@ -61,12 +65,12 @@ OUTPUT:
     itype type pad binary hex decimal 
     sign #> #s # <# hold hld
 SYSTEM:
-    cold warm init-ram turnkey appl-turnkey quit pause
+    cold warm init-ram turnkey appl-turnkey quit pause interpret
     ms us .ver .build build.rev build.time build.config cpu board version name /user
     set-base bases .ready .ok .input .error first-run
     first-boot.done ?first-boot first-boot.marker first-boot.start
 TOOLS:
-    .s .k debug || dump ?ascii vdump break debug+ debug-
+    .s .k .rs .bt .itc dump ?ascii vdump break debug+ debug- || show
 FLASH:
     flash.cell flash.page flash.erased flash.start flash.low flash.max flash.erase flush naligned !i
     pv.do pv.init vaddr pv.store pvp pv.reset-hard 2!pvf
