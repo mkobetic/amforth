@@ -8,7 +8,7 @@ The purpose is to advance the 32-bit ARM and RISC-V variants of AmForth.
 
 For details check out the READMEs in the respective directories.
 * [core/](https://github.com/mkobetic/amforth/tree/main/core) - the shared 32-bit AmForth core
-* arm/ - the ARM architecture core (Cortex M4)
+* [arm/](https://github.com/mkobetic/amforth/tree/main/arm) - the ARM architecture core (Cortex M3/4)
 * rv/ - the RISC-V architecture core
 * rv/mcu/, arm/mcu/ - AmForth for different boards and targets
 
