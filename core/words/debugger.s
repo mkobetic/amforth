@@ -1,5 +1,27 @@
-#======================================================================
-#======================================================================
+/*
+To support debugging of colon words (which is somewhat inconvenient in GDB), the interpreter is modified to allow interrupting the normal COLON word interpretation cycle after each word. This is achieved by designating a register as a `DEBUG` register (ARM: r5, RV: s9) and checking in each cycle if its value is 0. If not it indicates the currently running debug action that is interpreted by the debugger. This adds overhead of a single test and jump instruction to the normal interpreter cycle. All other overhead is incurred only when the debugger is activated. AmForth can be rebuilt with `WANT_DEBUGGER` set to `NO` to eliminate all debugger overhead (including code).
+
+One of the main goals was to allow writing the debugger in Forth for both convenience and portability. Consequently it is critical that the debugger word is executed normally (without further interruptions). Therefore the DEBUG register is cleared when entering the debugger word and restored when the debugger word exits (`exitd`).
+
+To enter the debugging regime, the word `break` sets up the `DEBUG` register which causes the interpreter to be interrupted in the following cycle (before executing next word). The debugger sends debugging information back to the terminal emulator (the parameter stack, backtrace and a short list of XTs to be executed next). The debug info lines are prefixed with `|D ` to enable post-processing on the host side (amforth-shell uses that). After sending the info the debugger then waits for input from the operator.
+
+Debugger interprets user input as follows:
+* `c`  - continue, resume normal execution (until `break` is hit again)
+* `s` - step, executes single interpreter cycle and stops again
+* `n` - next, steps until the same `rstack` depth is reached again, for stepping through the current word without diving down into called words
+* `r` - return, steps until the current word is fully executed and returns to the calling word
+* any other input is evaluated as a Forth expression and the result is returned
+
+Step simply leaves the DEBUG hook in place and resumes interpreter for single cycle and stops again. Continue instead clears the debug hook so the interpreter resumes normal execution until it hits the `break` word again. Next and Return step repeatedly until `rdepth` is the same (Next) or one less (Return). Executing Forth expressions leaves the debugger in control.
+To indicate that debugger is in control it emits `#` as its prompt character, instead of `>` which indicates the interpreter is in control.
+
+The DEBUG register is controlled through the USER variable `debug.next`, which determines the next debug action by being the source of value to restore into the DEBUG register when the debugger word exits. Continue sets it to 0, which means the DEBUG register will be cleared when interpreter resumes. The other actions set it to a value representing the action (lowest 2 bits) and optional argument (highest 30 bits).
+
+`debug.break` is kind of a defer for the debugger word (but a user variable instead). It can be used to disable the debugger by setting it to 0. Words `debug+` and `debug-` do just that.
+
+*/
+# ======================================================================
+# ======================================================================
 # transpiling ../amforth/lib/backtrace.frt on 2026/03/16 23:15:21
 # : ?ip \# ( a -- f ) is a likely to be a valid IP address
 # \# i.e. is it within the address ranges where words are compiled
@@ -341,6 +363,9 @@ DOTRS_0002: /* (for ?do IF required) */
 END DOTRS
 # ----------------------------------------------------------------------
 COLON ".itc", DOTITC /* ( u1 u2 -- ) dump u1 XTs starting from current IP u2 cells down the return stack  */
+/* The output is a vertical dump of the ITC at the current IP position, one line per cell showing the IP address, the value it contains, and if it's an XT the name of its corresponding word. The `<<(IP)<<` marker shows what is the next XT to be executed.
+The second parameter (TOS) says how many return stack entries to skip, this allows viewing code at any level along the current backtrace. 
+*/
 	.word XT_RDEPTH
 	.word XT_OVER
 	.word XT_MINUS
