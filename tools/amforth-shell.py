@@ -526,6 +526,7 @@ class AMForth(object):
             self._search_list = os.environ["AMFORTH_LIB"].split(":")
         else:
             self._search_list=["."]
+        self._in_debugger = False # indicates whether the debugger is active (based on the response)
         self._sym_file = None # path to symbol table file
         # XT symbols
         self._xt_addresses = [] # array of addresses for bisect searching
@@ -1127,6 +1128,7 @@ additional definitions (e.g. register names)
         response = self.read_response()
         # handle debugger info lines
         if response.startswith("|D "):
+            self._in_debugger = True
             lines = response.splitlines()
             response = []
             for line in lines:
@@ -1154,8 +1156,12 @@ additional definitions (e.g. register names)
                         line += pointer
                     response.append(line)
                     continue
-                response.append(line)
+                if line.startswith("|D "):
+                    response.append(line[3:])
+                    continue
             response = "\n".join(response)
+        else:
+            self._in_debugger = False
         return response
 
     def read_response(self):
@@ -1294,7 +1300,9 @@ additional definitions (e.g. register names)
         in_comment = False
         while True:
             try:
-                if self._show_stack :
+                if self._in_debugger :
+                    prompt="# "
+                elif self._show_stack :
                     self._update_stack()
                     prompt=self._amforth_stack + "> "
                 else:

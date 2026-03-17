@@ -122,7 +122,7 @@
 #         2dup s" r" compare not if 2drop
 #             rdepth 1- 2 lshift debug.rdepth or debug.next ! (exitd) then
 #         \# ( s ) otherwise evaluate the expression and repeat
-#         (evaluate) .ok .ready.debugger
+#         s" |D " type (evaluate) .ok .ready.debugger
 #     again
 # ;d
 # 
@@ -500,6 +500,8 @@ DEBUGGER_0006: /* then */
 	.word XT_EXITD
 DEBUGGER_0007: /* then */
 /* ( s ) otherwise evaluate the expression and repeat */
+	STRING "|D "
+	.word XT_TYPE
 	.word XT_LPARENEVALUATERPAREN
 	.word XT_PROMPTOK
 	.word XT_PROMPTREADYDEBUGGER
