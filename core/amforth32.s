@@ -8,9 +8,11 @@ RAMALLOT ram_vector, 256*cellsize, 4
 RAMALLOT datastack, datastack_size, 4
 RAMALLOT returnstack, returnstack_size, 4
 RAMALLOT leavestack, leavestack_size, 4
-RAMALLOT userarea, userarea_size
+RAMALLOT userarea, userarea_size, 4
 RAMALLOT refill_buf, refill_buf_size, 4
-
+.if WANT_DEBUGGER == YES
+RAMALLOT debug_buf, refill_buf_size, 4
+.endif
 # EXCEPTION CODES
 
 # Standard Exceptions
@@ -37,12 +39,12 @@ RAMALLOT refill_buf, refill_buf_size, 4
 .equ EROWRT,   -20	/* write to a read-only location */
 .equ EUNSUP,   -21	/* unsupported operation */
 .equ ECTRL,    -22	/* control structure mismatch */
-.equ EADRAL,   -23	/* address alignment exception */
+.equ EALIGN,   -23	/* address alignment exception */
 .equ EARGN,    -24	/* invalid numeric argument */
 .equ ERSIMB,   -25	/* return stack imbalance */
 .equ ELOOPP,   -26	/* loop parameters unavailable */
 .equ ERECUR,   -27	/* invalid recursion */
-.equ EUINT,    -28	/* user interrupt */
+.equ EUINTR,    -28	/* user interrupt */
 .equ ECOMPN,   -29	/* compiler nesting */
 .equ EOBSOL,   -30	/* obsolescent feature */
 .equ EBODY,    -31	/* >BODY used on non-CREATEd definition */

@@ -156,6 +156,8 @@ def parse_toc(filepath, categories):
                 name = name.replace('\\\\', '\\')
                 # Replace \xHH with ascii character for HH
                 name = re.sub(r'\\x([0-9a-fA-F]{2})', lambda m: chr(int(m.group(1), 16)), name)
+                # Replace \OOO with ascii character for OOO
+                name = re.sub(r'\\([0-7]{3})', lambda m: chr(int(m.group(1), 8)), name)
                 symbol = match.group(3)
                 parameter = match.group(5)
                 raw_comment = match.group(7).strip()

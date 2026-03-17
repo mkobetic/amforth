@@ -253,15 +253,134 @@ Finally the Linux based targets (e.g. `arm/mcu/linux`) can run on `qemu-user` on
 
 ### Debugging
 
-To debug AmForth you will need GDB, especially for debugging CODEWORDs, or in situations where AmForth is generally not responsive (e.g. boot time and initialization issues). GDB is less convenient for debugging COLON words. This is because ITC is not directly executed, the CPU never jumps into the PFA area of a word, so you cannot just put a breakpoint there. In these situation a more elaborate technique may be needed, e.g. putting a conditional breakpoint into the inner interpreter loop (see `interpreter.s`) and interrogating the W or IP register in the condition.
-
-Another difficulty with using GDB for AmForth is that AmForth runtime is a completely alien environment for GDB. Its tools don't understand the AmForth stacks, it cannot reconstruct the backtrace correctly, etc. This is why AmForth development tooling provides GDB extensions to help deal with these issues. The Makefiles normally provide `make gdb` command that starts the maximally extended GDB connected to the current target (more on that below). The extensions are implemented equally for both CPU architectures.
-
-To debug AmForth GDB must connect to it through a "GDB server" process. This is somewhat different between [emulated](#qemu-targets) and [physical](#physical-targets) targets as discussed below.
+Debugging requires different tools based on what part of AmForth you want to debug. To debug CODEWORDs, or in situations where AmForth is generally not responsive (e.g. boot time and initialization issues) you will need an external debugger like GDB. External debugger is less convenient for debugging COLON words. This is because ITC is not directly executed, the CPU never jumps into the PFA area of a word, so you cannot just put a breakpoint there. For these situations AmForth also provides an internal debugger, which is the most convenient way to debug COLON words.
 
 There are other AmForth or general Forth debugging techniques that can be useful in some circumstances. See [AmForth Programming and Debugging](https://amforth.sourceforge.net/TG/recipes/Programming.html) for a list of such techniques.
 
+#### AmForth Debugger
+
+When enabled, the AmForth debugger is engaged when execution reaches the word the word `break`. It causes the interpreter to be interrupted in the following cycle (before executing next word) and the debugger takes over. The debugger sends debugging information back to the terminal emulator (the parameter stack, backtrace and a short list of XTs to be executed next) and then waits for input from the operator. 
+
+Debugger interprets user input as follows:
+* `c`  - continue, resume normal execution (until `break` is hit again)
+* `s` - step, executes single interpreter cycle and stops again, allows diving deeper into words being called
+* `n` - next, steps through the current word without diving down into called words
+* `r` - return, steps until the current word is fully executed and returns to the calling word
+* any other input is evaluated as a Forth expression and the result is returned
+
+`debug.break` is sort of a defer for the word implementing the debugger (but a user variable instead). It can be used to disable the debugger by setting it to 0. Words `debug+` and `debug-` do just that to enable or disable the debugger. When disabled the `break` word acts as a `nop`.
+
+`amforth-shell` was extended to augment the presentation of the state sent by the debugger. It also loads symbols from the symbol table file and uses those to re-interpret raw addresses from the debugger; this allows interpreting NONAME word addresses (e.g. the `XT_R_WORD_INTERPRET` in the example below) and also addresses from other memory regions (e.g. `RAM_upper_datastack` below).
+
+Below is a transcript of a short debugging session using `fib` word that has a break at the top of it, so it will halt on each entry into the word (including the recursive calls):
+
+```
+: fib 
+    break
+    dup 2 <= if drop 1 exit then 
+    dup 1- recurse swap 1- 1- recurse +
+;
+```
+
+The stacks are presented each on its own line, with the stack label and current depth, e.g. `PS(3):`, `RS(10): `, followed by the list of top 10 values. If there are more than 10 values the list is finished with `...`. The stack lines are followed by a vertical dump of the ITC at the current IP position; one line per cell showing the IP address, the value it contains, and if it's an XT the name of its corresponding word. The `<<(IP)<<` marker shows what is the next XT to be executed.
+
+The first (c)ontinue command in the example stops again because `break` is hit again on recursive call to `fib`. Next command shows the integrated debug-shell allowing evaluation of arbitrary forth expressions, useful to interrogate the current state of the runtime. The (r)eturn calls step until the execution pops out of the current word. The last (c)ontinue call doesn't hit another `break` and normal outer interpreter interaction resumes (the fib result is printed).
+
+Note that the prompt changes to `#` instead of `>` when the debugger is in control instead of the interpreter.
+
+```
+> 5 fib .
+PS(1): 5
+RS(9): fib+2 XT_R_WORD_INTERPRET+3 interpret+14 catch+10 0 RAM_upper_datastack-8 quit+18 warm+20 0
+400428D4 400002A8 dup   <<(IP)<<
+400428D8 40001D30 2
+400428DC 40000730 <=
+400428E0 400010EC (?branch)
+400428E4 400428F4
+# c
+PS(2): 4 5
+RS(10): fib+2 fib+13 XT_R_WORD_INTERPRET+3 interpret+14 catch+10 0 RAM_upper_datastack-8 quit+18 warm+20 0
+400428D4 400002A8 dup   <<(IP)<<
+400428D8 40001D30 2
+400428DC 40000730 <=
+400428E0 400010EC (?branch)
+400428E4 400428F4
+# 3 4 + .
+7  ok
+# r
+PS(2): 3 5
+RS(9): fib+13 XT_R_WORD_INTERPRET+3 interpret+14 catch+10 0 RAM_upper_datastack-8 quit+18 warm+20 0
+40042900 400000CC swap   <<(IP)<<
+40042904 40000DC4 1-
+40042908 40000DC4 1-
+4004290C 400428CC fib
+40042910 40000118 +
+# r
+PS(1): 5
+RS(8): XT_R_WORD_INTERPRET+3 interpret+14 catch+10 0 RAM_upper_datastack-8 quit+18 warm+20 0
+400019B0 4000025C (exit)   <<(IP)<<
+400019B4 00000003
+400019B8 40000635
+400019BC 400006F8 0<
+400019C0 400010EC (?branch)
+# c
+5  ok
+>
+```
+
+Same scenario using a generic terminal emulator (not amforth-shell) shows the raw debug info lines that are sent from AmForth. The `|D ` prefix is used to indicate that the line contains information produced from the debugger. The debugging commands and the debug-shell expressions work the same way.
+
+```
+> 5 fib .
+|D PS: 1  5 
+|D RS: fib+2 400019A4+3 interpret+14 catch+10 0 4004059C quit+18 warm+20 0 
+|D 400428D4 400002A8 dup   <<(IP)<<
+|D 400428D8 40001D30 2
+|D 400428DC 40000730 <=
+|D 400428E0 400010EC (?branch)
+|D 400428E4 400428F4 
+ ok
+# c
+|D PS: 2  4 5 
+|D RS: fib+2 fib+13 400019A4+3 interpret+14 catch+10 0 4004059C quit+18 warm+20 0 
+|D 400428D4 400002A8 dup   <<(IP)<<
+|D 400428D8 40001D30 2
+|D 400428DC 40000730 <=
+|D 400428E0 400010EC (?branch)
+|D 400428E4 400428F4 
+ ok
+# 3 4 + .
+|D 7  ok
+# r
+|D PS: 2  3 5 
+|D RS: fib+13 400019A4+3 interpret+14 catch+10 0 4004059C quit+18 warm+20 0 
+|D 40042900 400000CC swap   <<(IP)<<
+|D 40042904 40000DC4 1-
+|D 40042908 40000DC4 1-
+|D 4004290C 400428CC fib
+|D 40042910 40000118 +
+ ok
+# r
+|D PS: 1  5 
+|D RS: 400019A4+3 interpret+14 catch+10 0 4004059C quit+18 warm+20 0 
+|D 400019B0 4000025C (exit)   <<(IP)<<
+|D 400019B4 00000003 
+|D 400019B8 40000635 
+|D 400019BC 400006F8 0<
+|D 400019C0 400010EC (?branch)
+ ok
+# c
+5  ok
+> 
+```
+
+Debugger support requires modifying the inner interpreter to allow interrupting the normal COLON word interpretation cycle after each word. This is achieved by designating a register as a `DEBUG` register (ARM: r5, RV: s9) and checking in each cycle if its value is 0. If not the register indicates the currently running debug action that is interpreted by the debugger. This adds overhead of a single test and jump instruction to the normal interpreter cycle (see {arm|rv}/interpret.s). All other overhead is incurred only when the debugger is activated. AmForth can be rebuilt with `WANT_DEBUGGER` set to `NO` to eliminate all debugger overhead (including code).
+
 #### GDB
+
+GDB should be primarily used for debugging CODEWORDs or in situations where AmForth is generally not responsive (e.g. boot time and initialization issues). AmForth runtime is a completely alien environment for GDB, that is why AmForth development tooling provides GDB extensions to give better insight into the state of AmForth virtual machine. The Makefiles normally provide `make gdb` command that starts the maximally extended GDB connected to the current target (more on that below). The extensions are implemented equally for both CPU architectures.
+
+To debug AmForth GDB must connect to it through a "GDB server" process. This is somewhat different between [emulated](#qemu-targets) and [physical](#physical-targets) targets as discussed below.
 
 GDB is normally part of the GNU toolchain. There are two variants of GDB and two fundamental ways of extending it.
 

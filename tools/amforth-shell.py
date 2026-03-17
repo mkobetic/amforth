@@ -258,6 +258,7 @@
 
 import argparse
 import atexit
+import bisect
 import copy
 import glob
 import os
@@ -396,7 +397,7 @@ class AMForth(object):
         "#cd", "#edit", "#require", "#include", "#directive", "#ignore-error",
         "#error-on-output", "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#update-words", "#exit",
-        "#update-cpu", "#update-files" , "#stack"
+        "#update-cpu", "#update-files" , "#stack", "#show-symbols"
         ]
     # standard words are usually uppercase, but amforth needs
     # them in lowercase.
@@ -525,7 +526,17 @@ class AMForth(object):
             self._search_list = os.environ["AMFORTH_LIB"].split(":")
         else:
             self._search_list=["."]
-
+        self._in_debugger = False # indicates whether the debugger is active (based on the response)
+        self._sym_file = None # path to symbol table file
+        # XT symbols
+        self._xt_addresses = [] # array of addresses for bisect searching
+        self._xt_symbols = [] # array of names for mapping bisect results
+        # RAM area symbols
+        self._ram_area_addrs = [] # array of addresses for bisect searching
+        self._ram_area_symbols = [] # array of names for mapping bisect results
+        # Variable, defer, value RAM address symbols
+        self._var_addrs = [] # array of addresses for bisect searching
+        self._var_symbols = [] # array of names for mapping bisect results
         # define application constants to substitute
         try:
             ad_file = open("appl_defs.frt")
@@ -660,6 +671,8 @@ additional definitions (e.g. register names)
             help="Keep the list of uploaded filenames in the dictionary.")
         parser.add_argument("--encoding", "-e", action="store", default="latin1",
             help="Serial port encoding (default: latin1)")
+        parser.add_argument("--sym-file", action="store", default="amforth.sym",
+            help="Symbol table file (default amforth.sym)")
 
         parser.add_argument("files", nargs="*", help="may be found via the environment variable AMFORTH_LIB")
         arg = parser.parse_args()
@@ -672,6 +685,7 @@ additional definitions (e.g. register names)
         self._update_uploaded = arg.uploaded_wl
         self.editor = arg.editor
         self._encoding = arg.encoding
+        self._sym_file = arg.sym_file
         if arg.Include:
             self._search_list.extend(arg.Include)
         behavior = self._config.current_behavior
@@ -1077,7 +1091,7 @@ additional definitions (e.g. register names)
                 return False
             else:
                 errmsg = "Invalid directive argument.  Must be yes or no."
-                raise AMForthExcetion(errmsg)
+                raise AMForthException(errmsg)
 
     def send_line(self, line):
         if len(line) > self.max_line_length - 1: # For newline
@@ -1107,6 +1121,49 @@ additional definitions (e.g. register names)
         if self.debug:
             sys.stderr.write("\n")
 
+    _debugger_itc_re = re.compile(r"\|D ([0-9A-F]{8}) ([0-9A-F]{8})(?:\s+(\S+))?(\s+<<\(IP\)<<)?\s*")
+    def read_response_interactive(self):
+        """ Enhanced read_response() for interactive session.
+        """
+        response = self.read_response()
+        # handle debugger info lines
+        if response.startswith("|D "):
+            self._in_debugger = True
+            lines = response.splitlines()
+            response = []
+            for line in lines:
+                if line.startswith("|D PS: "):
+                    ps = line[7:].strip().split()
+                    response.append("PS("+ps[0]+"): "+" ".join(ps[1:11])+(" ... " if len(ps) > 11 else ""))
+                    continue
+                if line.startswith("|D RS: "):
+                    rs = line[7:].strip().split()
+                    rs = self._translate_addresses(rs)
+                    response.append("RS("+repr(len(rs))+"): "+" ".join(rs[:10])+(" ..." if len(rs) > 10 else ""))
+                    continue
+                match = self._debugger_itc_re.match(line)
+                if match:
+                    addr = match.group(1)
+                    xt = match.group(2)
+                    word = match.group(3)
+                    pointer = match.group(4)
+                    if not word:
+                        word = self._translate_address(xt)
+                    line = f"{addr} {xt}"
+                    if word:
+                        line += f" {word}"
+                    if pointer:
+                        line += pointer
+                    response.append(line)
+                    continue
+                if line.startswith("|D "):
+                    response.append(line[3:])
+                    continue
+            response = "\n".join(response)
+        else:
+            self._in_debugger = False
+        return response
+
     def read_response(self):
         if self.debug:
             sys.stderr.write("|r(     )")
@@ -1127,9 +1184,100 @@ additional definitions (e.g. register names)
             r = self._serialconn.read(1).decode(self._encoding)
         if not response:
             response = "Timed out waiting for ok response"
+
         if self.debug:
             sys.stderr.write("\n")
+        # Strip PROMPTINPUT if present (at the start of the line)
+        if response[:2] == "\r\n":
+            response = response[2:] 
         return response
+
+    _symbol_table_re = re.compile(r"^0x([0-9a-f]{8}).*(\S+)\s+(\S+)\s+(\S+)$")
+    def _load_symbols(self):
+        """ Load symbols from the symbol table.
+        """
+        if len(self._xt_addresses) > 0:
+            return
+        try:
+            with open(self._sym_file) as f:
+                for line in f:
+                    match = self._symbol_table_re.match(line.strip())
+                    if not match:
+                        continue
+
+                    addr_str = match.group(1)
+                    section = match.group(2)
+                    name = match.group(4)
+                    if name.startswith("XT_"):
+                        addr = int(addr_str, 16)
+                        self._xt_addresses.append(addr)
+                        self._xt_symbols.append(name)
+                        continue
+                    if name.startswith("RAM_"):
+                        addr = int(addr_str, 16)
+                        self._ram_area_addrs.append(addr)
+                        self._ram_area_symbols.append(name)
+                        continue
+                    if name.endswith("_ram"):
+                        addr = int(addr_str, 16)
+                        if len(self._var_addrs) == 0 or self._var_addrs[-1] < addr:
+                            self._var_addrs.append(addr)
+                            self._var_symbols.append(name)
+
+        except Exception as e:
+            self.progress_callback("Error", None, f"{e}: reading symbol file {self._sym_file}")
+            self._xt_addresses = []
+            self._xt_symbols = []
+
+        self.progress_callback("Information", None, f"loaded {len(self._xt_addresses)} XT, {len(self._ram_area_addrs)} RAM, {len(self._var_addrs)} VAR symbols")
+
+    def _translate_addresses(self, addrs):
+        """ Translate numeric return stack addresses using the loaded symbols (if possible)
+        """
+        out = []
+        for a in addrs:
+            ta = self._translate_address(a)
+            out.append(ta if ta else a)
+        return out
+
+    _address_re = re.compile(r"([0-9A-F]+)(\+[0-9]+)?")
+    def _translate_address(self, addr):
+        match = self._address_re.match(addr)
+        if not match:
+            return None
+        addr = match.group(1)
+        suffix = match.group(2)
+        val = int(addr,16)
+        # check XT symbol match
+        i = bisect.bisect(self._xt_addresses, val)
+        if 0 < i < len(self._xt_addresses):
+            diff = val - self._xt_addresses[i-1]
+            if diff == 0:
+                name = self._xt_symbols[i-1]
+                return (name+suffix)
+        # check RAM area match
+        i = bisect.bisect(self._ram_area_addrs, val)
+        if 0 < i < len(self._ram_area_addrs):
+            name = self._ram_area_symbols[i-1]
+            # show stack area addresses as negative offsets from upper bound
+            if name.endswith("stack"):
+                name = self._ram_area_symbols[i]
+                diff = val - self._ram_area_addrs[i]
+            else:
+                diff = val - self._ram_area_addrs[i-1]
+            if diff == 0:
+                return name
+            else:
+                suffix = repr(diff) if diff < 0 else "+"+repr(diff)
+                return name+suffix
+        # Check variable/value/defer RAM address match
+        i = bisect.bisect(self._var_addrs, val)
+        if 0 < i < len(self._var_addrs):
+            diff = val - self._var_addrs[i-1]
+            if diff == 0:
+                name = self._var_symbols[i-1]
+                return name+suffix
+        return None
 
     def print_progress(self, type, lineno, info):
         if not lineno:
@@ -1152,7 +1300,9 @@ additional definitions (e.g. register names)
         in_comment = False
         while True:
             try:
-                if self._show_stack :
+                if self._in_debugger :
+                    prompt="# "
+                elif self._show_stack :
                     self._update_stack()
                     prompt=self._amforth_stack + "> "
                 else:
@@ -1205,6 +1355,16 @@ additional definitions (e.g. register names)
                         else:
                             print("No file to edit")
                         continue
+                    elif directive == "#show-symbols":
+                        for i, s in enumerate(self._xt_addresses):
+                            print(f"{self._xt_symbols[i]}={s:X}", end=" ")
+                        print("\n")
+                        for i, s in enumerate(self._var_addrs):
+                            print(f"{self._var_symbols[i]}={s:X}", end=" ")
+                        print("\n")
+                        for i, s in enumerate(self._ram_area_addrs):
+                            print(f"{self._ram_area_symbols[i]}={s:X}")
+                        continue
                     self.handle_common_directives(directive, directive_arg)
                     if directive == "#include" or directive == "#require":
                         self._update_words()
@@ -1213,7 +1373,7 @@ additional definitions (e.g. register names)
                     continue
                 else:
                     self.send_line(line)
-                    print (self.read_response())
+                    print (self.read_response_interactive())
             except AMForthException as e:
                 print ("Error: " + str(e))
         self._config.pop_file()
@@ -1246,6 +1406,7 @@ additional definitions (e.g. register names)
             self._update_words()
             self._update_cpu()
             self._update_files()
+            self._load_symbols()
             self._update_uploaded_files()
             atexit.register(readline.write_history_file, histfn)
 

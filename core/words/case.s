@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-IMMED "case" , CASE /* ( x -- x ) CASE: test value x for case..of..endof..endcase */
+IMMED "case" , CASE /* ( x -- x ) test value x for case..of..endof..endcase */
     .word XT_ZERO
     .word XT_EXIT 
 END CASE
 
-IMMED "of" , OF /* ( x n -- NUL|x ) CASE: if x equals n do body of..endof else leave x on stack */
+IMMED "of" , OF /* ( x n -- | x ) if x equals n do body of..endof else leave x on stack */
     .word XT_1PLUS
     .word XT_TO_R
     .word XT_COMPILE , XT_OVER 
@@ -17,14 +17,14 @@ IMMED "of" , OF /* ( x n -- NUL|x ) CASE: if x equals n do body of..endof else l
     .word XT_EXIT 
 END OF
 
-IMMED "endof" , ENDOF /* ( -- ) CASE: close for of in of..endof */
+IMMED "endof" , ENDOF /* ( -- ) close for of in of..endof */
      .word XT_TO_R 
      .word XT_DOXLITERAL , XT_ELSE , XT_EXECUTE 
      .word XT_R_FROM  
      .word XT_EXIT
 END ENDOF
 
-IMMED "endcase" , ENDCASE /* ( x -- ) CASE: close for case in case..of..endof..endcase */
+IMMED "endcase" , ENDCASE /* ( x -- ) close for case in case..of..endof..endcase */
      .word XT_COMPILE , XT_DROP
      .word XT_ZERO , XT_DODO
 ENDCASE1:

@@ -14,7 +14,7 @@ COLON "evaluate.source", EVALUATEDOTSOURCE
     .word XT_EXIT
 END EVALUATEDOTSOURCE
 # ----------------------------------------------------------------------
-COLON "(evaluate)", LPARENEVALUATERPAREN 
+COLON "(evaluate)", LPARENEVALUATERPAREN /* ( a u -- ) interpret a Forth string of length u starting at address a  */
     .word XT_DOLITERAL
     .word XT_SOURCE
     .word XT_DEFER_FETCH

@@ -210,14 +210,16 @@
 .include "words/dump.s"
 .include "words/testing.s"
 
+.if WANT_DEBUGGER == YES
+.include "words/debugger.s"
+.include "words/debugger2.s"
+.include "words/barbar.s"
+.endif
 
-
+.include "words/dicthelp.s"
 .if WANT_SEE 
 .include "words/dis-asm.s"
 .include "words/see.s"
-.include "words/dicthelp.s"
-.else
-.include "words/dicthelp.s"
 .endif
 
 .if WANT_MATCH
@@ -244,7 +246,6 @@
 .include "words/table.s"
 .endif
 
-.include "words/barbar.s"
 #.include "words/does.s"
 #.include "words/code.s"
 
@@ -269,7 +270,6 @@
 .include "words/valign.s"
 
 .include "words/evaluate.s"
-.include "words/break.s"
 
 .include "words/chkdalign.s"
 .include "words/vdump.s"

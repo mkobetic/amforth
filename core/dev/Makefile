@@ -215,7 +215,7 @@ export AMFORTH_LIB=.:$(AMFORTH)/tests:$(AMFORTH)/lib
 ## Connect via AmShell (needs MODEM)
 shell:
 	# export EDITOR in your .env file to make the #edit shell directive work.
-	$(AMSHELL) --no-error-on-output -i
+	$(AMSHELL) --no-error-on-output --sym-file build/amforth.sym -i
 
 # Running full test suite:
 # Not finished means we didn't get through the whole test file.

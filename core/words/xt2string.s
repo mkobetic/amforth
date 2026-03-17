@@ -51,7 +51,7 @@
 # 
 
 # ----------------------------------------------------------------------
-COLON "xt>string", XT2STRING /* ( xt c-addr u ) leave string associated with name of xt */
+COLON "xt>string", XT2STRING /* ( xt -- c-addr u ) leave string associated with name of xt */
 /*
 xt>string always returns a valid string. If xt>nfa leaves a zero NFA
 (indicating a failure to find a valid NFA ) then xt>string leaves

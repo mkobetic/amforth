@@ -3,7 +3,7 @@
 
 @ register usage
 @ temporary r0, r1, r2, r3, r4, r5
-
+DEBUG   .req r5
 tos     .req r6
 psp     .req r7
 FORTHW  .req r8

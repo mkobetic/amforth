@@ -6,22 +6,23 @@ Also look for TODO: in source files
 * review the default sizing of memory regions and sections (especially for the physical targets)
 * update AmForth version
 * automated compiled artifact releases
+* keep WANT_SAVE?
 
 * replace PFA_ labels that aren't PFAs with transient labels 1f, 2b...
 * do we need the CON macro?
 * xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
 * review/simplify word flags
 
+* immediate should throw when compiling to flash
 * extend the error prompt to list words on the R-stack to help identify where the throw comes from
 * all words should use the END macro to be proper function blocks (debug_info)
 * proper, and extractable comments for all words
 * add long word description to the html refcard as title attribute, so that it shows on hover
 
 * sort out issues with `to` word (to.s/alto.s)
-* `does>` only works in RAM dictionary, need `<builds`
 * don't waste 2 registers for do loop index and limit (especially on ARM)
-* does the `UP` pointer need to be a register?
 * `LEAVE` stack is only used at compile time? Make it usable as a second parameter stack maybe?
+* header flags don't each need their own bit in FFA
 * runtime defined values and defers are not the same as the compile time defined ones (getters, setters, default values)
 * core/aligned.s vs arm|rv/aligned.s
 * aligned.s and do-aligned.s are identical
