@@ -20,10 +20,6 @@ DO_EXECUTE:
         bx r0
 .size _INTERPRETER, . - _INTERPRETER
 
-
-USER "debug.next", DEBUG_NEXT, USER_DEBUG_NEXT /* next debug action, 0 if none */
-END DEBUG_NEXT
-
 CODEWORD "(exitd)", EXITD /* ( -- ) exit from a debugger word */
         /* restore DEBUG hook */
         ldr DEBUG, [up, USER_DEBUG_NEXT]
@@ -31,18 +27,6 @@ CODEWORD "(exitd)", EXITD /* ( -- ) exit from a debugger word */
         b DO_NEXT1 /* finish the interrupted DO_NEXT */
         .ltorg
 END EXITD
-
-IMMED "\073d", SEMICOLOND /* MUST be used to end debug hook word definition */
-        .word XT_COMPILE
-        .word XT_EXITD
-        .word XT_LBRACKET
-        .word XT_REVEAL
-        .word XT_FLASHDOTFLUSH
-        .word XT_EXIT
-END SEMICOLOND
-
-USER "debug.break", DEBUG_BREAK, USER_DEBUG_BREAK /* XT of debugger, invoked when BREAK is reached */
-END DEBUG_BREAK
 
 .equ DEBUG_STEP, 1
 

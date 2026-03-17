@@ -210,6 +210,7 @@
 .include "words/dump.s"
 .include "words/testing.s"
 .include "words/debugger.s"
+.include "words/debugger2.s"
 
 .include "words/dicthelp.s"
 .if WANT_SEE 

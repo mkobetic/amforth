@@ -1,5 +1,5 @@
-: ?ip ( a -- f ) \ is a likely to be a valid IP address
-\ i.e. is it within the address ranges where words are compiled
+: ?ip \# ( a -- f ) is a likely to be a valid IP address
+\# i.e. is it within the address ranges where words are compiled
     dup flash.low memmode if dp else dp.flash then within if
         drop true
     else
@@ -7,15 +7,15 @@
     then
 ;
 
-' ?ip @ constant xt_docolon
+\ ' ?ip @ constant docolon
 
-: ?xt ( a -- f ) \ is a likely an XT
-    @ xt_docolon =
+: ?xt \# ( a -- f ) is a likely an XT
+    @ docolon =
 ;
 
-: ip2xt ( a -- xt u true | a false ) \ convert IP to the XT of its containing word, u = a - xt (in cells)
-    dup ?ip not if false exit then \ leave a as is if not an IP address
-    #100 0 do ( a ) \ don't go more than 100 cells back
+: ip2xt \# ( a -- xt u true | a false ) convert IP to the XT of its containing word, u = a - xt (in cells)
+    dup ?ip not if false exit then \# leave a as is if not an IP address
+    #100 0 do ( a ) \# don't go more than 100 cells back
         dup ?xt if ( xt )
             i true
             unloop exit
@@ -25,107 +25,108 @@
     false
 ;
 
-: ip2name ( a -- u s true | u a false ) \ convert IP a to the name of its containing word, u = a - xt (in cells)
+: ip2name \# ( a -- u s true | u a false ) convert IP a to the name of its containing word, u = a - xt (in cells)
     ip2xt if ( xt u )
         swap dup xt>nfa ?dup if ( u xt nfa )
             dup @ 3 = if ( u xt nfa )
-                drop false \ noname, return xt
+                drop false \# noname, return xt
             else ( u xt nfa )
                 nip nfa>string true
             then
-        else ( u xt ) \ nfa not found
+        else ( u xt ) \# nfa not found
             false
         then
-    else ( a ) \ xt not found
+    else ( a ) \# xt not found
         0 swap false
     then
 ;
 
-: d. ( n -- ) \ print n in base 10
+: dbg.d. \# ( n -- ) print n in base 10
     base @ swap #10 base ! . base !
 ;
 
-: h. ( n -- ) \ print n in base 16
+: dbg.uh. \# ( u -- ) print u in base 16
     base @ swap #16 base ! u. base !
 ;
 
 
-: .bt ( u -- ) \ print return stack (top first) skipping top u cells, use word names
+: .bt \# ( u -- ) print return stack (top first) skipping top u cells, use word names
     rdepth over - dup 0 <= if 2drop exit then ( u depth )
     swap cells rp@ + swap 0 ?do ( a )
         dup @ ip2name if
             type
-        else over if 8x. else h. then
+        else over if 8x. else dbg.uh. then
         then ( a u )
-        ?dup if #43 emit d. then ( a )
+        ?dup if #43 emit dbg.d. then ( a )
     cell+ loop
     drop
 ;
 
-: .rs ( u -- ) \ print return stack (top first) skipping top u cells, use raw IP addresses
+: .rs \# ( u -- ) print return stack (top first) skipping top u cells, use raw IP addresses
     rdepth over - dup 0 <= if 2drop exit then ( u depth )
     swap cells rp@ + swap 0 ?do dup @ . cell+ loop
     drop
 ;
 
-: .itc ( u1 u2 -- ) \ dump u1 XTs starting from current IP u2 cells down the return stack 
+: .itc \# ( u1 u2 -- ) dump u1 XTs starting from current IP, skipping top u2 cells 
     rdepth over - 0 <= if 2drop drop exit then
-    cells rp@ + @ ( u1 ip ) \ get the IP
+    cells rp@ + @ ( u1 ip ) \# get the IP
     swap 0 ?do ( ip )
-        ." |D " dup 8x. space dup @ dup 8x. space xt>string type
-        i 0= if ."    <<(IP)<<" then
+        s" |D " type dup 8x. space dup @ dup 8x. space xt>string type
+        i 0= if s"    <<(IP)<<" type then
         cr cell+
     loop
     drop
 ;
 
 \ testing words
-: tt ?dup if 1- recurse else 0 break then ;
-: fib 
-    break
-    dup 2 <= if drop 1 exit then 
-    dup 1- recurse swap 1- 1- recurse +
-;
+\ : tt ?dup if 1- recurse else 0 break then ;
+\ : fib 
+\     break
+\     dup 2 <= if drop 1 exit then 
+\     dup 1- recurse swap 1- 1- recurse +
+\ ;
 
 \ debug.next[1:0] denotes the next debug action, 0 means no action
 \ debug.next[31:2] is action specific argument value
 \ debug actions
-1 constant debug.step    \ single step, no argument
-2 constant debug.rdepth  \ step until rdepth, argument is desired rdepth
+1 constant debug.step    \# single step, no argument
+2 constant debug.rdepth  \# step until rdepth, argument is desired rdepth
 
-: debugger ( -- ) \ executes next debug action
-    debug.next @ 2 and if \ is next action step until rdepth ?
+: debugger \# ( -- ) implements debug actions
+    debug.next @ 2 and if \# is next action step until rdepth ?
         debug.next @ 2 rshift rdepth < if 
-            (exitd) \ rdepth is more than desired, keep going
+            (exitd) \# rdepth is more than desired, keep going
         then
     then
-    \ emit stack state
-    ." |D PS: " .s cr
-    ." |D RS: " 1 .bt cr
+    \# emit stack state
+    s" |D PS: " type .s cr
+    s" |D RS: " type 1 .bt cr
     5 1 .itc .ok .ready
     begin
-        \ receive input from user
-        debug_buf dup refill-buf-size accept cr \ ( s )
-        \ (c)ontinue - resume normal execution
+        \# receive input from user
+        debug_buf dup refill-buf-size accept cr \# ( s )
+        \# (c)ontinue - resume normal execution
         2dup s" c" compare not if 2drop
             0 debug.next ! (exitd) then
-        \ (s)tep - single interpreter cycle
+        \# (s)tep - single interpreter cycle
         2dup s" s" compare not if 2drop
             debug.step debug.next ! (exitd) then
-        \ (n)ext - step until we're back in the same word
+        \# (n)ext - step until we're back in the same word
         2dup s" n" compare not if 2drop
             rdepth 2 lshift debug.rdepth or debug.next ! (exitd) then
-        \ (r)eturn - step until we're out of current word
+        \# (r)eturn - step until we're out of current word
         2dup s" r" compare not if 2drop
             rdepth 1- 2 lshift debug.rdepth or debug.next ! (exitd) then
-        \ ( s ) otherwise evaluate the expression and repeat
+        \# ( s ) otherwise evaluate the expression and repeat
         (evaluate) .ok .ready
     again
 ;d
 
-: debug+ ( -- ) \ enable debugger, break will interrupt execution
+: debug+ \# ( -- ) enable debugger, break will interrupt execution
     ['] debugger debug.break ! ;
 
-: debug- ( -- ) \ disable debugger, break will do nothing
+: debug- \# ( -- ) disable debugger, break will do nothing
     0 debug.break ! ;
-debug+
+
+\ debug+

@@ -26,27 +26,12 @@ DO_EXECUTE:
 #        jalr zero,s10,0 # jump to code
 .size _INTERPRETER, . - _INTERPRETER
 
-USER "debug.next", DEBUG_NEXT, USER_DEBUG_NEXT /* next debug action, 0 if none */
-END DEBUG_NEXT
-
 CODEWORD "(exitd)", EXITD /* ( -- ) exit from a debugger word */
         /* restore DEBUG hook */
         lw s9, USER_DEBUG_NEXT(s6)
         pop s2 /* restore FORTHIP */
         j DO_NEXT1 /* finish the interrupted DO_NEXT */
 END EXITD
-
-IMMED "\073d", SEMICOLOND /* MUST be used to end debug hook word definition */
-        .word XT_COMPILE
-        .word XT_EXITD
-        .word XT_LBRACKET
-        .word XT_REVEAL
-        .word XT_FLASHDOTFLUSH
-        .word XT_EXIT
-END SEMICOLOND
-
-USER "debug.break", DEBUG_BREAK, USER_DEBUG_BREAK /* XT of debugger, invoked when BREAK is reached */
-END DEBUG_BREAK
 
 .equ DEBUG_STEP, 1
 
