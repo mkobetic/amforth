@@ -105,7 +105,7 @@
 #     \# emit stack state
 #     s" |D PS: " type .s cr
 #     s" |D RS: " type 1 .bt cr
-#     5 1 .itc .ok .ready
+#     5 1 .itc .ok .ready.debugger
 #     begin
 #         \# receive input from user
 #         debug_buf dup refill-buf-size accept cr \# ( s )
@@ -122,7 +122,7 @@
 #         2dup s" r" compare not if 2drop
 #             rdepth 1- 2 lshift debug.rdepth or debug.next ! (exitd) then
 #         \# ( s ) otherwise evaluate the expression and repeat
-#         (evaluate) .ok .ready
+#         (evaluate) .ok .ready.debugger
 #     again
 # ;d
 # 
@@ -433,7 +433,7 @@ DEBUGGER_0001: /* then */
 	.word XT_ONE
 	.word XT_DOTITC
 	.word XT_PROMPTOK
-	.word XT_PROMPTREADY
+	.word XT_PROMPTREADYDEBUGGER
 DEBUGGER_0003: /* begin */
 /* receive input from user */
 	.word XT_DEBUG_BUF
@@ -502,7 +502,7 @@ DEBUGGER_0007: /* then */
 /* ( s ) otherwise evaluate the expression and repeat */
 	.word XT_LPARENEVALUATERPAREN
 	.word XT_PROMPTOK
-	.word XT_PROMPTREADY
+	.word XT_PROMPTREADYDEBUGGER
 	.word XT_DOBRANCH,DEBUGGER_0003 /* again */
 	.word XT_EXITD
 # ----------------------------------------------------------------------

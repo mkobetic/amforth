@@ -96,7 +96,7 @@
     \# emit stack state
     s" |D PS: " type .s cr
     s" |D RS: " type 1 .bt cr
-    5 1 .itc .ok .ready
+    5 1 .itc .ok .ready.debugger
     begin
         \# receive input from user
         debug_buf dup refill-buf-size accept cr \# ( s )
@@ -113,7 +113,7 @@
         2dup s" r" compare not if 2drop
             rdepth 1- 2 lshift debug.rdepth or debug.next ! (exitd) then
         \# ( s ) otherwise evaluate the expression and repeat
-        (evaluate) .ok .ready
+        (evaluate) .ok .ready.debugger
     again
 ;d
 
