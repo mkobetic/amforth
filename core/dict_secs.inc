@@ -138,6 +138,7 @@
 .include "words/else.s"
 .include "words/again.s"
 .include "words/repeat.s"
+.include "words/lstack.s"
 .include "words/leave.s"
 .include "words/immediate.s"
 .include "words/turnkey.s"

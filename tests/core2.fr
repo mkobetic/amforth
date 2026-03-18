@@ -98,3 +98,9 @@ T{ s"    one" bl cskip s" one" compare -> false }T
 
 T{ s" one two" bl cscan s" one" compare -> false }T
 T{ s"  one" bl cscan nip 0= -> true }T
+
+TESTING leave stack
+
+T{ 5 >l l@ l> -> 5 5 }T
+T{ 1 2 2>l 2l@ 2l> -> 1 2 1 2 }T
+T{ ldepth 1 >l ldepth ldrop ldepth -> 0 1 0 }T
