@@ -85,13 +85,13 @@ CODEWORD "syscall", SYSCALL @ ( r0 r1 r2 r3 r4 r5 Syscall# -- r0 )
 
  push {tos} @ Syscall number
 
- ldm psp!, {r6}
- ldm psp!, {r5}
- ldm psp!, {r4}
- ldm psp!, {r3}
- ldm psp!, {r2}
- ldm psp!, {r1}
- ldm psp!, {r0}
+ loadtos
+ popnos r5
+ popnos r4
+ popnos r3
+ popnos r2
+ popnos r1
+ popnos r0
 
  pop {r7} @ into r7
 

@@ -36,7 +36,7 @@ CODEWORD  "move", MOVE /* ( addr1 addr2 n -- ) copy n bytes from addr1 to addr2 
   subs r1, #1
   bne 2b
 
-3:  ldm psp!, {tos}
+3:  loadtos
   pop {r0, r1, r2}
   NEXT
 END MOVE

@@ -46,7 +46,7 @@ END ZEROLESS
 @ -----------------------------------------------------------------------------
   CODEWORD  ">=", GREATEREQUAL /* ( n1 n2 -- f ) f = n1 >= n2 */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}     @ Get x1 into a register.
+  popnos r0     @ Get x1 into a register.
   cmp r0, tos        @ Is x2 less?
   ite lt             @ If so,
   movlt tos, #0      @  set all bits in TOS,
@@ -57,7 +57,7 @@ END GREATEREQUAL
 @ -----------------------------------------------------------------------------
   CODEWORD  "<=", LESSEQUAL /* ( n1 n2 -- f ) f = n1 <= n2 */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}     @ Get x1 into a register.
+  popnos r0     @ Get x1 into a register.
   cmp r0, tos        @ Is x2 greater?
   ite gt             @ If so,
   movgt tos, #0      @  set all bits in TOS,
@@ -68,7 +68,7 @@ END LESSEQUAL
 @ -----------------------------------------------------------------------------
   CODEWORD  "<", LESS /* ( n1 n2 -- f ) f = n1 < n2 */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}     @ Get x1 into a register.
+  popnos r0     @ Get x1 into a register.
   cmp r0, tos        @ Is x2 less?
   ite lt             @ If so,
   movlt tos, #-1     @  set all bits in TOS,
@@ -79,7 +79,7 @@ END LESS
 @ -----------------------------------------------------------------------------
   CODEWORD  ">", GREATER /* ( n1 n2 -- f ) f = n1 > n2 */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}     @ Get x1 into a register.
+  popnos r0     @ Get x1 into a register.
   cmp r0, tos        @ Is x2 greater?
   ite gt             @ If so,
   movgt tos, #-1     @  set all bits in TOS,
@@ -90,7 +90,7 @@ END GREATER
 @ -----------------------------------------------------------------------------
   CODEWORD  "u<", ULESS /* ( u1 u2 -- f ) f = u1 < u2 */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}      @ Get u1 into a register.
+  popnos r0      @ Get u1 into a register.
   subs tos, r0, tos   @ subs tos, w, tos   @ TOS = a-b  -- carry set if a is less than b
   sbcs tos, tos
   NEXT
@@ -99,7 +99,7 @@ END ULESS
 @ -----------------------------------------------------------------------------
   CODEWORD  "u>", UGREATER /* ( u1 u2 -- f ) f = u1 > u2 */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}
+  popnos r0
   subs tos, r0
   sbcs tos, tos
   NEXT
@@ -108,7 +108,7 @@ END UGREATER
 @ -----------------------------------------------------------------------------
   CODEWORD  "<>", NOTEQUAL /* ( n1 n2 -- f ) f = n1 != n2 */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}      @ Get the next elt into a register.
+  popnos r0      @ Get the next elt into a register.
   subs tos, r0        @ Z=equality; if equal, TOS=0
 
   it ne             @ If not equal,
@@ -119,7 +119,7 @@ END NOTEQUAL
 @ -----------------------------------------------------------------------------
   CODEWORD  "=", EQUAL /* ( n1 n2 -- f ) f = n1 == n2 */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}     @ Get the next elt into a register.
+  popnos r0     @ Get the next elt into a register.
   subs tos, r0       @ Z=equality; if equal, TOS=0
 
   subs tos, #1       @ Wenn es Null war, gibt es jetzt einen Überlauf
@@ -130,7 +130,7 @@ END EQUAL
 @ -----------------------------------------------------------------------------
   CODEWORD  "min", MIN /* ( n1 n2 -- n3 ) n3 = min(n1, n2) */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}       @ Get x1 into a register.
+  popnos r0       @ Get x1 into a register.
   cmp r0, tos          @ Compare them.
   it lt                @ If X is less,
   movlt tos, r0        @  replace TOS with it.
@@ -140,7 +140,7 @@ END MIN
 @ -----------------------------------------------------------------------------
   CODEWORD  "max", MAX /* ( n1 n2 -- n3 ) n3 = max(n1, n2) */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}       @ Get x1 into a register.
+  popnos r0       @ Get x1 into a register.
   cmp r0, tos          @ Compare them.
   it gt                @ If X is greater,
   movgt tos, r0        @  replace TOS with it.
@@ -150,7 +150,7 @@ END MAX
 @ -----------------------------------------------------------------------------
   CODEWORD  "umax", UMAX /* ( u1 u2 -- u3 ) u3 = max(u1, u2) */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}  @ Get u1 into a register.
+  popnos r0  @ Get u1 into a register.
   cmp r0, tos 
   it hi           @ If W > TOS,
   movhi tos, r0   @  replace TOS with W.
@@ -160,7 +160,7 @@ END UMAX
 @ -----------------------------------------------------------------------------
   CODEWORD  "umin", UMIN /* ( u1 u2 -- u3 ) u3 = min(u1, u2) */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}  @ Get u1 into a register.
+  popnos r0  @ Get u1 into a register.
   cmp r0, tos
   it lo           @ If W < TOS,
   movlo tos, r0   @  replace TOS with W.

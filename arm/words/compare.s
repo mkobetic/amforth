@@ -26,12 +26,12 @@ compare:
   cmp r0, r1
   beq 1f
 
-    ldm psp!, {tos}
+    loadtos
     movs tos, #0
     bx lr
 
 1: @ Lengths are equal. Compare characters.
-   ldm psp!, {r1}  @ Address of first string.
+   popnos r1  @ Address of first string.
                    @ TOS contains address of second string.
 
    @ How many characters to compare left ?

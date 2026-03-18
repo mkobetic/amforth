@@ -10,7 +10,7 @@ END RP_FETCH
   CODEWORD "rp!", RP_STORE /* ( addr -- ) set return stack pointer to addr */
 @ -----------------------------------------------------------------------------
   mov sp, tos
-  ldm psp!, {tos}
+  loadtos
   NEXT
 END RP_STORE
 

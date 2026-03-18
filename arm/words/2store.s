@@ -6,6 +6,6 @@ CODEWORD  "2!", 2STORE /* ( d addr -- ) store two cells at addr */
   ldmia psp!, {r1, r2}
   str r1, [tos]
   str r2, [tos, #4]
-  ldm psp!, {tos}
+  loadtos
   NEXT
 END 2STORE

@@ -1,7 +1,7 @@
 @ -----------------------------------------------------------------------------
   CODEWORD "*", STAR /* ( n1 n2 -- n3 ) n3 = n1 * n2 */
 @ -----------------------------------------------------------------------------
-  ldm psp!, {r0}    @ Get u1|n1 into a register.
+  popnos r0    @ Get u1|n1 into a register.
   muls tos, r0      @ Multiply!
   NEXT
 END STAR

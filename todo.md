@@ -30,7 +30,6 @@ Also look for TODO: in source files
 
 # ARM
 
-* don't use ldm when not needed (poptos, popnos)
 * `(exiti)` needs work
 * better HW fault handling
 * can we use LR as top of return stack?

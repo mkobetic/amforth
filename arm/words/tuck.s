@@ -2,7 +2,7 @@
   CODEWORD "tuck", TUCK /* ( x1 x2 -- x2 x1 x2 ) insert TOS below 2nd cell of the stack */ 
 @ -----------------------------------------------------------------------------
 tuck:
-  ldm psp!, {r0}
+  popnos r0
   subs psp, #8
   str tos, [psp, #4]
   str r0, [psp]

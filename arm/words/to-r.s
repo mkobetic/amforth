@@ -2,6 +2,6 @@
   CODEWORD ">r", TO_R /* ( x -- )(R: -- x) move TOS to return stack */ 
 @------------------------------------------------------------------------------
   push {tos}
-  ldm psp!, {tos}
+  loadtos
   NEXT
 END TO_R

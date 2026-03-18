@@ -10,7 +10,7 @@ END SP_FETCH
   CODEWORD "sp!", SP_STORE /* ( addr -- ) set data stack pointer to addr */
 @ -----------------------------------------------------------------------------
   mov psp, tos
-  ldm psp!, {tos}
+  loadtos
   NEXT
 END SP_STORE
 

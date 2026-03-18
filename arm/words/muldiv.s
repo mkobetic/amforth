@@ -18,7 +18,7 @@ END SLASH
   cbnz tos, slashmod  @ throw if divisor is zero
   throw EDIVZ
 slashmod:  
-  ldm psp!, {r0}     @ Get u1 into a register
+  popnos r0     @ Get u1 into a register
   movs r1, tos       @ Back up the divisor in X.
   sdiv tos, r0, tos  @ Divide: quotient in TOS.
   @ TODO: should be able to use mls to do muls/subs in one instruction
@@ -36,7 +36,7 @@ END SLASHMOD
   cbnz tos, uslashmod  @ throw if divisor is zero
   throw EDIVZ
 uslashmod:  
-  ldm psp!, {r0}      @ Get u1 into a register
+  popnos r0      @ Get u1 into a register
   movs r1, tos        @ Back up the divisor in X.
   udiv tos, r0, tos   @ Divide: quotient in TOS.
   muls r1, tos, r1    @ Un-divide to compute remainder.
