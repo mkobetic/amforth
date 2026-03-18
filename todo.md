@@ -30,7 +30,6 @@ Also look for TODO: in source files
 
 # ARM
 
-* don't push{lr}/pop{pc} in leaf functions (just bx lr)
 * don't use ldm when not needed (poptos, popnos)
 * `(exiti)` needs work
 * better HW fault handling

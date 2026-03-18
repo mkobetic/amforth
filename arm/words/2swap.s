@@ -3,7 +3,6 @@ CODEWORD "2swap", 2SWAP /* ( d1 d2 -- d2 d1 ) swap top two cell pairs on the sta
   NEXT
 
 dswap:
-  push {lr}
   ldm psp!, {r0, r1, r2}
   subs psp, #4
   str r0, [psp]
@@ -11,5 +10,5 @@ dswap:
   subs psp, #4
   str r2, [psp]
   movs tos, r1
-  pop {pc}
+  bx lr
 END 2SWAP

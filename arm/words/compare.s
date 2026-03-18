@@ -20,7 +20,6 @@ NEXT
 .endif
 
 compare:
-  push {lr}
 
   poptos r1  @ Length of second string
   popnos r0  @ Length of first  string
@@ -29,7 +28,7 @@ compare:
 
     ldm psp!, {tos}
     movs tos, #0
-    pop {pc}
+    bx lr
 
 1: @ Lengths are equal. Compare characters.
    ldm psp!, {r1}  @ Address of first string.
@@ -54,11 +53,11 @@ compare:
 
      @ Unequal
      movs tos, #0
-     pop {pc}
+     bx lr
 
 3: @ Equal !
    movs tos, #0
    mvns tos, tos
-   pop {pc}
+   bx lr
 
 END COMPARE
