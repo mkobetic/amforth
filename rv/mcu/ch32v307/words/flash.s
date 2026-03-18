@@ -42,11 +42,6 @@ END EOW
 
 # ----------------------------------------------------------------------
 
-.ifdef TARGET_QEM
-.include "core/words/flash.s"
-.endif
-
-.ifdef TARGET_307
 
 VALUE    "dp.cache" , DP_CACHE , 0
 END DP_CACHE
@@ -118,6 +113,12 @@ COLON "~!i", TILDESTORE_I
 	.word XT_EXIT
 END TILDESTORE_I
 
+COLON "~c!i", TILDECSTORE_I
+    .word XT_DOLITERAL
+    .word EUNSUP
+    .word XT_THROW
+END TILDECSTORE_I
+
 CODEWORD "(h!i)", INT_STORE # ( -- ) 
 
       li   t3, R32_FLASH_STATR
@@ -164,19 +165,21 @@ CODEWORD "(h!i)", INT_STORE # ( -- )
       NEXT
 END INT_STORE
 
-.endif
 
-CODEWORD "std.unlock", STDDOTUNLOCK # ( -- ) FLASH: Unlock flash
 
+CODEWORD "flash.unlock", FLASHDOTUNLOCK # ( -- ) FLASH: Unlock flash
+      /* this unlock STD flash on the ch32v */
+      /* there is another word of same name */
+      /* that will unlock FAST flash        */
       li t0 , R32_FLASH_KEYR
       li t1 , 0x45670123
       sw t1 , 0(t0)
       li t1 , 0xCDEF89AB
       sw t1 , 0(t0)
       NEXT
-END STDDOTUNLOCK
+END FLASHDOTUNLOCK
 
-CODEWORD "std.erase" , STDDOTERASE # ( a-flash -- ) FLASH: Erase 4K page flash-a is in 
+CODEWORD "~flash.erase" , TILDEFLASH_ERASE # ( a-flash -- ) FLASH: Erase 4K page flash-a is in 
 
       li  t3, OFFSET
       add s3, s3, t3
@@ -209,12 +212,11 @@ CODEWORD "std.erase" , STDDOTERASE # ( a-flash -- ) FLASH: Erase 4K page flash-a
   
       loadtos
       NEXT
-END STDDOTERASE
-
-.ifdef TARGET_307
-
-CODEALIAS "~flash.erase", TILDEFLASH_ERASE, STDDOTERASE /* ( addr -- ) erase flash page at addr */
 END TILDEFLASH_ERASE
+
+
+#CODEALIAS "~flash.erase", TILDEFLASH_ERASE, STDDOTERASE /* ( addr -- ) erase flash page at addr */
+#END TILDEFLASH_ERASE
 
 # ----------------------------------------------------------------------
 COLON "~(dallot)", TILDEDODALLOT 
@@ -227,7 +229,7 @@ COLON "~(dallot)", TILDEDODALLOT
 	.word XT_ZEROEQUAL
 	.word XT_DOCONDBRANCH, DODALLOT_0002 # if
 	.word XT_DP
-	.word XT_STDDOTERASE
+	.word XT_TILDEFLASH_ERASE
 	.word XT_DOBRANCH, DODALLOT_0003
 DODALLOT_0002: # else
 	.word XT_DROP
@@ -291,7 +293,9 @@ END FDOTWRITE
 #======================================================================
 # PVFLASH primitives
 
-CODEALIAS "~pvflash.erase", TILDEPVFLASH_ERASE, STDDOTERASE /* ( addr -- ) erase flash page at addr */
+#CODEALIAS "~pvflash.erase", TILDEPVFLASH_ERASE, STDDOTERASE /* ( addr -- ) erase flash page at addr */
+#END TILDEPVFLASH_ERASE
+CODEALIAS "~pvflash.erase", TILDEPVFLASH_ERASE, TILDEFLASH_ERASE /* ( addr -- ) erase flash page at addr */
 END TILDEPVFLASH_ERASE
 
 NONAME "~2!pvf", TILDE2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsize] = x1 (in the PV flash) */
@@ -304,4 +308,4 @@ NONAME "~2!pvf", TILDE2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsiz
 	.word XT_EXIT
 END TILDE2STORE_PVF
 
-.endif
+

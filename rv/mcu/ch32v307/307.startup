@@ -374,11 +374,11 @@ handle_reset:
     csrw 0xbc0, t0
 
 .if WANT_NESTED_ISR
-    .print "CHOICE nested ISR and HPE"
+    .print "INFO: using nested ISR and HPE"
 	li t0, 0x0b         /* enable nested and hardware stack */
 	csrw 0x804, t0
 .else
-    .print "CHOICE HPE only"
+    .print "INFO: using HPE only"
 	li t0, 0x01         /* hardware stack only */
 	csrw 0x804, t0
 .endif

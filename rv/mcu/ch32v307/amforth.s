@@ -11,26 +11,22 @@
 .include "mcu/ch32v307/config.inc"   # most configuration options are in this file
 .include "build-config.inc"
 
-.ifdef BUILD_203
+.ifdef TARGET_203
 .print "INFO: using 203 startup"	
-.include "startup.203"  # startup and master_int handler for both C and Forth
+.include "203.startup"  # startup and master_int handler for both C and Forth
 .endif
 
-.ifdef BUILD_305
-.print "INFO: using 307 startup"		
-.include "startup.307"  # startup and master_int handler for both C and Forth
+.ifdef TARGET_305
+.print "INFO: using 307 startup for 305"		
+.include "307.startup"  # startup and master_int handler for both C and Forth
 .endif 
 
 .ifdef TARGET_307
 .print "INFO: using 307 startup"		
-.include "startup.307"  # startup and master_int handler for both C and Forth
+.include "307.startup"  # startup and master_int handler for both C and Forth
 .endif 
 
-.ifdef TARGET_QEM
-.print "INFO: using QEM startup"		
-.include "startup.qem"  # startup and master_int handler for both C and Forth
-.endif 
-
+.include "main.s"
 
 # amforth --------------------------------------------
 

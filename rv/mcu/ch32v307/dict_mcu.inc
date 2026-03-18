@@ -2,16 +2,9 @@
 
 # MFD wrong chip .include "words/pll.s"
 
-.ifdef TARGET_QEM
-    .print "INFO: using QEM MCU words"	
-    .include "words/serial.qem"
-.endif
+.include "words/usart.s"
+.include "words/gpio.s"
 
-.ifdef TARGET_307
-    .print "INFO: using 307 MCU words"
-    .include "words/usart.s"
-    .include "words/gpio.s"
-.endif
 
 .include "words/led.s"
 .include "words/blink.s"
@@ -46,3 +39,4 @@
 
 #.include "words/pc.s"
 .include "words/wordswap.s"
+.include "words/fast.s"

@@ -2,7 +2,7 @@
 
 ENVIRONMENT "board", BOARD /* ( -- addr u ) string with board identifier */
 
-.ifdef BUILD_203
+.ifdef TARGET_203
     STRING "WCH CH32V203"
 .endif
 
@@ -10,13 +10,10 @@ ENVIRONMENT "board", BOARD /* ( -- addr u ) string with board identifier */
     STRING "WCH CH32V307"
 .endif
 
-.ifdef BUILD_305
+.ifdef TARGET_305
     STRING "WCH CH32V305"
 .endif
 
-.ifdef TARGET_QEM
-    STRING "QEMU"
-.endif
 
     .word XT_EXIT
 END BOARD

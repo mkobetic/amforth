@@ -32,6 +32,14 @@ COLON "~!i", TILDESTORE_I
 	.word XT_STORE, XT_EXIT
 END TILDESTORE_I
 
+COLON "~c!i", TILDECSTORE_I
+	/* don't allow writing below dp0.flash */
+	.word XT_DUP, XT_DP0_FLASH, XT_LESS, XT_DOCONDBRANCH, 1f
+		.word XT_DOLITERAL, EFWADDR, XT_THROW
+1:	/* then */
+	.word XT_CSTORE, XT_EXIT
+END TILDECSTORE_I
+
 COLON "~flash.erase", TILDEFLASH_ERASE /* ( addr -- ) erase (fake) flash page at addr */
     .word XT_DUP, XT_FLASH_PAGE, XT_PLUS, XT_SWAP, XT_DODO
 1:	

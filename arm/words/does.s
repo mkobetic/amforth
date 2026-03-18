@@ -53,8 +53,10 @@ COLON "(does)", DODOES /* (R: addr -- ) addr of the synthetic jump after (does),
 
    .word XT_R_FROM @ get the synthetic jump address from return stack
    .word XT_1PLUS  @ set the thumb bit on the jump address
-   .word XT_NEWEST @ get the child word's CFA
+   .word XT_NEWEST @ get the child word's FFA
    .word XT_FETCH
+   .word XT_DUP
+   .word XT_TO_R
    .word XT_FFA2CFA
 
    .word XT_MEMMODE , XT_DOCONDBRANCH, 1f
@@ -66,7 +68,12 @@ COLON "(does)", DODOES /* (R: addr -- ) addr of the synthetic jump after (does),
 .endif   
    .word XT_DOBRANCH , 2f
 1: .word XT_STORE     @ store the jump address in child's CFA
-2: .word XT_EXIT
+   .word XT_DOLITERAL
+   .word Flag_child
+   .word XT_R_FETCH
+   .word XT_STORE
+2: .word XT_RDROP
+   .word XT_EXIT
 END DODOES
 
 CODEWORD "(xdoes)", XDODOES /* ( -- u) prepares interpreter state for execution of the DOES> wordlist, u is child's PFA */

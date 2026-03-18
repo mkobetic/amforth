@@ -77,6 +77,7 @@ COLON "<builds", BUILDS /* (C: "name" -- )( -- ) build dictionary header for nam
 END BUILDS
 
 COLON "builds>", ENDBUILDS /* (C: "name" -- )( -- ) add exit <builds ... builds> ... does> ... ; (so SEE will work) */
+    .word XT_DALIGN
     .word XT_COMPILE
     .word XT_EXIT
     .word XT_EXIT
