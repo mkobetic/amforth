@@ -30,7 +30,6 @@ pty:
 	$(QEMU) -nographic -serial pty
 
 # Add -S if you want QEMU to not start the quest.
-# WARNING: GDB TUI struggles to start properly when the target has not started (-S).
 ## Like pty but allows GDB to attach to it (-s).
 debug:
 	$(QEMU) -nographic -serial pty -s

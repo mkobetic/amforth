@@ -43,7 +43,6 @@ pty:
 #	$(QEMU) -chardev pty,path=/dev/stellaris,id=stellaris -serial chardev:stellaris
 
 # Add -S if you want QEMU to not start the quest.
-# WARNING: GDB TUI struggles to start properly when the target has not started (-S).
 ## Like pty but allows GDB to attach to it (-s).
 debug:
 	$(QEMU) -nographic -serial pty -s
