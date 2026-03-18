@@ -8,21 +8,22 @@ AmForth requires several registers for its operation. These registers are specif
 
 AmForth Register             |  ARM Register
 ---------------------------- | -------------
-TOS: Top of Stack            | R6
-PSP: Parameter Stack Pointer | R7
-W: Word Pointer              | R8
-IP: Instruction Pointer      | R9
-UP: User Pointer             | R10
-RLOOPINDEX                   | R11
-RLOOPLIMIT                   | R12
+DEBUG: debugger support (*)  | R6
+TOS: Top of Stack            | R7
+PSP: Parameter Stack Pointer | R8
+W: Word Pointer              | R9
+IP: Instruction Pointer      | R10
+UP: User Pointer             | R11
 RSP: Return Stack Pointer    | R13 (SP)
+
+(*) only used if WANT_DEBUGGER == YES
 
 Registers R0 to R5 are used as scratch registers.
 
 The ARM calling convention:
 * R0-R3 (Argument/Scratch Registers): Pass arguments to subroutines and return results. These are caller-saved (volatile).
 * R4-R11 (Local Variables): Callee-saved (non-volatile). A function must preserve these registers.
-* R12 (IP - Intra-Procedure-call scratch register): Used e.g by linker veneers (trampolines)
+* R12 (IP - Intra-Procedure-call scratch register): Used e.g by linker veneers for long jumps
 * R13 (SP - Stack Pointer): Points to the current top of the stack.
 * R14 (LR - Link Register): Stores the return address from a subroutine.
 * R15 (PC - Program Counter): Contains the current instruction
