@@ -1,18 +1,21 @@
 HEADLESS "(loop)", DOLOOP
-  ldr r0, =#1
+  ldr r1, =#1 @ increment
   b 1f
 END DOLOOP
 
 HEADLESS "(+loop)", DOPLUSLOOP
-  mov r0, tos
-  loadtos
+  poptos r1 @ increment
 1:
-  adds rloopindex, r0
+  loadindex r0
+  adds r0, r1
   bvs 2f
+  storeindex r0
   ldr FORTHIP, [FORTHIP]
   NEXT
 2:
   add FORTHIP, #4
-  pop {rloopindex, rlooplimit}
+  pop {r0, r1}
+  storeindex r0
+  storelimit r1
   NEXT
 END DOPLUSLOOP

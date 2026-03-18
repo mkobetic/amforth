@@ -1,7 +1,9 @@
 @------------------------------------------------------------------------------
   CODEWORD "i", I /* ( -- n) inner-most loop index */
 @------------------------------------------------------------------------------
+  loadindex r0
+  loadlimit r1
   savetos
-  add tos, rloopindex,rlooplimit
+  add tos, r0, r1
   NEXT
 END I
