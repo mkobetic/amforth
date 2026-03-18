@@ -74,7 +74,7 @@ def parse_legend_md(filepath):
                 continue
             
             # Split table row into cells
-            cols = [col.strip() for col in line.split('|')]
+            cols = [col.strip().replace("||", "|") for col in line.split(' | ')]
             # Remove empty strings from start/end (before first | and after last |)
             cols = [col for col in cols if col]
             if len(cols) >= 2:

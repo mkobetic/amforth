@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-DEFER "refill", REFILL, XT_REFILLTIB /* ( -- f ) refills the input buffer */
+DEFER "refill", REFILL, XT_REFILLTIB /* ( -- f ) refills current source */
 END REFILL
 
 CONSTANT "refill-buf-size", REFILL_BUF_SIZE, refill_buf_size
 END REFILL_BUF_SIZE
 
-COLON "refill-tib", REFILLTIB /* ( -- f ) refills the input buffer */
+COLON "refill-tib", REFILLTIB /* ( -- f ) refills TIB */
     .word XT_TIB
     .word XT_DOLITERAL
     .word refill_buf_size

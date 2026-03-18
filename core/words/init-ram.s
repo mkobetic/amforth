@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "init-ram", INIT_RAM
+COLON "init-ram", INIT_RAM /* ( -- ) startup/reset RAM initialization */
     .word XT_DOLITERAL, RAM_lower_userarea, XT_UP_STORE /* set UP */
     .word XT_DOLITERAL, XT_FORTH_WORDLIST, XT_TO_BODY,XT_DUP,XT_CELLPLUS,XT_FETCH,XT_SWAP,XT_FETCH,XT_STORE
     .word XT_DOLITERAL, XT_DOINITS, XT_FORTH_WORDLIST, XT_TRAVERSEWORDLIST /* initialize values and defers */

@@ -9,5 +9,3 @@ CONSTANT "true", TRUE, -1
 CONSTANT "false", FALSE, 0
 #
 CONSTANT "cell" , CELL , cellsize
-#
-CONSTANT "first-run" , FIRST_RUN , 0xEFBEADDE      

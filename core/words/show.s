@@ -251,8 +251,7 @@ NONAME "show.header", SHOWDOTHEADER
 	.word XT_CR
 	.word XT_EXIT
 # ----------------------------------------------------------------------
-COLON "show", SHOW
-# ( "name" -- ) SHOW: List words containing substring name
+COLON "show", SHOW /* ( "name" -- ) SHOW: List words containing substring name */
 	.word XT_PARSENAME
 	.word XT_SHOWDOTHEADER
 	.word XT_DOLITERAL

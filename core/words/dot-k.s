@@ -5,8 +5,7 @@
 # ;
 
 # ----------------------------------------------------------------------
-COLON ".k", DOTK
-	# ( nN..n1 -- ) OUTPUT: Delete all entries in stack 
+COLON ".k", DOTK /* ( nN..n1 -- ) delete all entries in stack */
 	.word XT_DEPTH
 	.word XT_ZERO
 	.word XT_QDOCHECK, XT_DOCONDBRANCH,DOTK_0001 /* ?do */

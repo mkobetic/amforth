@@ -1,11 +1,10 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "spaces", SPACES
-# ( n -- ) Emit n spaces 
-
-.word XT_ZERO, XT_MAX
+COLON "spaces", SPACES /* ( u -- ) emit u spaces */
+  .word XT_ZERO, XT_MAX
 SPCS1:
   .word XT_DUP,XT_DOCONDBRANCH,SPCS2
   .word XT_SPACE,XT_1MINUS,XT_DOBRANCH,SPCS1
 SPCS2:  
   .word XT_DROP,XT_EXIT
+END SPACES

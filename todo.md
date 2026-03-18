@@ -8,13 +8,10 @@ Also look for TODO: in source files
 * automated compiled artifact releases
 * keep WANT_SAVE?
 
-* replace PFA_ labels that aren't PFAs with transient labels 1f, 2b...
-* do we need the CON macro?
+* remove PFA_ prefix from labels that aren't PFAs
 * xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
-* review/simplify word flags
 
 * immediate should throw when compiling to flash
-* extend the error prompt to list words on the R-stack to help identify where the throw comes from
 * all words should use the END macro to be proper function blocks (debug_info)
 * proper, and extractable comments for all words
 * add long word description to the html refcard as title attribute, so that it shows on hover
@@ -70,8 +67,9 @@ Also look for TODO: in source files
 # TOOLS
 
 * make sure all tools work
-* make sure the `words` change didn't break amshell's autocomplete
+* amshell: make sure the `words` change didn't break autocomplete
 * amshell: translate exception number to mnemonic
+* amshell: reconsider the greedy echo loop in send_line()
 * socket-shell.py duplicates most of amforth-shell.py
 * keep am4up.c ?
 

@@ -33,7 +33,7 @@ STRING:
 DICTIONARY:
     ' c, , h, (c,) (,) s, chkdalign reveal newest latest 
     value to (to) is variable constant :noname header
-    find find-xt forget words execute
+    find find-xt forget words execute evaluate
     nfa>string nfa>xt lfa>ffa ffa>nfa xt>string >body ffa>string ffa2cfa ffa>lfa xt>ffa xt>nfa xt>lfa
     ?ip ?nfa anybranch? branch? colon? codeword? compile? condbranch? exit? literal? loop? sliteral? value? variable? xliteral?
     ip2name ip2xt
@@ -49,7 +49,6 @@ COMPILER:
     create <builds builds> does> char [ ] ['] [compile] [char] 
     compile xliteral literal 2literal sliteral
     Udefer! Udefer@ defer! defer@ defer
-    evaluate
 FLOW:
     ?abort abort" abort trap.base trap! throw catch handler exit
     ahead if else then begin until again while repeat 
@@ -61,13 +60,13 @@ IO:
 OUTPUT:
     . u. u.r d. d.r ud. ud.r
     r. r.. hex. 8x. 2x. x. .8hex
-    spaces space bl cr base
-    itype type pad binary hex decimal 
-    sign #> #s # <# hold hld
+    spaces space bl cr type itype
+    base binary hex decimal 
+    <# sign #s # hold #> hld pad 
 SYSTEM:
     cold warm init-ram turnkey appl-turnkey quit pause interpret
-    ms us .ver .build build.rev build.time build.config cpu board version name /user
-    set-base bases .ready .ok .input .error first-run
+    ms .ver .build build.rev build.time build.config cpu board version name /user
+    set-base bases .ready .ok .input .error
     first-boot.done ?first-boot first-boot.marker first-boot.start
 TOOLS:
     .s .k .rs .bt .itc dump ?ascii vdump break debug+ debug- || show

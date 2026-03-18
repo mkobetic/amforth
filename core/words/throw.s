@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-COLON "throw", THROW
-
+COLON "throw", THROW /* ( n -- ) throw exception n if n != 0 */
     .word XT_QDUP
     .word XT_DOCONDBRANCH,PFA_THROW1
       .word XT_HANDLER
@@ -17,4 +16,6 @@ COLON "throw", THROW
       .word XT_R_FROM    
 PFA_THROW1:
     .word XT_EXIT
+END THROW
+
 

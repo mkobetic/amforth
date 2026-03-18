@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-USER "handler", HANDLER, USER_HANDLER
+USER "handler", HANDLER, USER_HANDLER /* used by catch/throw */
+END HANDLER
 
-COLON "catch", CATCH
+COLON "catch", CATCH /* ( i*x xt -- j*x 0 | i*x n ) execute XT and check for exceptions */
 
     .word XT_SP_FETCH
     .word XT_TO_R
@@ -20,3 +21,4 @@ COLON "catch", CATCH
     .word XT_DROP
     .word XT_ZERO
     .word XT_EXIT
+END CATCH

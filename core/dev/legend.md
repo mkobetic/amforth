@@ -29,12 +29,15 @@ loop-sys | do..loop index/limit state
 
 # Stack notation
 
-notation    | stack
------------ | -------------------
-( -- )      | parameter/data stack
-(R: -- )    | return stack
-(C: -- )    | control flow stack (data stack at compile time)
-(L: -- )    | leave stack
+notation            | stack
+------------------- | -------------------
+( -- )              | parameter/data stack
+(R: -- )            | return stack
+(C: -- )            | control flow stack (data stack at compile time)
+(L: -- )            | leave stack
+( -- j*x || i*x )   | alternative outcomes
+( -- [ j*x ] i*x )  | optional outcomes
+( xu .. x1 )        | u values of type x indexed 1 to u
 
 # Other terminology
 
@@ -43,3 +46,5 @@ term        | meaning
 TOS         | top of stack
 NOS         | next on stack
 3OS, 4OS    | 3rd, 4th, ... on stack
+TIB         | terminal input buffer
+PNO         | pictured numeric output

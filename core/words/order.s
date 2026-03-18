@@ -37,7 +37,7 @@ DATA "order.forth" , ORDERDOTFORTH /* FLASH dictionary mode search order */
 .word XT_ENVIRONMENT
 END ORDERDOTFORTH
 
-COLON "forth" , FORTH /* set search order to FLASH dictionary mode */
+COLON "forth" , FORTH /* ( -- ) set search order to FLASH dictionary mode */
       .word XT_DOXLITERAL
       .word XT_ORDERDOTFORTH
       .word XT_DOTO
@@ -45,7 +45,7 @@ COLON "forth" , FORTH /* set search order to FLASH dictionary mode */
       .word XT_EXIT
 END FORTH
 
-COLON "core" , CORE /* set search order to core words only mode */
+COLON "core" , CORE /* ( -- ) set search order to core words only mode */
       .word XT_DOXLITERAL
       .word XT_ORDERDOTCORE
       .word XT_DOTO
@@ -53,7 +53,7 @@ COLON "core" , CORE /* set search order to core words only mode */
       .word XT_EXIT
 END CORE
 
-COLON "only" , ONLY /* set search order to RAM dictionary mode */
+COLON "only" , ONLY /* ( -- ) set search order to RAM dictionary mode */
       .word XT_DOXLITERAL
       .word XT_ORDERDOTONLY
       .word XT_DOTO
@@ -72,7 +72,7 @@ NONAME "(order)" , DOORDER
       .word XT_EXIT
 END DOORDER
 
-COLON "order" , ORDER /* show currently configured search order */
+COLON "order" , ORDER /* ( -- ) show currently configured search order */
 
       .word XT_DOXLITERAL
       .word XT_DOORDER
