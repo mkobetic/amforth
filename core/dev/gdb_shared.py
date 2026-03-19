@@ -55,7 +55,7 @@ def address(val):
 
 def register_prefix(name, fName = None):
     if fName:
-        if len(fName) > 3:
+        if len(name+fName) > 5:
             return f"{name}/{fName}:\t"
         else:
             return f"{name}/{fName}:\t\t"

@@ -2,6 +2,6 @@
   CODEWORD "+", PLUS /* ( n1 n2 -- n3 ) n3 = n1 + n2 */
 @ -----------------------------------------------------------------------------
   popnos r0
-  adds tos, r0
+  adds TOS, r0
   NEXT
 END PLUS

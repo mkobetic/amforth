@@ -2,7 +2,7 @@
   CODEWORD "compare", COMPARE  /* ( addr1 n1 addr2 n2 -- f ) f is true if the strings are different (based on WANT_IGNORECASE) */
 @ -----------------------------------------------------------------------------
   bl compare
-  mvns tos,tos
+  mvns TOS, TOS
 NEXT
 
 .if WANT_IGNORECASE==1
@@ -27,7 +27,7 @@ compare:
   beq 1f
 
     loadtos
-    movs tos, #0
+    movs TOS, #0
     bx lr
 
 1: @ Lengths are equal. Compare characters.
@@ -40,7 +40,7 @@ compare:
 
      subs r0, #1
      ldrb r2, [r1, r0]
-     ldrb r3, [tos, r0]
+     ldrb r3, [TOS, r0]
 
 .if WANT_IGNORECASE==1
   .print "INFO: Using IGNORECASE for word comparison"
@@ -52,12 +52,12 @@ compare:
      beq 2b
 
      @ Unequal
-     movs tos, #0
+     movs TOS, #0
      bx lr
 
 3: @ Equal !
-   movs tos, #0
-   mvns tos, tos
+   movs TOS, #0
+   mvns TOS, TOS
    bx lr
 
 END COMPARE

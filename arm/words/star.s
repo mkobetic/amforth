@@ -2,6 +2,6 @@
   CODEWORD "*", STAR /* ( n1 n2 -- n3 ) n3 = n1 * n2 */
 @ -----------------------------------------------------------------------------
   popnos r0    @ Get u1|n1 into a register.
-  muls tos, r0      @ Multiply!
+  muls TOS, r0      @ Multiply!
   NEXT
 END STAR

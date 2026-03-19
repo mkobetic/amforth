@@ -64,12 +64,12 @@ class ForthRegisterWindow:
             contents = str(exc)
         self._tui_window.write(contents, True)
 
-# ForthParameterStack shows the contents of the PSP
-class ForthParameterStack: 
+# ForthParameterStack shows the contents of the DSP
+class ForthDataStack: 
 
     def __init__(self, tui_window): 
         self._tui_window = tui_window
-        tui_window.title = "Forth Parameter Stack"
+        tui_window.title = "Forth Data Stack"
         gdb.events.before_prompt.connect(self.render)
 
     def get_contents(self):
@@ -78,25 +78,24 @@ class ForthParameterStack:
         frame = gdb.selected_frame()
         if frame is None:
             return "no frame selected"
-        tos = frame.read_register(TOS)
         # TODO: need to detect when stack is empty
-        lines = [ f"{TOS}/TOS:\t\t{value(tos)}" ]
-        psp = frame.read_register(PSP).cast(gdb.lookup_type("unsigned int").pointer())
+        lines = [ value_register(frame, TOS, "TOS") ]
+        dsp = frame.read_register(DSP).cast(gdb.lookup_type("unsigned int").pointer())
 
-        if not (RAM_lower_datastack <= psp <= RAM_upper_datastack):
-            return (f"PSP 0x{psp} out of range.\n"
+        if not (RAM_lower_datastack <= dsp <= RAM_upper_datastack):
+            return (f"DSP 0x{dsp} out of range.\n"
                     f"Expected [0x{RAM_lower_datastack}, 0x{RAM_upper_datastack})")
 
-        if psp == RAM_upper_datastack:
+        if dsp == RAM_upper_datastack:
             return f"Empty"
     
-        # cast psp from int to int* so that we can dereference it
-        psp = psp.cast(psp.type.pointer())
+        # cast dsp from int to int* so that we can dereference it
+        dsp = dsp.cast(dsp.type.pointer())
         count = 0
-        while psp < RAM_upper_datastack and count < 16:
-            addr = psp.format_string(format="x")
-            lines.append(f"{addr}:\t{value(psp.dereference())}")
-            psp += 1
+        while dsp < RAM_upper_datastack and count < 16:
+            addr = dsp.format_string(format="x")
+            lines.append(f"{addr}:\t{value(dsp.dereference())}")
+            dsp += 1
             count += 1
         return "\n".join(lines)
 
@@ -123,10 +122,11 @@ class ForthReturnStack:
         frame = gdb.selected_frame()
         if frame is None:
             return "no frame selected"
-        w = frame.read_register(WD) # FORTHW
-        lines = [ f"{WD}/FORTHW:\t{address(w)}" ]
-        ip = frame.read_register(IP) # FORTHIP
-        lines.append(f"{IP}/FORTHIP:\t{address(ip)}")
+        w = frame.read_register(WD) # FW
+        lines = [
+            addres_register(frame, WD, "FW"),
+            addres_register(frame, IP, "FIP")
+        ]
         rsp = frame.read_register(RSP).cast(gdb.lookup_type("unsigned int").pointer())
 
         if not (RAM_lower_returnstack <= rsp <= RAM_upper_returnstack):
@@ -153,7 +153,7 @@ class ForthReturnStack:
         self._tui_window.write(contents, True)
 
 
-gdb.register_window_type("fps", ForthParameterStack)
+gdb.register_window_type("fps", ForthDataStack)
 gdb.register_window_type("frs", ForthReturnStack)
 gdb.register_window_type("fregs", ForthRegisterWindow)
 

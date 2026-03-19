@@ -4,7 +4,7 @@ from gdb_shared import *
 # Forth register names
 DEBUG = "r6"
 TOS = "r7"
-PSP = "r8"
+DSP = "r8"
 WD = "r9"
 IP = "r10"
 UP = "r11"
@@ -48,9 +48,9 @@ def register_lines(frame):
         value_register(frame, "r5"),
         value_register(frame, "r6", "DEBUG"),
         value_register(frame, "r7", "TOS"),
-        addres_register(frame, "r8", "PSP"),
-        addres_register(frame, "r9", "FORTHW"),
-        addres_register(frame, "r10", "FORTHIP"),
+        addres_register(frame, "r8", "DSP"),
+        addres_register(frame, "r9", "FW"),
+        addres_register(frame, "r10", "FIP"),
         addres_register(frame, "r11", "UP"),
         value_register(frame, "r12"),
         addres_register(frame, "sp", "RSP"),

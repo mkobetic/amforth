@@ -47,7 +47,7 @@ CODEWORD "dwt@" , DWT_FETCH /* ( -- n ) read the DWT CYCCNT 32b counter */
 
     ldr   r0, =DWT_CYCCNT    /* DWT_CYCCNT */
     savetos 
-    ldr   tos, [r0]          /* r0 = cycle count */
+    ldr   TOS, [r0]          /* r0 = cycle count */
     
     NEXT
 END DWT_FETCH
@@ -57,7 +57,7 @@ CODEWORD "dwt-ms" , DWT_MS /* ( n -- ) delay (busy) n milliseconds (max int dela
     ldr   r1, =DWT_CYCCNT     /* DWT_CYCCNT address */
     ldr   r2, [r1]            /* Get start count */
     ldr   r3, =48000          /* 48000 cycles per millisecond at 48MHz */
-    mul   r0, tos, r3         /* Convert ms to cycles */
+    mul   r0, TOS, r3         /* Convert ms to cycles */
 
 1:
     ldr   r3, [r1]            /* Read current count */
@@ -73,7 +73,7 @@ CODEWORD "dwt-us" , DWT_US /* ( n -- ) delay (busy) n microseconds (max int dela
     ldr   r1, =DWT_CYCCNT     /* DWT_CYCCNT address */
     ldr   r2, [r1]            /* Get start count */
     ldr   r3, =48             /* 48 cycles per microsecond at 48MHz */
-    mul   r0, tos, r3         /* Convert ms to cycles */
+    mul   r0, TOS, r3         /* Convert ms to cycles */
 
 1:
     ldr   r3, [r1]            /* Read current count */

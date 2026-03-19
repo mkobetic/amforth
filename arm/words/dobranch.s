@@ -1,4 +1,4 @@
 HEADLESS "(branch)", DOBRANCH /* ( -- ) jump to address stored in the next cell */
-  ldr FORTHIP, [FORTHIP]
+  ldr FIP, [FIP]
   NEXT
 END DOBRANCH

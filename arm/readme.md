@@ -10,9 +10,9 @@ AmForth Register             |  ARM Register
 ---------------------------- | -------------
 DEBUG: debugger support (*)  | R6
 TOS: Top of Stack            | R7
-PSP: Parameter Stack Pointer | R8
-W: Word Pointer              | R9
-IP: Instruction Pointer      | R10
+DSP: Parameter Stack Pointer | R8
+FW: Word Pointer             | R9
+FIP: Instruction Pointer     | R10
 UP: User Pointer             | R11
 RSP: Return Stack Pointer    | R13 (SP)
 

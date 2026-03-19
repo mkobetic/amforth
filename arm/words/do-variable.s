@@ -1,6 +1,6 @@
 
 HEADLESS "(variable)", DOVARIABLE
   savetos
-  ldr tos, [FORTHW]
+  ldr TOS, [FW]
   NEXT
 END DOVARIABLE

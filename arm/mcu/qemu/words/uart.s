@@ -34,19 +34,19 @@ tx_wait:
     bne tx_wait
 
     /* Write the character to the Data Register */
-    str tos, [r1, #UARTDR]
+    str TOS, [r1, #UARTDR]
     loadtos
     NEXT
 END SERIAL_EMIT
 
 CODEWORD  "serial-emit?", SERIAL_EMITQ
     savetos
-    mov tos, #0
+    mov TOS, #0
     ldr r1, =UART_BASE
     ldr r2, [r1, #UARTFR]     
     tst r2, #TXFF
     bne 1f
-    mvns tos, tos
+    mvns TOS, TOS
 1: 
     NEXT
 END SERIAL_EMITQ
@@ -61,18 +61,18 @@ rx_wait:
     bne rx_wait
 
     /* Read the character from the Data Register */
-    ldr tos, [r1, #UARTDR]
+    ldr TOS, [r1, #UARTDR]
     NEXT
 END SERIAL_KEY
 
 CODEWORD  "serial-key?", SERIAL_KEYQ
     savetos
-    mov tos, #0
+    mov TOS, #0
     ldr r1, =UART_BASE
     ldr r2, [r1, #UARTFR]   
     tst r2, #RXFE 
     bne 1f
-    mvns tos, tos
+    mvns TOS, TOS
 1: 
     NEXT
 END SERIAL_KEYQ

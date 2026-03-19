@@ -2,7 +2,7 @@
   CODEWORD  "and", AND /* ( x1 x2 -- x3 ) x3 = x1 & x2 */
 @ -----------------------------------------------------------------------------
   popnos r0
-  ands tos, r0
+  ands TOS, r0
   NEXT
 END AND
 
@@ -10,7 +10,7 @@ END AND
   CODEWORD  "or", OR /* ( x1 x2 -- x3 ) x3 = x1 | x2 */
 @ -----------------------------------------------------------------------------
   popnos r0
-  orrs tos, r0
+  orrs TOS, r0
   NEXT
 END OR
 
@@ -25,8 +25,8 @@ END NOT
   CODEWORD  "rshift", RSHIFT /* ( x1 u -- x2 ) x2 = x1 >> u */
 @ -----------------------------------------------------------------------------
   popnos r0
-  lsrs r0, tos
-  movs tos, r0
+  lsrs r0, TOS
+  movs TOS, r0
   NEXT
 END RSHIFT
 
@@ -34,7 +34,7 @@ END RSHIFT
   CODEWORD  "lshift", LSHIFT /* ( x1 u -- x2 ) x2 = x1 << u */
 @ -----------------------------------------------------------------------------
   popnos r0
-  lsls r0, tos
-  movs tos, r0
+  lsls r0, TOS
+  movs TOS, r0
   NEXT
 END LSHIFT

@@ -2,6 +2,6 @@
   CODEWORD "over", OVER /* ( x1 x2 -- x1 x2 x1 ) copy NOS to the top */
 @ -----------------------------------------------------------------------------
   savetos
-  ldr tos, [psp, #4] 
+  ldr TOS, [DSP, #4] 
   NEXT
 END OVER

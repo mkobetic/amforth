@@ -101,8 +101,8 @@ NEXT
    savetos
 
    ldr r0, =UARTDR    @ Einkommendes Zeichen abholen
-   ldr tos, [r0]      @ Register lesen
-   uxtb tos, tos      @ 8 Bits davon nehmen, Rest mit Nullen auffüllen.
+   ldr TOS, [r0]      @ Register lesen
+   uxtb TOS, TOS      @ 8 Bits davon nehmen, Rest mit Nullen auffüllen.
   
 NEXT
 
@@ -110,12 +110,12 @@ NEXT
   CODEWORD  "serial-key?", SERIAL_KEYQ
 @ -----------------------------------------------------------------------------
    savetos
-   movs tos, #0
+   movs TOS, #0
    ldr r0, =UARTFR
    ldr r1, [r0]
    ands r1, #RXFE
    bne 1f
-     mvns tos, tos
+     mvns TOS, TOS
 1: 
 NEXT
 .equ RXFE, 0x10 @ Receive  FIFO empty
@@ -132,7 +132,7 @@ SERIAL_EMIT_WAIT:
    bne SERIAL_EMIT_WAIT
 
    ldr r0, =UARTDR
-   str tos, [r0]
+   str TOS, [r0]
    loadtos
 NEXT
 
@@ -140,11 +140,11 @@ NEXT
   CODEWORD  "serial-emit?", SERIAL_EMITQ
 @ -----------------------------------------------------------------------------
    savetos
-   mov tos, #0
+   mov TOS, #0
    ldr r0, =UARTFR
    ldr r1, [r0]
    ands r1, #TXFF
    bne SERIAL_EMITQ1
-     mvn tos, tos
+     mvn TOS, TOS
 SERIAL_EMITQ1:
 NEXT

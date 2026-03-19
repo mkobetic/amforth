@@ -33,7 +33,7 @@ class ForthUnwinder(Unwinder):
                 if self.first_frame_done:
                     ret_addr = rsp.dereference().cast(uintptr)
                 else:
-                    # Adjust SP for first frame (FORTHIP effectively extends RSP by one slot)
+                    # Adjust SP for first frame (FIP effectively extends RSP by one slot)
                     rsp -= 1
                     ret_addr = pending_frame.read_register(IP).cast(uintptr)
                     self.first_frame_done = True

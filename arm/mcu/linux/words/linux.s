@@ -22,7 +22,7 @@ COLON "stdout?", SERIAL_EMITQ
 
 CODEWORD "stdin", SERIAL_KEY
   savetos
-  mov tos, #0
+  mov TOS, #0
   push {r7}
  
   push {r6}
@@ -40,7 +40,7 @@ CODEWORD "stdin", SERIAL_KEY
   
   pop {r7}
   
-  cmp tos, #4 @ Ctrl-D
+  cmp TOS, #4 @ Ctrl-D
   beq.n PFA_BYE
 NEXT
 
@@ -75,15 +75,15 @@ CODEWORD "cacheflush", CACHEFLUSH @ ( -- )
 NEXT
 
 CODEWORD "bye", BYE
-  mov  r0, tos @ Error code 
+  mov  r0, TOS @ Error code 
   mov  r7, #1  @ Syscall 1: Exit
   swi #0
 NEXT
 
 CODEWORD "syscall", SYSCALL @ ( r0 r1 r2 r3 r4 r5 Syscall# -- r0 )
- push { r7} @ Save psp register
+ push { r7} @ Save DSP register
 
- push {tos} @ Syscall number
+ push {TOS} @ Syscall number
 
  loadtos
  popnos r5
@@ -97,7 +97,7 @@ CODEWORD "syscall", SYSCALL @ ( r0 r1 r2 r3 r4 r5 Syscall# -- r0 )
 
  swi #0
 
- pop {r7}     @ restore old psp
+ pop {r7}     @ restore old DSP
  adds r7, #28 @ Drop 7 elements at once
 
  movs r6, r0  @ Syscall reply into TOS

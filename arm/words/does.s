@@ -78,14 +78,14 @@ END DODOES
 
 CODEWORD "(xdoes)", XDODOES /* ( -- u) prepares interpreter state for execution of the DOES> wordlist, u is child's PFA */
   /* W register has child's PFA, push it to TOS */ 
-  pushtos FORTHW
+  pushtos FW
   /* IP points to the next word after child's call site,
   that's where we want to return to, so push it to return stack */
-  str FORTHIP, [sp, #-4]!
+  str FIP, [sp, #-4]!
   /* Link register points to the DOES> word list in parent word,
   but we need to account for the XDODOES address stored after the blx instruction.
   The LR value has the thumb bit set, that's why +3 and not +4 */
   add lr, lr , #3  
-  mov FORTHIP, lr
+  mov FIP, lr
   NEXT
 END XDODOES

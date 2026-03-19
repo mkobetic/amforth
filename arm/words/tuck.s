@@ -3,8 +3,8 @@
 @ -----------------------------------------------------------------------------
 tuck:
   popnos r0
-  subs psp, #8
-  str tos, [psp, #4]
-  str r0, [psp]
+  subs DSP, #8
+  str TOS, [DSP, #4]
+  str r0, [DSP]
   NEXT
 END TUCK

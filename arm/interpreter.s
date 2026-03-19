@@ -3,22 +3,22 @@
 _INTERPRETER:
 .thumb_func /* need to set the thumb bit on the DOCOLON symbol */
 DOCOLON: 
-        push {FORTHIP}
-        mov FORTHIP, FORTHW
+        push {FIP}
+        mov FIP, FW
 .thumb_func
 DO_NEXT:
 .if WANT_DEBUGGER == YES
         /* if debug hook is set interrupt the DO_NEXT cycle */
         cbz DEBUG, DO_NEXT1
-        ldr FORTHW, [up, USER_DEBUG_BREAK] /* load debugger into FORTHW */
+        ldr FW, [up, USER_DEBUG_BREAK] /* load debugger into FW */
         mov DEBUG, #0 /* clear DEBUG */
         b DO_EXECUTE
 DO_NEXT1:
 .endif
-        ldr FORTHW, [FORTHIP], #4
+        ldr FW, [FIP], #4
 .thumb_func
 DO_EXECUTE:
-        ldr r0, [FORTHW], #4
+        ldr r0, [FW], #4
         bx r0
 .size _INTERPRETER, . - _INTERPRETER
 
@@ -26,7 +26,7 @@ DO_EXECUTE:
 CODEWORD "(exitd)", EXITD /* ( -- ) exit from a debugger word */
         /* restore DEBUG hook */
         ldr DEBUG, [up, USER_DEBUG_NEXT]
-        pop {FORTHIP} /* restore FORTHIP */
+        pop {FIP} /* restore FIP */
         b DO_NEXT1 /* finish the interrupted DO_NEXT */
         .ltorg
 END EXITD
@@ -47,7 +47,7 @@ END BREAK
 
 CODEWORD "debug_buf", DEBUG_BUF /* ( -- addr ) debugger input buffer address */
   savetos
-  ldr tos, =RAM_lower_debug_buf
+  ldr TOS, =RAM_lower_debug_buf
   NEXT
 END DEBUG_BUF
 .endif
