@@ -11,6 +11,12 @@ COLON "warm", WARM /* ( -- ) high level part of the boot sequence, VM is running
   /* initialize values and defers to their defaults */
   .word XT_INIT_RAM
 
+.if WANT_DEBUGGER == YES
+  /* initialize debugger to disabled state,
+    needs UP initialized so after INIT_RAM! */
+  .word XT_DEBUGMINUS
+.endif
+
   /* initialize pvalue system */
   .word XT_QFIRST_BOOT, XT_DOCONDBRANCH, 1f
     .word XT_PVARENA1, XT_DOTO, XT_PVARENA, XT_PV_RESET_HARD

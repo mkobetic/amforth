@@ -7,6 +7,7 @@ Also look for TODO: in source files
 * update AmForth version
 * automated compiled artifact releases
 * keep WANT_SAVE?
+* review unused files (see make unused)
 
 * remove PFA_ prefix from labels that aren't PFAs
 * xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
