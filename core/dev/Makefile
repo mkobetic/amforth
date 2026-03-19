@@ -226,17 +226,17 @@ shell:
 # to do it from the inside, i.e. from AmForth running in it.
 # WARNING: some of the tests can run destructive operations,
 # don't run against real MCUs without reviewing the tests.
-TESTER ?= $(AMFORTH)/lib/forth2012/tester/tester-amforth.frt
+TESTER ?= $(AMFORTH)/tests/tester.frt
 SKIP := $(PP) -w -E --no-line-commands
 ## Run standard tests, output failures and summarize the results (QEMU only)
 tests: TIMEOUT ?= 4s
 tests:
-	{ cat $(TESTER); \
-	  echo '.s" TESTS STARTING"' ; \
+	@{ cat $(TESTER); \
+	  echo '\ TESTS STARTING"' ; \
 	  $(SKIP) $(AMFORTH)/tests/cpp-core.fr; \
 	  cat $(AMFORTH)/tests/core2.fr; \
 	  cat $(AMFORTH)/tests/pvalue.fr; \
-	  echo '.s" TESTS FINISHED"' ; \
+	  echo '\ TESTS FINISHED"' ; \
 	} | timeout -s TERM $(TIMEOUT) $(QEMU) -display none -serial stdio | \
 	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
@@ -244,10 +244,10 @@ tests:
 ## Run test file $(TEST), output failures and summarize the results (QEMU only)
 test: TIMEOUT ?= 1s
 test:
-	{ cat $(TESTER); \
-	  echo '.s" TESTS STARTING"' ; \
+	@{ cat $(TESTER); \
+	  echo '\ TESTS STARTING"' ; \
 	  cat $(AMFORTH)/tests/$(TEST); \
-	  echo '.s" TESTS FINISHED"' ; \
+	  echo '\ TESTS FINISHED"' ; \
 	} | timeout -s TERM $(TIMEOUT) $(QEMU) -display none -serial stdio | \
 	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
