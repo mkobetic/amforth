@@ -1,14 +1,15 @@
 HEADLESS "(do)", DODO
     @ save loopsys
-    push {rloopindex, rlooplimit}
+    loadindex r0
+    loadlimit r1
+    push {r0, r1}
 
     @ create new loopsys from stack
-    mov rloopindex, tos
-    loadtos
-    mov rlooplimit, tos
-    loadtos
-
-    add rlooplimit, #0x80000000
-    sub rloopindex, rlooplimit
+    poptos r0 @ loopindex
+    poptos r1 @ looplimit
+    add r1, #0x80000000
+    storelimit r1
+    sub r0, r1
+    storeindex r0
     NEXT
 END DODO

@@ -374,7 +374,7 @@ Same scenario using a generic terminal emulator (not amforth-shell) shows the ra
 > 
 ```
 
-Debugger support requires modifying the inner interpreter to allow interrupting the normal COLON word interpretation cycle after each word. This is achieved by designating a register as a `DEBUG` register (ARM: r5, RV: s9) and checking in each cycle if its value is 0. If not the register indicates the currently running debug action that is interpreted by the debugger. This adds overhead of a single test and jump instruction to the normal interpreter cycle (see {arm|rv}/interpret.s). All other overhead is incurred only when the debugger is activated. AmForth can be rebuilt with `WANT_DEBUGGER` set to `NO` to eliminate all debugger overhead (including code).
+Debugger support requires modifying the inner interpreter to allow interrupting the normal COLON word interpretation cycle after each word. This is achieved by designating a register as a `DEBUG` register (ARM: r6, RV: s7) and checking in each cycle if its value is 0. If not the register indicates the currently running debug action that is interpreted by the debugger. This adds overhead of a single test and jump instruction to the normal interpreter cycle (see {arm|rv}/interpret.s). All other overhead is incurred only when the debugger is activated. AmForth can be rebuilt with `WANT_DEBUGGER` set to `NO` to eliminate all debugger overhead (including code).
 
 #### GDB
 

@@ -21,9 +21,6 @@
 .equ refill_buf_size, 96
 .global refill_buf_size
 
-.equ userarea_size, (2 + 32) * cellsize
-.global userarea_size
-
 # RAMHI areas
 
 .equ rampool_size, 4096*2

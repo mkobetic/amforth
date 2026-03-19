@@ -2,14 +2,13 @@ import gdb
 from gdb_shared import *
 
 # Forth register names
+DEBUG = "r6"
+TOS = "r7"
+PSP = "r8"
+WD = "r9"
+IP = "r10"
+UP = "r11"
 RSP = "sp"
-IP = "r9"
-WD = "r8"
-PSP = "r7"
-TOS = "r6"
-UP = "r10"
-RLIDX = "r11"
-RLLIM = "r12"
 
 def status_register(frame, name):
     try:
@@ -47,13 +46,13 @@ def register_lines(frame):
         value_register(frame, "r3"),
         value_register(frame, "r4"),
         value_register(frame, "r5"),
-        value_register(frame, "r6", "TOS"),
-        addres_register(frame, "r7", "PSP"),
-        addres_register(frame, "r8", "FORTHW"),
-        addres_register(frame, "r9", "FORTHIP"),
-        addres_register(frame, "r10", "UP"),
-        value_register(frame, "r11", "RLINDEX"),
-        value_register(frame, "r12", "RLLIMIT"),
+        value_register(frame, "r6", "DEBUG"),
+        value_register(frame, "r7", "TOS"),
+        addres_register(frame, "r8", "PSP"),
+        addres_register(frame, "r9", "FORTHW"),
+        addres_register(frame, "r10", "FORTHIP"),
+        addres_register(frame, "r11", "UP"),
+        value_register(frame, "r12"),
         addres_register(frame, "sp", "RSP"),
         addres_register(frame, "lr"),
         addres_register(frame, "pc"),

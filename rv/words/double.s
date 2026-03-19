@@ -53,11 +53,20 @@ CODEWORD "ud/mod" , UDSLASHMOD # ( a b c -- c)
 #------------------------------------------------------------------------------
   CODEWORD  "ud/mod", UDSLASHMOD /* (ud1 ud2 -- ud3 ud4 ) ud3 remainder, ud4 quotient of ud1 / ud2 */
 #------------------------------------------------------------------------------
+# TODO: why use s7/s8 as temporary registers?
 .macro addc dest, sour1, sour2
   add t2, \sour1, \sour2
   sltu s7, t2, \sour1
   add \dest, t2, t0
   sltu s8, \dest, t2
+  or t0, s7, s8
+.endm
+
+.macro subc dest, sour1, sour2
+  sub t2, \sour1, \sour2
+  sltu s7, \sour1, \sour2
+  sub \dest, t2, t0
+  sltu s8, t2, t0
   or t0, s7, s8
 .endm
 

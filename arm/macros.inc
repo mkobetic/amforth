@@ -2,17 +2,17 @@
 .include "core/macros.inc"
 
 @ register usage
-@ temporary r0, r1, r2, r3, r4, r5
-DEBUG   .req r5
-tos     .req r6
-psp     .req r7
-FORTHW  .req r8
-FORTHIP .req r9
-UP      .req r10
-rloopindex .req r11
-rlooplimit .req r12
+@ temporary volatile r0, r1, r2, r3
+@ temporary callee-saved r4, r5
+DEBUG   .req r6 @ used when WANT_DEBUGGER == YES
+tos     .req r7
+psp     .req r8
+FORTHW  .req r9
+FORTHIP .req r10
+UP      .req r11
 
 @ default register mapping
+@ ip .req r12 @ may be used by linker veneer for long jumps
 @ sp .req r13
 @ lr .req r14
 @ pc .req r15
@@ -51,6 +51,27 @@ rlooplimit .req r12
 .macro popnos register
   ldr \register, [psp], #4
 .endm
+
+// load loop index from user block
+.macro loadindex register
+  ldr \register, [up, USER_LOOP_INDEX]
+.endm
+
+// store loop index in user block
+.macro storeindex register
+  str \register, [up, USER_LOOP_INDEX]
+.endm
+
+// load loop limit from user block
+.macro loadlimit register
+  ldr \register, [up, USER_LOOP_LIMIT]
+.endm
+
+// store loop limit in user block
+.macro storelimit register
+  str \register, [up, USER_LOOP_LIMIT]
+.endm
+
 
 .macro throw exception
   savetos               /* for good order        */

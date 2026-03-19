@@ -4,18 +4,17 @@
 
 
 # macros
-#   s5/SP RSP Return Stack Pointer
+#   s1 W   Forth VM W register
+#   s2 IP  Forth VM IP register (ITC Instruction Pointer)
 #   s3 TOS Top Of Stack
 #   s4 DSP Data Stack Pointer
+#   s5/SP RSP Return Stack Pointer
+#   s6 UP  user area pointer
+#   s7 DEBUG debugger action (used when WANT_DEBUGGER == YES)
 #   t0 temp 
 #   t1 temp
 #   t2 temp
-#   s7 loop index
-#   s8 loop limit
 #   a0..a5 temp
-#   s2 IP  Forth VM IP register (ITC Instruction Pointer)
-#   s1 W   Forth VM W register
-#   s6 user pointer UP
 
 .macro NEXT
     j DO_NEXT
@@ -76,6 +75,27 @@
   lw s3, 4(s4)
   addi s4, s4, 8
 .endm
+
+# load loop index from user block
+.macro loadindex register
+  lw \register, USER_LOOP_INDEX(s6)
+.endm
+
+# store loop index in user block
+.macro storeindex register
+  sw \register, USER_LOOP_INDEX(s6)
+.endm
+
+# load loop limit from user block
+.macro loadlimit register
+  lw \register, USER_LOOP_LIMIT(s6)
+.endm
+
+# store loop limit in user block
+.macro storelimit register
+  sw \register, USER_LOOP_LIMIT(s6)
+.endm
+
 
 .macro CODEWORD Name, Label
     HEADER Flag_none, "\Name", \Label, PFA_\Label

@@ -10,9 +10,9 @@ DOCOLON:
 DO_NEXT:
 .if WANT_DEBUGGER == YES
         /* if debug hook is set interrupt the DO_NEXT cycle */
-        beq s9, zero, DO_NEXT1
+        beq s7, zero, DO_NEXT1
         lw s1, USER_DEBUG_BREAK(s6) /* load debugger into FORTHW */
-        mv s9, zero /* clear DEBUG */
+        mv s7, zero /* clear DEBUG */
         j DO_EXECUTE
 DO_NEXT1:
 .endif
@@ -31,7 +31,7 @@ DO_EXECUTE:
 .if WANT_DEBUGGER == YES
 CODEWORD "(exitd)", EXITD /* ( -- ) exit from a debugger word */
         /* restore DEBUG hook */
-        lw s9, USER_DEBUG_NEXT(s6)
+        lw s7, USER_DEBUG_NEXT(s6)
         pop s2 /* restore FORTHIP */
         j DO_NEXT1 /* finish the interrupted DO_NEXT */
 END EXITD
@@ -40,13 +40,13 @@ END EXITD
 
 CODEWORD "break", BREAK /* ( -- ) activate the debugger (if enabled) */
         /* check if we are already debugging */
-        bne s9, zero, 1f
+        bne s7, zero, 1f
         /* check if debugger is enabled */
-        lw s9, USER_DEBUG_BREAK(s6)
-        beq s9, zero, 1f
+        lw s7, USER_DEBUG_BREAK(s6)
+        beq s7, zero, 1f
         /* set debug.next to debug_step */
-        li s9, DEBUG_STEP
-        sw s9, USER_DEBUG_NEXT(s6)
+        li s7, DEBUG_STEP
+        sw s7, USER_DEBUG_NEXT(s6)
 1:      NEXT
 END BREAK
 
