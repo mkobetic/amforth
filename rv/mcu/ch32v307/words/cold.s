@@ -156,6 +156,9 @@ CODEWORD "cold", COLD /* ( i*x -- )(R: j*y -- ) assembler part of the boot seque
 
   la s5, RAM_upper_returnstack
   la s4, RAM_upper_datastack # TW hack
+.if WANT_DEBUGGER == YES
+  mv s7, zero # zero out the DEBUG register
+.endif
 
 # BEG COM TW FIXME
   .ifdef initflash

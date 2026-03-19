@@ -9,6 +9,10 @@ CODEWORD "cold", COLD /* ( i*x -- )(R: j*y -- ) assembler part of startup sequen
    mov sp, r0
    ldr psp, =RAM_upper_datastack
 
+.if WANT_DEBUGGER == YES
+   mov DEBUG, 0
+.endif
+
 /* Copy RAM functions from Flash to RAM */
    ldr r0, =RAM_lower_res    
    ldr r1, =FSH_lower_res    
