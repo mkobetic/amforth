@@ -4,6 +4,6 @@
   loadindex r0
   loadlimit r1
   savetos
-  add tos, r0, r1
+  add TOS, r0, r1
   NEXT
 END I

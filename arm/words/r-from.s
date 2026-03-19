@@ -2,6 +2,6 @@
   CODEWORD "r>", R_FROM /* (R: x -- )( -- x ) move top of return stack to data stack */
 @------------------------------------------------------------------------------
   savetos
-  pop {tos}
+  pop {TOS}
   NEXT
 END R_FROM

@@ -6,12 +6,12 @@
 NEXT
 
 dnegate:
-  ldr r0, [psp]
+  ldr r0, [DSP]
   movs r1, #0
   mvns r0, r0
-  mvns tos, tos
+  mvns TOS, TOS
   adds r0, #1
-  adcs tos, r1
-  str r0, [psp]
+  adcs TOS, r1
+  str r0, [DSP]
   bx lr
 END DNEGATE

@@ -21,25 +21,25 @@
 @ -----------------------------------------------------------------------------
   CODEWORD  "0=", ZEROEQUAL /* ( n -- f ) f = n == 0 */
 @ -----------------------------------------------------------------------------
-  subs tos, #1
-  sbcs tos, tos
+  subs TOS, #1
+  sbcs TOS, TOS
   NEXT
 END ZEROEQUAL
 
 @ -----------------------------------------------------------------------------
   CODEWORD  "0<>", NOTZEROEQUAL /* ( n -- f ) f = n != 0 */
 @ -----------------------------------------------------------------------------
-  subs tos, #1
-  sbcs tos, tos
-  mvns tos, tos
+  subs TOS, #1
+  sbcs TOS, TOS
+  mvns TOS, TOS
   NEXT
 END NOTZEROEQUAL
 
 @ -----------------------------------------------------------------------------
   CODEWORD  "0<", ZEROLESS /* ( n -- f ) f = n < 0 */
 @ -----------------------------------------------------------------------------
-  movs tos, tos
-  asr tos, #32    @ Turn MSB into 0xffffffff or 0x00000000
+  movs TOS, TOS
+  asr TOS, #32    @ Turn MSB into 0xffffffff or 0x00000000
   NEXT
 END ZEROLESS
 
@@ -47,10 +47,10 @@ END ZEROLESS
   CODEWORD  ">=", GREATEREQUAL /* ( n1 n2 -- f ) f = n1 >= n2 */
 @ -----------------------------------------------------------------------------
   popnos r0     @ Get x1 into a register.
-  cmp r0, tos        @ Is x2 less?
+  cmp r0, TOS        @ Is x2 less?
   ite lt             @ If so,
-  movlt tos, #0      @  set all bits in TOS,
-  movge tos, #-1     @  otherwise clear them all.
+  movlt TOS, #0      @  set all bits in TOS,
+  movge TOS, #-1     @  otherwise clear them all.
   NEXT
 END GREATEREQUAL 
 
@@ -58,10 +58,10 @@ END GREATEREQUAL
   CODEWORD  "<=", LESSEQUAL /* ( n1 n2 -- f ) f = n1 <= n2 */
 @ -----------------------------------------------------------------------------
   popnos r0     @ Get x1 into a register.
-  cmp r0, tos        @ Is x2 greater?
+  cmp r0, TOS        @ Is x2 greater?
   ite gt             @ If so,
-  movgt tos, #0      @  set all bits in TOS,
-  movle tos, #-1     @  otherwise clear them all.
+  movgt TOS, #0      @  set all bits in TOS,
+  movle TOS, #-1     @  otherwise clear them all.
   NEXT
 END LESSEQUAL
 
@@ -69,10 +69,10 @@ END LESSEQUAL
   CODEWORD  "<", LESS /* ( n1 n2 -- f ) f = n1 < n2 */
 @ -----------------------------------------------------------------------------
   popnos r0     @ Get x1 into a register.
-  cmp r0, tos        @ Is x2 less?
+  cmp r0, TOS        @ Is x2 less?
   ite lt             @ If so,
-  movlt tos, #-1     @  set all bits in TOS,
-  movge tos, #0      @  otherwise clear them all.
+  movlt TOS, #-1     @  set all bits in TOS,
+  movge TOS, #0      @  otherwise clear them all.
   NEXT
 END LESS
 
@@ -80,10 +80,10 @@ END LESS
   CODEWORD  ">", GREATER /* ( n1 n2 -- f ) f = n1 > n2 */
 @ -----------------------------------------------------------------------------
   popnos r0     @ Get x1 into a register.
-  cmp r0, tos        @ Is x2 greater?
+  cmp r0, TOS        @ Is x2 greater?
   ite gt             @ If so,
-  movgt tos, #-1     @  set all bits in TOS,
-  movle tos, #0      @  otherwise clear them all.
+  movgt TOS, #-1     @  set all bits in TOS,
+  movle TOS, #0      @  otherwise clear them all.
   NEXT
 END GREATER
 
@@ -91,8 +91,8 @@ END GREATER
   CODEWORD  "u<", ULESS /* ( u1 u2 -- f ) f = u1 < u2 */
 @ -----------------------------------------------------------------------------
   popnos r0      @ Get u1 into a register.
-  subs tos, r0, tos   @ subs tos, w, tos   @ TOS = a-b  -- carry set if a is less than b
-  sbcs tos, tos
+  subs TOS, r0, TOS   @ subs TOS, w, TOS   @ TOS = a-b  -- carry set if a is less than b
+  sbcs TOS, TOS
   NEXT
 END ULESS
 
@@ -100,8 +100,8 @@ END ULESS
   CODEWORD  "u>", UGREATER /* ( u1 u2 -- f ) f = u1 > u2 */
 @ -----------------------------------------------------------------------------
   popnos r0
-  subs tos, r0
-  sbcs tos, tos
+  subs TOS, r0
+  sbcs TOS, TOS
   NEXT
 END UGREATER
 
@@ -109,10 +109,10 @@ END UGREATER
   CODEWORD  "<>", NOTEQUAL /* ( n1 n2 -- f ) f = n1 != n2 */
 @ -----------------------------------------------------------------------------
   popnos r0      @ Get the next elt into a register.
-  subs tos, r0        @ Z=equality; if equal, TOS=0
+  subs TOS, r0        @ Z=equality; if equal, TOS=0
 
   it ne             @ If not equal,
-  movne tos, #-1    @  set all bits in TOS.
+  movne TOS, #-1    @  set all bits in TOS.
   NEXT
 END NOTEQUAL
 
@@ -120,10 +120,10 @@ END NOTEQUAL
   CODEWORD  "=", EQUAL /* ( n1 n2 -- f ) f = n1 == n2 */
 @ -----------------------------------------------------------------------------
   popnos r0     @ Get the next elt into a register.
-  subs tos, r0       @ Z=equality; if equal, TOS=0
+  subs TOS, r0       @ Z=equality; if equal, TOS=0
 
-  subs tos, #1       @ Wenn es Null war, gibt es jetzt einen Überlauf
-  sbcs tos, tos
+  subs TOS, #1       @ Wenn es Null war, gibt es jetzt einen Überlauf
+  sbcs TOS, TOS
   NEXT
 END EQUAL
 
@@ -131,9 +131,9 @@ END EQUAL
   CODEWORD  "min", MIN /* ( n1 n2 -- n3 ) n3 = min(n1, n2) */
 @ -----------------------------------------------------------------------------
   popnos r0       @ Get x1 into a register.
-  cmp r0, tos          @ Compare them.
+  cmp r0, TOS          @ Compare them.
   it lt                @ If X is less,
-  movlt tos, r0        @  replace TOS with it.
+  movlt TOS, r0        @  replace TOS with it.
   NEXT
 END MIN
 
@@ -141,9 +141,9 @@ END MIN
   CODEWORD  "max", MAX /* ( n1 n2 -- n3 ) n3 = max(n1, n2) */
 @ -----------------------------------------------------------------------------
   popnos r0       @ Get x1 into a register.
-  cmp r0, tos          @ Compare them.
+  cmp r0, TOS          @ Compare them.
   it gt                @ If X is greater,
-  movgt tos, r0        @  replace TOS with it.
+  movgt TOS, r0        @  replace TOS with it.
   NEXT
 END MAX
 
@@ -151,9 +151,9 @@ END MAX
   CODEWORD  "umax", UMAX /* ( u1 u2 -- u3 ) u3 = max(u1, u2) */
 @ -----------------------------------------------------------------------------
   popnos r0  @ Get u1 into a register.
-  cmp r0, tos 
+  cmp r0, TOS 
   it hi           @ If W > TOS,
-  movhi tos, r0   @  replace TOS with W.
+  movhi TOS, r0   @  replace TOS with W.
   NEXT
 END UMAX
 
@@ -161,9 +161,9 @@ END UMAX
   CODEWORD  "umin", UMIN /* ( u1 u2 -- u3 ) u3 = min(u1, u2) */
 @ -----------------------------------------------------------------------------
   popnos r0  @ Get u1 into a register.
-  cmp r0, tos
+  cmp r0, TOS
   it lo           @ If W < TOS,
-  movlo tos, r0   @  replace TOS with W.
+  movlo TOS, r0   @  replace TOS with W.
   NEXT
 END UMIN
 

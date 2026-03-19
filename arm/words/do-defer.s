@@ -1,5 +1,5 @@
 HEADLESS "(defer)", DODEFER
-  ldr FORTHW, [FORTHW]
-  ldr FORTHW, [FORTHW]
+  ldr FW, [FW]
+  ldr FW, [FW]
   b DO_EXECUTE
 END DODEFER

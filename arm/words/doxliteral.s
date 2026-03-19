@@ -1,6 +1,6 @@
 HEADLESS "(xliteral)", DOXLITERAL            
     savetos
-    ldr tos, [FORTHIP]
-    adds FORTHIP, #4
+    ldr TOS, [FIP]
+    adds FIP, #4
     NEXT
 END DOXLITERAL

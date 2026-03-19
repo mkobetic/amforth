@@ -2,6 +2,6 @@
   CODEWORD "-", MINUS /* ( n1 n2 -- n3 ) n3 = n1 - n2 */
 @ -----------------------------------------------------------------------------
   popnos r0
-  subs tos, r0, tos
+  subs TOS, r0, TOS
   NEXT
 END MINUS

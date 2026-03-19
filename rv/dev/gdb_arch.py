@@ -6,7 +6,7 @@ from gdb_shared import *
 RSP = "s5"
 IP = "s2"
 WD = "s1"
-PSP = "s4"
+DSP = "s4"
 TOS = "s3"
 UP = "s6"
 RLIDX = "s7"
@@ -14,10 +14,10 @@ RLLIM = "s8"
 
 def register_lines(frame):
     return [
-        addres_register(frame, "s1", "FORTHW"),
-        addres_register(frame, "s2", "FORTHIP"),
+        addres_register(frame, "s1", "FW"),
+        addres_register(frame, "s2", "FIP"),
         value_register(frame, "s3", "TOS"),
-        addres_register(frame, "s4", "PSP"),
+        addres_register(frame, "s4", "DSP"),
         addres_register(frame, "s5", "RSP"),
         addres_register(frame, "s6", "UP"),
         value_register(frame, "s7", "DEBUG"),

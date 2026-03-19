@@ -1,6 +1,6 @@
 HEADLESS "(user)", DOUSER
   savetos
-  ldr tos, [FORTHW]
-  add tos, up
+  ldr TOS, [FW]
+  add TOS, up
   NEXT
 END DOUSER

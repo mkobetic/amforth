@@ -1,6 +1,6 @@
 
 HEADLESS "(data)", DODATA
   savetos
-  mov tos, FORTHW
+  mov TOS, FW
   NEXT
 END DODATA

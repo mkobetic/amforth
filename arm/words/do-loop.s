@@ -10,10 +10,10 @@ HEADLESS "(+loop)", DOPLUSLOOP
   adds r0, r1
   bvs 2f
   storeindex r0
-  ldr FORTHIP, [FORTHIP]
+  ldr FIP, [FIP]
   NEXT
 2:
-  add FORTHIP, #4
+  add FIP, #4
   pop {r0, r1}
   storeindex r0
   storelimit r1

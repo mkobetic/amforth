@@ -312,7 +312,7 @@ __flash_erase__:
     push {r0,lr}
     cpsid   i
     bl      enter_cf_pe_mode
-    mov     r0, tos             @ erase block
+    mov     r0, TOS             @ erase block
     bl      erase_cf_block
     bl      exit_cf_pe_mode
     loadtos    
@@ -326,7 +326,7 @@ __flash_write__:
     push {r0,lr}
     cpsid   i
     bl      enter_cf_pe_mode
-    mov     r0, tos 
+    mov     r0, TOS 
     ldr     r1, =FLASH_CACHE_ram
     bl      program_cf
     bl      exit_cf_pe_mode

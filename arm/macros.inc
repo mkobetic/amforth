@@ -5,10 +5,10 @@
 @ temporary volatile r0, r1, r2, r3
 @ temporary callee-saved r4, r5
 DEBUG   .req r6 @ used when WANT_DEBUGGER == YES
-tos     .req r7
-psp     .req r8
-FORTHW  .req r9
-FORTHIP .req r10
+TOS     .req r7
+DSP     .req r8
+FW  .req r9
+FIP .req r10
 UP      .req r11
 
 @ default register mapping
@@ -23,33 +23,33 @@ UP      .req r11
 .endm
 
 .macro savetos @ Push TOS on Datastack - a common, often used factor.
-    str tos, [psp, #-4]!
+    str TOS, [DSP, #-4]!
 .endm
 
 .macro loadtos
-    ldr tos, [psp], #4
+    ldr TOS, [DSP], #4
 .endm
 
 // push register to the data stack (n2 n1 -- n2 n1 reg)
 .macro pushtos register
   savetos
-  mov tos, \register
+  mov TOS, \register
 .endm
 
 // pop register from data stack (n2 n1 reg -- n2 n1)
 .macro poptos register
-  mov \register, tos
+  mov \register, TOS
   loadtos
 .endm
 
-// push register under tos, leave tos as is (n2 n1 -- n2 reg n1)
+// push register under TOS, leave TOS as is (n2 n1 -- n2 reg n1)
 .macro pushnos register
-  str \register, [psp, #-4]!
+  str \register, [DSP, #-4]!
 .endm
 
-// pop nos into register, leave tos as is (n2 reg n1 -- n2 n1)
+// pop nos into register, leave TOS as is (n2 reg n1 -- n2 n1)
 .macro popnos register
-  ldr \register, [psp], #4
+  ldr \register, [DSP], #4
 .endm
 
 // load loop index from user block
@@ -75,8 +75,8 @@ UP      .req r11
 
 .macro throw exception
   savetos               /* for good order        */
-  ldr tos, =\exception   /* load exception number */
-  ldr FORTHW, =XT_THROW  /* load XT of THROW to W reg */
+  ldr TOS, =\exception   /* load exception number */
+  ldr FW, =XT_THROW  /* load XT of THROW to W reg */
   b DO_EXECUTE          /* execute via ITC VM    */
 .endm
 

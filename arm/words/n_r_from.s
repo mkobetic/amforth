@@ -3,10 +3,10 @@ CODEWORD "nr>", N_R_FROM /* (R: xu .. x1 u -- )( -- xu .. x1 u ) move u items fr
     mov r0, r1
     savetos
 1:
-    pop {tos}
+    pop {TOS}
     savetos
     subs r0,1
     bne 1b
-    mov tos, r1
+    mov TOS, r1
     NEXT
 END N_R_FROM

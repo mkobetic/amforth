@@ -74,11 +74,11 @@ CODEWORD  "at", AT
 @ (addr n -- addr2 n2 | -1 if error)
 
     @ send command
-    ldr     r0, [psp], #4          @ r0 = addr, tos = n
+    ldr     r0, [DSP], #4          @ r0 = addr, TOS = n
     ldr     r1, =SCI1_BASE
 
 at_tx_loop:
-    cbz     tos, at_cmd_done             @ If char count is 0, exit
+    cbz     TOS, at_cmd_done             @ If char count is 0, exit
 
 at_tx_wait:
     ldrb     r2, [r1, #SCI_SSR]   @ Read SSR
@@ -100,14 +100,14 @@ at_cmd_done:
     cmp r0, r2
     beq at_tx_done
     ldr r0, =AT_CMD_END
-    mov tos, #2
+    mov TOS, #2
     b at_tx_loop
 at_tx_done:
 
 
-    @ Read response, max refill_buf_size chars, use tos to count received bytes
+    @ Read response, max refill_buf_size chars, use TOS to count received bytes
     ldr     r0, =RAM_lower_refill_buf   @ Store the response in TIB
-    str     r0, [psp, #-4]!             @ Store response address on psp, tos is 0
+    str     r0, [DSP, #-4]!             @ Store response address on DSP, TOS is 0
 at_rx_loop:
     ldrb     r2, [r1, #SCI_SSR]   @ Read SSR
     tst     r2, #SCI_SSR_RDRF           @ Test RDRF flag
@@ -120,8 +120,8 @@ at_rx_loop:
     @ Handle errors
     bic     r2, r2, #SCI_SSR_RERR
     strb     r2, [r1, #SCI_SSR]   @ Clear error flags@ clear flags
-    add psp, psp, #4    @ drop the address from the stack
-    mvn tos, #0         @ store -1 at the top of the stack
+    add DSP, DSP, #4    @ drop the address from the stack
+    mvn TOS, #0         @ store -1 at the top of the stack
     b       at_rx_done                 @ Abort on error
 
 at_rx_no_error:
@@ -129,7 +129,7 @@ at_rx_no_error:
 
     @ Write to buffer
     strb    r2, [r0], #1            @ Store byte, increment pointer
-    add     tos, tos, #1              @ Increment count
+    add     TOS, TOS, #1              @ Increment count
 
     @ Optional: Manual clear of RDRF (not always required, but safe)
     @ bic     r3, r3, #RDRF_BIT
@@ -138,7 +138,7 @@ at_rx_no_error:
     cmp     r2, #'\n'               @ Stop if newline
     beq     at_rx_done
     ldr     r3, =refill_buf_size
-    cmp     tos, r3      @ Stop if max bytes
+    cmp     TOS, r3      @ Stop if max bytes
     beq     at_rx_done
     b     at_rx_loop                 @ Continue if not done
 at_rx_done:

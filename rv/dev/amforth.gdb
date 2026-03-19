@@ -8,7 +8,7 @@ source amforth-core.gdb
 define .s
   # print TOS
   printf "TOS:     \t0x%x\n", $s3
-  # grab the PSP
+  # grab the DSP
   set var $frame = (int*)$s4
   # rest of the parameter stack
   while $frame < &RAM_upper_datastack
@@ -21,9 +21,9 @@ end
 # command to dump the return stack
 define .r
   # print W
-  printf "FORTHW: \t0x%x\n", $s1
+  printf "FW: \t0x%x\n", $s1
   # print IP
-  printf "FORTHIP:\t0x%x\n", $s2
+  printf "FIP:\t0x%x\n", $s2
   set var $frame = (unsigned int*)$s5
   while $frame < &RAM_upper_returnstack
     # location of the next XT to run after EXIT

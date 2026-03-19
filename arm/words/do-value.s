@@ -1,6 +1,6 @@
 HEADLESS "(value)", DOVALUE
   savetos
-  ldr tos, [FORTHW]
-  ldr tos, [tos]
+  ldr TOS, [FW]
+  ldr TOS, [TOS]
   NEXT
 END DOVALUE

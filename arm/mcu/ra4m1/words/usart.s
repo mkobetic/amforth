@@ -113,7 +113,7 @@ CODEWORD  "serial-key", SERIAL_KEY
    savetos
   @ Don't read SCI_SSR_RDRF, it was already read by SERIAL_KEYQ and flag is now 0.
   ldr r0, =UART_RDR  @ read RDR
-  ldrb tos, [r0]  
+  ldrb TOS, [r0]  
 NEXT
 
 @ -----------------------------------------------------------------------------
@@ -121,13 +121,13 @@ CODEWORD  "serial-key?", SERIAL_KEYQ
 @ returns false if there is another character ready to be read
 @ -----------------------------------------------------------------------------
    savetos
-   mov tos, #0
+   mov TOS, #0
    ldr r0, =UART_SSR
    ldrb r1, [r0]
    ands r1, #SCI_SSR_RDRF
    @ TODO: error handling
    beq 1f
-     mvns tos, tos
+     mvns TOS, TOS
 1: 
 NEXT
 
@@ -137,7 +137,7 @@ NEXT
 
   @ Don't read SCI_SSR_TDRE, it was already read by SERIAL_EMITQ and flag is now 0.
    ldr r0, =UART_TDR
-   strb tos, [r0]
+   strb TOS, [r0]
    loadtos
 NEXT
 
@@ -150,11 +150,11 @@ CODEWORD  "serial-emit?", SERIAL_EMITQ
 @  without checking SERIAL_EMITQ (see appl-turnkey.s)
 @ -----------------------------------------------------------------------------
    savetos
-   mov tos, #0
+   mov TOS, #0
    ldr r0, =UART_SSR
    ldrb r1, [r0]
    ands r1, #SCI_SSR_TDRE
    beq 1f
-     mvn tos, tos
+     mvn TOS, TOS
 1:
 NEXT

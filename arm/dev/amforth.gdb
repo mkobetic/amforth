@@ -8,7 +8,7 @@ source amforth-core.gdb
 define .s
   # print TOS
   printf "TOS: %x\n", $r7
-  # grab the PSP
+  # grab the DSP
   set var $frame = $r8
   # rest of the parameter stack
   while $frame < &RAM_upper_datastack

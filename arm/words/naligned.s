@@ -2,14 +2,14 @@
 
 CODEWORD "naligned" , NALIGNED /* ( n a1 -- a2 ) n = 2**u; a2 is a1 aligned (up) at n bytes */
 naligned:
-    ldr     r1, [psp]       @ r1 = n (byte count from NOS)
-    add     psp, psp, #4    @ pop stack (remove n)
+    ldr     r1, [DSP]       @ r1 = n (byte count from NOS)
+    add     DSP, DSP, #4    @ pop stack (remove n)
 
     sub     r0, r1, #1      @ r0 = n - 1 (alignment mask)
-    add     tos, tos, r0    @ tos = a + (n - 1)
+    add     TOS, TOS, r0    @ TOS = a + (n - 1)
     mvn     r0, r0          @ r0 = ~(n - 1)
-    and     tos, tos, r0    @ tos = (a + mask) & ~mask
+    and     TOS, TOS, r0    @ TOS = (a + mask) & ~mask
 
-    @ tos now contains aligned address (new TOS)
+    @ TOS now contains aligned address (new TOS)
     NEXT                    @ return to Forth interpreter
 END NALIGNED

@@ -1,6 +1,6 @@
 CODEWORD "abs", ABS /* ( n1 -- n2 ) n2 = abs(n1) */
-  cmp tos, #0
+  cmp TOS, #0
   it lt
-  neglt tos, tos
+  neglt TOS, TOS
   NEXT
 END ABS
