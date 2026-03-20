@@ -259,7 +259,7 @@ There are other AmForth or general Forth debugging techniques that can be useful
 
 #### AmForth Debugger
 
-When enabled, the AmForth debugger is engaged when execution reaches the word the word `break`. It causes the interpreter to be interrupted in the following cycle (before executing next word) and the debugger takes over. The debugger sends debugging information back to the terminal emulator (the parameter stack, backtrace and a short list of XTs to be executed next) and then waits for input from the operator. 
+When enabled, the AmForth debugger is engaged when execution reaches the word the word `break`. It causes the interpreter to be interrupted in the following cycle (before executing next word) and the debugger takes over. The debugger sends debugging information back to the terminal emulator (the data stack, backtrace and a short list of XTs to be executed next) and then waits for input from the operator. 
 
 Debugger interprets user input as follows:
 * `c`  - continue, resume normal execution (until `break` is hit again)
@@ -392,7 +392,7 @@ Another category of extensions is the GDB TUI (text UI). It allows creating a mo
 
 A separate GDB executable (usually with a `py` suffix) extends the basic GDB with a Python API that allows much more extensive customization. This one may take a bit of fiddling to get going because it relies on Python3 being installed on the host OS as a shared library. It is fussy about specific version being available, etc. You may need to pay close attention to the error messages to resolve these issues if it fails to start.
 
-It is however worth it, if you can get it going, because the extensions are much more powerful when using GDBPY. In general you get a much more capable TUI with an additional window for the AmForth parameter stack and return stack. It also extends the register window to highlight which registers are dedicated for the Forth runtime and renders their value in most suitable way. Moreover a custom ForthUnwinder allows GDB to properly reconstruct the AmForth backtrace, so the core GDB `bt` command becomes actually usable.
+It is however worth it, if you can get it going, because the extensions are much more powerful when using GDBPY. In general you get a much more capable TUI with an additional window for the AmForth data stack and return stack. It also extends the register window to highlight which registers are dedicated for the Forth runtime and renders their value in most suitable way. Moreover a custom ForthUnwinder allows GDB to properly reconstruct the AmForth backtrace, so the core GDB `bt` command becomes actually usable.
 
 These extensions are brought in by the `core/dev/tui-full.gdb` file. This is what is used by the `make gdb` command by default. If you cannot get GDBPY to work correctly then change it to use the `tui-basic.gdb` and basic GDB instead.
 

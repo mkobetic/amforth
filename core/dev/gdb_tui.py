@@ -27,7 +27,7 @@ class GdbCommandWindow:
         self._tui_window.write(self.get_contents(), True)
 
 # class ForthParameterStack(GdbCommandWindow):
-#     title = "Parameter Stack"
+#     title = "Data Stack"
 #     gdb_command = ".s"
 
 # class ForthReturnStack(GdbCommandWindow):

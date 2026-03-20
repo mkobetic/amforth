@@ -4,13 +4,13 @@
 # source shared core commands
 source amforth-core.gdb
 
-# command to dump the parameter stack
+# command to dump the data stack
 define .s
   # print TOS
   printf "TOS:     \t0x%x\n", $s3
   # grab the DSP
   set var $frame = (int*)$s4
-  # rest of the parameter stack
+  # rest of the data stack
   while $frame < &RAM_upper_datastack
     # print *(int)$frame
     x/x $frame

@@ -3,7 +3,7 @@ To support debugging of colon words (which is somewhat inconvenient in GDB), the
 
 One of the main goals was to allow writing the debugger in Forth for both convenience and portability. Consequently it is critical that the debugger word is executed normally (without further interruptions). Therefore the DEBUG register is cleared when entering the debugger word and restored when the debugger word exits (`exitd`).
 
-To enter the debugging regime, the word `break` sets up the `DEBUG` register which causes the interpreter to be interrupted in the following cycle (before executing next word). The debugger sends debugging information back to the terminal emulator (the parameter stack, backtrace and a short list of XTs to be executed next). The debug info lines are prefixed with `|D ` to enable post-processing on the host side (amforth-shell uses that). After sending the info the debugger then waits for input from the operator.
+To enter the debugging regime, the word `break` sets up the `DEBUG` register which causes the interpreter to be interrupted in the following cycle (before executing next word). The debugger sends debugging information back to the terminal emulator (the data stack, backtrace and a short list of XTs to be executed next). The debug info lines are prefixed with `|D ` to enable post-processing on the host side (amforth-shell uses that). After sending the info the debugger then waits for input from the operator.
 
 Debugger interprets user input as follows:
 * `c`  - continue, resume normal execution (until `break` is hit again)

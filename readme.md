@@ -7,30 +7,30 @@ This is a fork of https://sourceforge.net/p/amforth/code/2462/.
 The purpose is to advance the 32-bit ARM and RISC-V variants of AmForth.
 
 For details check out the READMEs in the respective directories.
-* [core/](https://github.com/mkobetic/amforth/tree/main/core) - the shared 32-bit AmForth core
-* [arm/](https://github.com/mkobetic/amforth/tree/main/arm) - the ARM architecture core (Cortex M3/4)
-* rv/ - the RISC-V architecture core
+* [core/](core) - the shared 32-bit AmForth core
+* [arm/](arm) - the ARM architecture core (Cortex M3/4)
+* [rv/](rv) - the RISC-V architecture core
 * rv/mcu/, arm/mcu/ - AmForth for different boards and targets
 
 ## Available MCUs/Boards
 
 ### RISC-V 32
 
-* [WCH CH32V307 / dev board (+QEMU emulation)](https://github.com/mkobetic/amforth/tree/main/rv/mcu/ch32v307)
-* [SiFive FE310 / Hifive1](https://github.com/mkobetic/amforth/tree/main/rv/mcu/hifive1)
-* [Generic RISCV-32 / QEMU -M virt](https://github.com/mkobetic/amforth/tree/main/rv/mcu/qemu)
+* [WCH CH32V307 / dev board v307, v305, v203 ](rv/mcu/ch32v307)
+* [SiFive FE310 / Hifive1](rv/mcu/hifive1)
+* [Generic RISCV-32 / QEMU -M virt](rv/mcu/qemu)
 
 
 ### ARM 32
 
-* [Renesas RA4M1 / Arduino UNO R4](https://github.com/mkobetic/amforth/tree/main/arm/mcu/ra4m1)
-* [TI LM4F120 / Stellaris Launchpad (+QEMU emulation)](https://github.com/mkobetic/amforth/tree/main/arm/mcu/lm4f120)
-* [Generic ARM-32 / Linux, Raspberry PI (+Docker emulation)](https://github.com/mkobetic/amforth/tree/main/arm/mcu/linux)
-* [Generic ARM-32 / QEMU -M virt](https://github.com/mkobetic/amforth/tree/main/arm/mcu/qemu)
+* [Renesas RA4M1 / Arduino UNO R4](arm/mcu/ra4m1)
+* [TI LM4F120 / Stellaris Launchpad (+QEMU emulation)](arm/mcu/lm4f120)
+* [Generic ARM-32 / Linux, Raspberry PI (+Docker emulation)](arm/mcu/linux)
+* [Generic ARM-32 / QEMU -M virt](arm/mcu/qemu)
 
 The original README follows.
 
----------------------------------------------------------------
+```
 
 Author:
     Matthias Trute <mtrute@users.sourceforge.net>
@@ -98,3 +98,5 @@ on the homepage http://amforth.sourceforge.net/.
 
 Contact, bug reports, questions, wishes etc:
     mailto:amforth-devel@lists.sourceforge.net
+
+```

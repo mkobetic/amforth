@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON ".s", DOTS /* ( -- ) show parameter stack non-destructively */
+COLON ".s", DOTS /* ( -- ) show data stack non-destructively */
 
     .word XT_DEPTH
     .word XT_UDOT
