@@ -4,6 +4,7 @@ COLON ":", COLON /* ( "name" -- ) create a colon word entry in the dictionary */
     .word XT_FLAGDOTCOLON
     .word XT_DOTO
     .word XT_FLAGDOTHEADER
+    .word XT_TPILE_WORD
     .word XT_DOCREATE
     .word XT_COLONNONAME
     .word XT_DROP

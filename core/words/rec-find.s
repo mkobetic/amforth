@@ -27,6 +27,7 @@ END R_WORD_INTERPRET
 NONAME "rword.compile", R_WORD_COMPILE
     .word XT_ZEROLESS
     .word XT_DOCONDBRANCH,1f
+        .word XT_TPILE_XT
 	    .word XT_COMMA
         .word XT_EXIT
 1:

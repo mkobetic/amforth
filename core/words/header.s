@@ -10,6 +10,7 @@ COLON "header", HEADER /* ( addr u wid -- ffa ) creates header (without CF/PF) f
     .word XT_DP,XT_TO_R
     .word XT_FLAGDOTHEADER
     .word XT_COMMA
+    .word XT_TPILE_NAME
     .word XT_SCOMMA
     .word XT_R_FROM /* return the FFA */
     .word XT_EXIT

@@ -2,10 +2,8 @@
 
 IMMED "until", UNTIL /* ( f -- )(C: a -- ) if f is true jump back to begin, otherwise leave the loop */
     .word XT_QNOP
-    .word XT_DOLITERAL
+    .word XT_COMPILE
     .word XT_DOCONDBRANCH
-    .word XT_COMMA
-
     .word XT_LRESOLVE
     .word XT_EXIT
 END UNTIL

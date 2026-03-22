@@ -397,7 +397,7 @@ class AMForth(object):
         "#cd", "#edit", "#require", "#include", "#directive", "#ignore-error",
         "#error-on-output", "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#update-words", "#exit",
-        "#update-cpu", "#update-files" , "#stack", "#show-symbols"
+        "#update-cpu", "#update-files" , "#stack", "#show-symbols", "#transpile"
         ]
     # standard words are usually uppercase, but amforth needs
     # them in lowercase.
@@ -528,6 +528,8 @@ class AMForth(object):
             self._search_list = os.environ["AMFORTH_LIB"].split(":")
         else:
             self._search_list=["."]
+
+        self._transpiling = False # set to True when excuting transpile_file()
         self._in_debugger = False # indicates whether the debugger is active (based on the response)
         self._sym_file = None # path to symbol table file
         # XT symbols
@@ -775,6 +777,19 @@ additional definitions (e.g. register names)
             # Restore the current timeout
             self._serialconn.timeout = self._config.current_behavior.timeout
 
+    def transpile_file(self, filename, install=False):
+        self.send_line("tpile+\n")
+        self.read_response()
+        self._transpiling = True
+        self._transpiled_lines = []
+        try:
+            self.upload_file(filename, install)
+        finally:
+            self._transpiling = False
+            self.send_line("tpile-\n")
+            self.read_response()
+        self.process_transpiled_lines(self._transpiled_lines)
+
     def upload_file(self, filename, install=False):
         if not install and filename in self._uploaded:
             return False
@@ -915,6 +930,8 @@ additional definitions (e.g. register names)
                                 raise AMForthException(errmsg)
                 elif self._log:
                     self._log.write(line + "\n")
+                if self._transpiling: 
+                    self._transpiled_lines.append((full_line, response[:-3]))
             else:
                 self.progress_callback("Error", None, response)
                 if not self._config.current_behavior.ignore_errors:
@@ -1264,11 +1281,11 @@ additional definitions (e.g. register names)
         val = int(addr,16)
         # check XT symbol match
         i = bisect.bisect(self._xt_addresses, val)
-        if 0 < i < len(self._xt_addresses):
+        if 0 < i <= len(self._xt_addresses):
             diff = val - self._xt_addresses[i-1]
             if diff == 0:
                 name = self._xt_symbols[i-1]
-                return (name+suffix)
+                return (name+suffix if suffix else name)
         # check RAM area match
         i = bisect.bisect(self._ram_area_addrs, val)
         if 0 < i < len(self._ram_area_addrs):
@@ -1292,6 +1309,105 @@ additional definitions (e.g. register names)
                 name = self._var_symbols[i-1]
                 return name+suffix
         return None
+
+    def process_transpiled_lines(self, lines):
+        xt_dosliteral = f"X{self._xt_addresses[self._xt_symbols.index("XT_DOSLITERAL")]:X}"
+        labels = {}
+        for line, response in lines:
+            # offset is the line offset to use for ouput
+            # it is dictated by the formatting of the source file
+            offset = len(line) - len(line.lstrip())
+            offset = max(offset, 3)
+            line = line.strip()
+            tokens = response.split()
+            # assuming that any word definition always starts on its own line
+            if len(tokens) > 0 and tokens[0][0] == 'W':
+                # starting a new word
+                print(f"# {line}")
+                token = tokens[0]
+                type = token[1]
+                name = bytes.fromhex(token[2:]).decode(self._encoding)
+                match type:
+                    case 'W':
+                        print(f'COLON "{name}"', end="")
+                    case 'I':
+                        print(f'IMMED "{name}"', end="")
+                    case 'V':
+                        print(f'VARIABLE "{name}"', end="")
+                    case 'C':
+                        print(f'CONSTANT "{name}"', end="")
+                    case 'U':
+                        print(f'VALUE "{name}"', end="")
+                    case 'D':
+                        print(f'DEFER "{name}"', end="")
+                    case _:
+                        msg = f'Unrecognized word type {type}, word "{name}"'
+                        self.progress_callback("Error", None,  msg)
+                        raise AMForthException(msg)
+                symbol = nameToSymbol(name)
+                if not symbol:
+                    msg = f'invalid character in word name "{name}", check _symbolCharTable'
+                    self.progress_callback("Error", None,  msg)
+                    raise AMForthException(msg)
+                print(f", {symbol}", end="")
+                # XT of the current word follows (from LATEST)
+                addr = int(tokens[1][1:], 16)
+                self._xt_addresses.append(addr)
+                self._xt_symbols.append(f"XT_{symbol}")
+                if type == 'W' or type == 'I':
+                    # drop the docolon XT emitted by :noname
+                    tokens = tokens[3:]
+                    print()
+                elif type == 'C' or type == 'U':
+                    # add the value to the definition
+                    print(f', 0x{tokens[3][1:]}', end="")
+                    tokens = tokens[4:]
+                else:
+                    # drop the XT value
+                    tokens = tokens[3:]
+            else:
+                print(" " * offset + f"# {line}")
+            separator = " " * offset + ".word "
+            for i, token in enumerate(tokens):
+                if not (token[0] == 'L' or token[0] == 'E' or token == xt_dosliteral and tokens[i+1][0] == 'S'):
+                    print(separator, end="")
+                match token[0]:
+                    case 'X':
+                        # >mark compiles XT 0 to create space for >resolve to write the address to, skip it
+                        # also skip DOSLITERAL if it's followed by string token, the STRING macro includes it.
+                        if token == "X00000000" or token == xt_dosliteral and tokens[i+1][0] == 'S':
+                            separator = ""
+                        else:
+                            xt = self._translate_address(token[1:])
+                            print(f"{xt}", end="")
+                            separator = ", "
+                    case '$':
+                        print(f"0x{token[1:]}", end="")
+                        separator = ", "
+                    case 'S':
+                        s = bytes.fromhex(token[1:]).decode(self._encoding)
+                        if i > 1:
+                            print()
+                        print(" " * offset + f'STRING "{s}" ', end="")
+                        separator = "\n"+ " " * offset + ".word "
+                    case 'F':
+                        print(f"{getLabel(token[1:],labels)}f", end="")
+                        separator = ", "
+                    case 'B':
+                        print(f"{getLabel(token[1:],labels)}b", end="")
+                        separator = ", "
+                    case 'L':
+                        if i > 0:
+                            print()
+                        l = f"{getLabel(token[1:],labels)}: "
+                        print(l, end="")
+                        separator = " " * (offset - len(l)) + ".word "
+                    case 'E':
+                        print(f"\nEND {symbol}")
+                        separator = ""
+                        labels = {}
+            if len(tokens) > 1 or len(tokens) == 1 and tokens[0][0] != 'L':
+                print()
 
     def print_progress(self, type, lineno, info):
         if not lineno:
@@ -1378,6 +1494,9 @@ additional definitions (e.g. register names)
                         print("\n")
                         for i, s in enumerate(self._ram_area_addrs):
                             print(f"{self._ram_area_symbols[i]}={s:X}")
+                        continue
+                    elif directive == "#transpile":
+                        self.transpile_file(directive_arg.strip())
                         continue
                     self.handle_common_directives(directive, directive_arg)
                     if directive == "#include" or directive == "#require":
@@ -1578,6 +1697,44 @@ additional definitions (e.g. register names)
                 raise AMForthException("Could not start editor: "+self.editor)
         else:
             raise AMForthException("No editor specified.  Use --editor or EDITOR environment variable")
+
+_symbolCharTable = {
+#    "?": "q", "<": "Lt", ">": "Gt", "=": "Eq", "|": "Bar",
+    "?": "q", "<": "Lt", ">": "2", "=": "Eq", "|": "Bar",
+    "+": "Plus", "-": "Minus", "!": "Bang", "@": "At", "#": "Hash",
+    "$": "Dollar", "%": "Percent", "^": "Caret", "&": "Amp",
+    "*": "Star", "(": "Lparen", ")": "Rparen", "[": "Lbrack",
+#    "]": "Rbrack", "_": "Under", "\\": "Backslash",
+    "]": "Rbrack", "\\": "Backslash",
+    "/": "Slash", "~": "Tilde", "`": "Backtick", "'": "Apostrophe",
+    ",": "Comma", ".": "Dot", '"': "Quo", ":": "colon",
+    ";": "Semi"
+}
+
+def nameToSymbol(s):
+    """Convert a Forth name into a suitable name for a Python function.
+       This is needed only at compile time, so speed is not important.
+       Prepend "n" to a leading digit, convert other non-alphanumeric
+       characters to alphanumerics based on _symbolCharTable."""
+
+    if s[0].isdigit():
+        s = "n" + s
+    nonalnum = list(set(re.findall(r"\W", s)))
+    for k in nonalnum:
+        r = _symbolCharTable[k]
+        if r:
+            s = s.replace(k, r)
+        else:
+            return None
+    return s.upper()
+
+def getLabel(label, labels):
+    if label in labels:
+        return labels[label]
+    else:
+        l = len(labels)+1
+        labels[label] = l
+        return l
 
 if __name__ == "__main__":
     sys.exit(AMForth().main())

@@ -18,5 +18,6 @@ GMARK_0001: /* else */
     .space 4 
 #   .word -1
 GMARK_0002: /* # then */
+	.word XT_TPILE_FWD
 	.word XT_EXIT
 END GMARK

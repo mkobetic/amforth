@@ -4,6 +4,7 @@ IMMED "\x3b", SEMICOLON /* ( -- ) finish colon word definition */
 /* Compiles (exit) and returns to interpret state */
     .word XT_COMPILE
     .word XT_EXIT
+    .word XT_TPILE_END
     .word XT_LBRACKET
     .word XT_REVEAL
 # addition for EOW marker     # removed but left for reference 

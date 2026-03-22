@@ -7,6 +7,7 @@ COLON "compile", COMPILE /* ( -- ) append the XT that follows in the calling wor
     .word XT_CELLPLUS
     .word XT_TO_R
     .word XT_FETCH
+    .word XT_TPILE_XT
     .word XT_COMMA
     .word XT_EXIT
 END COMPILE

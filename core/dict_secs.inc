@@ -200,6 +200,7 @@
 
 .include "words/dump.s"
 .include "words/testing.s"
+.include "words/tpile.s"
 
 .if WANT_DEBUGGER == YES
 .include "words/debugger.s"

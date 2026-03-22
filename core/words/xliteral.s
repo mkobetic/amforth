@@ -3,5 +3,7 @@
 IMMED "xliteral", XLITERAL
         .word XT_COMPILE
         .word XT_DOXLITERAL
+        .word XT_TPILE_LIT
         .word XT_COMMA
         .word XT_EXIT
+END XLITERAL

@@ -3,6 +3,7 @@
 COLON "(create)", DOCREATE /* (C: "name" -- ) parse name, write header, set newest */
     .word XT_PARSENAME,XT_WLSCOPE
     .word XT_DOCREATE_IN
+    .word XT_TPILE_WXT
     .word XT_EXIT
 END DOCREATE
 

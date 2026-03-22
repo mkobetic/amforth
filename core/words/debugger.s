@@ -255,7 +255,7 @@ IP2NAME_0006: /* then */
 	.word XT_EXIT
 END IP2NAME
 # ----------------------------------------------------------------------
-NONAME "dbg.d.", DBGDOTDDOT /* ( n -- ) print n in base 10 */
+COLON "dec.", DECDOT /* ( n -- ) print n in base 10 */
 	.word XT_BASE
 	.word XT_FETCH
 	.word XT_SWAP
@@ -267,9 +267,9 @@ NONAME "dbg.d.", DBGDOTDDOT /* ( n -- ) print n in base 10 */
 	.word XT_BASE
 	.word XT_STORE
 	.word XT_EXIT
-END DBGDOTDDOT
+END DECDOT
 # ----------------------------------------------------------------------
-NONAME "dbg.uh.", DBGDOTUHDOT /* ( u -- ) print u in base 16 */
+NONAME "uhex.", UHEXDOT /* ( u -- ) print u in base 16 */
 	.word XT_BASE
 	.word XT_FETCH
 	.word XT_SWAP
@@ -281,7 +281,7 @@ NONAME "dbg.uh.", DBGDOTUHDOT /* ( u -- ) print u in base 16 */
 	.word XT_BASE
 	.word XT_STORE
 	.word XT_EXIT
-END DBGDOTUHDOT
+END UHEXDOT
 # ----------------------------------------------------------------------
 COLON ".bt", DOTBT /* ( u -- ) print return stack (top first) skipping top u cells, use word names */
 	.word XT_RDEPTH
@@ -315,7 +315,7 @@ DOTBT_0004: /* else */
 	.word XT_8XDOT
 	.word XT_DOBRANCH,DOTBT_0007
 DOTBT_0006: /* else */
-	.word XT_DBGDOTUHDOT
+	.word XT_UHEXDOT
 DOTBT_0007: /* then */
 DOTBT_0005: /* then */
 	.word XT_QDUP
@@ -323,7 +323,7 @@ DOTBT_0005: /* then */
 	.word XT_DOLITERAL
 	.word 43
 	.word XT_EMIT
-	.word XT_DBGDOTDDOT
+	.word XT_DECDOT
 DOTBT_0008: /* then */
 	.word XT_CELLPLUS
 	.word XT_DOLOOP,DOTBT_0003 /* loop */

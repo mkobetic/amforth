@@ -3,6 +3,7 @@
 IMMED "literal", LITERAL /* (C: x -- ) compile code that will append x as a literal to the dictionary */
         .word XT_COMPILE
         .word XT_DOLITERAL
+        .word XT_TPILE_LIT
         .word XT_COMMA
         .word XT_EXIT
 END LITERAL
