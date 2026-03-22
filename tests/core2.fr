@@ -6,9 +6,9 @@ T{ 1 2 3 -rot rot -> 1 2 3 }T
 TESTING >NUMBER (alternative and additional tests)
 hex
 \                           LSB MSB U       U=0 converted U!=0 error
-T{ 0 0 s" 0"   >NUMBER nip -> 0   0 0 }T    \
-T{ 0 0 s" 1"   >NUMBER nip -> 1   0 0 }T    \
-T{ 0 0 s" -"   >NUMBER nip -> 0   0 1 }T	\ should fail to convert
+T{ 0 0 s" 0"   >NUMBER nip -> 0   0 0 }T    \ ok
+T{ 0 0 s" 1"   >NUMBER nip -> 1   0 0 }T    \ ok
+T{ 0 0 s" -"   >NUMBER nip -> 0   0 1 }T    \ should fail to convert
 T{ 0 0 s" +"   >NUMBER nip -> 0   0 1 }T    \ should fail to convert
 T{ 0 0 s" ."   >NUMBER nip -> 0   0 1 }T    \ should fail to convert 
 T{ 0 0 s" +++" >NUMBER nip -> 0   0 3 }T    \ should fail to convert 

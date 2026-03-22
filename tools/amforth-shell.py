@@ -519,6 +519,8 @@ class AMForth(object):
         self._amforth_cpu = ""
         self._show_stack = False 
         self._amforth_stack = ""
+        self.tee=None  # subprocess
+        self._tee=None # file name
         self._last_error = ()
         self._last_edited_file = None
         self._config = BehaviorManager()
@@ -603,6 +605,14 @@ class AMForth(object):
         "Main function called when module is used as a script"
         upload_files, interact = self.parse_arg()
         try:
+            if self._tee is not None:
+                behavior = self._config.current_behavior
+                behavior.error_on_output = False
+                self.tee = subprocess.Popen(["tee",self._tee],stdin=subprocess.PIPE)
+                behavior.error_on_output = False
+                os.dup2(self.tee.stdin.fileno(),sys.stdout.fileno())
+                os.dup2(self.tee.stdin.fileno(),sys.stderr.fileno())
+                atexit.register(self.tee.kill)
             for fn in upload_files:
                 if fn == "-":
                     self.interact()
@@ -646,6 +656,8 @@ additional definitions (e.g. register names)
             default=self.serial_rtscts, help="Serial port RTS/CTS enable")
         parser.add_argument("--speed", "-s", action="store",
             type=int, default=self.serial_speed, help="Serial port speed")
+        parser.add_argument("--tee", action="store",
+            default=None, help="copy session stdout to file")
         parser.add_argument("--log", type=argparse.FileType('w'),
                             help="Uploaded Forth log-file")
         parser.add_argument("--line-length", "-l", action="store",
@@ -682,6 +694,7 @@ additional definitions (e.g. register names)
         self._serial_rtscts = arg.rtscts
         self._serial_speed = arg.speed
         self._log = arg.log
+        self._tee = arg.tee
         self._update_uploaded = arg.uploaded_wl
         self.editor = arg.editor
         self._encoding = arg.encoding
@@ -1019,6 +1032,7 @@ additional definitions (e.g. register names)
     def handle_common_directives(self, directive, directive_arg):
         if directive == "#include" or directive == "#require":
             fn = directive_arg.strip()
+            fn = fn.strip('"')
             if self.upload_file(fn, directive == "#include"):
                 resume_fn = self._config.current_behavior.filename
                 if resume_fn:
