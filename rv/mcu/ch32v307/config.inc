@@ -59,9 +59,5 @@
     .equ WANT_USB     , YES
 .endif         
 
-.if WANT_SEE
-    .equ WANT_CASE    , YES
-    .equ WANT_MATCH   , YES
-.endif
 
 

@@ -72,10 +72,7 @@
 .equ WANT_CASE         , YES
 .equ WANT_MATCH        , YES
 .equ WANT_FORNEXT      , NO
-
 .equ WANT_SEE          , NO
-.equ WANT_SAVE         , NO
-
 .equ WANT_CODE         , NO
 .equ WANT_TABLE        , NO
 

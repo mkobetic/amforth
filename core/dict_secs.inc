@@ -224,10 +224,6 @@
 .include "words/for-next.s"
 .endif
 
-.if WANT_SAVE
-.include "words/save.s"
-.endif 
-
 .if WANT_FLOAT
 .include "words/float.s"
 .endif 
