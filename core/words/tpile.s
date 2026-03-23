@@ -1,3 +1,12 @@
+/*
+    Emits a stream of tokens when words are compiled. Tokens can be easily converted to ITC given a list of XT addresses (from a symbol table). See (#transpile directive in amforth-shell)
+
+    Doesn't handle (see XT_COMMA references):
+    * :noname (no word token or word XT emitted)
+    * does> parent/child word
+    * [char], [compile], postpone, ram, , to
+ */
+
 VARIABLE "tpile", TPILE /* ( -- f ) transpiling status */
 END TPILE
 

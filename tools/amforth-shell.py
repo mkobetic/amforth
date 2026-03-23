@@ -856,6 +856,7 @@ additional definitions (e.g. register names)
     def _send_file_contents(self, f):
         in_comment = False
         lineno = 0
+        comment = []
         for full_line in f:
             self._config.advance_line()
             self._serialconn.timeout = self._config.current_behavior.timeout
@@ -876,8 +877,12 @@ additional definitions (e.g. register names)
             if len(line) == 0:
                 if in_comment:
                     self.progress_callback("Comment", lineno, full_line)
+                    if self._transpiling:
+                        comment.append(line)
                 else:
                     self.progress_callback("Whitespace", lineno, full_line)
+                    if self._transpiling:
+                        comment = []
                 continue
             try:
                 (line, in_comment,
@@ -900,6 +905,8 @@ additional definitions (e.g. register names)
                 continue
             if len(line) == 0:
                 self.progress_callback("Comment", lineno, full_line)
+                if self._transpiling:
+                        comment.append(full_line.strip())
                 continue
             try:
                 self.send_line(line)
@@ -931,7 +938,8 @@ additional definitions (e.g. register names)
                 elif self._log:
                     self._log.write(line + "\n")
                 if self._transpiling: 
-                    self._transpiled_lines.append((full_line, response[:-3]))
+                    self._transpiled_lines.append((full_line, response[:-3], comment))
+                    comment = []
             else:
                 self.progress_callback("Error", None, response)
                 if not self._config.current_behavior.ignore_errors:
@@ -1313,7 +1321,7 @@ additional definitions (e.g. register names)
     def process_transpiled_lines(self, lines):
         xt_dosliteral = f"X{self._xt_addresses[self._xt_symbols.index("XT_DOSLITERAL")]:X}"
         labels = {}
-        for line, response in lines:
+        for line, response, comment in lines:
             # offset is the line offset to use for ouput
             # it is dictated by the formatting of the source file
             offset = len(line) - len(line.lstrip())
@@ -1365,8 +1373,13 @@ additional definitions (e.g. register names)
                 else:
                     # drop the XT value
                     tokens = tokens[3:]
+                if len(comment) > 0:
+                    print("/* "+"\n   ".join(comment)+" */")
             else:
-                print(" " * offset + f"# {line}")
+                sep = " " * offset + "# "
+                if len(comment) > 0:
+                    print(sep + ("\n"+sep).join(comment))
+                print(sep + line)
             separator = " " * offset + ".word "
             for i, token in enumerate(tokens):
                 if not (token[0] == 'L' or token[0] == 'E' or token == xt_dosliteral and tokens[i+1][0] == 'S'):

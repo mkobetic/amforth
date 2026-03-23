@@ -3,6 +3,7 @@
 IMMED "\x3bi", SEMICOLONI /* ( -- ) finish interrupt colon word definition */ 
     .word XT_COMPILE
     .word XT_EXITI
+    .word XT_TPILE_END
     .word XT_LBRACKET
     .word XT_REVEAL
 # addition for EOW marker     
