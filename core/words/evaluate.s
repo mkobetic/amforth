@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-VARIABLE "evaluate.strlen", EVALUATEDOTSTRLEN
+NOVAR "evaluate.strlen", EVALUATEDOTSTRLEN
 END EVALUATEDOTSTRLEN
 
-VARIABLE "evaluate.str", EVALUATEDOTSTR
+NOVAR "evaluate.str", EVALUATEDOTSTR
 END EVALUATEDOTSTR
 # ----------------------------------------------------------------------
-COLON "evaluate.source", EVALUATEDOTSOURCE 
+NONAME "evaluate.source", EVALUATEDOTSOURCE 
     .word XT_EVALUATEDOTSTR
     .word XT_FETCH
     .word XT_EVALUATEDOTSTRLEN
@@ -14,7 +14,7 @@ COLON "evaluate.source", EVALUATEDOTSOURCE
     .word XT_EXIT
 END EVALUATEDOTSOURCE
 # ----------------------------------------------------------------------
-COLON "(evaluate)", LPARENEVALUATERPAREN /* ( a u -- ) interpret a Forth string of length u starting at address a  */
+NONAME "(evaluate)", LPARENEVALUATERPAREN /* ( a u -- ) interpret a Forth string of length u starting at address a  */
     .word XT_DOLITERAL
     .word XT_SOURCE
     .word XT_DEFER_FETCH
