@@ -5,13 +5,12 @@
 .include "words/usart.s"
 .include "words/gpio.s"
 
-
 .include "words/led.s"
 .include "words/blink.s"
 
 .include "words/applturnkey.s"
 
-.include "words/type0.s" # not sure 
+.include "words/type0.s" 
 
 .if WANT_SYSTICK
 .include "words/systick.s"
@@ -25,18 +24,13 @@
 .include "words/t9.s"
 .endif
 
-#.include "words/temp6.s"
 .include "words/usb.s"
-#.include "words/debug.s"
 
 .if WANT_FLOAT
     .include "words/float.s"
 .endif
 
-
-
-#.include "words/areg.s"
-
 #.include "words/pc.s"
+#.include "words/fast.s"
+
 .include "words/wordswap.s"
-.include "words/fast.s"
