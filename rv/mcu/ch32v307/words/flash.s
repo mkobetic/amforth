@@ -37,8 +37,8 @@
 .equ R32_FLASH_MODEKEYR , 0x40022024 # Extension key register X
 .equ OFFSET, 0x08000000
 
-CONSTANT "EOW" , EOW , 0xE339E339
-END EOW
+#CONSTANT "EOW" , EOW , 0xE339E339
+#END EOW
 
 # ----------------------------------------------------------------------
 
