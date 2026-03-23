@@ -41,10 +41,10 @@
 # ;
 # 
 
-VARIABLE "forget.prior", FORGETDOTPRIOR
+NOVAR "forget.prior", FORGETDOTPRIOR
 END FORGETDOTPRIOR
 # ----------------------------------------------------------------------
-COLON "(forget)", LPARENFORGETRPAREN 
+NONAME "(forget)", LPARENFORGETRPAREN 
 	.word XT_TO_R
 	.word XT_2DUP
 	.word XT_R_FETCH
@@ -114,7 +114,7 @@ LPARENFORGETRPAREN_0004: # then
 END LPARENFORGETRPAREN
 
 # ----------------------------------------------------------------------
-COLON "forget", FORGET /* ( -- "name" ) DICT: Remove a word from the RAM dictionary wordlist */
+COLON "forget", FORGET /* ( "subs" -- ) Remove most recent word matching substring from the RAM wordlist */
 	.word XT_SHOWDOTHEADER
 	.word XT_PARSENAME
 	.word XT_DOLITERAL
