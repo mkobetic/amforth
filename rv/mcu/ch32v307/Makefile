@@ -43,23 +43,6 @@ min:
 	$(RM) minicom.cap
 	$(MINICOM) -D $(MODEM) --color=on -C minicom.cap
 
-
-#? --- QEM ---
-QEMU := $(QEMU_RV32) -M virt -bios none -kernel $(BUILD_DIR)/$(TARGET_ELF)
-
-## Start AmForth under QEMU with operator uart connected to stdio
-stdio:
-	$(QEMU) -display none -serial stdio
-
-## Start AmForth under QEMU with operator uart connected to a pty
-pty:
-	$(QEMU) -nographic -serial pty
-
-# Add -S if you want QEMU to not start the quest.
-## Like pty but allows GDB to attach to it (-s).
-debug:
-	$(QEMU) -nographic -serial pty -s
-
 #? --- Debugging ---
 ## Start GDB 
 #gdb:

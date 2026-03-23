@@ -12,7 +12,7 @@
 .include "build-config.inc"
 
 .print "INFO: using QEM startup"		
-.include "startup.qem"  # startup and master_int handler for both C and Forth
+.include "qemu.startup"  # startup and master_int handler for both C and Forth
 
 # amforth --------------------------------------------
 
