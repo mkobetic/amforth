@@ -3,16 +3,10 @@ Also look for TODO: in source files
 
 # Release
 
-* finish ch32 cleanup
-* ch32: update or remove dict_min.inc
-* remove save / WANT_SAVE
-
 * ch32: readme & release
 * main readme
 * RV readme
-
-* NOVAR, NOCON, NOVAL macros
-* update AmForth version
+* update AmForth version, name ...
 
 
 # CORE
