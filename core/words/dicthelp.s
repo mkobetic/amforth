@@ -3,37 +3,37 @@
 #CONSTANT "XT.COLON"    , CON_COLON, DOCOLON
 #CONSTANT "XT.VARIABLE" , CON_VARIABLE, PFA_DOVARIABLE
 #CONSTANT "XT.EXIT"     , CON_EXIT  , XT_EXIT
-CONSTANT "PFA.DEFER"   , CON_DEFER , PFA_DODEFER
+#CONSTANT "PFA.DEFER"   , CON_DEFER , PFA_DODEFER
 #CONSTANT "PFA.VALUE"   , CON_VALUE , PFA_DOVALUE
 #CONSTANT "XT.DOCONDBRANCH" , CON_DOCONDBRANCH, XT_DOCONDBRANCH            
 CONSTANT "XT.DONEXT" , CON_DONEXT, DO_NEXT
-CONSTANT "XT.EXECUTE" , CON_EXECUTE, DO_EXECUTE
+#CONSTANT "XT.EXECUTE" , CON_EXECUTE, DO_EXECUTE
 
-CONSTANT "PFA.DODATA" , CON_DODATA, PFA_DODATA
-CONSTANT "PFA.DOUSER" , CON_DOUSER, PFA_DOUSER
+#CONSTANT "PFA.DODATA" , CON_DODATA, PFA_DODATA
+#CONSTANT "PFA.DOUSER" , CON_DOUSER, PFA_DOUSER
 
 /* FIX THIS */
 
-COLON "compile?" , COMPILEQ /* ( a -- f ) f is true if a contains XT of COMPILE  */
-      .word XT_FETCH
-      .word XT_DOLITERAL
-      .word XT_COMPILE
-      .word XT_EQUAL
-      .word XT_EXIT
+# COLON "compile?" , COMPILEQ /* ( a -- f ) f is true if a contains XT of COMPILE  */
+#       .word XT_FETCH
+#       .word XT_DOLITERAL
+#       .word XT_COMPILE
+#       .word XT_EQUAL
+#       .word XT_EXIT
 
-COLON "literal?" , LITERALQ /* ( a -- f ) f is true if a contains XT of DOLITERAL  */
-      .word XT_FETCH
-      .word XT_DOLITERAL
-      .word XT_DOLITERAL
-      .word XT_EQUAL
-      .word XT_EXIT
+# COLON "literal?" , LITERALQ /* ( a -- f ) f is true if a contains XT of DOLITERAL  */
+#       .word XT_FETCH
+#       .word XT_DOLITERAL
+#       .word XT_DOLITERAL
+#       .word XT_EQUAL
+#       .word XT_EXIT
 
-COLON "xliteral?" , XLITERALQ /* ( a -- f ) f is true if a contains XT of DOXLITERAL  */
-      .word XT_FETCH
-      .word XT_DOLITERAL
-      .word XT_DOXLITERAL
-      .word XT_EQUAL
-      .word XT_EXIT
+# COLON "xliteral?" , XLITERALQ /* ( a -- f ) f is true if a contains XT of DOXLITERAL  */
+#       .word XT_FETCH
+#       .word XT_DOLITERAL
+#       .word XT_DOXLITERAL
+#       .word XT_EQUAL
+#       .word XT_EXIT
 
 COLON "sliteral?" , SLITERALQ /* ( a -- f ) f is true if a contains XT of DOSLITERAL  */
       .word XT_FETCH
@@ -42,43 +42,43 @@ COLON "sliteral?" , SLITERALQ /* ( a -- f ) f is true if a contains XT of DOSLIT
       .word XT_EQUAL
       .word XT_EXIT
 
-COLON "loop?" , LOOPQ /* ( a -- f ) f is true if [a] is XT of DOLOOP | DOPLUSLOOP  */
-      .word XT_FETCH
-      .word XT_DUP
-      .word XT_DOLITERAL
-      .word XT_DOLOOP
-      .word XT_EQUAL
-      .word XT_SWAP
-      .word XT_DOLITERAL
-      .word XT_DOPLUSLOOP
-      .word XT_EQUAL
-      .word XT_OR 
-      .word XT_EXIT
+# COLON "loop?" , LOOPQ /* ( a -- f ) f is true if [a] is XT of DOLOOP | DOPLUSLOOP  */
+#       .word XT_FETCH
+#       .word XT_DUP
+#       .word XT_DOLITERAL
+#       .word XT_DOLOOP
+#       .word XT_EQUAL
+#       .word XT_SWAP
+#       .word XT_DOLITERAL
+#       .word XT_DOPLUSLOOP
+#       .word XT_EQUAL
+#       .word XT_OR 
+#       .word XT_EXIT
 
-COLON "condbranch?", CONDBRANCHQ /* ( a -- f ) f is true if a contains XT of DOCONDBRANCH */
-      .word XT_FETCH
-      .word XT_DOLITERAL
-      .word XT_DOCONDBRANCH
-      .word XT_EQUAL
-      .word XT_EXIT
+# COLON "condbranch?", CONDBRANCHQ /* ( a -- f ) f is true if a contains XT of DOCONDBRANCH */
+#       .word XT_FETCH
+#       .word XT_DOLITERAL
+#       .word XT_DOCONDBRANCH
+#       .word XT_EQUAL
+#       .word XT_EXIT
 
-COLON "branch?", BRANCHQ /* ( a -- f ) f is true if a contains XT of DOBRANCH */
-      .word XT_FETCH
-      .word XT_DOLITERAL
-      .word XT_DOBRANCH
-      .word XT_EQUAL
-      .word XT_EXIT
+# COLON "branch?", BRANCHQ /* ( a -- f ) f is true if a contains XT of DOBRANCH */
+#       .word XT_FETCH
+#       .word XT_DOLITERAL
+#       .word XT_DOBRANCH
+#       .word XT_EQUAL
+#       .word XT_EXIT
 
-COLON "anybranch?", ANYBRANCHQ /* ( a -- f ) f is true if a contains XT of any branch */
-      .word XT_DUP
-      .word XT_CONDBRANCHQ
-      .word XT_OVER
-      .word XT_BRANCHQ
-      .word XT_OR
-      .word XT_SWAP
-      .word XT_LOOPQ
-      .word XT_OR 
-      .word XT_EXIT
+# COLON "anybranch?", ANYBRANCHQ /* ( a -- f ) f is true if a contains XT of any branch */
+#       .word XT_DUP
+#       .word XT_CONDBRANCHQ
+#       .word XT_OVER
+#       .word XT_BRANCHQ
+#       .word XT_OR
+#       .word XT_SWAP
+#       .word XT_LOOPQ
+#       .word XT_OR 
+#       .word XT_EXIT
 
 COLON "colon?" , COLONQ /* ( a -- f ) f is true if a contains XT of DOCOLON  */
       .word XT_FETCH
@@ -87,13 +87,13 @@ COLON "colon?" , COLONQ /* ( a -- f ) f is true if a contains XT of DOCOLON  */
       .word XT_EQUAL
       .word XT_EXIT
 
-COLON "codeword?" , CODEWORDQ /* ( a -- f ) f is true if a contains XT of CODEWORD */
-      .word XT_DUP
-      .word XT_FETCH
-      .word XT_SWAP
-      .word XT_CELLPLUS
-      .word XT_EQUAL
-      .word XT_EXIT
+# COLON "codeword?" , CODEWORDQ /* ( a -- f ) f is true if a contains XT of CODEWORD */
+#       .word XT_DUP
+#       .word XT_FETCH
+#       .word XT_SWAP
+#       .word XT_CELLPLUS
+#       .word XT_EQUAL
+#       .word XT_EXIT
       
 COLON "exit?" , EXITQ  /* ( a -- f ) f is true if [a] is XT of EXIT | EXITI */
       .word XT_FETCH
@@ -108,19 +108,19 @@ COLON "exit?" , EXITQ  /* ( a -- f ) f is true if [a] is XT of EXIT | EXITI */
       .word XT_OR 
       .word XT_EXIT
 
-COLON "variable?" , VARIABLEQ /* ( a -- f ) f is true if [a] is XT for a variable */
-      .word XT_FETCH
-      .word XT_DOLITERAL
-      .word PFA_DOVARIABLE
-      .word XT_EQUAL
-      .word XT_EXIT
+# COLON "variable?" , VARIABLEQ /* ( a -- f ) f is true if [a] is XT for a variable */
+#       .word XT_FETCH
+#       .word XT_DOLITERAL
+#       .word PFA_DOVARIABLE
+#       .word XT_EQUAL
+#       .word XT_EXIT
 
-COLON "value?" , VALUEQ /* ( a -- f ) f is true if [a] is XT for a value */
-      .word XT_FETCH
-      .word XT_DOLITERAL
-      .word PFA_DOVALUE
-      .word XT_EQUAL
-      .word XT_EXIT
+# COLON "value?" , VALUEQ /* ( a -- f ) f is true if [a] is XT for a value */
+#       .word XT_FETCH
+#       .word XT_DOLITERAL
+#       .word PFA_DOVALUE
+#       .word XT_EQUAL
+#       .word XT_EXIT
 
 /* brain damaged string */
 .macro BDAM string

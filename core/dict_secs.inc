@@ -93,17 +93,8 @@
 .include "words/order.s"
 .include "words/find-xt.s"
 
-# dictionary start
-#.include "words/xt2nfa.s"
-#.include "words/xt2ffa.s"
-#.include "words/nfa2lfa.s"
-#.include "words/nfa2cfa.s"
-#.include "words/name2string.s"
-#.include "words/name2flags.s"
-#.include "words/dictopt.s"
 .include "words/xt2string.s"
 .include "words/dictopt-newb.s"
-# dictionary end
 
 .include "words/traverse-wordlist.s"
 .include "words/show-wordlist.s"
@@ -193,7 +184,7 @@
 .include "words/ramwordlist.s"
 .include "words/flag.s"
 .include "words/search.s"
-#.include "words/freeze.s"
+
 
 
 # TW testing 
@@ -218,7 +209,6 @@
 
 .include "words/dicthelp.s"
 .if WANT_SEE 
-.include "words/dis-asm.s"
 .include "words/see.s"
 .endif
 
@@ -233,10 +223,6 @@
 .if WANT_FORNEXT
 .include "words/for-next.s"
 .endif
-
-.if WANT_SAVE
-.include "words/save.s"
-.endif 
 
 .if WANT_FLOAT
 .include "words/float.s"

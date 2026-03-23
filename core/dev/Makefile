@@ -252,6 +252,14 @@ test:
 	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
 
+## Run tests-mcu.frt through amforth-shell on hardware 
+tests-mcu:
+	# export EDITOR in your .env file to make the #edit shell directive work.
+	$(SKIP) -x assembler-with-cpp -I $(AMFORTH) $(AMFORTH)/tests/tests-mcu.frt > ./build/tests-mcu.frt
+	$(AMSHELL) -I $(AMFORTH) --no-error-on-output --sym-file build/amforth.sym  \
+    --tee ./build/tests-mcu.log ./build/tests-mcu.frt
+	awk -f $(AMFORTH)/tests/results-mcu.awk ./build/tests-mcu.log
+
 ## Detailed dump of ELF sections for debugging linker issues
 sections: sec-type sec-addr sec-sum
 

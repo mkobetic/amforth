@@ -6,11 +6,6 @@
 .equ flash_cell, 2
 .equ flash_erased, 0xE339E339 /* a word in erased flash */
 
-/* fast flash mode
-.equ flash_page, 256
-.equ flash_cell, 256
-*/
-
 .equ WANT_NESTED_ISR   , NO
 
 # what Forth word groups do you want included in the core 
@@ -21,8 +16,8 @@
 .equ WANT_MATCH        , YES
 .equ WANT_FORNEXT      , NO
 
-.equ WANT_SEE          , NO
-.equ WANT_SAVE         , NO
+.equ WANT_SEE          , YES
+
 
 .equ WANT_TIMER6       , NO
 .equ WANT_SYSTICK      , NO
@@ -64,13 +59,5 @@
     .equ WANT_USB     , YES
 .endif         
 
-.if WANT_SEE
-    .equ WANT_CASE    , YES
-    .equ WANT_MATCH   , YES
-.endif
 
-.if WANT_SAVE
-    .equ WANT_CASE    , YES
-    .equ WANT_MATCH   , YES
-.endif
 
