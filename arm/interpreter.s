@@ -1,6 +1,11 @@
 .global _INTERPRETER
 .type _INTERPRETER, STT_FUNC
 _INTERPRETER:
+.thumb_func
+DOALIAS:
+        push {FIP}
+        ldr FIP, [FW]
+        NEXT
 .thumb_func /* need to set the thumb bit on the DOCOLON symbol */
 DOCOLON: 
         push {FIP}

@@ -1,6 +1,8 @@
+/*
 # SPDX-License-Identifier: GPL-3.0-only
 # SEE (Version 2) , does not disassemble CODEWORDS 
 # ----------------------------------------------------------------------
+*/
 NONAME "bip", BIP 
 	.word XT_TO_R
 	.word XT_R_FETCH
@@ -12,7 +14,7 @@ NONAME "bip", BIP
 	.word XT_MOD
 	.word XT_ZEROEQUAL
 	.word XT_DOCONDBRANCH,BIP_0002 /* if */
-	.word XT_DOLITERAL # [char]
+	.word XT_DOLITERAL /* # [char] */
 	.word 46 /* . */
 	.word XT_EMIT
 	.word XT_SPACE
@@ -23,7 +25,7 @@ BIP_0002: /* else */
 BIP_0003: /* then */
 	.word XT_DOBRANCH,BIP_0004
 BIP_0001: /* else */
-	.word XT_DOLITERAL # [char]
+	.word XT_DOLITERAL /* # [char] */
 	.word 114 /* r */
 	.word XT_EMIT
 	.word XT_SPACE
@@ -256,12 +258,7 @@ NONAME "see.do.exit", SEEDOTDODOTEXIT
 	.word XT_FETCH
 	.word XT_SEEDOTXT
 	.word XT_FETCH
-	.word XT_DUP
-	.word XT_XT2NFA
-	.word XT_GREATERZERO
-	.word XT_DOCONDBRANCH,SEEDOTDODOTEXIT_0001 /* if */
 	.word XT_XT2LFA
-SEEDOTDODOTEXIT_0001: /* then */
 	.word XT_MINUS
 	.word XT_CELL
 	.word XT_PLUS
@@ -274,6 +271,32 @@ SEEDOTDODOTEXIT_0001: /* then */
 	.word XT_STORE
 	.word XT_EXIT
 END SEEDOTDODOTEXIT
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+NONAME "see.do.child.exit", SEEDOTDODOTCHILDDOTEXIT 
+	.word XT_SEEDOTLINE
+	.word XT_SEEDOTIP
+	.word XT_FETCH
+	.word XT_FETCH
+	.word XT_XT2STRING
+	.word XT_TYPE
+	.word XT_SPACE
+	.word XT_SEEDOTIP
+	.word XT_FETCH
+	.word XT_SEEDOTXT
+	.word XT_FETCH
+	.word XT_MINUS
+	.word XT_CELL
+	.word XT_PLUS
+	.word XT_UDOT
+	STRING "bytes"
+	.word XT_TYPE
+	.word XT_CR
+	.word XT_TRUE
+	.word XT_SEEDOTDONEQ
+	.word XT_STORE
+	.word XT_EXIT
+END SEEDOTDODOTCHILDDOTEXIT
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
 NONAME "see.any?", SEEDOTANYQ 
@@ -538,7 +561,7 @@ SEEDOTCHILD_0008: /* else */
 	.word XT_EXECUTE
 	.word XT_DOCONDBRANCH,SEEDOTCHILD_000A /* if */
 	.word XT_DROP
-	.word XT_SEEDOTDODOTEXIT
+	.word XT_SEEDOTDODOTCHILDDOTEXIT
 	.word XT_DOBRANCH,SEEDOTCHILD_000B
 SEEDOTCHILD_000A: /* else */
 	.word XT_DOXLITERAL
@@ -583,7 +606,7 @@ NONAME "see.variable", SEEDOTVARIABLE
 	.word XT_FETCH
 	.word XT_DUP
 	.word XT_HEXDOT
-	.word XT_DOLITERAL # [char]
+	.word XT_DOLITERAL /* # [char] */
 	.word 35 /* # */
 	.word XT_EMIT
 	.word XT_DOT
@@ -613,7 +636,7 @@ NONAME "see.value", SEEDOTVALUE
 	.word XT_FETCH
 	.word XT_DUP
 	.word XT_HEXDOT
-	.word XT_DOLITERAL # [char]
+	.word XT_DOLITERAL /* # [char] */
 	.word 35 /* # */
 	.word XT_EMIT
 	.word XT_DOT
@@ -668,7 +691,7 @@ NONAME "see.constant", SEEDOTCONSTANT
 	.word XT_SEEDOTIP
 	.word XT_FETCH
 	.word XT_FETCH
-	.word XT_DOLITERAL # [char]
+	.word XT_DOLITERAL /* # [char] */
 	.word 35 /* # */
 	.word XT_EMIT
 	.word XT_DOT

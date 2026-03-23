@@ -65,5 +65,6 @@ RAMALLOT debug_buf, refill_buf_size, 4
 .equ EFWADDR,  -258 /* attempt to write below flash limit */
 .equ ENFAZ,    -259 /* NFA is not found */
 .equ ENFANN,   -260 /* NFA is from NONAME or HEADLESS */
+.equ EALIALI,  -261 /* attempt to alias an alias */
 
 

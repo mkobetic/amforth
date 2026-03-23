@@ -235,6 +235,10 @@
 .include "words/table.s"
 .endif
 
+.if WANT_SYNONYM
+.include "words/synonym.s"
+.endif
+
 #.include "words/does.s"
 #.include "words/code.s"
 
@@ -266,3 +270,4 @@
 
 .include "words/empty.s"
 .include "words/builds.s"
+

@@ -18,15 +18,6 @@ END FLASH_MAX
 
 /* flash primitives */
 
-DEFER "(dallot)", DODALLOT, XT_TILDEDODALLOT /* ( u -- ) allocate u bytes in the dictionary */
-END DODALLOT
-
-DEFER "(,)", DOCOMMA, XT_TILDEDOCOMMA /* ( x -- ) append x to the dictionary */
-END DOCOMMA
-
-DEFER "(c,)", DOCCOMMA, XT_TILDEDOCCOMMA /* ( c -- ) append c to the dictionary */
-END DOCCOMMA
-
 DEFER "!i", STORE_I , XT_TILDESTORE_I /* ( x addr -- ) write x at addr in flash */
 END STORE_I
 
@@ -77,3 +68,54 @@ NONAME "flash.flush", FLASHDOTFLUSH /* ( -- ) force flush (write) of flash.cache
 .endif
     .word XT_EXIT
 END FLASHDOTFLUSH
+
+# ----------------------------------------------------------------------
+# NFF3
+
+NONAME "ram>flash", RAM2FLASH /* ( -- ) assign defer targets for flash mode (memmode=true) */
+	.word XT_DOXLITERAL
+	.word XT_TILDECCOMMA
+	.word XT_DOXLITERAL
+	.word XT_CCOMMA
+	.word XT_DEFER_STORE
+	.word XT_DOXLITERAL
+	.word XT_TILDEDALLOT
+	.word XT_DOXLITERAL
+	.word XT_DALLOT
+	.word XT_DEFER_STORE
+	.word XT_DOXLITERAL
+	.word XT_TILDECOMMA
+	.word XT_DOXLITERAL
+	.word XT_COMMA
+	.word XT_DEFER_STORE
+	STRING "targeting flash..."
+	.word XT_TYPE
+	.word XT_CR
+	.word XT_EXIT
+END RAM2FLASH
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+NONAME "flash>ram", FLASH2RAM /* ( -- ) assign defer targets for RAM mode (memmode=false) */
+	.word XT_DOXLITERAL
+	.word XT_CARETCCOMMA
+	.word XT_DOXLITERAL
+	.word XT_CCOMMA
+	.word XT_DEFER_STORE
+	.word XT_DOXLITERAL
+	.word XT_CARETDALLOT
+	.word XT_DOXLITERAL
+	.word XT_DALLOT
+	.word XT_DEFER_STORE
+	.word XT_DOXLITERAL
+	.word XT_CARETCOMMA
+	.word XT_DOXLITERAL
+	.word XT_COMMA
+	.word XT_DEFER_STORE
+	STRING "targeting ram..."
+	.word XT_TYPE
+	.word XT_CR
+	.word XT_EXIT
+END FLASH2RAM
+# ----------------------------------------------------------------------
+#=====================================================================
+#======================================================================

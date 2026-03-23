@@ -26,13 +26,14 @@ END DP
 
 COLON ">flash" , TO_FLASH /* compile new words to flash */
   .word XT_MEMMODE, XT_DOCONDBRANCH , 1f
-    .word XT_EXIT 
+    .word XT_FINISH
 1:
   .word XT_DP , XT_DOTO, XT_DP_RAM
   .word XT_DP_FLASH , XT_DOTO, XT_DP
   .word XT_TRUE, XT_DOTO, XT_MEMMODE
   .word XT_DOLITERAL , XT_FORTH_WORDLIST , XT_DOTO , XT_CURRENT
   .word XT_FORTH /* set search order to FLASH mode */
+  .word XT_RAM2FLASH /* assign defers for FLASH mode */
   .word XT_EXIT
 END TO_FLASH
 
@@ -43,6 +44,7 @@ COLON ">ram" , TO_RAM /* compile new words to RAM */
     .word XT_ZERO, XT_DOTO, XT_MEMMODE
     .word XT_DOLITERAL, XT_RAM_WORDLIST , XT_DOTO , XT_CURRENT
     .word XT_ONLY /* set search order to RAM mode */
+    .word XT_FLASH2RAM /* assign defers for RAM mode */
 1:
   .word XT_EXIT
 END TO_RAM

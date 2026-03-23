@@ -61,6 +61,7 @@ END FORTH_WORDLIST
 .equ Flag_table,      0x0100
 .equ Flag_pvalue,     0x0200
 .equ Flag_child,      0x0400
+.equ Flag_alias,      0x0800
 
 /*
   Note that ideally we would use the XT_\Label symbol as the function symbol, however, thanks to the ARM interworking garbage,
@@ -100,6 +101,12 @@ PFA_\Label:
 
 .macro CODEALIAS Name, Label, Target
     HEADER Flag_none, "\Name", \Label, PFA_\Target
+.endm
+
+.macro COLONALIAS Name, Label , Target
+    HEADER Flag_alias, "\Name", \Label, DOALIAS
+    .word PFA_\Target
+    .word XT_EXIT
 .endm
 
 .macro COLON Name, Label
