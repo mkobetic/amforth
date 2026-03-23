@@ -12,6 +12,9 @@ For details check out the READMEs in the respective directories.
 * [rv/](rv) - the RISC-V architecture core
 * rv/mcu/, arm/mcu/ - AmForth for different boards and targets
 
+The [development.md](development.md) describes the development setup of the repository.
+The [core readme](core/readme.md) provides an architectural overview.
+
 ## Available MCUs/Boards
 
 ### RISC-V 32
