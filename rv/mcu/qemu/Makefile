@@ -34,16 +34,6 @@ pty:
 debug:
 	$(QEMU) -nographic -serial pty -s
 
-## Start AmForth under QEMU with operator uart connected to a socket
-sock:
-	$(QEMU) -nographic -serial tcp:localhost:4321,server,nowait  # need to terminate
-
-SOCKSHELL=$(AMFORTH)/tools/socket-shell.py --port $(MODEM) --speed 115200 $1
-
-## Start sock shell  
-sksh:
-	$(SOCKSHELL) --no-error-on-output -i 
-
 ## Connect GDB to amforth running on QEMU (must be running with -s, see debug)
 gdb:
 	$(GDBPY) build/amforth.elf --quiet \

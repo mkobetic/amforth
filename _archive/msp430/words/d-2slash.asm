@@ -1,5 +1,0 @@
-CODEHEADER(XT_D2SLASH,3,"d2/")
-
-    RRA TOS
-    RRC @PSP
-    NEXT

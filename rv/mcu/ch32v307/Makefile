@@ -9,7 +9,6 @@ QEMU_RV32 ?= qemu-system-riscv32
 WLINK ?= $(HOME)/.cargo/bin/wlink
 MINICOM ?= minicom
 
-SOCKSHELL=$(AMFORTH)/tools/socket-shell.py --port $(MODEM) --speed 115200 $1
 UU=$(AMFORTH)/tools/uu
 
 # ----------------------------------------------------------------------
@@ -60,14 +59,6 @@ pty:
 ## Like pty but allows GDB to attach to it (-s).
 debug:
 	$(QEMU) -nographic -serial pty -s
-
-## Start AmForth under QEMU with operator uart connected to a socket
-sock:
-	$(QEMU) -nographic -serial tcp:localhost:4321,server,nowait  # need to terminate
-
-## Start sock shell  
-sksh:
-	$(SOCKSHELL) --no-error-on-output -i 
 
 #? --- Debugging ---
 ## Start GDB 

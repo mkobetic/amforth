@@ -1,5 +1,0 @@
-CODEHEADER(XT_D2STAR,3,"d2*")
-
-    RLA @PSP
-    RLC TOS
-    NEXT

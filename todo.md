@@ -1,18 +1,27 @@
 List of known issues and tasks that need to be done (by area)
 Also look for TODO: in source files
 
+# Release
+
+* finish ch32 cleanup
+* ch32 update or remove dict_min.inc
+* remove save / WANT_SAVE
+
+* ch32 readme & release
+* main readme
+* RV readme
+
+* NOVAR, NOCON, NOVAL macros
+* update AmForth version
+
+
 # CORE
 
 * review the default sizing of memory regions and sections (especially for the physical targets)
-* update AmForth version
-* automated compiled artifact releases
-* keep WANT_SAVE?
 * review unused files (see make unused)
 
 * remove PFA_ prefix from labels that aren't PFAs
 * xxx_ram symbols => RAM_xxx symbols (otherwise should be underscore prefixed)
-
-* immediate should throw when compiling to flash
 * all words should use the END macro to be proper function blocks (debug_info)
 * proper, and extractable comments for all words
 * add long word description to the html refcard as title attribute, so that it shows on hover
@@ -54,9 +63,6 @@ Also look for TODO: in source files
 
 ## CH32V307
 
-* RAMALLOT reg_shadow differences between 307 ad QEM configuration
-* update or remove dict_min.inc
-
 ## HIFIVE1
 
 * get it running under qemu -M sifive_e (SiFive E31 core)
@@ -64,12 +70,9 @@ Also look for TODO: in source files
 
 # TOOLS
 
-* make sure all tools work
 * amshell: make sure the `words` change didn't break autocomplete
 * amshell: translate exception number to mnemonic
 * amshell: reconsider the greedy echo loop in send_line()
-* socket-shell.py duplicates most of amforth-shell.py
-* keep am4up.c ?
 
 
 # DOCS

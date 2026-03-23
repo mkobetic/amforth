@@ -1,5 +1,0 @@
-
-DEFER(XT_TURNKEY,7,"turnkey")
-  .dw CFG_TURNKEY
-  .dw XT_RDEFERFETCH
-  .dw XT_RDEFERSTORE
