@@ -1318,6 +1318,7 @@ additional definitions (e.g. register names)
                 return name+suffix
         return None
 
+    _word_comment_re = re.compile(r"(\(.*--.*\))\s*\\\s*(.*)$")
     def process_transpiled_lines(self, lines):
         xt_dosliteral = f"X{self._xt_addresses[self._xt_symbols.index("XT_DOSLITERAL")]:X}"
         labels = {}
@@ -1365,7 +1366,6 @@ additional definitions (e.g. register names)
                 if type == 'W' or type == 'I':
                     # drop the docolon XT emitted by :noname
                     tokens = tokens[3:]
-                    print()
                 elif type == 'C' or type == 'U':
                     # add the value to the definition
                     print(f', 0x{tokens[3][1:]}', end="")
@@ -1373,8 +1373,13 @@ additional definitions (e.g. register names)
                 else:
                     # drop the XT value
                     tokens = tokens[3:]
+                sig = self._word_comment_re.search(line)
+                if sig:
+                    print(f" /* {sig.group(1)} {sig.group(2)} */")
+                else:
+                    print()
                 if len(comment) > 0:
-                    print("/* "+"\n   ".join(comment)+" */")
+                    print("/* "+"\n   ".join([ l.lstrip("\ ") for l in comment])+" */")
             else:
                 sep = " " * offset + "# "
                 if len(comment) > 0:
