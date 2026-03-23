@@ -132,6 +132,24 @@ PFA_\Label:
     .word \Label\()_ram             
 .endm
 
+.macro NOVAR Name, Label
+    .p2align 2,0x55
+    .word 0x03
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:
+XT_\Label: .word PFA_DOVARIABLE
+PFA_\Label: 
+    .section amramlo,"aw",%nobits
+    .balign 4
+     # Capture current location counter
+    .set \Label\()_ram, .          
+    .space 4
+    .section amforth
+    # Write the captured address into flash
+    .word \Label\()_ram             
+.endm
+
 .macro DVARIABLE Name, Label
    HEADER Flag_variable, "\Name", \Label, PFA_DOVARIABLE
     .section amramlo,"aw",%nobits
@@ -163,6 +181,27 @@ PFA_\Label:
 
 .macro VALUE Name, Label, Default
     HEADER Flag_value|Flag_init, "\Name", \Label, PFA_DOVALUE
+   .section amramlo,"aw",%nobits
+   .balign 4
+    # Capture current location counter
+   .set \Label\()_ram, .          
+   .space 4
+   .section amforth
+   # Write the captured address into flash
+   .word \Label\()_ram             
+   .word \Default
+   .word XT_FETCH
+   .word XT_STORE
+.endm
+
+.macro NOVAL Name, Label, Default
+    .p2align 2,0x55
+    .word 0x03
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:
+XT_\Label: .word PFA_DOVALUE
+PFA_\Label: 
    .section amramlo,"aw",%nobits
    .balign 4
     # Capture current location counter
@@ -217,6 +256,17 @@ PFA_\Label:
 
 .macro CONSTANT Name, Label, NUM
     HEADER Flag_constant, "\Name", \Label, PFA_DOVARIABLE
+    .word \NUM
+.endm
+
+.macro NOCON Name, Label, NUM
+    .p2align 2,0x55
+    .word 0x03
+    .global _\Label
+    .type _\Label, STT_FUNC
+_\Label:
+XT_\Label: .word PFA_DOVARIABLE
+PFA_\Label: 
     .word \NUM
 .endm
 
