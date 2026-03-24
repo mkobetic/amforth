@@ -20,5 +20,5 @@ RSP: Return Stack Pointer    | s5
 
 Registers t0 to t6 are used as scratch registers.
 
-[1]: (https://riscv.org/wp-content/uploads/2024/12/riscv-calling.pdf)
+[1]: https://riscv.org/wp-content/uploads/2024/12/riscv-calling.pdf
 
