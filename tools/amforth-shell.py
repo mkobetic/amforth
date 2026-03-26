@@ -777,9 +777,14 @@ additional definitions (e.g. register names)
             # Restore the current timeout
             self._serialconn.timeout = self._config.current_behavior.timeout
 
+    amforth_error_re = re.compile(r" \?\? -\d+ \d+\s*$")
+
     def transpile_file(self, filename, install=False):
         self.send_line("tpile+\n")
-        self.read_response()
+        response = self.read_response()
+        if self.amforth_error_re.search(response):
+            self.progress_callback("Error", None,  "transpiling not supported by target")
+            return
         self._transpiling = True
         self._transpiled_lines = []
         try:
@@ -1379,7 +1384,7 @@ additional definitions (e.g. register names)
                 else:
                     print()
                 if len(comment) > 0:
-                    print("/* "+"\n   ".join([ l.lstrip("\ ") for l in comment])+" */")
+                    print("/* "+"\n   ".join([ l.lstrip("\\ ") for l in comment])+" */")
             else:
                 sep = " " * offset + "# "
                 if len(comment) > 0:
@@ -1723,7 +1728,7 @@ _symbolCharTable = {
     "$": "Dollar", "%": "Percent", "^": "Caret", "&": "Amp",
     "*": "Star", "(": "Lparen", ")": "Rparen", "[": "Lbrack",
 #    "]": "Rbrack", "_": "Under", "\\": "Backslash",
-    "]": "Rbrack", "\\": "Backslash",
+    "]": "Rbrack", "\\": "Backslash", "{": "Lbrace", "}": "Rbrace",
     "/": "Slash", "~": "Tilde", "`": "Backtick", "'": "Apostrophe",
     ",": "Comma", ".": "Dot", '"': "Quo", ":": "colon",
     ";": "Semi"

@@ -4,7 +4,9 @@ COLON "defer", DEFER /* ( "name" -- ) create deferred word "name" */
     .word XT_FLAGDOTDEFER
     .word XT_DOTO
     .word XT_FLAGDOTHEADER
+.if WANT_TRANSPILER == YES
     .word XT_TPILE_WORD
+.endif
     .word XT_DOCREATE
     .word XT_REVEAL
     .word XT_COMPILE
@@ -13,7 +15,9 @@ COLON "defer", DEFER /* ( "name" -- ) create deferred word "name" */
     .word XT_RAMCOMMA
     .word XT_LBRACKET
     .word XT_FLASHDOTFLUSH
+.if WANT_TRANSPILER == YES
     .word XT_TPILE_END
+.endif
     .word XT_EXIT
 END DEFER
 

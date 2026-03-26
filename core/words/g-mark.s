@@ -18,6 +18,8 @@ GMARK_0001: /* else */
     .space 4 
 #   .word -1
 GMARK_0002: /* # then */
+.if WANT_TRANSPILER == YES
 	.word XT_TPILE_FWD
+.endif
 	.word XT_EXIT
 END GMARK

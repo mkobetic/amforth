@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
 # all secondaries / colon words
-# they represend data instead of code
 #
 
 .include "words/flash-common.s"
@@ -185,8 +184,6 @@
 .include "words/flag.s"
 .include "words/search.s"
 
-
-
 # TW testing 
 
 .include "words/show.s"
@@ -198,9 +195,13 @@
 .include "words/memmode.s"
 .include "words/find.s"
 
+.include "words/output.s"
 .include "words/dump.s"
 .include "words/testing.s"
+
+.if WANT_TRANSPILER == YES
 .include "words/tpile.s"
+.endif
 
 .if WANT_DEBUGGER == YES
 .include "words/debugger.s"

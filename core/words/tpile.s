@@ -4,7 +4,10 @@
     Doesn't handle (see XT_COMMA references):
     * :noname (no word token or word XT emitted)
     * does> parent/child word
-    * [char], [compile], postpone, ram, , to
+    * postpone
+    * to : current definition compiles oddly, e.g.
+        # pvp cell+ cell+ to pvp \ increment pvp
+        .word XT_PVP, XT_CELLPLUS, XT_CELLPLUS, XT_DOXLITERAL, 0x400055A8, XT_DEFER_STORE
  */
 
 VARIABLE "tpile", TPILE /* ( -- f ) transpiling status */
