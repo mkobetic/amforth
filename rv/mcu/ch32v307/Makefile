@@ -8,6 +8,8 @@ AMFORTH ?= $(shell git rev-parse --show-toplevel)
 QEMU_RV32 ?= qemu-system-riscv32
 WLINK ?= $(HOME)/.cargo/bin/wlink
 MINICOM ?= minicom
+OPENOCD ?= openocd
+OPENCFG ?= dev/wch-riscv.cfg
 
 UU=$(AMFORTH)/tools/uu
 
@@ -23,6 +25,8 @@ CHIPSET=$(TARGET)
 MCU_LD := ./$(TARGET).ld
 LIB_WCH := ./lib_$(TARGET)
 LIB_USER := ./lib_$(TARGET)_user
+
+ASFLAGS ?= -march=rv32imafc -mabi=ilp32f
 
 # Included after various configuration bits are defined (importantly MCU_LD and TARGET)
 include $(AMFORTH)/rv/dev/Makefile
@@ -45,15 +49,12 @@ min:
 
 #? --- Debugging ---
 ## Start GDB 
-#gdb:
-#	$(BIN_STUB)-gdb --ex 'target extended-remote :3333' $(BUILD_DIR)/$(TARGET_ELF)
-
-## Connect GDB to amforth running on QEMU (must be running with -s, see debug)
 gdb:
 	$(GDBPY) build/amforth.elf --quiet \
-		-ex 'target remote :1234' \
-		-ex "source tui-full.gdb"
+		--ex 'target extended-remote :3333' \
+		--ex "source tui-full.gdb"
 
+# On Apple Silicon you need to download OpenOCD from MRS https://www.mounriver.com/download to get an arm64 version.
 ## Start OpenOCD
 ocd:
 	$(OPENOCD) -f $(OPENCFG)
