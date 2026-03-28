@@ -1,6 +1,6 @@
-theme: jekyll-theme-minima
+theme: minima
 minima:
-  skin: solarized
+  skin: dark
   nav_pages:
     - UG.md
     - TG.md
