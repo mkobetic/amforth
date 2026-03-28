@@ -19,17 +19,17 @@ The [core readme](core/readme.md) provides an architectural overview.
 
 ### RISC-V 32
 
-* [WCH CH32V307 / dev board v307, v305, v203 ](rv/mcu/ch32v307) [refcard](https://mkobetic.github.io/amforth/refcards/rv/rv-307.html)
-* [SiFive FE310 / Hifive1](rv/mcu/hifive1) [refcard](https://mkobetic.github.io/amforth/refcards/rv/rv-HIFIVE1.html)
-* [Generic RISCV-32 / QEMU -M virt](rv/mcu/qemu) [refcard](https://mkobetic.github.io/amforth/refcards/rv/rv-QEM.html)
+* [WCH CH32V307 / dev board v307, v305, v203 ](rv/mcu/ch32v307) @[refcard](https://mkobetic.github.io/amforth/refcards/rv/rv-307.html)
+* [SiFive FE310 / Hifive1](rv/mcu/hifive1) @[refcard](https://mkobetic.github.io/amforth/refcards/rv/rv-HIFIVE1.html)
+* [Generic RISCV-32 / QEMU -M virt](rv/mcu/qemu) @[refcard](https://mkobetic.github.io/amforth/refcards/rv/rv-QEM.html)
 
 
 ### ARM 32
 
-* [Renesas RA4M1 / Arduino UNO R4](arm/mcu/ra4m1) [refcard](https://mkobetic.github.io/amforth/refcards/arm/arm-UNOR4.html)
-* [TI LM4F120 / Stellaris Launchpad (+QEMU emulation)](arm/mcu/lm4f120) [refcard](https://mkobetic.github.io/amforth/refcards/arm/arm-LM4.html)
-* [Generic ARM-32 / Linux, Raspberry PI (+Docker emulation)](arm/mcu/linux) [refcard](https://mkobetic.github.io/amforth/refcards/arm-linux/arm-LINUX.html)
-* [Generic ARM-32 / QEMU -M virt](arm/mcu/qemu) [refcard](https://mkobetic.github.io/amforth/refcards/arm/arm-QEM.html)
+* [Renesas RA4M1 / Arduino UNO R4](arm/mcu/ra4m1) @[refcard](https://mkobetic.github.io/amforth/refcards/arm/arm-UNOR4.html)
+* [TI LM4F120 / Stellaris Launchpad (+QEMU emulation)](arm/mcu/lm4f120) @[refcard](https://mkobetic.github.io/amforth/refcards/arm/arm-LM4.html)
+* [Generic ARM-32 / Linux, Raspberry PI (+Docker emulation)](arm/mcu/linux) @[refcard](https://mkobetic.github.io/amforth/refcards/arm-linux/arm-LINUX.html)
+* [Generic ARM-32 / QEMU -M virt](arm/mcu/qemu) @[refcard](https://mkobetic.github.io/amforth/refcards/arm/arm-QEM.html)
 
 The original README follows.
 
