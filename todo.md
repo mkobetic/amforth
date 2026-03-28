@@ -5,7 +5,6 @@ Also look for TODO: in source files
 
 * ch32: readme & release
 * main readme
-* RV readme
 * update AmForth version, name ...
 
 

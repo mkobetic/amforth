@@ -71,3 +71,10 @@ jobs:
 
       - name: QEMU virt Core Tests
         run: cd rv/mcu/qemu && TIMEOUT=5s make tests
+
+      - name: Update Refcards
+        if: github.ref == 'refs/heads/main'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist/refcards
+          target-folder: refcards/rv
