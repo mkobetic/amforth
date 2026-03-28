@@ -1,4 +1,6 @@
 name: ARM
+permissions:
+  contents: write
 on:
   push:
     branches: [ '**' ]

@@ -1,4 +1,6 @@
 name: RISC-V
+permissions:
+  contents: write
 on:
   push:
     branches: [ '**' ]
