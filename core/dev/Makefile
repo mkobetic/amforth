@@ -232,11 +232,11 @@ SKIP := $(PP) -w -E --no-line-commands
 tests: TIMEOUT ?= 4s
 tests:
 	@{ cat $(TESTER); \
-	  echo '\ TESTS STARTING"' ; \
+	  echo '\ TESTS STARTING' ; \
 	  $(SKIP) $(AMFORTH)/tests/cpp-core.fr; \
 	  cat $(AMFORTH)/tests/core2.fr; \
 	  cat $(AMFORTH)/tests/pvalue.fr; \
-	  echo '\ TESTS FINISHED"' ; \
+	  echo '\ TESTS FINISHED' ; \
 	} | timeout -s TERM $(TIMEOUT) $(QEMU) -display none -serial stdio | \
 	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
@@ -245,9 +245,9 @@ tests:
 test: TIMEOUT ?= 1s
 test:
 	@{ cat $(TESTER); \
-	  echo '\ TESTS STARTING"' ; \
+	  echo '\ TESTS STARTING' ; \
 	  cat $(AMFORTH)/tests/$(TEST); \
-	  echo '\ TESTS FINISHED"' ; \
+	  echo '\ TESTS FINISHED' ; \
 	} | timeout -s TERM $(TIMEOUT) $(QEMU) -display none -serial stdio | \
 	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
