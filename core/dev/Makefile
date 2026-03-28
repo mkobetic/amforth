@@ -167,7 +167,8 @@ build/%.txt: build/%.toc
 build/%.html: build/%.toc
 	@echo "REBUILD $@"
 	@$(AMFORTH)/tools/refcard.py --html >$@
-
+	@mkdir -p $(AMFORTH)/dist/refcards
+	@cp $@ $(AMFORTH)/dist/refcards/$(ARCH)-$(TARGET).html
 
 SORT_SYMS_BY_ADDRESS := grep -E '^[0-9a-f]{8} .*' | \
 	awk '{ printf "0x%s\n",$$0; }' | \
