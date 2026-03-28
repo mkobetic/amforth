@@ -3,6 +3,9 @@
 COLON "(create)", DOCREATE /* (C: "name" -- ) parse name, write header, set newest */
     .word XT_PARSENAME,XT_WLSCOPE
     .word XT_DOCREATE_IN
+.if WANT_TRANSPILER == YES
+    .word XT_TPILE_WXT
+.endif
     .word XT_EXIT
 END DOCREATE
 

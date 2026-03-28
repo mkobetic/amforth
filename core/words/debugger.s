@@ -66,15 +66,6 @@ The DEBUG register is controlled through the USER variable `debug.next`, which d
 #     then
 # ;
 # 
-# : dbg.d. \# ( n -- ) print n in base 10
-#     base @ swap #10 base ! . base !
-# ;
-# 
-# : dbg.uh. \# ( u -- ) print u in base 16
-#     base @ swap #16 base ! u. base !
-# ;
-# 
-# 
 # : .bt \# ( u -- ) print return stack (top first) skipping top u cells, use word names
 #     rdepth over - dup 0 <= if 2drop exit then ( u depth )
 #     swap cells rp@ + swap 0 ?do ( a )
@@ -254,34 +245,7 @@ IP2NAME_0001: /* else */
 IP2NAME_0006: /* then */
 	.word XT_EXIT
 END IP2NAME
-# ----------------------------------------------------------------------
-NONAME "dbg.d.", DBGDOTDDOT /* ( n -- ) print n in base 10 */
-	.word XT_BASE
-	.word XT_FETCH
-	.word XT_SWAP
-	.word XT_DOLITERAL
-	.word 10
-	.word XT_BASE
-	.word XT_STORE
-	.word XT_DOT
-	.word XT_BASE
-	.word XT_STORE
-	.word XT_EXIT
-END DBGDOTDDOT
-# ----------------------------------------------------------------------
-NONAME "dbg.uh.", DBGDOTUHDOT /* ( u -- ) print u in base 16 */
-	.word XT_BASE
-	.word XT_FETCH
-	.word XT_SWAP
-	.word XT_DOLITERAL
-	.word 16
-	.word XT_BASE
-	.word XT_STORE
-	.word XT_UDOT
-	.word XT_BASE
-	.word XT_STORE
-	.word XT_EXIT
-END DBGDOTUHDOT
+
 # ----------------------------------------------------------------------
 COLON ".bt", DOTBT /* ( u -- ) print return stack (top first) skipping top u cells, use word names */
 	.word XT_RDEPTH
@@ -315,7 +279,7 @@ DOTBT_0004: /* else */
 	.word XT_8XDOT
 	.word XT_DOBRANCH,DOTBT_0007
 DOTBT_0006: /* else */
-	.word XT_DBGDOTUHDOT
+	.word XT_UHEXDOT
 DOTBT_0007: /* then */
 DOTBT_0005: /* then */
 	.word XT_QDUP
@@ -323,7 +287,7 @@ DOTBT_0005: /* then */
 	.word XT_DOLITERAL
 	.word 43
 	.word XT_EMIT
-	.word XT_DBGDOTDDOT
+	.word XT_DECDOT
 DOTBT_0008: /* then */
 	.word XT_CELLPLUS
 	.word XT_DOLOOP,DOTBT_0003 /* loop */

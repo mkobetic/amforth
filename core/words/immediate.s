@@ -28,6 +28,9 @@ COLON ":immed", COLONIMMED /* ( -- ) define an immediate word (for mcu that's ca
 	.word XT_DOXLITERAL
 	.word XT_FLAGDOTHEADER
 	.word XT_DEFER_STORE
+.if WANT_TRANSPILER == YES
+    .word XT_TPILE_WORD
+.endif
 	.word XT_DOCREATE
 	.word XT_COLONNONAME
 	.word XT_DROP
