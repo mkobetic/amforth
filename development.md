@@ -1,6 +1,29 @@
 # Development
 
-The development setup revolves around the MCU directories. This is where the make commands must be executed. `make all` will produce a number of build artifacts in the `build/` subdirectory (excluded from git), including the hex, bin and elf files containing AmForth compiled for a given target. `make` or `make help` shows the available targets for a given MCU. To build a different target than the default one, run `make all` with `TARGET` environment variable set accordingly, e.g. `TARGET=XXX make all`.
+The development setup revolves around the MCU directories. This is where the make commands must be executed. `make all` will produce a number of build artifacts in the `build/` subdirectory (excluded from git), including the hex, bin and elf files containing AmForth compiled for given target. `make` or `make help` shows the available targets for given MCU. To build a different target than the default one, run `make all` with `TARGET` environment variable set accordingly, e.g. `TARGET=XXX make all`. 
+
+The build process produces following files in the `build/` directory:
+
+#### Binary Files
+* amforth.bin - binary file for uploads into physical board
+* amforth.hex - Intel hex file for uploads into physical board
+* amforth.elf - executable for emulation
+
+#### Build Files
+* amforth.dep - list of files used in the build
+* amforth.map - linker map of the executable
+* amforth.sym - list of all symbols of the executable
+* amforth.lst - assembler listing from the linker
+* amforth.lst-as - assembler listing from the assembler
+* amforth.sal - symbol and source line listing (debug info)
+
+#### Documentation Files
+* amforth.html - reference card of all words in this build
+* amforth.txt - reference card of all words in this build
+* amforth.toc - list of headers of all words in this build
+
+
+### Customizing setup
 
 To allow for personalized development settings, the `Makefiles` optionally include `.env` file (excluded from git) if it is present in the MCU directory. Note that the `.env` file is interpreted as a Makefile, therefore it must follow Makefile syntax. It is useful to override default settings or provide required settings that don't change much to avoid having to provide them on the command line on each invocation. An `.env` file could look as follows:
 ```
@@ -13,9 +36,8 @@ CROSS = riscv-none-elf-
 # amforth-shell.py uses the EDITOR variable when it attempts to open an external editor
 export EDITOR=code
 ```
-The Makefiles set most variables with `?=`, therefore most can be overridden by the `.env` file. Read the Makefile comments for more details.
+The Makefiles set most variables with `?=`, therefore most can be overridden by the `.env` file. Read the Makefile comments for more details. The Makefiles provide `AMFORTH` variable as a convenient way to refer to the directory where the AmForth repository was cloned.
 
-The Makefiles provide `AMFORTH` variable as a convenient way to refer to the directory where the AmForth repository was cloned.
 
 ## Tools
 
@@ -249,3 +271,45 @@ FINISHED: Y, PASS: 635, FAIL: 0
 The termination warning is there because the test command must kill the QEMU process at the end, otherwise it would not quit. The test command gives the QEMU process predefined amount of time (e.g. 5 seconds) to run through the test suite and then kills it. It detects from the test output whether the whole test suite ran in that time or not. The `timeout` command is used to control the QEMU process. This command is native on Linux, on other OSes install `coreutils` to get it.
 
 AmForth CI runs the full test suite on every new commit pushed to GitHub. It runs it twice, once in normal build configuration and once with `WANT_ITC` set. When `WANT_ITC` option is set the build prefers the core/words ITC version of words over the native assembler version if both exist (normally it is the other way around). This makes sure both versions are exposed to the test suite in the CI tests. This whole process is also repeated for each CPU architecture. It uses the `QEMU -M virt` target for each.
+
+## Transpiling
+
+To add words to the core dictionary the word implementation must be converted into its compiled form, either native assembler for CODEWORDS or a sequence of words representing the body of a COLON word (called ITC assembler or just ITC). The words in `core/words` are examples of ITC assembler words and words in `arm/words` or `rv/words` are examples of native assembler words.
+
+Writing ITC assembler by hand is cumbersome. Transpiling provides a way to convert word source in Forth into its ITC equivalent. The tooling for transpiling is split between amforth itself and amforth-shell. When transpiling is enabled (`tpile+/tpile-`) amforth emits tokens during compilation of a word back to the host. These tokens are relatively easy to convert to ITC assembler source, this is what amforth-shell does. Here's an example of the transpiling interaction between amforth and amforth-shell compiling word `fib` followed by the transpiled result emitted by amshell.
+
+```
+|S|    2|: fib 
+|O|    2|WW666962 X400428D4 X40000681
+|S|    3|    dup 2 > if 
+|O|    3|X400002D4 X40001E98 X400007BC X400011C0 X00000000 F400428E8
+|S|    4|       dup 1- recurse swap 1- 1- recurse + exit 
+|O|    4|X400002D4 X40000E64 X400428D4 X400000D4 X40000E64 X40000E64 X400428D4 X40000128 X400002A4
+|S|    5|    then 
+|O|    5|L400428E8
+|S|    6|    drop 1 
+|O|    6|X40000098 X40001E84
+|S|    7|;
+|O|    7|X40000288 END
+
+# : fib
+COLON "fib", FIB
+    # dup 2 > if
+    .word XT_DUP, XT_TWO, XT_GREATER, XT_DOCONDBRANCH, 1f
+       # dup 1- recurse swap 1- 1- recurse + exit
+       .word XT_DUP, XT_1MINUS, XT_FIB, XT_SWAP, XT_1MINUS, XT_1MINUS, XT_FIB, XT_PLUS, XT_FINISH
+    # then
+1:     # drop 1
+    .word XT_DROP, XT_ONE
+   # ;
+   .word XT_EXIT
+END FIB
+```
+
+To trigger transpiling, use the `#transpile` directive (instead of `#include` directive) to load a Forth source file. Amforth-shell will attempt to transpile all word definitions in the file. If the words compile successfully the transpiled ITC should also be correct. Note however that the words being transpiled can only use core words or words previously transpiled in the same amforth-shell session (e.g. words preceding in the same file). Recursive calls should also transpile correctly. It is therefore important to review the transpiled results for correctness.
+
+Amforth-shell must have an up to date symbol table matching the compiled amforth binary. This is needed to translate raw addresses to the corresponding `XT` symbols. The symbol table is normally included as file named `amforth.sym` and should be located in the current working directory. Option `--sym-file` allows pointing amforth-shell at a different file instead.
+
+Amforth-shell emits the ITC along with the original Forth line (as a comment). It follows the offsets of the original source lines to offset the ITC code. It collects the continuous block of comments before the word and emits it as a long description block comment after the ITC word header. Similarly it parses the line that starts the word definition to look for stack signature and following short description to emit with the ITC header (to be used in the reference card tables).
+
+The transpiler support can be compiled in or out of amforth with WANT_TRANSPILER config option. Amforth-shell will report an error if #transpile is used without transpiler being available on the target.
