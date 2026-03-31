@@ -26,10 +26,11 @@ The default (custom) section flags seem to be CONTENTS and READONLY so not ALLOC
 .include "vectors.s" 
 
 .section amforth, "ax"
-.include "isr.s"
 
 STARTDICT
 
+.include "isr.s"
+.include "system.s"
 .include "dict_prims.inc"
 .include "dict_secs.inc"
 .include "dict_env.inc"
