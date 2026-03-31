@@ -22,7 +22,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 </head>
 <body>
 <h1>AmForth32 Reference Card</h1>
-<h2>RV32IMAFC / WCH CH32V307 main@f6f69e8 2026-03-30T02:19:21+00:00</h2>
+<h2>RV32IMAFC / WCH CH32V307 main@9f8f701 2026-03-31T13:46:22+00:00</h2>
 <p>
 <a href="#STACK">STACK</a> | <a href="#COMPARE">COMPARE</a> | <a href="#MATH">MATH</a> | <a href="#MIXED">MIXED</a> | <a href="#DOUBLE">DOUBLE</a> | <a href="#MEMORY">MEMORY</a> | <a href="#STRING">STRING</a> | <a href="#DICTIONARY">DICTIONARY</a> | <a href="#WORDLIST">WORDLIST</a> | <a href="#COMPILER">COMPILER</a> | <a href="#FLOW">FLOW</a> | <a href="#IO">IO</a> | <a href="#OUTPUT">OUTPUT</a> | <a href="#SYSTEM">SYSTEM</a> | <a href="#TOOLS">TOOLS</a> | <a href="#FLASH">FLASH</a> | <a href="#OTHER">OTHER</a> | <a href="#MCU">MCU</a> | <a href="#UNCATEGORIZED">UNCATEGORIZED</a> | <a href="#LEGEND">LEGEND</a>
 </p>
@@ -181,7 +181,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="HERE">here</td><td>COLON</td><td></td><td>return address of next free space in RAM</td><td>core/words/here.s:3<td></tr>
 <tr><td title="ALLOT">allot</td><td>COLON</td><td>( u -- )</td><td>allocate u bytes in RAM</td><td>core/words/allot.s:3<td></tr>
 <tr><td title="ALIGNED">aligned</td><td>COLON</td><td></td><td></td><td>core/words/aligned.s:12<td></tr>
-<tr><td title="TO_RAM">&gt;ram</td><td>COLON</td><td></td><td>compile new words to RAM</td><td>core/words/here.s:39<td></tr>
+<tr><td title="TO_RAM">&gt;ram</td><td>COLON</td><td></td><td>compile new words to RAM</td><td>core/words/here.s:40<td></tr>
 <tr><td title="TO_FLASH">&gt;flash</td><td>COLON</td><td></td><td>compile new words to flash</td><td>core/words/here.s:27<td></tr>
 <tr><td title="MEMMODE">memmode</td><td>VALUE</td><td>0</td><td>0 compile to RAM, -1 compile to FLASH</td><td>core/words/memmode.s:3<td></tr>
 <tr><td title="VALIGN">valign</td><td>COLON</td><td>( -- )</td><td>align VP to cell boundary in variable RAM pool</td><td>core/words/valign.s:3<td></tr>
@@ -192,7 +192,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="VP0">vp0</td><td>CONSTANT</td><td>vp0</td><td>start of the RAM pool</td><td>core/words/ramhere.s:3<td></tr>
 <tr><td title="DALIGN">dalign</td><td>COLON</td><td>( -- )</td><td>cell align dp</td><td>core/words/dalign.s:21<td></tr>
 <tr><td title="DHERE">dhere</td><td>COLON</td><td>( -- addr )</td><td>return dictionary pointer</td><td>core/words/dhere.s:3<td></tr>
-<tr><td title="DALLOT">dallot</td><td>COLON</td><td>( u -- )</td><td>allocate u bytes in the dictionary</td><td>core/words/dallot.s:2<td></tr>
+<tr><td title="DALLOT">dallot</td><td>DEFER</td><td>XT_CARETDALLOT</td><td></td><td>core/words/dallot.s:3<td></tr>
 <tr><td title="DP">dp</td><td>VALUE</td><td>dp0.ram</td><td>dictionary pointer</td><td>core/words/here.s:23<td></tr>
 <tr><td title="DP0DOTRAM">dp0.ram</td><td>CONSTANT</td><td>dp0.ram</td><td>start of RAM dictionary</td><td>core/words/here.s:10<td></tr>
 <tr><td title="DP_RAM">dp.ram</td><td>VALUE</td><td>dp0.ram</td><td>RAM dictionary pointer</td><td>core/words/here.s:12<td></tr>
@@ -239,11 +239,11 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <table>
 <tr><th>Word</th><th>Type</th><th>Stack Signature</th><th>Description</th><th>Location</th></tr>
 <tr><td title="TICK">&#x27;</td><td>COLON</td><td>( &quot;name&quot; -- xt )</td><td>leave xt of &quot;name&quot; on stack</td><td>core/words/tick.s:3<td></tr>
-<tr><td title="CCOMMA">c,</td><td>COLON</td><td>( c -- )</td><td>append c to the dictionary</td><td>core/words/ccomma.s:2<td></tr>
-<tr><td title="COMMA">,</td><td>COLON</td><td>( x -- )</td><td>append x to the dictionary</td><td>core/words/comma.s:2<td></tr>
+<tr><td title="CCOMMA">c,</td><td>DEFER</td><td>( c -- )</td><td>append c to the dictionary</td><td>core/words/ccomma.s:3<td></tr>
+<tr><td title="COMMA">,</td><td>DEFER</td><td>( x -- )</td><td>append x to the dictionary</td><td>core/words/comma.s:3<td></tr>
 <tr><td>h,</td></tr>
-<tr><td title="DOCCOMMA">(c,)</td><td>DEFER</td><td>( c -- )</td><td>append c to the dictionary</td><td>core/words/flash-common.s:27<td></tr>
-<tr><td title="DOCOMMA">(,)</td><td>DEFER</td><td>( x -- )</td><td>append x to the dictionary</td><td>core/words/flash-common.s:24<td></tr>
+<tr><td>(c,)</td></tr>
+<tr><td>(,)</td></tr>
 <tr><td title="SCOMMA">s,</td><td>COLON</td><td>( addr u -- )</td><td>append string at addr to the dictionary (with count prefix)</td><td>core/words/scomma.s:11<td></tr>
 <tr><td title="CHKDALIGN">chkdalign</td><td>COLON</td><td>( -- )</td><td>check DP for cell alignment, throw if not</td><td>core/words/chkdalign.s:3<td></tr>
 <tr><td title="REVEAL">reveal</td><td>COLON</td><td>( -- )</td><td>makes the newest word entry visible in its wordlist</td><td>core/words/reveal.s:3<td></tr>
@@ -519,7 +519,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="DUMP">dump</td><td>COLON</td><td>( a u -- )</td><td>dump u lines of 16 bytes including [a]</td><td>core/words/dump.s:125<td></tr>
 <tr><td title="QASCII">?ascii</td><td>COLON</td><td>( c -- f )</td><td>f is true if c is printable character</td><td>core/words/dump.s:13<td></tr>
 <tr><td title="VDUMP">vdump</td><td>COLON</td><td>( addr u -- )</td><td>dump u bytes from addr as words</td><td>core/words/vdump.s:1<td></tr>
-<tr><td title="BREAK">break</td><td>CODEWORD</td><td>( -- )</td><td>activate the debugger (if enabled)</td><td>rv/interpreter.s:41<td></tr>
+<tr><td title="BREAK">break</td><td>CODEWORD</td><td>( -- )</td><td>activate the debugger (if enabled)</td><td>rv/interpreter.s:45<td></tr>
 <tr><td title="DEBUGPLUS">debug+</td><td>COLON</td><td>( -- )</td><td>enable debugger, break will interrupt execution</td><td>core/words/debugger.s:500<td></tr>
 <tr><td title="DEBUGMINUS">debug-</td><td>COLON</td><td>( -- )</td><td>disable debugger, break will do nothing</td><td>core/words/debugger.s:508<td></tr>
 <tr><td title="BARBAR">||</td><td>IMMED</td><td>( -- )</td><td>code after || is ignored during compilation if debugger is disabled</td><td>core/words/barbar.s:3<td></tr>
@@ -534,10 +534,10 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="FLASH_START">flash.start</td><td>CONSTANT</td><td>flash.start</td><td>start of the FLASH memory region</td><td>core/words/flash-common.s:12<td></tr>
 <tr><td title="FLASH_LOW">flash.low</td><td>CONSTANT</td><td>flash.low</td><td>start of the core dictionary in FLASH</td><td>core/words/flash-common.s:14<td></tr>
 <tr><td title="FLASH_MAX">flash.max</td><td>CONSTANT</td><td>flash.max</td><td>end of the FLASH memory region</td><td>core/words/flash-common.s:16<td></tr>
-<tr><td title="FLASH_ERASE">flash.erase</td><td>DEFER</td><td>( addr -- )</td><td>erase flash page at addr</td><td>core/words/flash-common.s:37<td></tr>
-<tr><td title="FLUSH">flush</td><td>COLON</td><td>( -- )</td><td>force flush (write) of flash.cache</td><td>core/words/flash-common.s:66<td></tr>
+<tr><td title="FLASH_ERASE">flash.erase</td><td>DEFER</td><td>( addr -- )</td><td>erase flash page at addr</td><td>core/words/flash-common.s:28<td></tr>
+<tr><td title="FLUSH">flush</td><td>COLON</td><td>( -- )</td><td>force flush (write) of flash.cache</td><td>core/words/flash-common.s:57<td></tr>
 <tr><td title="NALIGNED">naligned</td><td>CODEWORD</td><td>( n a1 -- a2 )</td><td>a2 is a1 aligned (up) at n bytes (n must be power of 2)</td><td>rv/words/naligned.s:3<td></tr>
-<tr><td title="STORE_I">!i</td><td>DEFER</td><td>( x addr -- )</td><td>write x at addr in flash</td><td>core/words/flash-common.s:30<td></tr>
+<tr><td title="STORE_I">!i</td><td>DEFER</td><td>( x addr -- )</td><td>write x at addr in flash</td><td>core/words/flash-common.s:21<td></tr>
 <tr><td title="PV_DO">pv.do</td><td>COLON</td><td>( xt -- )</td><td>run xt ( pv-xt -- f ) for every pvalue in forth-wordlist</td><td>core/words/pvalue.s:444<td></tr>
 <tr><td title="PV_INIT">pv.init</td><td>COLON</td><td>( -- )</td><td>replay pvarena records, set pvp</td><td>core/words/pvalue.s:303<td></tr>
 <tr><td title="VADDR">vaddr</td><td>COLON</td><td>( &quot;name&quot; -- addr )</td><td>RAM address of value &quot;name&quot;</td><td>core/words/pvalue.s:232<td></tr>
@@ -581,7 +581,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <table>
 <tr><th>Word</th><th>Type</th><th>Stack Signature</th><th>Description</th><th>Location</th></tr>
 <tr><td title="USART1INTNUM">#usart1</td><td>CONSTANT</td><td>53</td><td>USART1: interrupt trap number</td><td>rv/mcu/ch32v307/words/usart.s:183<td></tr>
-<tr><td title="INT_STORE">(h!i)</td><td>CODEWORD</td><td>( -- )</td><td></td><td>rv/mcu/ch32v307/words/flash.s:122<td></tr>
+<tr><td title="INT_STORE">(h!i)</td><td>CODEWORD</td><td>( -- )</td><td></td><td>rv/mcu/ch32v307/words/flash.s:80<td></tr>
 <tr><td title="PLUS_PA">+PA</td><td>CODEWORD</td><td>( mask -- )</td><td>GPIO: Set bits in mask | enable port A clk if mask=0</td><td>rv/mcu/ch32v307/words/gpio.s:222<td></tr>
 <tr><td title="PLUS_PB">+PB</td><td>CODEWORD</td><td>( mask -- )</td><td>GPIO: Set bits in mask | enable port B clk if mask=0</td><td>rv/mcu/ch32v307/words/gpio.s:290<td></tr>
 <tr><td title="PLUS_PC">+PC</td><td>CODEWORD</td><td>( mask -- )</td><td>GPIO: Set bits in mask | enable port C clk if mask=0</td><td>rv/mcu/ch32v307/words/gpio.s:340<td></tr>
@@ -614,11 +614,11 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="TOGLED">^led</td><td>CODEWORD</td><td>( -- )</td><td>LED: toggle (not) on-board LED jumpered to PC0</td><td>rv/mcu/ch32v307/words/led.s:124<td></tr>
 <tr><td title="BLINK">blink</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/blink.s:10<td></tr>
 <tr><td title="BUILD_TYPE">build-type</td><td>ENVIRONMENT</td><td></td><td></td><td>rv/mcu/ch32v307/words/env-cpu.s:14<td></tr>
-<tr><td title="CALLOT">callot</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:51<td></tr>
-<tr><td title="DP_CACHE">dp.cache</td><td>VALUE</td><td>0</td><td></td><td>rv/mcu/ch32v307/words/flash.s:46<td></tr>
-<tr><td title="FDOTWRITE">f.write</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:282<td></tr>
-<tr><td title="FLASH_CACHE">flash.cache</td><td>VARIABLE</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:48<td></tr>
-<tr><td title="FLASHDOTUNLOCK">flash.unlock</td><td>CODEWORD</td><td>( -- )</td><td>FLASH: Unlock flash</td><td>rv/mcu/ch32v307/words/flash.s:170<td></tr>
+<tr><td title="CALLOT">callot</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:48<td></tr>
+<tr><td title="DP_CACHE">dp.cache</td><td>VALUE</td><td>0</td><td></td><td>rv/mcu/ch32v307/words/flash.s:43<td></tr>
+<tr><td title="FLASH_CACHE">flash.cache</td><td>VARIABLE</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:45<td></tr>
+<tr><td title="FLASHDOTUNLOCK">flash.unlock</td><td>CODEWORD</td><td>( -- )</td><td>FLASH: Unlock flash</td><td>rv/mcu/ch32v307/words/flash.s:128<td></tr>
+<tr><td title="FLASHDOTWRITE">flash.write</td><td>COLON</td><td>( dp -- )</td><td>write flash.cell BEFORE dp</td><td>rv/mcu/ch32v307/words/flash.s:177<td></tr>
 <tr><td title="LED_DELAY">led.delay</td><td>CODEWORD</td><td>( -- )</td><td>LED: make arbitary delay for blinky</td><td>rv/mcu/ch32v307/words/led.s:139<td></tr>
 <tr><td title="LED_INIT">led.init</td><td>CODEWORD</td><td>( -- )</td><td>LED: Init (not) on-board LED jumpered to PC0</td><td>rv/mcu/ch32v307/words/led.s:93<td></tr>
 <tr><td title="LED_PULSE">led.pulse</td><td>CODEWORD</td><td>( u -- )</td><td>LED: make arbitary delay for blinky u=[0..3]</td><td>rv/mcu/ch32v307/words/led.s:147<td></tr>
@@ -654,14 +654,14 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="USB_RB">usb.rb</td><td>CONSTANT</td><td>( -- a )</td><td>USB: start of USB recieve ring buffer</td><td>rv/mcu/ch32v307/words/usb.s:217<td></tr>
 <tr><td title="USB_TB">usb.tb</td><td>CONSTANT</td><td>( -- a )</td><td>USB: start of USB transmit ring buffer</td><td>rv/mcu/ch32v307/words/usb.s:218<td></tr>
 <tr><td title="APPLTURNKEY">wch-turnkey</td><td>COLON</td><td>( -- )</td><td>SYSTEM:</td><td>rv/mcu/ch32v307/words/applturnkey.s:2<td></tr>
-<tr><td title="TILDESTORE_I">~!i</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:100<td></tr>
-<tr><td title="TILDEDOCOMMA">~(,)</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:71<td></tr>
-<tr><td title="TILDEDOCCOMMA">~(c,)</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:60<td></tr>
-<tr><td title="TILDEDODALLOT">~(dallot)</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:222<td></tr>
+<tr><td title="TILDESTORE_I">~!i</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:58<td></tr>
+<tr><td title="TILDECOMMA">~,</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:278<td></tr>
 <tr><td title="TILDE_PD">~PD</td><td>CODEWORD</td><td>( n -- )</td><td>GPIO: make pin n a floating input</td><td>rv/mcu/ch32v307/words/gpio.s:483<td></tr>
-<tr><td title="TILDECSTORE_I">~c!i</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:116<td></tr>
-<tr><td title="TILDEFLASH_ERASE">~flash.erase</td><td>CODEWORD</td><td>( a-flash -- )</td><td>FLASH: Erase 4K page flash-a is in</td><td>rv/mcu/ch32v307/words/flash.s:182<td></tr>
-<tr><td title="TILDEPVFLASH_ERASE">~pvflash.erase</td><td>CODEALIAS</td><td>( addr -- )</td><td>erase flash page at addr</td><td>rv/mcu/ch32v307/words/flash.s:298<td></tr>
+<tr><td title="TILDECSTORE_I">~c!i</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:74<td></tr>
+<tr><td title="TILDECCOMMA">~c,</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:209<td></tr>
+<tr><td title="TILDEDALLOT">~dallot</td><td>COLON</td><td></td><td></td><td>rv/mcu/ch32v307/words/flash.s:219<td></tr>
+<tr><td title="TILDEFLASH_ERASE">~flash.erase</td><td>CODEWORD</td><td>( a-flash -- )</td><td>FLASH: Erase 4K page flash-a is in</td><td>rv/mcu/ch32v307/words/flash.s:140<td></tr>
+<tr><td title="TILDEPVFLASH_ERASE">~pvflash.erase</td><td>CODEALIAS</td><td>( addr -- )</td><td>erase flash page at addr</td><td>rv/mcu/ch32v307/words/flash.s:193<td></tr>
 <tr><td title="TILDETILDE_PD">~~PD</td><td>CODEWORD</td><td>( n -- )</td><td>GPIO: make pin n a floating input with pullup</td><td>rv/mcu/ch32v307/words/gpio.s:498<td></tr>
 </table>
 <h2 id="UNCATEGORIZED">UNCATEGORIZED</h2>
@@ -669,14 +669,13 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><th>Word</th><th>Type</th><th>Stack Signature</th><th>Description</th><th>Location</th></tr>
 <tr><td title="LPARENALIGINEDRPAREN">(aligned)</td><td>CODEWORD</td><td>( c-addr -- a-addr )</td><td></td><td>rv/words/do-aligned.s:2<td></tr>
 <tr><td title="DOCREATE">(create)</td><td>COLON</td><td>(C: &quot;name&quot; -- )</td><td>parse name, write header, set newest</td><td>core/words/do-create.s:3<td></tr>
-<tr><td title="DODALLOT">(dallot)</td><td>DEFER</td><td>( u -- )</td><td>allocate u bytes in the dictionary</td><td>core/words/flash-common.s:21<td></tr>
 <tr><td title="DODOES">(does)</td><td>COLON</td><td>(R: addr -- )</td><td>addr of the synthetic jump after (does), stored in child&#x27;s CFA</td><td>rv/words/does.s:56<td></tr>
 <tr><td title="EXIT">(exit)</td><td>CODEWORD</td><td>(R: addr -- )</td><td>loads addr into IP; compiled by semicolon</td><td>rv/words/exit.s:3<td></tr>
-<tr><td title="EXITD">(exitd)</td><td>CODEWORD</td><td>( -- )</td><td>exit from a debugger word</td><td>rv/interpreter.s:32<td></tr>
+<tr><td title="EXITD">(exitd)</td><td>CODEWORD</td><td>( -- )</td><td>exit from a debugger word</td><td>rv/interpreter.s:36<td></tr>
 <tr><td title="EXITI">(exiti)</td><td>CODEWORD</td><td></td><td>return from interrupt handler; compiled by ;i.</td><td>rv/words/exiti.s:3<td></tr>
 <tr><td title="DOPP">(pp)</td><td>COLON</td><td></td><td></td><td>core/words/alto.s:71<td></tr>
 <tr><td title="QDOCHECK">(qdocheck)</td><td>COLON</td><td></td><td></td><td>core/words/qdo.s:13<td></tr>
-<tr><td title="LPARENSEERPAREN">(see)</td><td>COLON</td><td>( xt -- )</td><td>deconstruct word from XT</td><td>core/words/see.s:679<td></tr>
+<tr><td title="LPARENSEERPAREN">(see)</td><td>COLON</td><td>( xt -- )</td><td>deconstruct word from XT</td><td>core/words/see.s:702<td></tr>
 <tr><td title="DOTCHAR">.char</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:128<td></tr>
 <tr><td title="1MS">1ms</td><td>CODEWORD</td><td>( -- )</td><td>1ms delay loop (96MHz system clock)</td><td>rv/words/1ms.s:2<td></tr>
 <tr><td title="1S">1s</td><td>CODEWORD</td><td>( -- )</td><td>SYSTEM: 1s delay loop (96MHz system clock)</td><td>rv/words/1ms.s:16<td></tr>
@@ -688,6 +687,9 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="CON_DONEXT">XT.DONEXT</td><td>CONSTANT</td><td>DO_NEXT</td><td></td><td>core/words/dicthelp.s:9<td></tr>
 <tr><td title="LBRACKDEFINEDRBRACK">[defined]</td><td>IMMED</td><td>( &quot;name&quot; -- f )</td><td>f is true if name defined</td><td>core/words/immediate.s:56<td></tr>
 <tr><td title="LBRACKUNDEFINEDRBRACK">[undefined]</td><td>IMMED</td><td>( &quot;name -- f )</td><td>f is true if name undefined</td><td>core/words/immediate.s:71<td></tr>
+<tr><td title="CARETCOMMA">^,</td><td>COLON</td><td>( x -- )</td><td>append x to RAM dictionary</td><td>core/words/comma.s:5<td></tr>
+<tr><td title="CARETCCOMMA">^c,</td><td>COLON</td><td></td><td></td><td>core/words/ccomma.s:5<td></tr>
+<tr><td title="CARETDALLOT">^dallot</td><td>COLON</td><td></td><td></td><td>core/words/dallot.s:5<td></tr>
 <tr><td title="CCOUNT">ccount</td><td>VARIABLE</td><td></td><td></td><td>core/words/mlc.s:109<td></tr>
 <tr><td title="CIMAG">cimag</td><td>VARIABLE</td><td></td><td></td><td>core/words/mlc.s:106<td></tr>
 <tr><td title="COUNTUNDERANDUNDERTESTQ">count_and_test?</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:144<td></tr>
@@ -696,13 +698,14 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="DEBUG_NEXT">debug.next</td><td>USER</td><td>USER_DEBUG_NEXT</td><td>next debug action, 0 if none</td><td>core/words/debugger2.s:2<td></tr>
 <tr><td title="DEBUGDOTRDEPTH">debug.rdepth</td><td>CONSTANT</td><td>2</td><td>step until rdepth, argument is desired rdepth</td><td>core/words/debugger.s:388<td></tr>
 <tr><td title="DEBUGDOTSTEP">debug.step</td><td>CONSTANT</td><td>1</td><td>single step, no argument</td><td>core/words/debugger.s:385<td></tr>
-<tr><td title="DEBUG_BUF">debug_buf</td><td>CODEWORD</td><td>( -- addr )</td><td>debugger input buffer address</td><td>rv/interpreter.s:53<td></tr>
+<tr><td title="DEBUG_BUF">debug_buf</td><td>CODEWORD</td><td>( -- addr )</td><td>debugger input buffer address</td><td>rv/interpreter.s:57<td></tr>
 <tr><td title="DECDOT">dec.</td><td>COLON</td><td>( n -- )</td><td>print n in base 10</td><td>core/words/output.s:11<td></tr>
 <tr><td title="DOCELL">docell</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:211<td></tr>
 <tr><td title="DOESCAPE">doescape</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:177<td></tr>
 <tr><td title="DOROW">dorow</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:221<td></tr>
 <tr><td title="ESCAPESQ">escapes?</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:139<td></tr>
-<tr><td title="INIT_DP_FLASH">init.dp.flash</td><td>COLON</td><td>( -- )</td><td>set dp.flash to the first erased cell after end of flash dictionary</td><td>core/words/here.s:85<td></tr>
+<tr><td title="FLAGDOTALIAS">flag.alias</td><td>CONSTANT</td><td>0x800</td><td></td><td>core/words/flag.s:30<td></tr>
+<tr><td title="INIT_DP_FLASH">init.dp.flash</td><td>COLON</td><td>( -- )</td><td>set dp.flash to the first erased cell after end of flash dictionary</td><td>core/words/here.s:87<td></tr>
 <tr><td title="INITUNDERVARS">init_vars</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:155<td></tr>
 <tr><td title="MANDELBROT">mandelbrot</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:237<td></tr>
 <tr><td title="MAXITER">maxiter</td><td>CONSTANT</td><td>20</td><td></td><td>core/words/mlc.s:100<td></tr>
@@ -715,10 +718,11 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="R_PRIMEFETCH">r&#x27;@</td><td>CODEWORD</td><td>(R: x1 x2 -- x1 x2 )( -- x1 )</td><td>copy second cell of return stack to data stack</td><td>rv/words/r-fetch.s:11<td></tr>
 <tr><td title="RESCALE">rescale</td><td>CONSTANT</td><td>640</td><td></td><td>core/words/mlc.s:103<td></tr>
 <tr><td title="SUNDERESCAPE">s_escape</td><td>CONSTANT</td><td>2560</td><td></td><td>core/words/mlc.s:104<td></tr>
-<tr><td title="SEE">see</td><td>COLON</td><td>( &quot;name&quot; -- )</td><td>deconstruct word &quot;name&quot;</td><td>core/words/see.s:782<td></tr>
+<tr><td title="SEE">see</td><td>COLON</td><td>( &quot;name&quot; -- )</td><td>deconstruct word &quot;name&quot;</td><td>core/words/see.s:805<td></tr>
 <tr><td title="SHOWDOTFLASH">show.flash</td><td>COLON</td><td></td><td></td><td>core/words/show.s:278<td></tr>
 <tr><td title="SHOWDOTPAGE">show.page</td><td>COLON</td><td></td><td></td><td>core/words/show.s:288<td></tr>
 <tr><td title="SHOWDOTRAM">show.ram</td><td>COLON</td><td></td><td></td><td>core/words/show.s:268<td></tr>
+<tr><td title="SYNONYM">synonym</td><td>COLON</td><td>( &quot;&lt;spaces&gt;new-name&quot; &quot;name&quot; -- )</td><td>create alias of existing word</td><td>core/words/synonym.s:19<td></tr>
 <tr><td title="TPILE">tpile</td><td>VARIABLE</td><td>( -- f )</td><td>transpiling status</td><td>core/words/tpile.s:13<td></tr>
 <tr><td title="TPILEPLUS">tpile+</td><td>COLON</td><td>( -- )</td><td>enable transpiling during compilation</td><td>core/words/tpile.s:16<td></tr>
 <tr><td title="TPILEMINUS">tpile-</td><td>COLON</td><td>( -- )</td><td>disable transpiling during compilation</td><td>core/words/tpile.s:20<td></tr>
