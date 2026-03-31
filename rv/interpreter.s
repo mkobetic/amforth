@@ -4,6 +4,10 @@
 .global _INTERPRETER
 .type _INTERPRETER, STT_FUNC
 _INTERPRETER:
+DOALIAS:
+        push s2        # IP
+        lw s2 , 0(s1)  # [W]->IP
+        NEXT
 DOCOLON: 
         push s2   # IP
         mv s2,s1  # W->IP

@@ -12,11 +12,12 @@ NONAME ">mark", GMARK /* ( -- addr ) allocate and store address of forward jump 
 	.word XT_DP
 	.word XT_DOBRANCH,GMARK_0002
 GMARK_0001: /* else */
-.endif 
-    .word XT_DP
-    .word XT_COMPILE
-    .space 4 
-#   .word -1
+.endif
+     .word XT_DP
+     .word XT_DUP
+     .word XT_CELLPLUS
+     .word XT_DOTO
+     .word XT_DP
 GMARK_0002: /* # then */
 .if WANT_TRANSPILER == YES
 	.word XT_TPILE_FWD

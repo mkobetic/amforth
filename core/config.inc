@@ -76,6 +76,7 @@
 .equ WANT_SEE          , NO
 .equ WANT_CODE         , NO
 .equ WANT_TABLE        , NO
+.equ WANT_SYNONYM      , YES
 
 # Other configuration parameters
 

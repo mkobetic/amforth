@@ -37,11 +37,8 @@
 .equ R32_FLASH_MODEKEYR , 0x40022024 # Extension key register X
 .equ OFFSET, 0x08000000
 
-#CONSTANT "EOW" , EOW , 0xE339E339
-#END EOW
 
 # ----------------------------------------------------------------------
-
 
 VALUE    "dp.cache" , DP_CACHE , 0
 END DP_CACHE
@@ -55,45 +52,6 @@ COLON "callot" , CALLOT
      .word XT_DP_CACHE
      .word XT_EXIT
 END CALLOT
-
-# ----------------------------------------------------------------------
-COLON "~(c,)", TILDEDOCCOMMA 
-	.word XT_FLASH_CACHE
-	.word XT_DP_CACHE
-	.word XT_PLUS
-	.word XT_CSTORE
-    .word XT_ONE
-    .word XT_DALLOT
-	.word XT_EXIT
-END TILDEDOCCOMMA
-
-# ----------------------------------------------------------------------
-COLON "~(,)", TILDEDOCOMMA 
-	.word XT_FLASH_CELL
-	.word XT_TWO
-	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,DOCOMMA_0001 # if
-	.word XT_DUP
-	.word XT_FLASH_CACHE
-	.word XT_HSTORE
-	.word XT_TWO
-	.word XT_DALLOT
-	.word XT_WORDSWAP
-	.word XT_FLASH_CACHE
-	.word XT_HSTORE
-	.word XT_TWO
-	.word XT_DALLOT
-	.word XT_DOBRANCH,DOCOMMA_0002
-DOCOMMA_0001: # else
-	.word XT_FLASH_CACHE
-	.word XT_DP_CACHE
-	.word XT_PLUS
-	.word XT_STORE
-	.word XT_CELL
-	.word XT_DALLOT
-DOCOMMA_0002: # then
-	.word XT_EXIT
-END TILDEDOCOMMA
 
 # ----------------------------------------------------------------------
 
@@ -215,79 +173,16 @@ CODEWORD "~flash.erase" , TILDEFLASH_ERASE # ( a-flash -- ) FLASH: Erase 4K page
 END TILDEFLASH_ERASE
 
 
-#CODEALIAS "~flash.erase", TILDEFLASH_ERASE, STDDOTERASE /* ( addr -- ) erase flash page at addr */
-#END TILDEFLASH_ERASE
-
-# ----------------------------------------------------------------------
-COLON "~(dallot)", TILDEDODALLOT 
-	.word XT_DP
-	.word XT_FLASH_PAGE
-	.word XT_MOD
-	.word XT_ZEROEQUAL
-	.word XT_DOCONDBRANCH, DODALLOT_0001 # if
-	.word XT_DP_CACHE
-	.word XT_ZEROEQUAL
-	.word XT_DOCONDBRANCH, DODALLOT_0002 # if
-	.word XT_DP
-	.word XT_TILDEFLASH_ERASE
-	.word XT_DOBRANCH, DODALLOT_0003
-DODALLOT_0002: # else
-	.word XT_DROP
-	.word XT_DOLITERAL, EFCACHE, XT_THROW
-DODALLOT_0003: # then
-DODALLOT_0001: # then
-	.word XT_TO_R
-	.word XT_R_FETCH
-	.word XT_DP_CACHE
-	.word XT_PLUS
-	.word XT_FLASH_CELL
-	.word XT_LESS
-	.word XT_DOCONDBRANCH,DODALLOT_0004 # if
-	.word XT_R_FETCH
-	.word XT_CALLOT
-	.word XT_R_FROM
-	.word XT_DP
-	.word XT_PLUS
-	.word XT_DOTO
-	.word XT_DP
-	.word XT_DOBRANCH,DODALLOT_0005
-DODALLOT_0004: # else
-	.word XT_R_FETCH
-	.word XT_DP_CACHE
-	.word XT_PLUS
-	.word XT_FLASH_CELL
-	.word XT_EQUAL
-	.word XT_DOCONDBRANCH,DODALLOT_0006 # if
-	.word XT_ZERO
-	.word XT_DOTO
-	.word XT_DP_CACHE
-	.word XT_R_FROM
-	.word XT_DP
-	.word XT_PLUS
-	.word XT_DUP
-	.word XT_DOTO
-	.word XT_DP
-	.word XT_FDOTWRITE
-	.word XT_DOBRANCH,DODALLOT_0007
-DODALLOT_0006: # else
-	.word XT_R_FROM
-	.word XT_DROP
-	.word XT_DOLITERAL, EFCELLA, XT_THROW
-DODALLOT_0007: # then
-DODALLOT_0005: # then
-	.word XT_EXIT
-END TILDEDODALLOT
-
 # ----------------------------------------------------------------------                            
-COLON "f.write", FDOTWRITE                                                                          
+COLON "flash.write", FLASHDOTWRITE /* ( dp -- ) write flash.cell BEFORE dp */ 
     .word XT_FLASH_CACHE                                                                          
     .word XT_HFETCH                                                                                 
     .word XT_SWAP                                                                                   
     .word XT_FLASH_CELL                                                                           
     .word XT_MINUS                                                                                  
-    .word XT_INT_STORE                                                                              
+    .word XT_INT_STORE
     .word XT_EXIT
-END FDOTWRITE
+END FLASHDOTWRITE
 # ----------------------------------------------------------------------               
 
 #======================================================================
@@ -308,4 +203,89 @@ NONAME "~2!pvf", TILDE2STORE_PVF /* ( x1 x2 addr -- ) [addr] = x2, [addr+cellsiz
 	.word XT_EXIT
 END TILDE2STORE_PVF
 
+# ----------------------------------------------------------------------
+# NFF3
 
+COLON "~c,", TILDECCOMMA 
+	.word XT_FLASH_CACHE
+	.word XT_DP_CACHE
+	.word XT_PLUS
+	.word XT_CSTORE
+    .word XT_ONE
+    .word XT_DALLOT
+	.word XT_EXIT
+END TILDECCOMMA
+
+COLON "~dallot", TILDEDALLOT 
+	.word XT_DP
+	.word XT_FLASH_PAGE
+	.word XT_MOD
+	.word XT_ZEROEQUAL
+	.word XT_DOCONDBRANCH, TILDEDALLOT_0001 # if
+	.word XT_DP_CACHE
+	.word XT_ZEROEQUAL
+	.word XT_DOCONDBRANCH, TILDEDALLOT_0002 # if
+	.word XT_DP
+	.word XT_TILDEFLASH_ERASE
+	.word XT_DOBRANCH, TILDEDALLOT_0003
+TILDEDALLOT_0002: # else
+	.word XT_DROP
+	.word XT_DOLITERAL, EFCACHE, XT_THROW
+TILDEDALLOT_0003: # then
+TILDEDALLOT_0001: # then
+	.word XT_TO_R
+	.word XT_R_FETCH
+	.word XT_DP_CACHE
+	.word XT_PLUS
+	.word XT_FLASH_CELL
+	.word XT_LESS
+	.word XT_DOCONDBRANCH,TILDEDALLOT_0004 # if
+	.word XT_R_FETCH
+	.word XT_CALLOT
+	.word XT_R_FROM
+	.word XT_DP
+	.word XT_PLUS
+	.word XT_DOTO
+	.word XT_DP
+	.word XT_DOBRANCH,TILDEDALLOT_0005
+TILDEDALLOT_0004: # else
+	.word XT_R_FETCH
+	.word XT_DP_CACHE
+	.word XT_PLUS
+	.word XT_FLASH_CELL
+	.word XT_EQUAL
+	.word XT_DOCONDBRANCH,TILDEDALLOT_0006 # if
+	.word XT_ZERO
+	.word XT_DOTO
+	.word XT_DP_CACHE
+	.word XT_R_FROM
+	.word XT_DP
+	.word XT_PLUS
+	.word XT_DUP
+	.word XT_DOTO
+	.word XT_DP
+	.word XT_FLASHDOTWRITE
+	.word XT_DOBRANCH,TILDEDALLOT_0007
+TILDEDALLOT_0006: # else
+	.word XT_R_FROM
+	.word XT_DROP
+	.word XT_DOLITERAL, EFCELLA, XT_THROW
+TILDEDALLOT_0007: # then
+TILDEDALLOT_0005: # then
+	.word XT_EXIT
+END TILDEDALLOT
+
+COLON "~,", TILDECOMMA
+    .word XT_DALIGN 
+	.word XT_DUP
+	.word XT_FLASH_CACHE
+	.word XT_HSTORE
+	.word XT_TWO
+	.word XT_DALLOT
+	.word XT_WORDSWAP
+	.word XT_FLASH_CACHE
+	.word XT_HSTORE
+	.word XT_TWO
+	.word XT_DALLOT
+	.word XT_EXIT
+END TILDECOMMA

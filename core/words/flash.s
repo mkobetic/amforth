@@ -1,28 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
 /* Following words are FLASH primitives that are overridden by real MCUs */
-
-COLON "~(dallot)", TILDEDODALLOT 
-	.word XT_DP
-	.word XT_PLUS
-    .word XT_DOTO
-	.word XT_DP
-	.word XT_EXIT
-END TILDEDODALLOT
-
-COLON "~(c,)", TILDEDOCCOMMA 
-	.word XT_DP
-	.word XT_CSTORE
-	.word XT_ONE
-	.word XT_DALLOT
-	.word XT_EXIT
-END TILDEDOCCOMMA
-
-COLON "~(,)", TILDEDOCOMMA 
-	.word XT_DP
-	.word XT_STORE
-	.word XT_CELL
-	.word XT_DALLOT
-	.word XT_EXIT
-END TILDEDOCOMMA
 
 COLON "~!i", TILDESTORE_I
 	/* don't allow writing below dp0.flash */
@@ -65,3 +43,30 @@ COLON "~pvflash.erase", TILDEPVFLASH_ERASE /* ( addr -- ) erase PV flash page at
 	.word XT_DOLITERAL, 4, XT_DOPLUSLOOP, 1b
 	.word XT_EXIT
 END TILDEPVFLASH_ERASE
+
+# ----------------------------------------------------------------------
+# NFF3
+
+COLON "~c,", TILDECCOMMA
+	.word XT_DP
+	.word XT_CSTORE
+	.word XT_ONE
+	.word XT_DALLOT
+	.word XT_EXIT
+END TILDECCOMMA
+
+COLON "~dallot", TILDEDALLOT 
+	.word XT_DP
+	.word XT_PLUS
+    .word XT_DOTO
+	.word XT_DP
+	.word XT_EXIT
+END TILDEDALLOT
+
+COLON "~,", TILDECOMMA 
+	.word XT_DP
+	.word XT_STORE
+	.word XT_CELL
+	.word XT_DALLOT
+	.word XT_EXIT
+END TILDECOMMA
