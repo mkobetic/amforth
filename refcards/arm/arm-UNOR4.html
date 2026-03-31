@@ -22,7 +22,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 </head>
 <body>
 <h1>AmForth32 Reference Card</h1>
-<h2>CORTEX-M4 / UNO R4 WIFI main@f6f69e8 2026-03-30T02:19:19+00:00</h2>
+<h2>CORTEX-M4 / UNO R4 WIFI main@9f8f701 2026-03-31T13:46:15+00:00</h2>
 <p>
 <a href="#STACK">STACK</a> | <a href="#COMPARE">COMPARE</a> | <a href="#MATH">MATH</a> | <a href="#MIXED">MIXED</a> | <a href="#DOUBLE">DOUBLE</a> | <a href="#MEMORY">MEMORY</a> | <a href="#STRING">STRING</a> | <a href="#DICTIONARY">DICTIONARY</a> | <a href="#WORDLIST">WORDLIST</a> | <a href="#COMPILER">COMPILER</a> | <a href="#FLOW">FLOW</a> | <a href="#IO">IO</a> | <a href="#OUTPUT">OUTPUT</a> | <a href="#SYSTEM">SYSTEM</a> | <a href="#TOOLS">TOOLS</a> | <a href="#FLASH">FLASH</a> | <a href="#OTHER">OTHER</a> | <a href="#MCU">MCU</a> | <a href="#UNCATEGORIZED">UNCATEGORIZED</a> | <a href="#LEGEND">LEGEND</a>
 </p>
@@ -181,7 +181,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="HERE">here</td><td>COLON</td><td></td><td>return address of next free space in RAM</td><td>core/words/here.s:3<td></tr>
 <tr><td title="ALLOT">allot</td><td>COLON</td><td>( u -- )</td><td>allocate u bytes in RAM</td><td>core/words/allot.s:3<td></tr>
 <tr><td title="ALIGNED">aligned</td><td>COLON</td><td></td><td></td><td>core/words/aligned.s:12<td></tr>
-<tr><td title="TO_RAM">&gt;ram</td><td>COLON</td><td></td><td>compile new words to RAM</td><td>core/words/here.s:39<td></tr>
+<tr><td title="TO_RAM">&gt;ram</td><td>COLON</td><td></td><td>compile new words to RAM</td><td>core/words/here.s:40<td></tr>
 <tr><td title="TO_FLASH">&gt;flash</td><td>COLON</td><td></td><td>compile new words to flash</td><td>core/words/here.s:27<td></tr>
 <tr><td title="MEMMODE">memmode</td><td>VALUE</td><td>0</td><td>0 compile to RAM, -1 compile to FLASH</td><td>core/words/memmode.s:3<td></tr>
 <tr><td title="VALIGN">valign</td><td>COLON</td><td>( -- )</td><td>align VP to cell boundary in variable RAM pool</td><td>core/words/valign.s:3<td></tr>
@@ -192,7 +192,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="VP0">vp0</td><td>CONSTANT</td><td>vp0</td><td>start of the RAM pool</td><td>core/words/ramhere.s:3<td></tr>
 <tr><td title="DALIGN">dalign</td><td>COLON</td><td>( -- )</td><td>cell align dp</td><td>core/words/dalign.s:21<td></tr>
 <tr><td title="DHERE">dhere</td><td>COLON</td><td>( -- addr )</td><td>return dictionary pointer</td><td>core/words/dhere.s:3<td></tr>
-<tr><td title="DALLOT">dallot</td><td>COLON</td><td>( u -- )</td><td>allocate u bytes in the dictionary</td><td>core/words/dallot.s:2<td></tr>
+<tr><td title="DALLOT">dallot</td><td>DEFER</td><td>XT_CARETDALLOT</td><td></td><td>core/words/dallot.s:3<td></tr>
 <tr><td title="DP">dp</td><td>VALUE</td><td>dp0.ram</td><td>dictionary pointer</td><td>core/words/here.s:23<td></tr>
 <tr><td title="DP0DOTRAM">dp0.ram</td><td>CONSTANT</td><td>dp0.ram</td><td>start of RAM dictionary</td><td>core/words/here.s:10<td></tr>
 <tr><td title="DP_RAM">dp.ram</td><td>VALUE</td><td>dp0.ram</td><td>RAM dictionary pointer</td><td>core/words/here.s:12<td></tr>
@@ -239,11 +239,11 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <table>
 <tr><th>Word</th><th>Type</th><th>Stack Signature</th><th>Description</th><th>Location</th></tr>
 <tr><td title="TICK">&#x27;</td><td>COLON</td><td>( &quot;name&quot; -- xt )</td><td>leave xt of &quot;name&quot; on stack</td><td>core/words/tick.s:3<td></tr>
-<tr><td title="CCOMMA">c,</td><td>COLON</td><td>( c -- )</td><td>append c to the dictionary</td><td>core/words/ccomma.s:2<td></tr>
-<tr><td title="COMMA">,</td><td>COLON</td><td>( x -- )</td><td>append x to the dictionary</td><td>core/words/comma.s:2<td></tr>
+<tr><td title="CCOMMA">c,</td><td>DEFER</td><td>( c -- )</td><td>append c to the dictionary</td><td>core/words/ccomma.s:3<td></tr>
+<tr><td title="COMMA">,</td><td>DEFER</td><td>( x -- )</td><td>append x to the dictionary</td><td>core/words/comma.s:3<td></tr>
 <tr><td>h,</td></tr>
-<tr><td title="DOCCOMMA">(c,)</td><td>DEFER</td><td>( c -- )</td><td>append c to the dictionary</td><td>core/words/flash-common.s:27<td></tr>
-<tr><td title="DOCOMMA">(,)</td><td>DEFER</td><td>( x -- )</td><td>append x to the dictionary</td><td>core/words/flash-common.s:24<td></tr>
+<tr><td>(c,)</td></tr>
+<tr><td>(,)</td></tr>
 <tr><td title="SCOMMA">s,</td><td>COLON</td><td>( addr u -- )</td><td>append string at addr to the dictionary (with count prefix)</td><td>core/words/scomma.s:11<td></tr>
 <tr><td title="CHKDALIGN">chkdalign</td><td>COLON</td><td>( -- )</td><td>check DP for cell alignment, throw if not</td><td>core/words/chkdalign.s:3<td></tr>
 <tr><td title="REVEAL">reveal</td><td>COLON</td><td>( -- )</td><td>makes the newest word entry visible in its wordlist</td><td>core/words/reveal.s:3<td></tr>
@@ -519,7 +519,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="DUMP">dump</td><td>COLON</td><td>( a u -- )</td><td>dump u lines of 16 bytes including [a]</td><td>core/words/dump.s:125<td></tr>
 <tr><td title="QASCII">?ascii</td><td>COLON</td><td>( c -- f )</td><td>f is true if c is printable character</td><td>core/words/dump.s:13<td></tr>
 <tr><td title="VDUMP">vdump</td><td>COLON</td><td>( addr u -- )</td><td>dump u bytes from addr as words</td><td>core/words/vdump.s:1<td></tr>
-<tr><td title="BREAK">break</td><td>CODEWORD</td><td>( -- )</td><td>activate the debugger (if enabled)</td><td>arm/interpreter.s:36<td></tr>
+<tr><td title="BREAK">break</td><td>CODEWORD</td><td>( -- )</td><td>activate the debugger (if enabled)</td><td>arm/interpreter.s:41<td></tr>
 <tr><td title="DEBUGPLUS">debug+</td><td>COLON</td><td>( -- )</td><td>enable debugger, break will interrupt execution</td><td>core/words/debugger.s:500<td></tr>
 <tr><td title="DEBUGMINUS">debug-</td><td>COLON</td><td>( -- )</td><td>disable debugger, break will do nothing</td><td>core/words/debugger.s:508<td></tr>
 <tr><td title="BARBAR">||</td><td>IMMED</td><td>( -- )</td><td>code after || is ignored during compilation if debugger is disabled</td><td>core/words/barbar.s:3<td></tr>
@@ -534,10 +534,10 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="FLASH_START">flash.start</td><td>CONSTANT</td><td>flash.start</td><td>start of the FLASH memory region</td><td>core/words/flash-common.s:12<td></tr>
 <tr><td title="FLASH_LOW">flash.low</td><td>CONSTANT</td><td>flash.low</td><td>start of the core dictionary in FLASH</td><td>core/words/flash-common.s:14<td></tr>
 <tr><td title="FLASH_MAX">flash.max</td><td>CONSTANT</td><td>flash.max</td><td>end of the FLASH memory region</td><td>core/words/flash-common.s:16<td></tr>
-<tr><td title="FLASH_ERASE">flash.erase</td><td>DEFER</td><td>( addr -- )</td><td>erase flash page at addr</td><td>core/words/flash-common.s:37<td></tr>
-<tr><td title="FLUSH">flush</td><td>COLON</td><td>( -- )</td><td>force flush (write) of flash.cache</td><td>core/words/flash-common.s:66<td></tr>
+<tr><td title="FLASH_ERASE">flash.erase</td><td>DEFER</td><td>( addr -- )</td><td>erase flash page at addr</td><td>core/words/flash-common.s:28<td></tr>
+<tr><td title="FLUSH">flush</td><td>COLON</td><td>( -- )</td><td>force flush (write) of flash.cache</td><td>core/words/flash-common.s:57<td></tr>
 <tr><td title="NALIGNED">naligned</td><td>CODEWORD</td><td>( n a1 -- a2 )</td><td>n = 2**u; a2 is a1 aligned (up) at n bytes</td><td>arm/words/naligned.s:3<td></tr>
-<tr><td title="STORE_I">!i</td><td>DEFER</td><td>( x addr -- )</td><td>write x at addr in flash</td><td>core/words/flash-common.s:30<td></tr>
+<tr><td title="STORE_I">!i</td><td>DEFER</td><td>( x addr -- )</td><td>write x at addr in flash</td><td>core/words/flash-common.s:21<td></tr>
 <tr><td title="PV_DO">pv.do</td><td>COLON</td><td>( xt -- )</td><td>run xt ( pv-xt -- f ) for every pvalue in forth-wordlist</td><td>core/words/pvalue.s:444<td></tr>
 <tr><td title="PV_INIT">pv.init</td><td>COLON</td><td>( -- )</td><td>replay pvarena records, set pvp</td><td>core/words/pvalue.s:303<td></tr>
 <tr><td title="VADDR">vaddr</td><td>COLON</td><td>( &quot;name&quot; -- addr )</td><td>RAM address of value &quot;name&quot;</td><td>core/words/pvalue.s:232<td></tr>
@@ -604,25 +604,24 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="LED_INIT">led-init</td><td>CODEWORD</td><td></td><td></td><td>arm/mcu/ra4m1/words/led.s:19<td></tr>
 <tr><td title="LED_OFF">led-off</td><td>CODEWORD</td><td></td><td></td><td>arm/mcu/ra4m1/words/led.s:27<td></tr>
 <tr><td title="LED_ON">led-on</td><td>CODEWORD</td><td></td><td></td><td>arm/mcu/ra4m1/words/led.s:33<td></tr>
-<tr><td title="RASTORE_I">ra!i</td><td>COLON</td><td>( x addr -- )</td><td>write x at addr in flash</td><td>arm/mcu/ra4m1/words/flash.s:104<td></tr>
+<tr><td title="RASTORE_I">ra!i</td><td>COLON</td><td>( x addr -- )</td><td>write x at addr in flash</td><td>arm/mcu/ra4m1/words/flash.s:84<td></tr>
 <tr><td title="UART_INIT">uart-init</td><td>CODEWORD</td><td></td><td></td><td>arm/mcu/ra4m1/words/usart.s:46<td></tr>
-<tr><td title="TILDESTORE_I">~!i</td><td>COLON</td><td>( x addr -- )</td><td>write x at addr in flash</td><td>arm/mcu/ra4m1/words/flash.s:67<td></tr>
-<tr><td title="TILDEDOCOMMA">~(,)</td><td>COLON</td><td></td><td></td><td>arm/mcu/ra4m1/words/flash.s:57<td></tr>
-<tr><td title="TILDEDOCCOMMA">~(c,)</td><td>COLON</td><td></td><td></td><td>arm/mcu/ra4m1/words/flash.s:47<td></tr>
-<tr><td title="TILDEDODALLOT">~(dallot)</td><td>COLON</td><td>( u -- allocate u bytes in the dictionary )</td><td></td><td>arm/mcu/ra4m1/words/flash.s:137<td></tr>
-<tr><td title="TILDECSTORE_I">~c!i</td><td>COLON</td><td></td><td></td><td>arm/mcu/ra4m1/words/flash.s:98<td></tr>
+<tr><td title="TILDESTORE_I">~!i</td><td>COLON</td><td>( x addr -- )</td><td>write x at addr in flash</td><td>arm/mcu/ra4m1/words/flash.s:47<td></tr>
+<tr><td title="TILDECOMMA">~,</td><td>COLON</td><td></td><td></td><td>arm/mcu/ra4m1/words/flash.s:150<td></tr>
+<tr><td title="TILDECSTORE_I">~c!i</td><td>COLON</td><td></td><td></td><td>arm/mcu/ra4m1/words/flash.s:78<td></tr>
+<tr><td title="TILDECCOMMA">~c,</td><td>COLON</td><td></td><td></td><td>arm/mcu/ra4m1/words/flash.s:140<td></tr>
+<tr><td title="TILDEDALLOT">~dallot</td><td>COLON</td><td>( u -- allocate u bytes in the dictionary )</td><td></td><td>arm/mcu/ra4m1/words/flash.s:161<td></tr>
 <tr><td title="TILDEFLASH_ERASE">~flash.erase</td><td>CODEALIAS</td><td>( addr -- )</td><td>erase FLASH page at addr</td><td>arm/mcu/ra4m1/words/flash.s:33<td></tr>
-<tr><td title="TILDEPVFLASH_ERASE">~pvflash.erase</td><td>CODEALIAS</td><td>( addr -- )</td><td>erase PVFLASH page at addr</td><td>arm/mcu/ra4m1/words/flash.s:182<td></tr>
+<tr><td title="TILDEPVFLASH_ERASE">~pvflash.erase</td><td>CODEALIAS</td><td>( addr -- )</td><td>erase PVFLASH page at addr</td><td>arm/mcu/ra4m1/words/flash.s:118<td></tr>
 </table>
 <h2 id="UNCATEGORIZED">UNCATEGORIZED</h2>
 <table>
 <tr><th>Word</th><th>Type</th><th>Stack Signature</th><th>Description</th><th>Location</th></tr>
 <tr><td title="LPARENALIGINEDRPAREN">(aligned)</td><td>CODEWORD</td><td>( c-addr -- a-addr )</td><td></td><td>arm/words/do-aligned.s:2<td></tr>
 <tr><td title="DOCREATE">(create)</td><td>COLON</td><td>(C: &quot;name&quot; -- )</td><td>parse name, write header, set newest</td><td>core/words/do-create.s:3<td></tr>
-<tr><td title="DODALLOT">(dallot)</td><td>DEFER</td><td>( u -- )</td><td>allocate u bytes in the dictionary</td><td>core/words/flash-common.s:21<td></tr>
 <tr><td title="DODOES">(does)</td><td>COLON</td><td>(R: addr -- )</td><td>addr of the synthetic jump after (does), stored in child&#x27;s CFA</td><td>arm/words/does.s:41<td></tr>
 <tr><td title="EXIT">(exit)</td><td>CODEWORD</td><td>(R: addr -- )</td><td>loads addr into IP; compiled by semicolon</td><td>arm/words/exit.s:1<td></tr>
-<tr><td title="EXITD">(exitd)</td><td>CODEWORD</td><td>( -- )</td><td>exit from a debugger word</td><td>arm/interpreter.s:26<td></tr>
+<tr><td title="EXITD">(exitd)</td><td>CODEWORD</td><td>( -- )</td><td>exit from a debugger word</td><td>arm/interpreter.s:31<td></tr>
 <tr><td title="EXITI">(exiti)</td><td>CODEWORD</td><td></td><td>return from interrupt handler; compiled by ;i.</td><td>arm/words/exiti.s:4<td></tr>
 <tr><td title="DOPP">(pp)</td><td>COLON</td><td></td><td></td><td>core/words/alto.s:71<td></tr>
 <tr><td title="QDOCHECK">(qdocheck)</td><td>COLON</td><td></td><td></td><td>core/words/qdo.s:13<td></tr>
@@ -636,6 +635,9 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="CON_DONEXT">XT.DONEXT</td><td>CONSTANT</td><td>DO_NEXT</td><td></td><td>core/words/dicthelp.s:9<td></tr>
 <tr><td title="LBRACKDEFINEDRBRACK">[defined]</td><td>IMMED</td><td>( &quot;name&quot; -- f )</td><td>f is true if name defined</td><td>core/words/immediate.s:56<td></tr>
 <tr><td title="LBRACKUNDEFINEDRBRACK">[undefined]</td><td>IMMED</td><td>( &quot;name -- f )</td><td>f is true if name undefined</td><td>core/words/immediate.s:71<td></tr>
+<tr><td title="CARETCOMMA">^,</td><td>COLON</td><td>( x -- )</td><td>append x to RAM dictionary</td><td>core/words/comma.s:5<td></tr>
+<tr><td title="CARETCCOMMA">^c,</td><td>COLON</td><td></td><td></td><td>core/words/ccomma.s:5<td></tr>
+<tr><td title="CARETDALLOT">^dallot</td><td>COLON</td><td></td><td></td><td>core/words/dallot.s:5<td></tr>
 <tr><td title="CCOUNT">ccount</td><td>VARIABLE</td><td></td><td></td><td>core/words/mlc.s:109<td></tr>
 <tr><td title="CIMAG">cimag</td><td>VARIABLE</td><td></td><td></td><td>core/words/mlc.s:106<td></tr>
 <tr><td title="COUNTUNDERANDUNDERTESTQ">count_and_test?</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:144<td></tr>
@@ -644,13 +646,14 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="DEBUG_NEXT">debug.next</td><td>USER</td><td>USER_DEBUG_NEXT</td><td>next debug action, 0 if none</td><td>core/words/debugger2.s:2<td></tr>
 <tr><td title="DEBUGDOTRDEPTH">debug.rdepth</td><td>CONSTANT</td><td>2</td><td>step until rdepth, argument is desired rdepth</td><td>core/words/debugger.s:388<td></tr>
 <tr><td title="DEBUGDOTSTEP">debug.step</td><td>CONSTANT</td><td>1</td><td>single step, no argument</td><td>core/words/debugger.s:385<td></tr>
-<tr><td title="DEBUG_BUF">debug_buf</td><td>CODEWORD</td><td>( -- addr )</td><td>debugger input buffer address</td><td>arm/interpreter.s:48<td></tr>
+<tr><td title="DEBUG_BUF">debug_buf</td><td>CODEWORD</td><td>( -- addr )</td><td>debugger input buffer address</td><td>arm/interpreter.s:53<td></tr>
 <tr><td title="DECDOT">dec.</td><td>COLON</td><td>( n -- )</td><td>print n in base 10</td><td>core/words/output.s:11<td></tr>
 <tr><td title="DOCELL">docell</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:211<td></tr>
 <tr><td title="DOESCAPE">doescape</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:177<td></tr>
 <tr><td title="DOROW">dorow</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:221<td></tr>
 <tr><td title="ESCAPESQ">escapes?</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:139<td></tr>
-<tr><td title="INIT_DP_FLASH">init.dp.flash</td><td>COLON</td><td>( -- )</td><td>set dp.flash to the first erased cell after end of flash dictionary</td><td>core/words/here.s:85<td></tr>
+<tr><td title="FLAGDOTALIAS">flag.alias</td><td>CONSTANT</td><td>0x800</td><td></td><td>core/words/flag.s:30<td></tr>
+<tr><td title="INIT_DP_FLASH">init.dp.flash</td><td>COLON</td><td>( -- )</td><td>set dp.flash to the first erased cell after end of flash dictionary</td><td>core/words/here.s:87<td></tr>
 <tr><td title="INITUNDERVARS">init_vars</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:155<td></tr>
 <tr><td title="MANDELBROT">mandelbrot</td><td>COLON</td><td></td><td></td><td>core/words/mlc.s:237<td></tr>
 <tr><td title="MAXITER">maxiter</td><td>CONSTANT</td><td>20</td><td></td><td>core/words/mlc.s:100<td></tr>
@@ -663,6 +666,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="SHOWDOTFLASH">show.flash</td><td>COLON</td><td></td><td></td><td>core/words/show.s:278<td></tr>
 <tr><td title="SHOWDOTPAGE">show.page</td><td>COLON</td><td></td><td></td><td>core/words/show.s:288<td></tr>
 <tr><td title="SHOWDOTRAM">show.ram</td><td>COLON</td><td></td><td></td><td>core/words/show.s:268<td></tr>
+<tr><td title="SYNONYM">synonym</td><td>COLON</td><td>( &quot;&lt;spaces&gt;new-name&quot; &quot;name&quot; -- )</td><td>create alias of existing word</td><td>core/words/synonym.s:19<td></tr>
 <tr><td title="TPILE">tpile</td><td>VARIABLE</td><td>( -- f )</td><td>transpiling status</td><td>core/words/tpile.s:13<td></tr>
 <tr><td title="TPILEPLUS">tpile+</td><td>COLON</td><td>( -- )</td><td>enable transpiling during compilation</td><td>core/words/tpile.s:16<td></tr>
 <tr><td title="TPILEMINUS">tpile-</td><td>COLON</td><td>( -- )</td><td>disable transpiling during compilation</td><td>core/words/tpile.s:20<td></tr>
