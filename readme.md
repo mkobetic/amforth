@@ -31,7 +31,7 @@ The [core readme](core/readme.md) provides an architectural overview.
 * [Generic ARM-32 / Linux, Raspberry PI (+Docker emulation)](arm/mcu/linux) @[refcard](https://mkobetic.github.io/amforth/refcards/arm-linux/arm-LINUX.html)
 * [Generic ARM-32 / QEMU -M virt](arm/mcu/qemu) @[refcard](https://mkobetic.github.io/amforth/refcards/arm/arm-QEM.html)
 
-The original README follows.
+From the original AmForth README:
 
 ```
 
@@ -64,37 +64,7 @@ It does not need additional hard or software. It works
 completely on the controller (no cross-compiler). AmForth 
 uses the indirect threading forth implementation technique.
 
-ATmega:
-
-  Wordsize is 16bit. The forth dictionary is in the flash memory, new 
-  words are compiled directly into flash. Since no (widely available) 
-  bootloader supports an API to write to flash, AmForth uses the 
-  bootloader space itself.
-
-MSP430
-  
-  Wordsize is 16bit. The Forth dictionary is in the flash or FRAM memory, 
-  new words are compiled to it. Use SAVE to keep the code accessible across
-  reboots. The flash devices cannot rewrite the flash cell once a 
-  word is written.
-
-RV32IM
-  Wordsize is 32bit. Uses a unified memory model.
-
-ARM Cortex-M
-  Wordsize is 32bit. Uses a unified memory model
-
-AmForth is implemented in assembly and Forth. The code is stable
-and well tested. The 32bit variante are newer and may have less
-features.
-
-All words have Forth 2012 (CORE and various extenion word sets)
-stack diagrams, but not necessarily the complete semantics. Some
-words from the standards are left out, ask for them if you need them.
-
-Development hardware are evaluation boards running various Controllers
-with various external hardware: none, led, push-buttons, SD-card, 
-ethernet controller, RF module etc. 
+...
 
 Documentation can be found in the doc/ subdirectory and
 on the homepage http://amforth.sourceforge.net/.

@@ -70,9 +70,6 @@ Also look for TODO: in source files
 
 # DOCS
 
-* how to use AmForth32 as is
-* overall architecture (core/readme.md?)
-* arch specific docs (e.g. register allocation)
 * how to add a new MCU
 * how to add a new ARCH
 * document conventions and standard practices
