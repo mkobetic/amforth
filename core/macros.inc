@@ -286,13 +286,13 @@ PFA_\Label:
 # environment contains colon words only
 # ===================
 
-.macro ENVIRONMENT Name, Label
+.macro ENV_HEADER Flags, Name, Label, PFA
     .p2align 2,0xf0
 VE_ENV_\Label:
     # LFA: Insert Link
     .word 98b          
 98: # FFA: Flag field
-    .word Flag_none
+    .word \Flags
     # NFA: Name field
     # Calculate length of name field
     .byte 8f - 7f     
@@ -303,8 +303,17 @@ VE_ENV_\Label:
     .global _\Label
     .type _\Label, STT_FUNC
 _\Label:        
-XT_ENV_\Label: .word DOCOLON
+XT_ENV_\Label: .word \PFA
 PFA_ENV_\Label:
+.endm
+
+.macro ENVIRONMENT Name, Label
+    ENV_HEADER Flag_none, "\Name", \Label, DOCOLON
+.endm
+
+.macro ENV_CONSTANT Name, Label, NUM
+    ENV_HEADER Flag_constant, "\Name", \Label, PFA_DOVARIABLE
+    .word \NUM
 .endm
 
 # ================================
