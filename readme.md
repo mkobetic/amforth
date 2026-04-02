@@ -6,13 +6,12 @@ This is a fork of https://sourceforge.net/p/amforth/code/2462/.
 
 The purpose is to advance the 32-bit ARM and RISC-V variants of AmForth.
 
-For details check out the READMEs in the respective directories.
+For more information see the [documentation](https://amforth32.github.io/amforth32/) and the READMEs in the respective directories:
+
 * [core/](core) - the shared 32-bit AmForth core
 * [arm/](arm) - the ARM architecture core (Cortex M3/4)
 * [rv/](rv) - the RISC-V architecture core
 * rv/mcu/, arm/mcu/ - AmForth for different boards and targets
-
-See the [documentation](https://amforth32.github.io/amforth32/) for more information.
 
 
 ## Available MCUs/Boards

@@ -1,12 +1,6 @@
 List of known issues and tasks that need to be done (by area)
 Also look for TODO: in source files
 
-# Release
-
-* ch32: readme & release
-* main readme
-* update AmForth version, name ...
-
 
 # CORE
 
@@ -72,4 +66,4 @@ Also look for TODO: in source files
 
 * how to add a new MCU
 * how to add a new ARCH
-* document conventions and standard practices
+* conventions and standard practices
