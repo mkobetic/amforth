@@ -5,6 +5,8 @@
 
 AMFORTH ?= $(shell git rev-parse --show-toplevel)
 
+DIST_TARGET ?= rv-ch32-307
+
 QEMU_RV32 ?= qemu-system-riscv32
 WLINK ?= $(HOME)/.cargo/bin/wlink
 MINICOM ?= minicom

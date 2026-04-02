@@ -59,6 +59,9 @@ jobs:
       - name: Build QEMU virt
         run: cd rv/mcu/qemu && VERSION=${{github.ref_name}} make dist
 
+      - name: Build CH32V307
+        run: cd rv/mcu/ch32v307 && VERSION=${{github.ref_name}} make dist
+
       - name: Upload RISC-V artifacts
         uses: actions/upload-artifact@v4
         with:
