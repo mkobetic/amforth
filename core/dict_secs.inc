@@ -176,7 +176,6 @@
 .include "words/variable.s"
 .include "words/wlscope.s"
 .include "words/to-body.s"
-.include "words/get-current.s"
 .include "words/greater-zero.s"
 .include "words/to-in.s"
 .include "words/udefer.s"

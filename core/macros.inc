@@ -17,8 +17,8 @@ XT_NOP: .word PFA_NOP
 .endm
 
 # save the beginning of the wordlists
-.macro ENDDICT_ARCH ARCH
-VALUE "\ARCH-wordlist", ARCH_WORDLIST, 97b
+.macro ENDDICT
+VALUE "arch-wordlist", ARCH_WORDLIST, 97b
 END ARCH_WORDLIST
 VALUE "environment", ENVIRONMENT, 98b
 END ENVIRONMENT

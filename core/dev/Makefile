@@ -157,7 +157,7 @@ build/%.toc: build/%.dep
 	@cd $(AMFORTH) && awk -f core/dev/toc.awk $(DEPS) >$(TOC)
 	@echo 'VALUE "environment", ENVIRONMENT /* FFA of last word; standard environment search list */ @ core/macros.inc' >>$@
 	@echo 'VALUE "forth-wordlist", FORTH_WORDLIST /* FFA of last word; system default wordlist */ @ core/macros.inc' >>$@
-	@echo 'VALUE "$(ARCH)-wordlist", ARCH_WORDLIST /* FFA of last word; architecture specific words */ @ core/macros.inc' >>$@
+	@echo 'VALUE "arch-wordlist", ARCH_WORDLIST /* FFA of last word; architecture specific words */ @ core/macros.inc' >>$@
 	@echo 'CONSTANT "core-wordlist", CORE_WORDLIST /* FFA of last word; core words compiled at build time */ @ core/macros.inc' >>$@
 
 build/%.txt: build/%.toc

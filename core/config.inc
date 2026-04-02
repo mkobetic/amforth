@@ -64,7 +64,6 @@
 
 # Optional Forth word groups
 
-.equ WANT_SEARCH_ORDER , YES 
 .equ WANT_FLOAT , NO
 
 .equ WANT_DEBUGGER, YES

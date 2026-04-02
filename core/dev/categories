@@ -41,10 +41,10 @@ DICTIONARY:
     flag.table flag.init flag.defer flag.value flag.pvalue flag.immed flag.con flag.colon flag.dvar flag.var flag.code flag.child flag.header
 WORDLIST:
     empty.flash empty.ram
-    wordlist forth-wordlist ram-wordlist core-wordlist environment rv-wordlist arm-wordlist
+    wordlist forth-wordlist ram-wordlist core-wordlist environment arch-wordlist
     current get-current set-current wlscope search-wordlist show-wordlist traverse-wordlist
     order cfg-order only core forth order.forth order.core order.only 
-    previous set-order get-order w1  order.table  top> >top top
+    previous set-order get-order order.table  top> >top top
 COMPILER:
     : ; ;i ( \# \ recurse postpone immediate state
     create <builds builds> does> char [ ] ['] [compile] [char] 

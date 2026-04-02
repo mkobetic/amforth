@@ -108,10 +108,6 @@ PFA_NOP:
         NEXT 
 .endm
 
-.macro ENDDICT
-  ENDDICT_ARCH arm
-.endm
-
 @ ================================
 @ ARM Wordlist Entry
 @ different types

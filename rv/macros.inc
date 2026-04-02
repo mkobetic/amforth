@@ -117,10 +117,6 @@ PFA_NOP:
         NEXT 
 .endm
 
-.macro ENDDICT
-  ENDDICT_ARCH riscv
-.endm
-
 # =====================
 # CSR are RISC-V specific registers
 # =====================
