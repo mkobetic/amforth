@@ -22,7 +22,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 </head>
 <body>
 <h1>AmForth32 Reference Card</h1>
-<h2>board / build.time main@8e3ea97 2026-04-02T17:57:54+00:00</h2>
+<h2>board / LINUX main@802877e 2026-04-03T12:32:59+00:00</h2>
 <p>
 <a href="#STACK">STACK</a> | <a href="#COMPARE">COMPARE</a> | <a href="#MATH">MATH</a> | <a href="#MIXED">MIXED</a> | <a href="#DOUBLE">DOUBLE</a> | <a href="#MEMORY">MEMORY</a> | <a href="#STRING">STRING</a> | <a href="#DICTIONARY">DICTIONARY</a> | <a href="#WORDLIST">WORDLIST</a> | <a href="#COMPILER">COMPILER</a> | <a href="#FLOW">FLOW</a> | <a href="#IO">IO</a> | <a href="#OUTPUT">OUTPUT</a> | <a href="#SYSTEM">SYSTEM</a> | <a href="#TOOLS">TOOLS</a> | <a href="#FLASH">FLASH</a> | <a href="#OTHER">OTHER</a> | <a href="#MCU">MCU</a> | <a href="#UNCATEGORIZED">UNCATEGORIZED</a> | <a href="#LEGEND">LEGEND</a>
 </p>
@@ -580,21 +580,20 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <h2 id="MCU">MCU</h2>
 <table>
 <tr><th>Word</th><th>Type</th><th>Stack Signature</th><th>Description</th><th>Location</th></tr>
-<tr><td title="ARGV">argv</td><td>VARIABLE</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:107<td></tr>
-<tr><td title="BYE">bye</td><td>CODEWORD</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:77<td></tr>
-<tr><td title="CACHE_END">cache-end</td><td>CONSTANT</td><td>dp.ram.max</td><td></td><td>arm/mcu/linux/words/appl-turnkey.s:12<td></tr>
-<tr><td title="CACHE_START">cache-start</td><td>CONSTANT</td><td>dp0.ram</td><td></td><td>arm/mcu/linux/words/appl-turnkey.s:11<td></tr>
-<tr><td title="CACHEFLUSH">cacheflush</td><td>CODEWORD</td><td>( -- )</td><td></td><td>arm/mcu/linux/words/linux.s:56<td></tr>
-<tr><td title="COUNT0">count0</td><td>COLON</td><td></td><td></td><td>arm/mcu/linux/words/type0.s:12<td></tr>
-<tr><td title="HOSTNAME">hostname</td><td>ENVIRONMENT</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:118<td></tr>
-<tr><td title="UART_INIT">std-init</td><td>CODEWORD</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:51<td></tr>
-<tr><td title="SERIAL_KEY">stdin</td><td>CODEWORD</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:23<td></tr>
-<tr><td title="SERIAL_KEYQ">stdin?</td><td>COLON</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:48<td></tr>
-<tr><td title="SERIAL_EMIT">stdout</td><td>CODEWORD</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:2<td></tr>
-<tr><td title="SERIAL_EMITQ">stdout?</td><td>COLON</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:20<td></tr>
-<tr><td title="SYSCALL">syscall</td><td>CODEWORD</td><td>( r0 r1 r2 r3 r4 r5 Syscall# -- r0 )</td><td></td><td>arm/mcu/linux/words/linux.s:83<td></tr>
+<tr><td title="ARGV">argv</td><td>VARIABLE</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:86<td></tr>
+<tr><td title="BYE">bye</td><td>CODEWORD</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:66<td></tr>
+<tr><td title="CACHE_END">cache-end</td><td>CONSTANT</td><td>dp.ram.max</td><td></td><td>arm/mcu/linux/words/appl-turnkey.s:15<td></tr>
+<tr><td title="CACHE_START">cache-start</td><td>CONSTANT</td><td>dp0.ram</td><td></td><td>arm/mcu/linux/words/appl-turnkey.s:12<td></tr>
+<tr><td title="CACHEFLUSH">cacheflush</td><td>CODEWORD</td><td>( -- )</td><td></td><td>arm/mcu/linux/words/linux.s:44<td></tr>
+<tr><td title="COUNT0">count0</td><td>COLON</td><td></td><td></td><td>arm/mcu/linux/words/type0.s:13<td></tr>
+<tr><td title="HOSTNAME">hostname</td><td>ENVIRONMENT</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:107<td></tr>
+<tr><td title="SERIAL_KEY">stdin</td><td>CODEWORD</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:20<td></tr>
+<tr><td title="SERIAL_KEYQ">stdin?</td><td>COLON</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:40<td></tr>
+<tr><td title="SERIAL_EMIT">stdout</td><td>CODEWORD</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:3<td></tr>
+<tr><td title="SERIAL_EMITQ">stdout?</td><td>COLON</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:15<td></tr>
+<tr><td title="SYSCALL">syscall</td><td>CODEWORD</td><td>( r0 r1 r2 r3 r4 r5 Syscall# -- r0 )</td><td></td><td>arm/mcu/linux/words/linux.s:72<td></tr>
 <tr><td title="TYPE0">type0</td><td>COLON</td><td></td><td></td><td>arm/mcu/linux/words/type0.s:2<td></tr>
-<tr><td title="UNAME">uname</td><td>COLON</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:111<td></tr>
+<tr><td title="UNAME">uname</td><td>COLON</td><td></td><td></td><td>arm/mcu/linux/words/linux.s:99<td></tr>
 </table>
 <h2 id="UNCATEGORIZED">UNCATEGORIZED</h2>
 <table>
