@@ -10,8 +10,6 @@
 
 # what Forth word groups do you want included in the core 
 
-.equ WANT_SEARCH_ORDER , YES
-
 .equ WANT_CASE         , YES
 .equ WANT_MATCH        , YES
 .equ WANT_FORNEXT      , NO

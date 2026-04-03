@@ -21,9 +21,9 @@ FILENAME == "rv/macros.inc" { nextfile }
 /DEFER[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 /UDEFER[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 /CONSTANT[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
-/CON[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 /DATA[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 /ENVIRONMENT[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
+/ENV_CONSTANT[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 # RISC-V
 /CSR[[:space:]]+".*"/ { $1=$1; print $0 " @ " FILENAME ":" FNR }
 # ARM

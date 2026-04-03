@@ -9,8 +9,7 @@ ENVIRONMENT "build.rev", BUILD_REV /* ( -- addr u ) string with build revision *
     .word XT_EXIT
 END BUILD_REV
 
-ENVIRONMENT "build.config", BUILD_CONFIG /* ( -- u ) build configuration flags */
-    .word XT_DOLITERAL, BUILD_CONFIG, XT_EXIT
+ENV_CONSTANT "build.config", BUILD_CONFIG, BUILD_CONFIG /* ( -- u ) build configuration flags */
 END BUILD_CONFIG
 
 ENVIRONMENT ".build", DOT_BUILD /* ( -- ) show build information */

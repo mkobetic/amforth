@@ -17,23 +17,26 @@ DEFER "cfg-order", CFG_ORDER, XT_ORDERDOTONLY /* currently configured search ord
 END CFG_ORDER
 
 DATA "order.only", ORDERDOTONLY /* RAM dictionary mode search order */
-.word 3
+.word 4
 .word XT_RAM_WORDLIST
 .word XT_FORTH_WORDLIST
+.word XT_ARCH_WORDLIST
 .word XT_ENVIRONMENT
 END ORDERDOTONLY
 
 # This is only words assembled at build time 
 
 DATA "order.core" , ORDERDOTCORE /* core words only search order */
-.word 2
+.word 3
 .word XT_CORE_WORDLIST
+.word XT_ARCH_WORDLIST
 .word XT_ENVIRONMENT
 END ORDERDOTCORE
 
 DATA "order.forth" , ORDERDOTFORTH /* FLASH dictionary mode search order */
-.word 2
+.word 3
 .word XT_FORTH_WORDLIST
+.word XT_ARCH_WORDLIST
 .word XT_ENVIRONMENT
 END ORDERDOTFORTH
 
@@ -91,12 +94,10 @@ COLON "order" , ORDER /* ( -- ) show currently configured search order */
       .word XT_EXIT
 END ORDER
 
-.if WANT_SEARCH_ORDER
-
 #======================================================================
 #======================================================================
 # transpiling User/fth-words/get-order.f on 2024/11/17 07:41:43
-# : get-order ( -- widn....win1 n )
+# : get-order ( -- widn....wid1 n )
 #     cfg-order @ 1- 0 swap do
 #         cfg-order cell+ i cells + @
 #     -1 +loop
@@ -104,7 +105,7 @@ END ORDER
 # ;
 
 # ----------------------------------------------------------------------
-COLON "get-order", GETMINUSORDER 
+COLON "get-order", GETMINUSORDER /* ( -- widn ... wid1 n ) put wids of the search order on stack  */
 	.word XT_CFG_ORDER
 	.word XT_FETCH
 	.word XT_1MINUS
@@ -143,7 +144,7 @@ NVARIABLE "order.table" , ORDERDOTTABLE , 9
 # ;
 
 # ----------------------------------------------------------------------
-COLON "set-order", SETMINUSORDER 
+COLON "set-order", SETMINUSORDER /* ( widn ... wid1 n -- ) set search order to the list of wids on stack */
 	.word XT_DUP
 	.word XT_ORDERDOTTABLE
 	.word XT_STORE
@@ -179,7 +180,7 @@ SETMINUSORDER_0001: # (for ?do IF required)
 # ;
 
 # ----------------------------------------------------------------------
-COLON "previous", PREVIOUS 
+COLON "previous", PREVIOUS /* ( -- ) drop first wordlist from the search order */
 	.word XT_GETMINUSORDER
 	.word XT_NIP
 	.word XT_1MINUS
@@ -189,13 +190,4 @@ COLON "previous", PREVIOUS
 #=====================================================================
 #======================================================================
 
-COLON "set-current", SETMINUSCURRENT 
-	.word XT_DOXLITERAL
-	.word XT_CURRENT
-	.word XT_DEFER_STORE
-	.word XT_EXIT
-
-VALUE "w1" , W1 , 0
-
-.endif
 
