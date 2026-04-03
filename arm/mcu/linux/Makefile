@@ -50,7 +50,12 @@ drun: image
 dtests: image
 	$(DOCKER) amforth:latest /bin/sh -c ' \
 		cd amforth/arm/mcu/linux; \
-		QEMU=amforth AMFORTH=/amforth PP=cpp make tests '
+		cpp -w -E --no-line-commands -x assembler-with-cpp \
+			-I /amforth /amforth/tests/tests.frt > build/tests.frt; \
+		cat build/tests.frt \
+		| amforth \
+		| tee build/tests.log \
+		| awk -f /amforth/tests/results.awk '
 
 # Starts amforth under QEMU
 # WARNING(mk): This seems incomplete and does not work at least on MacOSX;

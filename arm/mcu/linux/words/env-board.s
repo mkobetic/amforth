@@ -1,5 +1,5 @@
 
 ENVIRONMENT "board", BOARD
-  .word XT_DOLITERAL,RAM_lower_uname_buf+260, XT_COUNT0
+  STRING "LINUX"
   .word XT_EXIT
 END BOARD

@@ -227,23 +227,19 @@ shell:
 # to do it from the inside, i.e. from AmForth running in it.
 # WARNING: some of the tests can run destructive operations,
 # don't run against real MCUs without reviewing the tests.
-TESTER ?= $(AMFORTH)/tests/tester.frt
-SKIP := $(PP) -w -E --no-line-commands
+SKIP := $(PP) -w -E --no-line-commands -x assembler-with-cpp
 ## Run standard tests, output failures and summarize the results (QEMU only)
 tests: TIMEOUT ?= 4s
 tests:
-	@{ cat $(TESTER); \
-	  echo '\ TESTS STARTING' ; \
-	  $(SKIP) $(AMFORTH)/tests/cpp-core.fr; \
-	  cat $(AMFORTH)/tests/core2.fr; \
-	  cat $(AMFORTH)/tests/pvalue.fr; \
-	  echo '\ TESTS FINISHED' ; \
-	} | timeout -s TERM $(TIMEOUT) $(QEMU) -display none -serial stdio | \
+	$(SKIP) -I $(AMFORTH) $(AMFORTH)/tests/tests.frt > build/tests.frt
+	cat build/tests.frt \
+	| timeout -s TERM $(TIMEOUT) $(QEMU) -display none -serial stdio | \
 	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
 
 ## Run test file $(TEST), output failures and summarize the results (QEMU only)
 test: TIMEOUT ?= 1s
+test: TESTER ?= $(AMFORTH)/tests/tester.frt
 test:
 	@{ cat $(TESTER); \
 	  echo '\ TESTS STARTING' ; \
@@ -256,7 +252,7 @@ test:
 ## Run tests-mcu.frt through amforth-shell on hardware 
 tests-mcu:
 	# export EDITOR in your .env file to make the #edit shell directive work.
-	$(SKIP) -x assembler-with-cpp -I $(AMFORTH) $(AMFORTH)/tests/tests-mcu.frt > ./build/tests-mcu.frt
+	$(SKIP) -I $(AMFORTH) $(AMFORTH)/tests/tests-mcu.frt > ./build/tests-mcu.frt
 	$(AMSHELL) -I $(AMFORTH) --no-error-on-output --sym-file build/amforth.sym  \
     --tee ./build/tests-mcu.log ./build/tests-mcu.frt
 	awk -f $(AMFORTH)/tests/results-mcu.awk ./build/tests-mcu.log
