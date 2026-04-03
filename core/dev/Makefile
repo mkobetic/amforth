@@ -261,6 +261,13 @@ tests-mcu:
     --tee ./build/tests-mcu.log ./build/tests-mcu.frt
 	awk -f $(AMFORTH)/tests/results-mcu.awk ./build/tests-mcu.log
 
+## Run tests-mcu.frt through amforth-shell on hardware 
+tests-sock:
+	# export EDITOR in your .env file to make the #edit shell directive work.
+	$(SKIP) -x assembler-with-cpp -I $(AMFORTH) $(AMFORTH)/tests/tests-mcu.frt > ./build/tests-mcu.frt
+	$(AMFORTH)/tools/socket-shell.py -I $(AMFORTH) --no-error-on-output ./build/tests-mcu.frt
+	#awk -f $(AMFORTH)/tests/results-mcu.awk ./build/tests-mcu.log
+
 ## Detailed dump of ELF sections for debugging linker issues
 sections: sec-type sec-addr sec-sum
 
