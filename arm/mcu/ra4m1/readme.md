@@ -89,6 +89,7 @@ Note that the only tools needed for this process are AmForth running on the targ
 # References
 
 ## AmForth
+* amforth32 documentation: https://amforth32.github.io/amforth32/
 * AmForth documentation: https://amforth.sourceforge.net/
 * AmForth mailing list: https://sourceforge.net/p/amforth/mailman/amforth-devel/
 
