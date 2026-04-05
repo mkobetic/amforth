@@ -361,7 +361,7 @@ SEEDOTDODOTXT_0001: /* then */
 	.word XT_DP_RAM
 	.word XT_DP
 	.word XT_MAX
-	.word XT_LESS
+	.word XT_ULESS
 	.word XT_DOCONDBRANCH,SEEDOTDODOTXT_0002 /* if */
 	.word XT_SEEDOTIP
 	.word XT_FETCH
