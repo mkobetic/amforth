@@ -228,12 +228,13 @@ shell:
 # WARNING: some of the tests can run destructive operations,
 # don't run against real MCUs without reviewing the tests.
 SKIP := $(PP) -w -E --no-line-commands -x assembler-with-cpp
+QEMU_TESTS ?= $(QEMU) -display none -serial stdio
 ## Run standard tests, output failures and summarize the results (QEMU only)
 tests: TIMEOUT ?= 4s
 tests:
 	$(SKIP) -I $(AMFORTH) $(AMFORTH)/tests/tests.frt > build/tests.frt
 	cat build/tests.frt \
-	| timeout -s TERM $(TIMEOUT) $(QEMU) -display none -serial stdio | \
+	| timeout -s TERM $(TIMEOUT) $(QEMU_TESTS) | \
 	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
 
@@ -245,7 +246,7 @@ test:
 	  echo '\ TESTS STARTING' ; \
 	  cat $(AMFORTH)/tests/$(TEST); \
 	  echo '\ TESTS FINISHED' ; \
-	} | timeout -s TERM $(TIMEOUT) $(QEMU) -display none -serial stdio | \
+	} | timeout -s TERM $(TIMEOUT) $(QEMU_TESTS) | \
 	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
 

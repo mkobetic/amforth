@@ -1,3 +1,6 @@
+AMFORTH ?= $(shell git rev-parse --show-toplevel)
+-include .env
+
 # Override default ARM toolchain for linux target.
 # On MacOS assume homebrew installed toolchain.
 ifeq ($(shell uname -s),Darwin)
@@ -18,14 +21,15 @@ else
 $(error Unknown TARGET '$(TARGET)')
 endif
 
-AMFORTH ?= $(shell git rev-parse --show-toplevel)
-
 # Included after various configuration bits are defined (importantly MCU_LD)
 include $(AMFORTH)/arm/dev/Makefile
 
+LDFLAGS += -z max-page-size=4096
 
-build/amforth: build/amforth.o
-	$(LD) -L $(AMFORTH)/core -T linux.ld -z max-page-size=4096 $< -o $@ 
+build/amforth: build/amforth.elf
+	cp $< $@
+
+all: build/amforth
 
 # To run amforth in emulated container you can use a container runtime that supports --platform linux/arm/v7
 # For MacOS check out https://orbstack.dev/ (Free for personal use)
@@ -57,7 +61,28 @@ dtests: image
 		| tee build/tests.log \
 		| awk -f /amforth/tests/results.awk '
 
-# Starts amforth under QEMU
+QEMU ?= qemu-arm-static
+QEMU_TESTS = $(QEMU) build/amforth
+
+tests:
+	$(SKIP) -I $(AMFORTH) $(AMFORTH)/tests/tests.frt > build/tests.frt
+	cat build/tests.frt | $(QEMU) -g 1234 build/amforth
+
+## Starts amforth under QEMU user (linux only)
+run:
+	$(QEMU) build/amforth
+
+## Like run but allows GDB to attach to it (-g).
+debug:
+	$(QEMU) -g 1234 build/amforth
+
+## Connect GDB to running amforth (must be running with -g, see debug)
+gdb:
+	$(GDBPY) build/amforth --quiet \
+		-ex 'target remote localhost:1234' \
+		-ex "source tui-full.gdb"
+
+# Starts amforth under QEMU system
 # WARNING(mk): This seems incomplete and does not work at least on MacOSX;
 #   tried many things to get raspios emulation going, but no luck so far :/
 # setup some terminal settings. Otherwise all input will be echo'ed
@@ -65,11 +90,11 @@ dtests: image
 # IMAGE = 2025-12-04-raspios-trixie-armhf-lite.img
 # KERNEL = kernel8.img
 # DTB = bcm2709-rpi-2-b.dtb
-QEMU ?=qemu-system-arm
-run: build/amforth
-	qemu-img resize build/amforth 128k
-	stty -icanon -echo
- 	$(QEMU) -machine raspi2b -display none -serial mon:stdio  || true
+# QEMU ?=qemu-system-arm
+# run: build/amforth
+# 	qemu-img resize build/amforth 128k
+# 	stty -icanon -echo
+#  	$(QEMU) -machine raspi2b -display none -serial mon:stdio  || true
 # 	$(QEMU) -machine $(MACHINE) -kernel $(KERNEL) -dtb $(DTB) -sd $(IMAGE) -nographic \
 # 		-append "rw earlyprintk loglevel=8 console=ttyAMA1,115200 dwc_otg.lpm_enable=0 root=/dev/mmcblk0p2 rootdelay=1" \
 # 		|| true
@@ -82,7 +107,7 @@ run: build/amforth
 # 	    -append 'root=/dev/vda2 panic=1' \
 #     	-no-reboot \
 #     	-nographic || true
-	stty sane
+# 	stty sane
 
 # NOTES
 #
