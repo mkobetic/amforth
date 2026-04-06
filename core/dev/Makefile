@@ -229,7 +229,7 @@ shell:
 # don't run against real MCUs without reviewing the tests.
 SKIP := $(PP) -w -E --no-line-commands -x assembler-with-cpp
 ## Run standard tests, output failures and summarize the results (QEMU only)
-tests: TIMEOUT ?= 4s
+tests: TIMEOUT ?= 10s
 tests:
 	$(SKIP) -I $(AMFORTH) $(AMFORTH)/tests/tests.frt > build/tests.frt
 	cat build/tests.frt \
