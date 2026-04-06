@@ -64,10 +64,6 @@ dtests: image
 QEMU ?= qemu-arm-static
 QEMU_TESTS = $(QEMU) build/amforth
 
-tests:
-	$(SKIP) -I $(AMFORTH) $(AMFORTH)/tests/tests.frt > build/tests.frt
-	cat build/tests.frt | $(QEMU) -g 1234 build/amforth
-
 ## Starts amforth under QEMU user (linux only)
 run:
 	$(QEMU) build/amforth

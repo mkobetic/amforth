@@ -173,8 +173,23 @@ SECTIONS
 
 	ASSERT(FSH_upper_res <= first_boot , "*ERROR* first_boot overlaps amramres")
 
+	/*
+		userdict2 is just a continuation of the userdict section but it needs to be split in two
+		to allow for the first_boot section. We need to actually allocate the available memory region,
+		otherwise for linux targets the kernel won't actually map it into the process' memory space
+		and amforth will segfault if that memory is accessed.
+	*/
+	unused_flash = ORIGIN(FLASH) + LENGTH(FLASH) - ADDR(first_boot) - flash_page - csec_size ;
+	userdict2 :
+	{
+		/* actually allocate the rest of unused FLASH */
+		. += unused_flash ;
+	} >FLASH AT>FLASH
+
 	/* C data sections */
 
+	/* allocated size for all the C data sections */
+	csec_size = SIZEOF(.dalign) + SIZEOF(.dlalign) + SIZEOF(.data) + SIZEOF(.bss) ;
 
 	.dalign :
 	{
@@ -247,6 +262,10 @@ SECTIONS
 		* RAM pool, where runtime defined flash words allocate RAM (vp)
 		* ram-dictionary where RAM defined words are compiled (dp.ram)
 	*/
+
+	/* calculate size of unallocated RAM, minus some fudge factor (256) for alignments */
+	PROVIDE( unused_ram = LENGTH(RAM) - SIZEOF(amramres) - SIZEOF(amramlo) - rampool_size - __stack_size - 256 ) ;
+
     amramhi :
     {
         . = ALIGN(4) ;
@@ -260,6 +279,14 @@ SECTIONS
         PROVIDE( dp0.ram = . ) ; 
         PROVIDE( HERESTART = . ) ;
 
+		/* 
+			Allocate the remainder of RAM minus the stack for the ram dictionary.
+			We need to actually allocate the available memory region, otherwise for linux targets
+			the kernel won't actually map it into the process' memory space
+			and amforth will segfault if that memory is accessed.
+		*/
+		. += unused_ram ;
+
     } > RAM 
 
 	ASSERT(RAM_upper_fi <= vp0 ,"*ERROR* amramlo and amramhi overlap") 
@@ -268,7 +295,8 @@ SECTIONS
 
 	/* C stack section */
     slack = cellsize ;
-    .stack ORIGIN(RAM) + LENGTH(RAM) - __stack_size - slack :
+	stack_start = ORIGIN(RAM) + LENGTH(RAM) - __stack_size - slack ;
+    .stack stack_start :
     {
         PROVIDE( _heap_end = . );    
         . = ALIGN(4);
