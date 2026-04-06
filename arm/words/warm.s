@@ -17,6 +17,11 @@ COLON "warm", WARM /* ( -- ) high level part of the boot sequence, VM is running
   .word XT_DEBUGMINUS
 .endif
 
+.if WANT_TRANSPILER == YES
+  /* initialize transpiler to disabled state */
+  .word XT_TPILEMINUS
+.endif
+
   /* initialize pvalue system */
   .word XT_QFIRST_BOOT, XT_DOCONDBRANCH, 1f
     .word XT_PVARENA1, XT_DOTO, XT_PVARENA, XT_PV_RESET_HARD
