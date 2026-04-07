@@ -297,6 +297,10 @@ sec-sum:
 	$(SIZE) build/amforth.elf
 	$(SIZE) build/amforth.elf
 
+## Dump program headers / segments
+segments:
+	$(READELF) --segments build/amforth.elf
+
 ## Dump symbols sorted by address, optionally filtered by section (e.g. sec=amramlo)
 symbols:
 	# Value Flags[7] Section Size Symbol

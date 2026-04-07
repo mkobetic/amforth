@@ -28,7 +28,10 @@ jobs:
         run: cd arm/dev && make toolchain
 
       - name: Build Linux/RaspPi
-        run: cd arm/mcu/linux && WANT_IGNORECASE=1 make all
+        run: | 
+          cd arm/mcu/linux && WANT_IGNORECASE=1 make all
+          make segments
+          make sections
 
       - name: Cache and Install QEMU USER ARM
         uses: awalsh128/cache-apt-pkgs-action@latest
