@@ -56,8 +56,7 @@ be used for words being developed, words can be redefined, the whole dictionary 
 a word is finished it can be compiled into the FLASH dictionary and thus become persistent (assuming FLASH is persistent on a given target).
 Words in the RAM dictionary will disappear when the system restarts.
 
-Typical development cycle would use amforth-shell to load and reload word definitions from a file on the host computer. At the start the words
-are loaded into the RAM dictionary, tested, changed, reloaded again, tested, etc. Repeat as many times as necessary. Once the file has words in the shape that satisfies all tests and requirements. The mode is switched to FLASH and the file is loaded one last time.
+Typical development cycle would use amforth-shell to load and reload word definitions from a file on the host computer. At the start the words are loaded into the RAM dictionary, tested, changed, reloaded again, tested, etc. Repeat as many times as necessary. Once the file has words in the shape that satisfies all tests and requirements. The mode is switched to FLASH and the file is loaded one last time.
 Then the words are persisted in the FLASH memory and ready to be used at any time later.
 
 Note that the only tools needed for this process are AmForth running on the target device and a terminal emulator, like amforth-shell. This makes AmForth a powerful tool to explore the target platform with ease.

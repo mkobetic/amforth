@@ -228,12 +228,13 @@ shell:
 # WARNING: some of the tests can run destructive operations,
 # don't run against real MCUs without reviewing the tests.
 SKIP := $(PP) -w -E --no-line-commands -x assembler-with-cpp
+QEMU_TESTS ?= $(QEMU) -display none -serial stdio
 ## Run standard tests, output failures and summarize the results (QEMU only)
 tests: TIMEOUT ?= 10s
 tests:
 	$(SKIP) -I $(AMFORTH) $(AMFORTH)/tests/tests.frt > build/tests.frt
 	cat build/tests.frt \
-	| timeout -s TERM $(TIMEOUT) $(QEMU) -display none -serial stdio | \
+	| timeout -s TERM $(TIMEOUT) $(QEMU_TESTS) | \
 	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
 
@@ -245,7 +246,7 @@ test:
 	  echo '\ TESTS STARTING' ; \
 	  cat $(AMFORTH)/tests/$(TEST); \
 	  echo '\ TESTS FINISHED' ; \
-	} | timeout -s TERM $(TIMEOUT) $(QEMU) -display none -serial stdio | \
+	} | timeout -s TERM $(TIMEOUT) $(QEMU_TESTS) | \
 	tee build/tests.log | \
 	awk -f $(AMFORTH)/tests/results.awk
 
@@ -295,6 +296,11 @@ sec-sum:
 	# SECTION SIZE SUMMARY:
 	$(SIZE) build/amforth.elf
 	$(SIZE) build/amforth.elf
+
+# Segments are used by linux kernel to allocate memory to the amforth process.
+## Dump program headers / segments
+segments:
+	$(READELF) --segments build/amforth.elf
 
 ## Dump symbols sorted by address, optionally filtered by section (e.g. sec=amramlo)
 symbols:
