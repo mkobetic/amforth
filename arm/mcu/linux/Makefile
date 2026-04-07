@@ -11,8 +11,6 @@ else
 	CROSS ?= arm-none-linux-gnueabihf-
 endif
 
-LANG=C
-
 TARGET ?= LINUX
 TARGETS = LINUX
 ifeq ($(strip $(TARGET)), LINUX)
@@ -26,16 +24,11 @@ include $(AMFORTH)/arm/dev/Makefile
 
 LDFLAGS += -z max-page-size=4096
 
-build/amforth: build/amforth.elf
-	cp $< $@
-
-all: build/amforth
-
 # To run amforth in emulated container you can use a container runtime that supports --platform linux/arm/v7
 # For MacOS check out https://orbstack.dev/ (Free for personal use)
 # See Dockerfile for the details of what goes into the container image, tweak to heart's desire.
 ## Build docker image with AmForth (see Dockerfile)
-image: build/amforth
+image:
 	docker build --tag amforth:latest .
 
 # Starts the amforth container with a terminal session.
@@ -61,24 +54,26 @@ dtests: image
 		| tee build/tests.log \
 		| awk -f /amforth/tests/results.awk '
 
+# On Linux hosts a convenient way to run the Linux target is using qemu-user-static.
+# The distribution should have the package available for installation.
 QEMU ?= qemu-arm-static
-QEMU_TESTS = $(QEMU) build/amforth
+QEMU_TESTS = $(QEMU) build/amforth.elf
 
-## Starts amforth under QEMU user (linux only)
+## Starts amforth under qemu-user-static (Linux only)
 run:
-	$(QEMU) build/amforth
+	$(QEMU) build/amforth.elf
 
-## Like run but allows GDB to attach to it (-g).
+## Like run but allows GDB to attach to it (-g); starts halted, needs to be resumed from GDB.
 debug:
-	$(QEMU) -g 1234 build/amforth
+	$(QEMU) -g 1234 build/amforth.elf
 
 ## Connect GDB to running amforth (must be running with -g, see debug)
 gdb:
-	$(GDBPY) build/amforth --quiet \
+	$(GDBPY) build/amforth.elf --quiet \
 		-ex 'target remote localhost:1234' \
 		-ex "source tui-full.gdb"
 
-# Starts amforth under QEMU system
+# Starts amforth under qemu-system.
 # WARNING(mk): This seems incomplete and does not work at least on MacOSX;
 #   tried many things to get raspios emulation going, but no luck so far :/
 # setup some terminal settings. Otherwise all input will be echo'ed

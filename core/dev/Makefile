@@ -297,6 +297,7 @@ sec-sum:
 	$(SIZE) build/amforth.elf
 	$(SIZE) build/amforth.elf
 
+# Segments are used by linux kernel to allocate memory to the amforth process.
 ## Dump program headers / segments
 segments:
 	$(READELF) --segments build/amforth.elf
