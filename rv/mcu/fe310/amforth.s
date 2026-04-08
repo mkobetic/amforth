@@ -2,8 +2,12 @@
 # Copy it into your mcu/ directory and modify as needed.
 
 .text
-.global PFA_COLD
-  j PFA_COLD
+
+.include "mcu/qemu/config.inc"   # most configuration options are in this file
+.include "build-config.inc"
+
+.print "INFO: using FE310 startup"		
+.include "fe310.startup"  # startup and master_int handler for both C and Forth
 
 .section amforth, "ax"
 

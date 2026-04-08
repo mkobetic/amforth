@@ -14,9 +14,19 @@ CODEWORD "+usart", INIT_USART
 
   # UART RX/TX are selected IOF_SEL on Reset. Set IOF_EN bits.
 
-  li t0, GPIO_IOF_EN
-  li t1, (1<<17)|(1<<16)
-  sw t1, 0(t0)
+  # Clear IOF_SEL bits 16,17 first → selects IOF0 (UART0 TX/RX)
+  li   t0, GPIO_IOF_SEL
+  lw   t2, 0(t0)
+  li   t1, ~((1<<17)|(1<<16))  # mask with bits 16,17 clear
+  and  t2, t2, t1
+  sw   t2, 0(t0)
+
+  # Set IOF_EN bits 16,17 — read/modify/write to preserve other peripherals
+  li   t0, GPIO_IOF_EN
+  lw   t2, 0(t0)
+  li   t1, (1<<17)|(1<<16)
+  or   t2, t2, t1
+  sw   t2, 0(t0)
 
   # Set baud rate
 
@@ -45,7 +55,15 @@ CODEWORD "+usart", INIT_USART
   li t1, 1
   sw t1, 0(t0)
 
+  # initialise the one cell buffer with -1 
+
+  la  t0, PFA_SERIAL_LASTCHAR
+  lw  t0, 0(t0)
+  li  t1, -1
+  sw  t1, 0(t0)
+
   NEXT
+END INIT_USART
 
   VARIABLE  "serial-lastchar", SERIAL_LASTCHAR # ( -- addr )
 
@@ -61,7 +79,7 @@ CODEWORD "+usart", INIT_USART
   sw t0, 0(t1)
 
   NEXT
-END INIT_USART
+END SERIAL_KEY
 
 # -----------------------------------------------------------------------------
   CODEWORD  "serial-key?", SERIAL_KEYQ
@@ -72,7 +90,9 @@ END INIT_USART
   # Check buffer for waiting character
 
   la t1, PFA_SERIAL_LASTCHAR
-  lw t0, 0(t1)
+#  lw t0, 0(t1)
+  lw t1 , 0(t1)
+  lw t0 , 0(t1)
   srai s3, t0, 31 # Sign extend the "receive FIFO empty" bit
   beq s3, zero, 1f 
 

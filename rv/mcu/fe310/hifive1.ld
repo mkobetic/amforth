@@ -1,6 +1,6 @@
 OUTPUT_ARCH( "riscv" )
 
-ENTRY( PFA_COLD )
+ENTRY( _start )
 
 /* Not enough memory to support pvalues practically */
 PVFLASH_PAGE = 0;
