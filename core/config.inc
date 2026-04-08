@@ -27,6 +27,10 @@
 .global rampool_size
 
 
+/* C stack size */
+.equ __stack_size, 2048
+.global __stack_size
+
 /* 
     Flash parameters
 
