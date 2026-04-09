@@ -26,15 +26,14 @@ include $(AMFORTH)/rv/dev/Makefile
 # 0x8000_0000 no matter what ENTRY() has in the linker file. The cpu-num=0 sets the PC
 # to the value indicated by ENTRY(), which is much more suitable our needs.
 # The alternative option line gives a hint as to how to set the PC to an absolute address at boot time.
-# QEMU := $(QEMU_RV32) -M virt -bios none -device loader,file=build/amforth.elf,cpu-num=0
+QEMU := $(QEMU_RV32) -M virt -bios none -device loader,file=build/amforth.elf,cpu-num=0
 #        -device loader,addr=0x20000000,cpu-num=0
 
 # The above is really slow when the memory regions are far apart, supposedly due to a slow generic ELF loader
 # that is zeroing out a lot of empty memory in an inefficient way. The workaround is to load the bin file instead,
 # which bypasses the ELF loading semantics. Note that it is important to set the loading address correctly,
 # it needs to match the start of the FLASH memory region!
-
-QEMU := $(QEMU_RV32) -M virt -bios none -device loader,file=build/amforth.bin,addr=0x20010000,cpu-num=0
+# QEMU := $(QEMU_RV32) -M virt -bios none -device loader,file=build/amforth.bin,addr=0x20010000,cpu-num=0
 
 ## Start AmForth under QEMU with operator uart connected to stdio
 stdio:
