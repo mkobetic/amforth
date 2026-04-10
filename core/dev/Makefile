@@ -134,7 +134,7 @@ build/%.hex: build/%.elf
 build/%.bin: build/%.elf
 	@echo "REBUILD $@"
 	@$(OBJCOPY) -O binary $< $@
-	test $(shell wc -c <$@) -lt 100000
+	test `wc -c <$@` -lt 100000
 
 build/%.lst: build/%.elf
 	@echo "REBUILD $@"
