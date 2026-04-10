@@ -135,6 +135,10 @@ SECTIONS
 		PROVIDE(RAM_upper_res = . );
 	} >RAM AT>FLASH :forth
 
+	PROVIDE(RAM_size_res = RAM_upper_res - RAM_lower_res) ;
+	PROVIDE(FSH_lower_res = LOADADDR(amramres)) ;
+	PROVIDE(FSH_upper_res = LOADADDR(amramres) + SIZEOF(amramres)) ;
+
 	/*
 		This is the main AmForth flash section housing all the predefined words.
 	*/
@@ -147,10 +151,6 @@ SECTIONS
 
 	} >FLASH AT>FLASH :forth
 
-	PROVIDE(RAM_size_res = RAM_upper_res - RAM_lower_res) ;
-	PROVIDE(RAM_stuf_res = SIZEOF(amramres)) ;
-	PROVIDE(FSH_lower_res = LOADADDR(amramres)) ;
-	PROVIDE(FSH_upper_res = LOADADDR(amramres) + SIZEOF(amramres)) ;
 
 	/*
 		userdict represents the free space used for new words created at runtime in flash (and therefore persistent).
