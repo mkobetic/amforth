@@ -123,6 +123,19 @@ SECTIONS
 	} >FLASH AT>FLASH :text
 
 	/*
+		RAM resident code, i.e. code that must run from RAM.
+		COLD is responsible for copying the code to RAM at boot.
+		Example is code flash writing code for RA4.
+	*/
+	amramres :
+	{
+		. = ALIGN(4) ;
+		PROVIDE(RAM_lower_res = . );
+		KEEP(*(amres))
+		PROVIDE(RAM_upper_res = . );
+	} >RAM AT>FLASH :forth
+
+	/*
 		This is the main AmForth flash section housing all the predefined words.
 	*/
 	amforth :
@@ -133,19 +146,6 @@ SECTIONS
 		*amforth.o(.text .text.*)
 
 	} >FLASH AT>FLASH :forth
-
-	/*
-		RAM resident code, i.e. code that must run from RAM.
-		COLD is responsible for copying the code to RAM at boot.
-		Example is code flash writing code for RA4.
-	*/
-	amramres :
-	{
-		. = ALIGN(4) ;
-		PROVIDE(RAM_lower_res = . );
-		*(amres)
-		PROVIDE(RAM_upper_res = . );
-	} >RAM AT>FLASH :text
 
 	PROVIDE(RAM_size_res = RAM_upper_res - RAM_lower_res) ;
 	PROVIDE(RAM_stuf_res = SIZEOF(amramres)) ;
@@ -163,7 +163,7 @@ SECTIONS
 		PROVIDE( dp0.flash = . );
 		PROVIDE( flash.high = . );
 		PROVIDE( flash.max = ORIGIN(FLASH) + LENGTH(FLASH));
-	} >FLASH AT>FLASH :forth
+	} >FLASH :forth
 
 	ASSERT(FSH_upper_res <= dp0.flash ,"*ERROR* userdict overlaps amramres")
 
@@ -192,17 +192,16 @@ SECTIONS
 		otherwise for linux targets the kernel won't actually map it into the process' memory space
 		and amforth will segfault if that memory is accessed.
 	*/
-	unused_flash = ORIGIN(FLASH) + LENGTH(FLASH) - ADDR(first_boot) - flash_page - csec_size ;
 	userdict2 (NOLOAD) :
 	{
 		/* actually allocate the rest of unused FLASH */
-		. += unused_flash ;
-	} >FLASH AT>FLASH :forth
+		. = ORIGIN(FLASH) + LENGTH(FLASH) - cdata_size ;
+	} >FLASH :forth
 
 	/* C data sections */
 
 	/* allocated size for all the C data sections */
-	csec_size = SIZEOF(.dalign) + SIZEOF(.dlalign) + SIZEOF(.data) + SIZEOF(.bss) ;
+	cdata_size = SIZEOF(.dalign) + SIZEOF(.dlalign) + SIZEOF(.data) + SIZEOF(.bss) ;
 
 	.dalign :
 	{
@@ -221,12 +220,12 @@ SECTIONS
     	*(.gnu.linkonce.r.*)
     	*(.data .data.*)
     	*(.gnu.linkonce.d.*)
-		. = ALIGN(8);
+		. = ALIGN(4);
     	PROVIDE( __global_pointer$ = . + 0x800 );
     	*(.sdata .sdata.*)
 		*(.sdata2.*)
     	*(.gnu.linkonce.s.*)
-    	. = ALIGN(8);
+    	. = ALIGN(4);
     	*(.srodata.cst16)
     	*(.srodata.cst8)
     	*(.srodata.cst4)
