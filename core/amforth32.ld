@@ -122,6 +122,59 @@ SECTIONS
 	  KEEP (*(.dtors))
 	} >FLASH AT>FLASH :text
 
+	/* C data sections */
+
+	.dalign :
+	{
+		. = ALIGN(4);
+		PROVIDE(_data_vma = .);
+	} >RAM AT>FLASH	:data
+
+	.dlalign :
+	{
+		. = ALIGN(4); 
+		PROVIDE(_data_lma = .);
+	} >FLASH AT>FLASH :data
+
+	.data :
+	{
+    	*(.gnu.linkonce.r.*)
+    	*(.data .data.*)
+    	*(.gnu.linkonce.d.*)
+		. = ALIGN(8);
+    	PROVIDE( __global_pointer$ = . + 0x800 );
+    	*(.sdata .sdata.*)
+		*(.sdata2.*)
+    	*(.gnu.linkonce.s.*)
+    	. = ALIGN(8);
+    	*(.srodata.cst16)
+    	*(.srodata.cst8)
+    	*(.srodata.cst4)
+    	*(.srodata.cst2)
+    	*(.srodata .srodata.*)
+    	. = ALIGN(4);
+		PROVIDE( _edata = .);
+	} >RAM AT>FLASH :data
+
+	.bss :
+	{
+		. = ALIGN(4);
+		PROVIDE( _sbss = .);
+  	    *(.sbss*)
+        *(.gnu.linkonce.sb.*)
+		*(.bss*)
+     	*(.gnu.linkonce.b.*)		
+		*(COMMON*)
+		. = ALIGN(4);
+		PROVIDE( _ebss = .);
+        PROVIDE( ram_ripe = .); /* QEMU */
+	} >RAM AT>FLASH :data
+
+	PROVIDE( _end = _ebss);
+	PROVIDE( end = . );    
+
+	/* AMFORTH SECTIONS */
+
 	/*
 		RAM resident code, i.e. code that must run from RAM.
 		COLD is responsible for copying the code to RAM at boot.
@@ -195,62 +248,8 @@ SECTIONS
 	userdict2 (NOLOAD) :
 	{
 		/* actually allocate the rest of unused FLASH */
-		. = ORIGIN(FLASH) + LENGTH(FLASH) - cdata_size ;
+		. = ORIGIN(FLASH) + LENGTH(FLASH) ;
 	} >FLASH :forth
-
-	/* C data sections */
-
-	/* allocated size for all the C data sections */
-	cdata_size = SIZEOF(.dalign) + SIZEOF(.dlalign) + SIZEOF(.data) + SIZEOF(.bss) ;
-
-	.dalign :
-	{
-		. = ALIGN(4);
-		PROVIDE(_data_vma = .);
-	} >RAM AT>FLASH	:data
-
-	.dlalign :
-	{
-		. = ALIGN(4); 
-		PROVIDE(_data_lma = .);
-	} >FLASH AT>FLASH :data
-
-	.data :
-	{
-    	*(.gnu.linkonce.r.*)
-    	*(.data .data.*)
-    	*(.gnu.linkonce.d.*)
-		. = ALIGN(4);
-    	PROVIDE( __global_pointer$ = . + 0x800 );
-    	*(.sdata .sdata.*)
-		*(.sdata2.*)
-    	*(.gnu.linkonce.s.*)
-    	. = ALIGN(4);
-    	*(.srodata.cst16)
-    	*(.srodata.cst8)
-    	*(.srodata.cst4)
-    	*(.srodata.cst2)
-    	*(.srodata .srodata.*)
-    	. = ALIGN(4);
-		PROVIDE( _edata = .);
-	} >RAM AT>FLASH :data
-
-	.bss :
-	{
-		. = ALIGN(4);
-		PROVIDE( _sbss = .);
-  	    *(.sbss*)
-        *(.gnu.linkonce.sb.*)
-		*(.bss*)
-     	*(.gnu.linkonce.b.*)		
-		*(COMMON*)
-		. = ALIGN(4);
-		PROVIDE( _ebss = .);
-        PROVIDE( ram_ripe = .); /* QEMU */
-	} >RAM AT>FLASH :data
-
-	PROVIDE( _end = _ebss);
-	PROVIDE( end = . );    
 
 	/* AmForth RAM sections */
 
