@@ -76,6 +76,7 @@
 .equ WANT_CODE         , NO
 .equ WANT_TABLE        , NO
 .equ WANT_SYNONYM      , YES
+.equ WANT_THROWTXT     , YES
 
 # Other configuration parameters
 

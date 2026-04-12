@@ -2,6 +2,11 @@
 COLON "throw", THROW /* ( n -- ) throw exception n if n != 0 */
     .word XT_QDUP
     .word XT_DOCONDBRANCH,PFA_THROW1
+.if WANT_THROWTXT==YES    
+      .word XT_DUP
+      .word XT_ERRQ
+      .word XT_TYPE
+.endif      
       .word XT_HANDLER
       .word XT_FETCH
       .word XT_RP_STORE
