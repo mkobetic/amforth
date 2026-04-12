@@ -22,7 +22,7 @@ endif
 # Included after various configuration bits are defined (importantly MCU_LD)
 include $(AMFORTH)/arm/dev/Makefile
 
-LDFLAGS += -z max-page-size=4096
+LDFLAGS += -no-pie -static -z max-page-size=4096
 
 # To run amforth in emulated container you can use a container runtime that supports --platform linux/arm/v7
 # For MacOS check out https://orbstack.dev/ (Free for personal use)
