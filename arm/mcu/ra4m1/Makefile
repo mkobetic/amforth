@@ -52,7 +52,7 @@ OPENOCD ?= openocd
 # The touch1200bps often doesn't work, not sure why (check the -boot option maybe?)
 # Double pressing the reset button is reliable.
 ## Upload bin file to the device  
-upload: build/amforth.bin touch1200bps
+upload:
 	touch1200bps/touch1200bps /dev/$(MODEM)
 	$(BOSSAC) --debug --port=$(MODEM) --write build/amforth.bin --reset
 

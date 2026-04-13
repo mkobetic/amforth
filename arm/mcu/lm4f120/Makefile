@@ -21,7 +21,7 @@ AMFORTH ?= $(shell git rev-parse --show-toplevel)
 include $(AMFORTH)/arm/dev/Makefile
 
 ## Upload bin file to the device
-upload: build/amforth.elf
+upload:
 	lm4flash build/amforth.bin
 
 # QEMU's lm3s6965evb machine is not the LM4F120H5QR (m3 vs m4), but seems to be close enough.
