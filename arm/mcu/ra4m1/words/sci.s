@@ -1,11 +1,11 @@
 # From RA4M1 Group: User's Manual (32-bit): 28 Serial Communications Interface (SCI)
 #   * only SCI0 and SCI1 support FIFO
 
-.equ RA4M1_MSTPCRB, 0x40047000 @ Module Stop Control Register B
-.equ RA4M1_MSTPCRB22, 1 << 22  @ [22] SCI9 Module Stop (reset = 1)
-.equ RA4M1_MSTPCRB29, 1 << 29  @ [29] SCI2 Module Stop (reset = 1)
-.equ RA4M1_MSTPCRB30, 1 << 30  @ [30] SCI1 Module Stop (reset = 1)
-.equ RA4M1_MSTPCRB31, 1 << 31  @ [31] SCI0 Module Stop (reset = 1)
+.equ RA4_MSTPCRB, 0x40047000 @ Module Stop Control Register B
+.equ RA4_MSTPCRB22, 1 << 22  @ [22] SCI9 Module Stop (reset = 1)
+.equ RA4_MSTPCRB29, 1 << 29  @ [29] SCI2 Module Stop (reset = 1)
+.equ RA4_MSTPCRB30, 1 << 30  @ [30] SCI1 Module Stop (reset = 1)
+.equ RA4_MSTPCRB31, 1 << 31  @ [31] SCI0 Module Stop (reset = 1)
 
 # with FIFO
 .equ SCI0_BASE, 0x40070000   @ base address of the SCI0 registers

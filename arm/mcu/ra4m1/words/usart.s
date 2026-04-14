@@ -16,17 +16,17 @@
 #   atLoop() listens for AT commands at SERIAL_AT
 
 # SCI9
-.equ RA4M1_P109PFS, 0x40040840 + 4 * 9  @ TXD9 pin
-.equ RA4M1_P110PFS, 0x40040840 + 4 * 10 @ RXD9 pin
+.equ RA4_P109PFS, 0x40040840 + 4 * 9  @ TXD9 pin
+.equ RA4_P110PFS, 0x40040840 + 4 * 10 @ RXD9 pin
 
 # SCI1 Pins 
-@ .equ RA4M1_P501PFS, 0x40040940 + 4 * 1  @ TXD1
-@ .equ RA4M1_P502PFS, 0x40040940 + 4 * 2  @ RXD1
+@ .equ RA4_P501PFS, 0x40040940 + 4 * 1  @ TXD1
+@ .equ RA4_P502PFS, 0x40040940 + 4 * 2  @ RXD1
 
 # UART pins and registers for SCI9
-.equ UART_TXD, RA4M1_P109PFS
-.equ UART_RXD, RA4M1_P110PFS
-.equ UART_STOP, RA4M1_MSTPCRB22
+.equ UART_TXD, RA4_P109PFS
+.equ UART_RXD, RA4_P110PFS
+.equ UART_STOP, RA4_MSTPCRB22
 .equ UART_SCR, SCI9_SCR
 .equ UART_BRR, SCI9_BRR
 .equ UART_RDR, SCI9_RDR
@@ -34,8 +34,8 @@
 .equ UART_SSR, SCI9_SSR
 
 # UART pins and registers SCI1
-@ .equ UART_TXD, RA4M1_P501PFS
-@ .equ UART_RXD, RA4M1_P502PFS
+@ .equ UART_TXD, RA4_P501PFS
+@ .equ UART_RXD, RA4_P502PFS
 @ .equ UART_SCR, SCI1_SCR
 @ .equ UART_BRR, SCI1_BRR
 @ .equ UART_RDR, SCI1_RDR
@@ -46,7 +46,7 @@
 CODEWORD  "uart-init", UART_INIT
 
 @ Make sure SCI9 module is not stopped
-  ldr r0, =RA4M1_MSTPCRB
+  ldr r0, =RA4_MSTPCRB
   ldr r1, [r0]
   bic r1, r1, #UART_STOP
   str r1, [r0]

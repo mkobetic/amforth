@@ -6,19 +6,19 @@
 # * RA4M1 Group: User's Manual (32-bit): 28. Serial Communications Interface (SCI)
 
 # SCI1 Pins 
-.equ RA4M1_P501PFS, 0x40040940 + 4 * 1  @ TXD1
-.equ RA4M1_P502PFS, 0x40040940 + 4 * 2  @ RXD1
+.equ RA4_P501PFS, 0x40040940 + 4 * 1  @ TXD1
+.equ RA4_P502PFS, 0x40040940 + 4 * 2  @ RXD1
 
 # UART pins and registers SCI1
 .equ AT_UART_BASE, SCI1_BASE
-.equ AT_UART_TXD, RA4M1_P501PFS
-.equ AT_UART_RXD, RA4M1_P502PFS
-.equ AT_UART_STOP, RA4M1_MSTPCRB30
+.equ AT_UART_TXD, RA4_P501PFS
+.equ AT_UART_RXD, RA4_P502PFS
+.equ AT_UART_STOP, RA4_MSTPCRB30
 
 CODEWORD  "at-uart-init", AT_UART_INIT
 
 @ Make sure SCI1 module is not stopped
-  ldr r0, =RA4M1_MSTPCRB
+  ldr r0, =RA4_MSTPCRB
   ldr r1, [r0]
   bic r1, r1, #AT_UART_STOP
   str r1, [r0]
