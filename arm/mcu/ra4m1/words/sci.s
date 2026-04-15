@@ -1,4 +1,4 @@
-# From RA4M1 Group: User's Manual (32-bit): 28 Serial Communications Interface (SCI)
+# From RA4M1 Group: User Manual (32-bit): 28 Serial Communications Interface (SCI)
 #   * only SCI0 and SCI1 support FIFO
 
 .equ RA4_MSTPCRB, 0x40047000 @ Module Stop Control Register B

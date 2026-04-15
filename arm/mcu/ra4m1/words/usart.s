@@ -1,6 +1,6 @@
 # Implement serial host connection via SCI9, using non-FIFO async mode
 # References:
-# * RA4M1 Group: User's Manual (32-bit): 28. Serial Communications Interface (SCI)
+# * RA4M1 Group: User Manual (32-bit): 28. Serial Communications Interface (SCI)
 
 # From github.com/arduino/uno-r4-wifi-usb-bridge/UNOR4USBBridge/UNOR4USBBridge.ino
 #   Serial refers to tinyUSB CDC port

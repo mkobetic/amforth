@@ -1,5 +1,5 @@
 # System Clock Support
-# RA4M1 Group: User's Manual (32-bit): 8. Clock Generation Circuit
+# RA4M1 Group: User Manual (32-bit): 8. Clock Generation Circuit
 # Table 8.1 Clock sources:
 # * Main clock oscillator (MOSC): 1-20MHz (2.4V < VCC <= 5.5V => 1 - 20 MHz)
 # * Sub-clock oscillator (SOSC): 32768Hz

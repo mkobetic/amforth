@@ -3,7 +3,7 @@
 # using non-FIFO async mode for now.
 # TODO: try FIFO
 # References:
-# * RA4M1 Group: User's Manual (32-bit): 28. Serial Communications Interface (SCI)
+# * RA4M1 Group: User Manual (32-bit): 28. Serial Communications Interface (SCI)
 
 # SCI1 Pins 
 .equ RA4_P501PFS, 0x40040940 + 4 * 1  @ TXD1
