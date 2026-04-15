@@ -89,6 +89,7 @@ help:
 all: config build/amforth.bin build/amforth.hex build/amforth.lst build/amforth.sal build/amforth.sym build/amforth.toc build/amforth.txt build/amforth.html
 	@echo INFO: Built $(TARGET) $(REVISION) using $(TC_DIR)
 	@$(SIZE) build/amforth.elf
+	@cd build && ls -l amforth.bin amforth.hex amforth.elf
 
 
 buildinfo:
@@ -133,6 +134,7 @@ build/%.hex: build/%.elf
 build/%.bin: build/%.elf
 	@echo "REBUILD $@"
 	@$(OBJCOPY) -O binary $< $@
+	test `wc -c <$@` -lt 100000
 
 build/%.lst: build/%.elf
 	@echo "REBUILD $@"
