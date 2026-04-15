@@ -2,136 +2,47 @@
 IRQ_VECTORS:
 .include "arm/vectors.s"
 
-@ Special interrupt handlers for this particular chip:
+/*  RA4M1 User Manual
+    13.3.1 Interrupt Vector Table
 
-.word irq_vektor_porta+1   @ 16: GPIO Port A
-.word irq_vektor_portb+1   @ 17: GPIO Port B
-.word irq_vektor_portc+1   @ 18: GPIO Port C
-.word irq_vektor_portd+1   @ 19: GPIO Port D
-.word irq_vektor_porte+1   @ 20: GPIO Port E
-.word irq_vektor_terminal+1   @ 21: UART0 Rx and Tx
+    13.2.6 ICU Event Link Setting Register n (IELSRn)
+    Address: 0x40006300 + 4n :
+    * IELS[7:0] - ICU Event Link Select ; 0 = disabled, otherwise Event Table 13.4.
+    * IR[16] - Interrupt Status Flag ; write 0 to clear request
+    * DTCE[24] - DTC Activation Enable ; activates DTC instead of NVIC
+    
+*/
 
-.word nullhandler+1   @ 22: UART1 Rx and Tx
-.word nullhandler+1   @ 23: SSI0 Rx and Tx
-.word nullhandler+1   @ 24: I2C0 Master and Slave
-
-.word 0  @ 25: Reserved
-.word 0  @ 26: Reserved
-.word 0  @ 27: Reserved
-.word 0  @ 28: Reserved
-.word 0  @ 29: Reserved
-
-.word irq_vektor_adc0seq0+1   @ 30: ADC Sequence 0
-.word irq_vektor_adc0seq1+1   @ 31: ADC Sequence 1
-.word irq_vektor_adc0seq2+1   @ 32: ADC Sequence 2
-.word irq_vektor_adc0seq3+1   @ 33: ADC Sequence 3
-
-.word nullhandler+1   @ 34: Watchdog timers 0 and 1
-
-.word irq_vektor_timer0a+1   @ 35: Timer 0 subtimer A
-.word irq_vektor_timer0b+1   @ 36: Timer 0 subtimer B
-.word irq_vektor_timer1a+1   @ 37: Timer 1 subtimer A
-.word irq_vektor_timer1b+1   @ 38: Timer 1 subtimer B
-.word irq_vektor_timer2a+1   @ 39: Timer 2 subtimer A
-.word irq_vektor_timer2b+1   @ 40: Timer 2 subtimer B
-
-.word nullhandler+1   @ 41: Analog Comparator 0
-.word nullhandler+1   @ 42: Analog Comparator 1
-
-.word 0  @ 43: Reserved
-
-.word nullhandler+1   @ 44: System Control (PLL, OSC, BO)
-.word nullhandler+1   @ 45: FLASH Control
-
-.word irq_vektor_portf+1   @ 46: GPIO Port F
-
-
-.word 0  @ 47: Reserved
-.word 0  @ 48: Reserved
-.word nullhandler+1   @ 49:
-.word nullhandler+1   @ 50:
-.word nullhandler+1   @ 51:
-.word nullhandler+1   @ 52:
-.word nullhandler+1   @ 53:
-.word 0  @ 54: Reserved
-.word nullhandler+1   @ 55:
-.word 0  @ 56: Reserved
-.word 0  @ 57: Reserved
-.word 0  @ 58: Reserved
-.word nullhandler+1   @ 59:
-.word nullhandler+1   @ 60:
-.word 0  @ 61: Reserved
-
-.word nullhandler+1   @ 62:
-.word nullhandler+1   @ 63:
-.word nullhandler+1   @ 64:
-.word nullhandler+1   @ 65:
-.word nullhandler+1   @ 66:
-.word nullhandler+1   @ 67:
-
-.word 0  @ 68: Reserved
-.word 0  @ 69: Reserved
-.word 0  @ 70: Reserved
-.word 0  @ 71: Reserved
-.word 0  @ 72: Reserved
-
-.word nullhandler+1   @ 73:
-.word nullhandler+1   @ 74:
-.word nullhandler+1   @ 75:
-.word nullhandler+1   @ 76:
-.word nullhandler+1   @ 77:
-.word nullhandler+1   @ 78:
-.word nullhandler+1   @ 79:
-
-.word 0  @ 80: Reserved
-.word 0  @ 81: Reserved
-.word 0  @ 82: Reserved
-.word 0  @ 83: Reserved
-
-.word nullhandler+1   @ 84:
-.word nullhandler+1   @ 85:
-.word nullhandler+1   @ 86:
-.word nullhandler+1   @ 87:
-
-.word 0  @ 88: Reserved
-.word 0  @ 89: Reserved
-.word 0  @ 90: Reserved
-.word 0  @ 91: Reserved
-.word 0  @ 92: Reserved
-.word 0  @ 93: Reserved
-.word 0  @ 94: Reserved
-.word 0  @ 95: Reserved
-.word 0  @ 96: Reserved
-.word 0  @ 97: Reserved
-.word 0  @ 98: Reserved
-.word 0  @ 99: Reserved
-.word 0  @ 100: Reserved
-.word 0  @ 101: Reserved
-.word 0  @ 102: Reserved
-.word 0  @ 103: Reserved
-.word 0  @ 104: Reserved
-.word 0  @ 105: Reserved
-.word 0  @ 106: Reserved
-.word 0  @ 107: Reserved
-
-.word nullhandler+1   @ 108:
-.word nullhandler+1   @ 109:
-.word nullhandler+1   @ 110:
-.word nullhandler+1   @ 111:
-.word nullhandler+1   @ 112:
-.word nullhandler+1   @ 113:
-.word nullhandler+1   @ 114:
-.word nullhandler+1   @ 115:
-.word nullhandler+1   @ 116:
-.word nullhandler+1   @ 117:
-.word nullhandler+1   @ 118:
-.word nullhandler+1   @ 119:
-.word nullhandler+1   @ 120:
-.word nullhandler+1   @ 121:
-.word nullhandler+1   @ 122:
-
-@ 123-154 reserved, space can be used for core instead.
-
-@ move past the vector table space
-.org 0x400
+.word 0 @ 16: ICU.IELSR0
+.word 0 @ 17: ICU.IELSR1
+.word 0 @ 18: ICU.IELSR2
+.word 0 @ 19: ICU.IELSR3
+.word 0 @ 20: ICU.IELSR4
+.word 0 @ 21: ICU.IELSR5
+.word 0 @ 22: ICU.IELSR6
+.word 0 @ 23: ICU.IELSR7
+.word 0 @ 24: ICU.IELSR8
+.word 0 @ 25: ICU.IELSR9
+.word 0 @ 26: ICU.IELSR10
+.word 0 @ 27: ICU.IELSR11
+.word 0 @ 28: ICU.IELSR12
+.word 0 @ 29: ICU.IELSR13
+.word 0 @ 30: ICU.IELSR14
+.word 0 @ 31: ICU.IELSR15
+.word 0 @ 32: ICU.IELSR16
+.word 0 @ 33: ICU.IELSR17
+.word 0 @ 34: ICU.IELSR18
+.word 0 @ 35: ICU.IELSR19
+.word 0 @ 36: ICU.IELSR20
+.word 0 @ 37: ICU.IELSR21
+.word 0 @ 38: ICU.IELSR22
+.word 0 @ 39: ICU.IELSR23
+.word 0 @ 40: ICU.IELSR24
+.word 0 @ 41: ICU.IELSR25
+.word 0 @ 42: ICU.IELSR26
+.word 0 @ 43: ICU.IELSR27
+.word 0 @ 44: ICU.IELSR28
+.word 0 @ 45: ICU.IELSR29
+.word 0 @ 46: ICU.IELSR30
+.word 0 @ 47: ICU.IELSR31
 

@@ -1,3 +1,4 @@
+.thumb_func
 nullhandler:
    push {lr}
    push {r1}
@@ -10,6 +11,7 @@ nullhandler:
    pop {r1}
    pop {pc}
 
+.thumb_func
 faulthandler:
    push {lr}
    push {r1}

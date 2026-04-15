@@ -19,10 +19,11 @@
 .p2align 2
 
 .section amforth, "ax"
-.include "mcu/ra4m1/isr.s"
 
 STARTDICT
 
+.include "isr.s"
+.include "system.s"
 .include "dict_prims.inc"
 .include "dict_secs.inc"
 .include "dict_env.inc"

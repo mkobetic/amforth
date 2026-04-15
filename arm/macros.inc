@@ -7,8 +7,8 @@
 DEBUG   .req r6 @ used when WANT_DEBUGGER == YES
 TOS     .req r7
 DSP     .req r8
-FW  .req r9
-FIP .req r10
+FW      .req r9
+FIP     .req r10
 UP      .req r11
 
 @ default register mapping
