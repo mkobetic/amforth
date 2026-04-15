@@ -22,7 +22,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 </head>
 <body>
 <h1>AmForth32 Reference Card</h1>
-<h2>CORTEX-M4 / LM4F120XL main@58606cc 2026-04-12T22:48:16+00:00</h2>
+<h2>CORTEX-M4 / LM4F120XL main@1a7f834 2026-04-15T12:33:20+00:00</h2>
 <p>
 <a href="#STACK">STACK</a> | <a href="#COMPARE">COMPARE</a> | <a href="#MATH">MATH</a> | <a href="#MIXED">MIXED</a> | <a href="#DOUBLE">DOUBLE</a> | <a href="#MEMORY">MEMORY</a> | <a href="#STRING">STRING</a> | <a href="#DICTIONARY">DICTIONARY</a> | <a href="#WORDLIST">WORDLIST</a> | <a href="#COMPILER">COMPILER</a> | <a href="#FLOW">FLOW</a> | <a href="#IO">IO</a> | <a href="#OUTPUT">OUTPUT</a> | <a href="#SYSTEM">SYSTEM</a> | <a href="#TOOLS">TOOLS</a> | <a href="#FLASH">FLASH</a> | <a href="#OTHER">OTHER</a> | <a href="#MCU">MCU</a> | <a href="#UNCATEGORIZED">UNCATEGORIZED</a> | <a href="#LEGEND">LEGEND</a>
 </p>
@@ -133,7 +133,7 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="MSTAR">m*</td><td>CODEWORD</td><td>( n1 n2 -- d )</td><td>d = n1*n2</td><td>arm/words/double.s:2<td></tr>
 <tr><td title="MPLUS">m+</td><td>COLON</td><td>( d1 n -- d2 )</td><td>d2 = d1 + n</td><td>core/words/mplus.s:3<td></tr>
 <tr><td title="UMSTAR">um*</td><td>CODEWORD</td><td>(u1 u2 -- ud )</td><td>ud = u1 * u2</td><td>arm/words/umstar.s:1<td></tr>
-<tr><td title="UMSLASHMOD">um/mod</td><td>COLON</td><td>( ud u1 -- u2 u3 )</td><td>Divide ud by u1, giving the quotient u3 and the remainder u2.</td><td>core/words/um-slash-mod.s:1<td></tr>
+<tr><td title="UMSLASHMOD">um/mod</td><td>CODEWORD</td><td>( ud u1 -- u2 u3 )</td><td>u3 is the quotient and u2 the remainder of ud / u1</td><td>arm/words/um-slash-mod.s:1<td></tr>
 <tr><td title="SMSLASHREM">sm/rem</td><td>COLON</td><td>( d n1 -- n2 n3 )</td><td>alias for m/mod</td><td>core/words/m-slash-mod.s:34<td></tr>
 <tr><td title="MSLASHMOD">m/mod</td><td>COLON</td><td>( d n1 -- n2 n3 )</td><td>n3 is quotient and n2 remainder of d / n1</td><td>core/words/m-slash-mod.s:1<td></tr>
 </table>
@@ -169,8 +169,8 @@ h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
 <tr><td title="PLUSSTORE">+!</td><td>CODEWORD</td><td>( n addr -- )</td><td>[addr] = [addr] + n; add n to the word at addr</td><td>arm/words/memory.s:20<td></tr>
 <tr><td title="FILL">fill</td><td>CODEWORD</td><td>( addr n c -- )</td><td>fill n bytes from addr with c</td><td>arm/words/memory.s:3<td></tr>
 <tr><td title="MOVE">move</td><td>CODEWORD</td><td>( addr1 addr2 n -- )</td><td>copy n bytes from addr1 to addr2</td><td>arm/words/move.s:2<td></tr>
-<tr><td title="2FETCH">2@</td><td>COLON</td><td>( a -- x1 x2 )</td><td>x1 = [a+cellsize], x2 = [a]</td><td>core/words/2fetch.s:2<td></tr>
-<tr><td title="2STORE">2!</td><td>COLON</td><td>( x1 x2 a -- )</td><td>[a] = x2, [a+cellsize] = x1</td><td>core/words/2store.s:2<td></tr>
+<tr><td title="2FETCH">2@</td><td>CODEWORD</td><td>( addr - d )</td><td>fetch two cells at addr</td><td>arm/words/2fetch.s:1<td></tr>
+<tr><td title="2STORE">2!</td><td>CODEWORD</td><td>( d addr -- )</td><td>store two cells at addr</td><td>arm/words/2store.s:1<td></tr>
 <tr><td title="CHARPLUS">char+</td><td>CODEALIAS</td><td>1PLUS</td><td></td><td>core/words/char-plus.s:11<td></tr>
 <tr><td title="MYCHARS">chars</td><td>IMMED</td><td>( n1 -- n2 )</td><td>n2 = n1 * char-size (1)</td><td>core/words/chars.s:2<td></tr>
 <tr><td title="CELLS">cells</td><td>CODEWORD</td><td>( n1 -- n2 )</td><td>n2 = n1 * cellsize</td><td>arm/words/cells.s:1<td></tr>
