@@ -13,6 +13,7 @@ endif
 
 TARGET ?= LINUX
 TARGETS = LINUX
+DIST_TARGET ?= arm-linux
 ifeq ($(strip $(TARGET)), LINUX)
 MCU_LD ?= linux.ld
 else

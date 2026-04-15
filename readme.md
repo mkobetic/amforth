@@ -11,8 +11,9 @@ For more information see the [documentation](https://amforth32.github.io/amforth
 * [core/](core) - the shared 32-bit AmForth core
 * [arm/](arm) - the ARM architecture core (Cortex M3/4)
 * [rv/](rv) - the RISC-V architecture core
-* rv/mcu/, arm/mcu/ - AmForth for different boards and targets
+* rv/mcu/..., arm/mcu/... - AmForth for different boards and targets
 
+Pre-built binaries for various targets are available as Github releases.
 
 ## Available MCUs/Boards
 
