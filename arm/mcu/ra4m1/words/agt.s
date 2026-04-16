@@ -1,7 +1,10 @@
 /*
-    RA4M1 Group: User Manual: 23. Low Power Asynchronous General Purpose Timer (AGT)
+    Use AGT0 timer as an interrupt source.
  */
 
+/*
+    RA4M1 Group: User Manual: 23. Low Power Asynchronous General Purpose Timer (AGT)
+ */
 .equ RA4_AGT0_AGT, 0x40084000 /* AGT0 Counter Register [15:0] R/W */
 .equ RA4_AGT1_AGT, 0x40084100 /* AGT1 Counter Register [15:0] R/W */
 .equ RA4_AGT0_AGTCMA, 0x40084002 /* AGT0 Compare Match A Register [15:0] R/W */
@@ -44,25 +47,46 @@
 .equ RA4_AGTO_AGTIOSEL, 0x4008400F /* AGT0 Pin Select Register */
 .equ RA4_AGT1_AGTIOSEL, 0x4008410F /* AGT1 Pin Select Register */
 
-CODEWORD "agt0.init", AGT0_INIT /* ( u1 u2 -- ) initialize AGT0 as millisecond counter to generate interrupt u2 every u1 ms */
-    @ validate and prepare TOS as IELSR offset
-    cmp TOS, #32
-    blo 1f @ unsigned < 32
-    throw -666
-1:
-    lsl TOS, #2 @ multiply by 4
+.equ INT_AGT0, 0 @ AGT0 interrupt number
+
+CODEWORD "agt0.init", AGT0_INIT /* ( u -- ) initialize AGT0 as millisecond counter to generate interrupt every u ms */
+    @ enable interrupt in NVIC
+    ldr r0, =ARM_NVIC_ISER
+    mov r1, 1<<INT_AGT0 @ bitmask for the interrupt number
+    str r1, [r0] @ set the bit in ISER
     ldr r0, =RA4_ICU_IELSR
-    ldr r1, =0x1e @ set AGT0_AGTI as event trigger for the interrupt
-    str r1, [r0, TOS]
+    mov r1, #0x1e @ set AGT0_AGTI as event trigger for the interrupt
+    str r1, [r0, INT_AGT0<<2] @ IELSR offset from the interrupt number
     ldr r0, =RA4_AGT0_AGTMR1
-    ldr r1, =0x40 @ Timer mode with AGTLCLK 32kHz
+    mov r1, #0x40 @ Timer mode with AGTLCLK 32kHz
     strb r1, [r0]
     ldr r0, =RA4_AGT0_AGTMR2
-    ldr r1, =0x05 @ 1/32 clock divisor => ~ 1ms period
+    mov r1, #0x05 @ 1/32 clock divisor => ~ 1ms tick
     strb r1, [r0]
     ldr r0, =RA4_AGT0_AGT
-    popnos r1 @ set interrupt period to u1 milliseconds
-    strb r1, [r0]
+    strb TOS, [r0] @ set interrupt period to u1 milliseconds
     loadtos
     NEXT
 END AGT0_INIT
+
+CODEWORD "agt0.start", AGT0_START /* ( -- ) start the interrupt timer */
+    ldr r0, =RA4_AGT0_AGTCR
+    mov r1, #1 @ TSTART = 1
+    str r1, [r0]
+    NEXT
+END AGT0_START
+
+CODEWORD "agt0.stop", AGT0_STOP /* ( -- ) stop the interrupt timer */
+    ldr r0, =RA4_AGT0_AGTCR
+    mov r1, #1 @ TSTART = 0
+    str r1, [r0]
+    NEXT
+END AGT0_STOP
+
+.thumb_func
+led_handler: /* flip the LED state, assume LED is initialized as per led.s */
+    ldr r0, =RA4_P102PFS
+    ldrb r1, [r0] @ read PODR bit
+    eor r1, #1  @ flip PODR bit
+    strb r1, [r0]
+    bx lr

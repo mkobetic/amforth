@@ -7,7 +7,7 @@ IRQ_VECTORS:
     ARM_ICTR.INTLINESNUM=0 => 32 interrupts
 */
 
-.word 0 @ 16: ICU.IELSR0
+.word led_handler @ 16: ICU.IELSR0 = AGT0
 .word 0 @ 17: ICU.IELSR1
 .word 0 @ 18: ICU.IELSR2
 .word 0 @ 19: ICU.IELSR3
