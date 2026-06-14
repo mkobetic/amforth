@@ -1,0 +1,44 @@
+#
+# platform_regs.inc: FE310-G002 registers as ASM constants
+#
+# 2021 flabbergast@drak.xyz
+# Unlicense: https://unlicense.org/
+#
+.equ GPIO_BASE,  0x10012000
+.equ INPUT_VAL,  0x00
+.equ INPUT_EN,   0x04
+.equ OUTPUT_EN,  0x08
+.equ OUTPUT_VAL, 0x0C
+.equ PUE,        0x10
+.equ DS,         0x14
+.equ RISE_IE,    0x18
+.equ RISE_IP,    0x1C
+.equ FALL_IE,    0x20
+.equ FALL_IP,    0x24
+.equ HIGH_IE,    0x28
+.equ HIGH_IP,    0x2C
+.equ LOW_IE,     0x30
+.equ LOW_IP,     0x34
+.equ IOF_EN,     0x38
+.equ IOF_SEL,    0x3C
+.equ OUTPUT_XOR, 0x40
+
+CON GPIO            , GPIO_BASE
+CON GPIO.INPUT_VAL  , GPIO_BASE + INPUT_VAL  
+CON GPIO.INPUT_EN   , GPIO_BASE + INPUT_EN  
+CON GPIO.OUTPUT_EN  , GPIO_BASE + OUTPUT_EN
+CON GPIO.OUTPUT_VAL , GPIO_BASE + OUTPUT_VAL
+CON GPIO.PUE        , GPIO_BASE + PUE       
+CON GPIO.DS         , GPIO_BASE + DS
+CON GPIO.RISE_IE    , GPIO_BASE + RISE_IE     
+CON GPIO.RISE_IP    , GPIO_BASE + RISE_IP   
+CON GPIO.FALL_IE    , GPIO_BASE + FALL_IE
+CON GPIO.FALL_IP    , GPIO_BASE + FALL_IP
+CON GPIO.HIGH_IE    , GPIO_BASE + HIGH_IE
+CON GPIO.HIGH_IP    , GPIO_BASE + HIGH_IP
+CON GPIO.LOW_IE     , GPIO_BASE + LOW_IE
+CON GPIO.LOW_IP     , GPIO_BASE + LOW_IP
+CON GPIO.IOF_EN     , GPIO_BASE + IOF_EN
+CON GPIO.IOF_SEL    , GPIO_BASE + IOF_SEL
+CON GPIO.OUTPUT_XOR , GPIO_BASE + OUTPUT_XOR
+
